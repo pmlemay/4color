@@ -18,14 +18,14 @@
 }
 
 table {
-  margin:1em auto;
+  margin:10em auto;
   border-collapse: collapse;
 }
 
 td {
   padding: -2px;
-  height:30px;
-  width:30px;
+  height:50px;
+  width:50px;
   border:1px solid;
   text-align:center;
 }
@@ -38,4 +38,24 @@ td {
   font-size: 16px;
   height: 22px;
   line-height: 25px;
+}
+
+/* Cells that can be interacted with */
+.table-drag-select td.cell-enabled {
+
+}
+
+/* Cells that cannot be interacted with */
+.table-drag-select td.cell-disabled {
+  /* Put yer css here */
+}
+
+/* Cells that have been selected */
+.table-drag-select td.cell-selected {
+  background-color: rgb(231, 255, 93);
+}
+
+/* Cells that are in the process of being selected */
+.table-drag-select td.cell-being-selected {
+  background-color: rgb(231, 255, 93);
 }
