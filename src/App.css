@@ -31,13 +31,12 @@ td {
 }
 
 .square{ 
-  width: 22px;
+  width: 46px;
   border: 0px;
   text-align: center;
   font-weight: bold;
   font-size: 16px;
-  height: 22px;
-  line-height: 25px;
+  height: 44px;
 }
 
 /* Cells that can be interacted with */
