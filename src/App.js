@@ -355,13 +355,16 @@ class Board extends React.Component {
     super(props);
     this.state = {
       cells: [
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false]
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false, false, false],
       ]
     };
   }
@@ -373,11 +376,10 @@ class Board extends React.Component {
   }
 
     render = () =>
-      // <TableDragSelect
-      //   value={this.state.cells}
-      //   onChange={cells => this.setState({ cells })}
-      // >
-      <table>
+      <TableDragSelect
+        value={this.state.cells}
+        onChange={cells => this.setState({ cells })}
+      >
         <tr>
           <td> {this.renderSquare()} </td>
           <td> {this.renderSquare()} </td>
@@ -498,7 +500,7 @@ class Board extends React.Component {
           <td> {this.renderSquare()} </td>
           <td> {this.renderSquare()} </td>
         </tr>
-      </table>
+      </TableDragSelect>
 }
 
 export default App;
