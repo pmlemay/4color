@@ -373,67 +373,132 @@ class Board extends React.Component {
   }
 
     render = () =>
-      <TableDragSelect
-        value={this.state.cells}
-        onChange={cells => this.setState({ cells })}
-      >
+      // <TableDragSelect
+      //   value={this.state.cells}
+      //   onChange={cells => this.setState({ cells })}
+      // >
+      <table>
         <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> 3 </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> 3 </td>
         </tr>
         <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> 3 </td>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> 2 </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
         </tr>
         <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> 5 </td>
         </tr>
         <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
+          <td> {this.renderSquare()} </td>
+          <td> 5 </td>
+          <td> {this.renderSquare()} </td>
+          <td> 2 </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
         </tr>
         <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
+          <td> 5 </td>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
         </tr>
         <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> 3 </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> 3 </td>
+          <td> {this.renderSquare()} </td>
+          <td> 3 </td>
+          <td> o </td>
         </tr>
         <tr>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
         </tr>
-      </TableDragSelect>;
+        <tr>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+        </tr>
+        <tr>
+          <td> 7 </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> 7 </td>
+          <td> o </td>
+          <td> 3 </td>
+          <td> {this.renderSquare()} </td>
+        </tr>
+        <tr>
+          <td> o </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> o </td>
+          <td> 4 </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+          <td> {this.renderSquare()} </td>
+        </tr>
+      </table>
 }
 
 export default App;
