@@ -92,10 +92,6 @@ class TableDragSelect extends React.Component {
 
   state = {
     selectionStarted: false,
-    startRow: null,
-    startColumn: null,
-    endRow: null,
-    endColumn: null,
     selection: []
   };
 
