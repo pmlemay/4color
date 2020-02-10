@@ -39,14 +39,17 @@ td {
   height: 44px;
 }
 
+.table-drag-select td.cell-fixed-value {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 /* Cells that can be interacted with */
 .table-drag-select td.cell-enabled {
-
 }
 
 /* Cells that cannot be interacted with */
 .table-drag-select td.cell-disabled {
-  /* Put yer css here */
 }
 
 /* Cells that have been selected */

@@ -92,19 +92,20 @@ class TableDragSelect extends React.Component {
 
   state = {
     selectionStarted: false,
+    shouldAppend: false,
     selection: []
   };
 
   componentDidMount = () => {
     window.addEventListener("mouseup", this.handleTouchEndWindow);
     window.addEventListener("touchend", this.handleTouchEndWindow);
-    window.addEventListener("keypress", this.handleKeyPressWindow);
+    window.addEventListener("keydown", this.handleKeyPressWindow);
   };
 
   componentWillUnmount = () => {
     window.removeEventListener("mouseup", this.handleTouchEndWindow);
     window.removeEventListener("touchend", this.handleTouchEndWindow);
-    window.removeEventListener("keypress", this.handleKeyPressWindow);
+    window.removeEventListener("keydown", this.handleKeyPressWindow);
   };
 
   render = () => {
@@ -124,7 +125,10 @@ class TableDragSelect extends React.Component {
               key={j}
               onTouchStart={this.handleTouchStartCell}
               onTouchMove={this.handleTouchMoveCell}
+              fixedValue={cell.props.children}
               value={this.props.data[i][j].value}
+              centerNote={this.props.data[i][j].centerNote}
+              cornerNote={this.props.data[i][j].cornerNote}
               selected={this.props.data[i][j].selected}
               beingSelected={this.isCellBeingSelected(i, j)}
               {...cell.props}
@@ -194,12 +198,52 @@ class TableDragSelect extends React.Component {
   };
 
   handleKeyPressWindow = e => {
-    if(this.state.selection === null) return;
+    e.preventDefault();
+    if (this.state.selection === null) return;
     const data = clone(this.props.data);
-    this.state.selection.forEach(element => {
-      data[element.row][element.column].value = e.key;
-    });
-    this.props.onChange(data);
+    console.log(e);
+
+    let shouldDelete = e.keyCode === 46 || e.keyCode === 8;
+    let isNumpadNumber = e.code.indexOf("Numpad") !== -1
+    let isNumber = (e.keyCode >= 48 && e.keyCode <= 57) || isNumpadNumber;
+    let valueToInsert = shouldDelete ? null : isNumpadNumber ? e.code.substring(6) : String.fromCharCode(e.keyCode);
+
+    let shouldUpdateData = false;
+    // Delete
+    if(shouldDelete)
+    {
+      this.state.selection.forEach(element => {
+        shouldUpdateData = true;
+        data[element.row][element.column].cornerNote = valueToInsert
+        data[element.row][element.column].centerNote = valueToInsert
+        data[element.row][element.column].value = valueToInsert
+      });
+    }
+    // Shift + Number
+    else if (e.shiftKey && isNumber) {
+      shouldUpdateData = true;
+      this.state.selection.forEach(element => {
+        data[element.row][element.column].cornerNote = valueToInsert
+      });
+    }
+     // Control + Number
+    else if (e.ctrlKey && isNumber) {
+      shouldUpdateData = true;
+      this.state.selection.forEach(element => {
+        data[element.row][element.column].centerNote = valueToInsert
+      });
+    }
+    // Number
+    else if (isNumber) {
+      shouldUpdateData = true;
+      this.state.selection.forEach(element => {
+        data[element.row][element.column].value = valueToInsert
+      });
+    }
+    
+    if(shouldUpdateData){
+      this.props.onChange(data);
+    }
   };
 
   isCellBeingSelected = (row, column) => {
@@ -212,7 +256,9 @@ class Cell extends React.Component {
   shouldComponentUpdate = nextProps =>
     this.props.beingSelected !== nextProps.beingSelected ||
     this.props.selected !== nextProps.selected ||
-    this.props.value !== nextProps.value;
+    this.props.value !== nextProps.value ||
+    this.props.centerNote !== nextProps.centerNote ||
+    this.props.cornerNote !== nextProps.cornerNote;
 
   componentDidMount = () => {
     // We need to call addEventListener ourselves so that we can pass
@@ -239,6 +285,8 @@ class Cell extends React.Component {
       onTouchStart,
       onTouchMove,
       value,
+      cornerNote,
+      centerNote,
       fixedValue,
       ...props
     } = this.props;
@@ -255,11 +303,12 @@ class Cell extends React.Component {
     }
 
     let cellValue;
-    // if(fixedValue)
-    // {
-    //   cellValue = fixedValue;
-    // }
-    // else
+    if(fixedValue && fixedValue.trim())
+    {
+      cellValue = fixedValue;
+      className += " cell-fixed-value";
+    }
+    else
     {
       cellValue = value;
     }
@@ -316,8 +365,15 @@ const eventToCellLocation = e => {
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    let gridSize = 10;
-    let grid = new Array(gridSize).fill((null)).map(() => new Array(gridSize).fill(null).map(() => ({selected: false, value: null})));
+    let gridSize = 11;
+    let grid = new Array(gridSize).fill((null)).map(() => new Array(gridSize).fill(null).map(() => (
+      {
+        selected: false,
+        value: null,
+        cornerNote: null,
+        centerNote: null,
+        fixedValue: null
+      })));
 
     this.state = {
       cells: grid
@@ -336,124 +392,148 @@ class Board extends React.Component {
         onChange={cells => this.setState({ cells })}
       >
         <tr>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> a </td>
-          <td> 3 </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> 3 </td>
+        <td> </td>
+        <td> </td>
+        <td> 3</td>
+        <td> </td>
+        <td>4 </td>
+        <td>1 </td>
+        <td>7 </td>
+        <td> </td>
+        <td>1 </td>
+        <td> </td>
+        <td> </td>
         </tr>
         <tr>
-          <td> {this.renderSquare()} </td>
-          <td> b </td>
-          <td> 3 </td>
-          <td> c </td>
-          <td> {this.renderSquare()} </td>
-          <td> 2 </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> d </td>
+        <td> </td>
+        <td> 3</td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> 1</td>
+        <td> </td>
         </tr>
         <tr>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> 5 </td>
+        <td>2 </td>
+        <td> </td>
+        <td>3 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> 1</td>
+        <td> </td>
+        <td> 3</td>
         </tr>
         <tr>
-          <td> {this.renderSquare()} </td>
-          <td> 5 </td>
-          <td> {this.renderSquare()} </td>
-          <td> 2 </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> 9</td>
+        <td> </td>
+        <td> 9</td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
         </tr>
         <tr>
-          <td> 5 </td>
-          <td> e </td>
-          <td> {this.renderSquare()} </td>
-          <td> f </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> g </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
+        <td>3 </td>
+        <td> </td>
+        <td> </td>
+        <td>9 </td>
+        <td> </td>
+        <td>9 </td>
+        <td> </td>
+        <td>9 </td>
+        <td> </td>
+        <td> </td>
+        <td>3 </td>
         </tr>
         <tr>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> 3 </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> 3 </td>
-          <td> {this.renderSquare()} </td>
-          <td> 3 </td>
-          <td> h </td>
+        <td>1 </td>
+        <td> </td>
+        <td> </td>
+        <td>9 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>9 </td>
+        <td> </td>
+        <td> </td>
+        <td>6 </td>
         </tr>
         <tr>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> i </td>
-          <td> {this.renderSquare()} </td>
-          <td> j </td>
-          <td> {this.renderSquare()} </td>
+        <td>3 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>9 </td>
+        <td> </td>
+        <td>9 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>2 </td>
         </tr>
         <tr>
-          <td> k </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> 9 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+
         </tr>
         <tr>
-          <td> 7 </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> l </td>
-          <td> {this.renderSquare()} </td>
-          <td> 7 </td>
-          <td> m </td>
-          <td> 3 </td>
-          <td> {this.renderSquare()} </td>
+        <td>4 </td>
+        <td> </td>
+        <td>8 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>6 </td>
+        <td> </td>
+        <td>2 </td>
         </tr>
         <tr>
-          <td> n </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> o </td>
-          <td> 4 </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
-          <td> {this.renderSquare()} </td>
+        <td> </td>
+        <td>2 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>1 </td>
+        <td> </td>
+        </tr>
+        <tr>
+        <td> </td>
+        <td> </td>
+        <td>4 </td>
+        <td> </td>
+        <td>6 </td>
+        <td>5 </td>
+        <td>2 </td>
+        <td> </td>
+        <td>1 </td>
+        <td> </td>
+        <td> </td>
         </tr>
       </TableDragSelect>
 }
