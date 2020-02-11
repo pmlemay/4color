@@ -4,6 +4,13 @@ import PropTypes from "prop-types";
 import './App.css';
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputMode: 1
+    };
+  }
+
   render() {
     return (
       <div className="game">
@@ -12,17 +19,45 @@ class App extends React.Component {
           />
         </div>
         <div className="game-controls">
+          <div className='input-mode'>
+            <InputMode 
+              selected={this.state.inputMode === 1}
+              onClick={() => this.setState({ inputMode: 1 })}
+              >
+              Normal
+            </InputMode>
+            <InputMode 
+              selected={this.state.inputMode === 2}
+              onClick={() => this.setState({ inputMode: 2 })}
+              >
+              Color
+            </InputMode>
+          </div>
         </div>
       </div>
     );
   }
 }
 
-function Square(props) {
-  return (
-    <input className="square">
-    </input>
-  );
+class InputMode extends React.Component {
+  render = () => {
+    let {
+      className = "input-mode-button",
+      selected,
+      onClick,
+      ...props
+    } = this.props;
+    if(selected) {
+      className += " selected";
+    }
+    return (
+      <button 
+        className={className}
+        onClick={onClick}> 
+        {this.props.children}
+      </button>
+    );
+  };
 }
 
 class TableDragSelect extends React.Component {
@@ -378,12 +413,6 @@ class Board extends React.Component {
     this.state = {
       cells: grid
     };
-  }
-
-  renderSquare(i) {
-    return (
-      <Square/>
-    );
   }
 
     render = () =>

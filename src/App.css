@@ -1,24 +1,5 @@
-.App {
-  text-align: center;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
 table {
-  margin:10em auto;
+  margin:4em auto;
   border-collapse: collapse;
 }
 
@@ -30,34 +11,26 @@ td {
   text-align:center;
 }
 
-.square{ 
-  width: 46px;
-  border: 0px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  height: 44px;
+.input-mode-button {
+  width: 100px;
+  height: 30px;
+  margin: 5px;
 }
+
+.input-mode-button.selected {
+  background-color: lightseagreen;
+}
+
 
 .table-drag-select td.cell-fixed-value {
   font-weight: bold;
   font-size: 18px;
 }
 
-/* Cells that can be interacted with */
-.table-drag-select td.cell-enabled {
-}
-
-/* Cells that cannot be interacted with */
-.table-drag-select td.cell-disabled {
-}
-
-/* Cells that have been selected */
 .table-drag-select td.cell-selected {
   background-color: rgb(231, 255, 93);
 }
 
-/* Cells that are in the process of being selected */
 .table-drag-select td.cell-being-selected {
   background-color: rgb(231, 255, 93);
 }
