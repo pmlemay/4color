@@ -15,7 +15,8 @@ class App extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board
+          <Board 
+            inputMode={this.state.inputMode}
           />
         </div>
         <div className="game-controls">
@@ -61,6 +62,15 @@ class InputMode extends React.Component {
 }
 
 class TableDragSelect extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectionStarted: false,
+      shouldAppend: false,
+      selection: []
+    };
+  }
+
   static propTypes = {
     data: props => {
       const error = new Error(
@@ -125,12 +135,6 @@ class TableDragSelect extends React.Component {
     onChange: () => {}
   };
 
-  state = {
-    selectionStarted: false,
-    shouldAppend: false,
-    selection: []
-  };
-
   componentDidMount = () => {
     window.addEventListener("mouseup", this.handleTouchEndWindow);
     window.addEventListener("touchend", this.handleTouchEndWindow);
@@ -164,6 +168,7 @@ class TableDragSelect extends React.Component {
               value={this.props.data[i][j].value}
               centerNote={this.props.data[i][j].centerNote}
               cornerNote={this.props.data[i][j].cornerNote}
+              color={this.props.data[i][j].color}
               selected={this.props.data[i][j].selected}
               beingSelected={this.isCellBeingSelected(i, j)}
               {...cell.props}
@@ -192,7 +197,9 @@ class TableDragSelect extends React.Component {
     const isLeftClick = e.button === 0;
     const isTouch = e.type !== "mousedown";
     if (!this.state.selectionStarted && (isLeftClick || isTouch)) {
-      this.resetSelection();
+      if(!eventIsInputButton(e)){
+        this.resetSelection();
+      }
       e.preventDefault();
       const { row, column } = eventToCellLocation(e);
       this.props.onSelectionStart({ row, column });
@@ -228,7 +235,9 @@ class TableDragSelect extends React.Component {
       this.props.onChange(data);
     }
     else{
-      this.resetSelection();
+      if(!eventIsInputButton(e)){
+        this.resetSelection();
+      }
     }
   };
 
@@ -252,27 +261,35 @@ class TableDragSelect extends React.Component {
         data[element.row][element.column].cornerNote = valueToInsert
         data[element.row][element.column].centerNote = valueToInsert
         data[element.row][element.column].value = valueToInsert
+        data[element.row][element.column].color = valueToInsert
       });
     }
     // Shift + Number
-    else if (e.shiftKey && isNumber) {
+    else if (this.props.inputMode === 1 && e.shiftKey && isNumber) {
       shouldUpdateData = true;
       this.state.selection.forEach(element => {
         data[element.row][element.column].cornerNote = valueToInsert
       });
     }
      // Control + Number
-    else if (e.ctrlKey && isNumber) {
+    else if (this.props.inputMode === 1 && e.ctrlKey && isNumber) {
       shouldUpdateData = true;
       this.state.selection.forEach(element => {
         data[element.row][element.column].centerNote = valueToInsert
       });
     }
     // Number
-    else if (isNumber) {
+    else if (this.props.inputMode === 1 && isNumber) {
       shouldUpdateData = true;
       this.state.selection.forEach(element => {
         data[element.row][element.column].value = valueToInsert
+      });
+    }
+    // Color
+    else if (this.props.inputMode === 2 && isNumber) {
+      shouldUpdateData = true;
+      this.state.selection.forEach(element => {
+        data[element.row][element.column].color = valueToInsert
       });
     }
     
@@ -293,7 +310,8 @@ class Cell extends React.Component {
     this.props.selected !== nextProps.selected ||
     this.props.value !== nextProps.value ||
     this.props.centerNote !== nextProps.centerNote ||
-    this.props.cornerNote !== nextProps.cornerNote;
+    this.props.cornerNote !== nextProps.cornerNote ||
+    this.props.color !== nextProps.color;
 
   componentDidMount = () => {
     // We need to call addEventListener ourselves so that we can pass
@@ -323,6 +341,7 @@ class Cell extends React.Component {
       cornerNote,
       centerNote,
       fixedValue,
+      color,
       ...props
     } = this.props;
     if (disabled) {
@@ -334,6 +353,9 @@ class Cell extends React.Component {
       }
       if (beingSelected) {
         className += " cell-being-selected";
+      }
+      if (color) {
+        className += " color" + color;
       }
     }
 
@@ -397,10 +419,14 @@ const eventToCellLocation = e => {
   };
 };
 
+const eventIsInputButton = e => {
+    return e.target.className === "input-mode-button"
+}
+
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    let gridSize = 11;
+    let gridSize = 10;
     let grid = new Array(gridSize).fill((null)).map(() => new Array(gridSize).fill(null).map(() => (
       {
         selected: false,
@@ -418,150 +444,127 @@ class Board extends React.Component {
     render = () =>
       <TableDragSelect
         data={this.state.cells}
+        inputMode={this.props.inputMode}
         onChange={cells => this.setState({ cells })}
       >
         <tr>
         <td> </td>
-        <td> </td>
-        <td> 3</td>
-        <td> </td>
-        <td>4 </td>
         <td>1 </td>
-        <td>7 </td>
-        <td> </td>
-        <td>1 </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td> 3</td>
+        <td>1</td>
         <td> </td>
         <td> </td>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 1</td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td>2 </td>
-        <td> </td>
-        <td>3 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 1</td>
-        <td> </td>
-        <td> 3</td>
+        <td>10 </td>
+        <td>10 </td>
         </tr>
         <tr>
         <td> </td>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> 9</td>
-        <td> </td>
-        <td> 9</td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td>3 </td>
-        <td> </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td> </td>
-        <td>3 </td>
-        </tr>
-        <tr>
+        <td> 7</td>
         <td>1 </td>
         <td> </td>
         <td> </td>
-        <td>9 </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td> </td>
-        <td>6 </td>
         </tr>
         <tr>
+        <td>14 </td>
         <td>3 </td>
         <td> </td>
         <td> </td>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>9 </td>
         <td>9 </td>
         <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>2 </td>
         </tr>
         <tr>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 9 </td>
-        <td> </td>
-        <td> </td>
+        <td>16 </td>
+        <td>16 </td>
         <td> </td>
         <td> </td>
         <td> </td>
-
+        <td> </td>
+        <td> </td>
         </tr>
         <tr>
         <td>4 </td>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>8 </td>
         <td>8 </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>6 </td>
-        <td> </td>
-        <td>2 </td>
         </tr>
         <tr>
         <td> </td>
-        <td>2 </td>
+        <td> </td>
+        <td>5 </td>
+        <td>9 </td>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>1 </td>
-        <td> </td>
-        </tr>
-        <tr>
         <td> </td>
         <td> </td>
         <td>4 </td>
+        </tr>
+        <tr>
         <td> </td>
-        <td>6 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>4 </td>
+        <td>7 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        </tr>
+        <tr>
+        <td> </td>
+        <td>8 </td>
+        <td> 8</td>
+        <td> </td>
+        <td> </td>
+        <td>  </td>
+        <td> </td>
+        <td> </td>
+        <td> 5</td>
         <td>5 </td>
-        <td>2 </td>
+        </tr>
+        <tr>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>3 </td>
         <td>1 </td>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        </tr>
+        <tr>
+        <td>1 </td>
+        <td>1 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> 4</td>
+        <td> 4</td>
         <td> </td>
         </tr>
       </TableDragSelect>
