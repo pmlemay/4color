@@ -4,28 +4,93 @@ import PropTypes from "prop-types";
 import './App.css';
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputMode: 1
+    };
+  }
+
   render() {
     return (
       <div className="game">
         <div className="game-board">
-          <Board
+          <Board 
+            inputMode={this.state.inputMode}
           />
         </div>
         <div className="game-controls">
+          <div className='input-modes'>
+            <InputMode 
+              selected={this.state.inputMode === 1}
+              onClick={() => this.setState({ inputMode: 1 })}
+              >
+              Normal
+            </InputMode>
+            <InputMode 
+              selected={this.state.inputMode === 2}
+              onClick={() => this.setState({ inputMode: 2 })}
+              >
+              Color
+            </InputMode>
+          </div>
+          <div className='input-controls'>
+            
+          </div>
         </div>
       </div>
     );
   }
 }
 
-function Square(props) {
-  return (
-    <input className="square">
-    </input>
-  );
+class InputControl extends React.Component {
+  render = () => {
+    let {
+      className = "input-control-button",
+      onClick
+    } = this.props;
+
+    return (
+      <button 
+        className={className}
+        onClick={onClick}> 
+        {this.props.children}
+      </button>
+    );
+  };
+}
+
+class InputMode extends React.Component {
+  render = () => {
+    let {
+      className = "input-mode-button",
+      selected,
+      onClick
+    } = this.props;
+    if(selected) {
+      className += " selected";
+    }
+    return (
+      <button 
+        className={className}
+        onClick={onClick}> 
+        {this.props.children}
+      </button>
+    );
+  };
 }
 
 class TableDragSelect extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectionStarted: false,
+      shouldAppend: false,
+      ctrlKeyIsPressed: false,
+      selection: []
+    };
+  }
+
   static propTypes = {
     data: props => {
       const error = new Error(
@@ -90,22 +155,18 @@ class TableDragSelect extends React.Component {
     onChange: () => {}
   };
 
-  state = {
-    selectionStarted: false,
-    shouldAppend: false,
-    selection: []
-  };
-
   componentDidMount = () => {
     window.addEventListener("mouseup", this.handleTouchEndWindow);
     window.addEventListener("touchend", this.handleTouchEndWindow);
     window.addEventListener("keydown", this.handleKeyPressWindow);
+    window.addEventListener("keyup", this.handleKeyUpWindow);
   };
 
   componentWillUnmount = () => {
     window.removeEventListener("mouseup", this.handleTouchEndWindow);
     window.removeEventListener("touchend", this.handleTouchEndWindow);
     window.removeEventListener("keydown", this.handleKeyPressWindow);
+    window.removeEventListener("keyup", this.handleKeyUpWindow);
   };
 
   render = () => {
@@ -129,6 +190,7 @@ class TableDragSelect extends React.Component {
               value={this.props.data[i][j].value}
               centerNote={this.props.data[i][j].centerNote}
               cornerNote={this.props.data[i][j].cornerNote}
+              color={this.props.data[i][j].color}
               selected={this.props.data[i][j].selected}
               beingSelected={this.isCellBeingSelected(i, j)}
               {...cell.props}
@@ -141,6 +203,8 @@ class TableDragSelect extends React.Component {
     });
 
   resetSelection() {
+    if(this.state.ctrlKeyIsPressed) return;
+
     const data = clone(this.props.data);
     for(let i = 0; i < data.length; i++)
     {
@@ -157,7 +221,9 @@ class TableDragSelect extends React.Component {
     const isLeftClick = e.button === 0;
     const isTouch = e.type !== "mousedown";
     if (!this.state.selectionStarted && (isLeftClick || isTouch)) {
-      this.resetSelection();
+      if(!eventIsInputButton(e)){
+        this.resetSelection();
+      }
       e.preventDefault();
       const { row, column } = eventToCellLocation(e);
       this.props.onSelectionStart({ row, column });
@@ -193,15 +259,22 @@ class TableDragSelect extends React.Component {
       this.props.onChange(data);
     }
     else{
-      this.resetSelection();
+      if(!eventIsInputButton(e)){
+        this.resetSelection();
+      }
     }
+  };
+
+  handleKeyUpWindow = e => {
+    this.setState({ctrlKeyIsPressed: e.ctrlKey})
   };
 
   handleKeyPressWindow = e => {
     e.preventDefault();
     if (this.state.selection === null) return;
+    this.setState({ctrlKeyIsPressed: e.ctrlKey})
+
     const data = clone(this.props.data);
-    console.log(e);
 
     let shouldDelete = e.keyCode === 46 || e.keyCode === 8;
     let isNumpadNumber = e.code.indexOf("Numpad") !== -1
@@ -217,27 +290,35 @@ class TableDragSelect extends React.Component {
         data[element.row][element.column].cornerNote = valueToInsert
         data[element.row][element.column].centerNote = valueToInsert
         data[element.row][element.column].value = valueToInsert
+        data[element.row][element.column].color = valueToInsert
       });
     }
     // Shift + Number
-    else if (e.shiftKey && isNumber) {
+    else if (this.props.inputMode === 1 && e.shiftKey && isNumber) {
       shouldUpdateData = true;
       this.state.selection.forEach(element => {
         data[element.row][element.column].cornerNote = valueToInsert
       });
     }
      // Control + Number
-    else if (e.ctrlKey && isNumber) {
+    else if (this.props.inputMode === 1 && e.ctrlKey && isNumber) {
       shouldUpdateData = true;
       this.state.selection.forEach(element => {
         data[element.row][element.column].centerNote = valueToInsert
       });
     }
     // Number
-    else if (isNumber) {
+    else if (this.props.inputMode === 1 && isNumber) {
       shouldUpdateData = true;
       this.state.selection.forEach(element => {
         data[element.row][element.column].value = valueToInsert
+      });
+    }
+    // Color
+    else if (this.props.inputMode === 2 && isNumber) {
+      shouldUpdateData = true;
+      this.state.selection.forEach(element => {
+        data[element.row][element.column].color = valueToInsert
       });
     }
     
@@ -258,7 +339,8 @@ class Cell extends React.Component {
     this.props.selected !== nextProps.selected ||
     this.props.value !== nextProps.value ||
     this.props.centerNote !== nextProps.centerNote ||
-    this.props.cornerNote !== nextProps.cornerNote;
+    this.props.cornerNote !== nextProps.cornerNote ||
+    this.props.color !== nextProps.color;
 
   componentDidMount = () => {
     // We need to call addEventListener ourselves so that we can pass
@@ -279,6 +361,7 @@ class Cell extends React.Component {
   render = () => {
     let {
       className = "",
+      innerDivClassName = "",
       disabled,
       beingSelected,
       selected,
@@ -288,6 +371,7 @@ class Cell extends React.Component {
       cornerNote,
       centerNote,
       fixedValue,
+      color,
       ...props
     } = this.props;
     if (disabled) {
@@ -300,13 +384,16 @@ class Cell extends React.Component {
       if (beingSelected) {
         className += " cell-being-selected";
       }
+      if (color) {
+        innerDivClassName += " color" + color;
+      }
     }
 
     let cellValue;
     if(fixedValue && fixedValue.trim())
     {
       cellValue = fixedValue;
-      className += " cell-fixed-value";
+      innerDivClassName += " cell-fixed-value";
     }
     else
     {
@@ -320,7 +407,7 @@ class Cell extends React.Component {
         onMouseMove={this.handleTouchMove}
         {...props}
       >
-        {cellValue}
+        <div className={innerDivClassName}>{cellValue}</div>
       </td>
     );
   };
@@ -362,10 +449,14 @@ const eventToCellLocation = e => {
   };
 };
 
+const eventIsInputButton = e => {
+    return e.target.className === "input-mode-button"
+}
+
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    let gridSize = 11;
+    let gridSize = 10;
     let grid = new Array(gridSize).fill((null)).map(() => new Array(gridSize).fill(null).map(() => (
       {
         selected: false,
@@ -380,159 +471,130 @@ class Board extends React.Component {
     };
   }
 
-  renderSquare(i) {
-    return (
-      <Square/>
-    );
-  }
-
     render = () =>
       <TableDragSelect
         data={this.state.cells}
+        inputMode={this.props.inputMode}
         onChange={cells => this.setState({ cells })}
       >
         <tr>
         <td> </td>
-        <td> </td>
-        <td> 3</td>
-        <td> </td>
-        <td>4 </td>
         <td>1 </td>
-        <td>7 </td>
-        <td> </td>
-        <td>1 </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td> 3</td>
+        <td>1</td>
         <td> </td>
         <td> </td>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 1</td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td>2 </td>
-        <td> </td>
-        <td>3 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 1</td>
-        <td> </td>
-        <td> 3</td>
+        <td>10 </td>
+        <td>10 </td>
         </tr>
         <tr>
         <td> </td>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> 9</td>
-        <td> </td>
-        <td> 9</td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td>3 </td>
-        <td> </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td> </td>
-        <td>3 </td>
-        </tr>
-        <tr>
+        <td> 7</td>
         <td>1 </td>
         <td> </td>
         <td> </td>
-        <td>9 </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td> </td>
-        <td>6 </td>
         </tr>
         <tr>
+        <td>14 </td>
         <td>3 </td>
         <td> </td>
         <td> </td>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>9 </td>
         <td>9 </td>
         <td> </td>
-        <td>9 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>2 </td>
         </tr>
         <tr>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 9 </td>
-        <td> </td>
-        <td> </td>
+        <td>16 </td>
+        <td>16 </td>
         <td> </td>
         <td> </td>
         <td> </td>
-
+        <td> </td>
+        <td> </td>
         </tr>
         <tr>
         <td>4 </td>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>8 </td>
         <td>8 </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>6 </td>
-        <td> </td>
-        <td>2 </td>
         </tr>
         <tr>
         <td> </td>
-        <td>2 </td>
+        <td> </td>
+        <td>5 </td>
+        <td>9 </td>
         <td> </td>
         <td> </td>
         <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>1 </td>
-        <td> </td>
-        </tr>
-        <tr>
         <td> </td>
         <td> </td>
         <td>4 </td>
+        </tr>
+        <tr>
         <td> </td>
-        <td>6 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>4 </td>
+        <td>7 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        </tr>
+        <tr>
+        <td> </td>
+        <td>8 </td>
+        <td> 8</td>
+        <td> </td>
+        <td> </td>
+        <td>  </td>
+        <td> </td>
+        <td> </td>
+        <td> 5</td>
         <td>5 </td>
-        <td>2 </td>
+        </tr>
+        <tr>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td>3 </td>
         <td>1 </td>
         <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        </tr>
+        <tr>
+        <td>1 </td>
+        <td>1 </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> 4</td>
+        <td> 4</td>
         <td> </td>
         </tr>
       </TableDragSelect>
