@@ -20,7 +20,7 @@ class App extends React.Component {
           />
         </div>
         <div className="game-controls">
-          <div className='input-mode'>
+          <div className='input-modes'>
             <InputMode 
               selected={this.state.inputMode === 1}
               onClick={() => this.setState({ inputMode: 1 })}
@@ -34,10 +34,30 @@ class App extends React.Component {
               Color
             </InputMode>
           </div>
+          <div className='input-controls'>
+            
+          </div>
         </div>
       </div>
     );
   }
+}
+
+class InputControl extends React.Component {
+  render = () => {
+    let {
+      className = "input-control-button",
+      onClick
+    } = this.props;
+
+    return (
+      <button 
+        className={className}
+        onClick={onClick}> 
+        {this.props.children}
+      </button>
+    );
+  };
 }
 
 class InputMode extends React.Component {
@@ -45,8 +65,7 @@ class InputMode extends React.Component {
     let {
       className = "input-mode-button",
       selected,
-      onClick,
-      ...props
+      onClick
     } = this.props;
     if(selected) {
       className += " selected";
@@ -67,6 +86,7 @@ class TableDragSelect extends React.Component {
     this.state = {
       selectionStarted: false,
       shouldAppend: false,
+      ctrlKeyIsPressed: false,
       selection: []
     };
   }
@@ -139,12 +159,14 @@ class TableDragSelect extends React.Component {
     window.addEventListener("mouseup", this.handleTouchEndWindow);
     window.addEventListener("touchend", this.handleTouchEndWindow);
     window.addEventListener("keydown", this.handleKeyPressWindow);
+    window.addEventListener("keyup", this.handleKeyUpWindow);
   };
 
   componentWillUnmount = () => {
     window.removeEventListener("mouseup", this.handleTouchEndWindow);
     window.removeEventListener("touchend", this.handleTouchEndWindow);
     window.removeEventListener("keydown", this.handleKeyPressWindow);
+    window.removeEventListener("keyup", this.handleKeyUpWindow);
   };
 
   render = () => {
@@ -181,6 +203,8 @@ class TableDragSelect extends React.Component {
     });
 
   resetSelection() {
+    if(this.state.ctrlKeyIsPressed) return;
+
     const data = clone(this.props.data);
     for(let i = 0; i < data.length; i++)
     {
@@ -241,11 +265,16 @@ class TableDragSelect extends React.Component {
     }
   };
 
+  handleKeyUpWindow = e => {
+    this.setState({ctrlKeyIsPressed: e.ctrlKey})
+  };
+
   handleKeyPressWindow = e => {
     e.preventDefault();
     if (this.state.selection === null) return;
+    this.setState({ctrlKeyIsPressed: e.ctrlKey})
+
     const data = clone(this.props.data);
-    console.log(e);
 
     let shouldDelete = e.keyCode === 46 || e.keyCode === 8;
     let isNumpadNumber = e.code.indexOf("Numpad") !== -1
@@ -332,6 +361,7 @@ class Cell extends React.Component {
   render = () => {
     let {
       className = "",
+      innerDivClassName = "",
       disabled,
       beingSelected,
       selected,
@@ -355,7 +385,7 @@ class Cell extends React.Component {
         className += " cell-being-selected";
       }
       if (color) {
-        className += " color" + color;
+        innerDivClassName += " color" + color;
       }
     }
 
@@ -363,7 +393,7 @@ class Cell extends React.Component {
     if(fixedValue && fixedValue.trim())
     {
       cellValue = fixedValue;
-      className += " cell-fixed-value";
+      innerDivClassName += " cell-fixed-value";
     }
     else
     {
@@ -377,7 +407,7 @@ class Cell extends React.Component {
         onMouseMove={this.handleTouchMove}
         {...props}
       >
-        {cellValue}
+        <div className={innerDivClassName}>{cellValue}</div>
       </td>
     );
   };

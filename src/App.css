@@ -1,4 +1,4 @@
-.input-mode {
+.input-modes {
   display: flex;
   justify-content: center;
 }
@@ -22,58 +22,66 @@ td {
   height:50px;
   width:50px;
   border:1px solid;
-  text-align:center;
 }
 
-.table-drag-select td.cell-fixed-value {
+.table-drag-select td .cell-fixed-value {
   font-weight: bold;
   font-size: 35px;
 }
 
 .table-drag-select td.cell-selected {
-  background-color: rgb(231, 255, 93) !important;
+  background-color: rgb(255, 255, 0) !important;
 }
 
 .table-drag-select td.cell-being-selected {
-  background-color: rgb(231, 255, 93) !important;
+  background-color: rgb(255, 255, 0) !important;
 }
 
-.table-drag-select td.color0 {
-  background-color: white;
+.table-drag-select td div {
+  height: calc(100% + 2px);
+  width: calc(100% + 2px);
+  margin-left: -1px;
+
+  text-align:center;
+  line-height: 50px;
 }
 
-.table-drag-select td.color1 {
-  background-color: gray;
+.table-drag-select td .color0 {
+  background-color: rgba(0,0,0,0.6);
 }
 
-.table-drag-select td.color2 {
-  background-color: red;
+.table-drag-select td .color1 {
+  background-color: rgba(180, 180, 180, 0.6);
 }
 
-.table-drag-select td.color3 {
-  background-color: orange;
+.table-drag-select td .color2 {
+  background-color: rgba(255,0,0,0.6);
 }
 
-.table-drag-select td.color4 {
-  background-color: yellow;
+.table-drag-select td .color3 {
+  background-color: rgba(248, 143, 6, 0.6);
 }
 
-.table-drag-select td.color5 {
-  background-color: lime;
+.table-drag-select td .color4 {
+  background-color: rgba(253, 253, 14, 0.6);
 }
 
-.table-drag-select td.color6 {
-  background-color: green;
+.table-drag-select td .color5 {
+  background-color: rgba(72, 255, 0, 0.6);
 }
 
-.table-drag-select td.color7 {
-  background-color: cyan;
+.table-drag-select td .color6 {
+  background-color: rgba(0, 255, 255, 0.6);
 }
 
-.table-drag-select td.color8 {
-  background-color: indigo;
+.table-drag-select td .color7 {
+  background-color: rgba(0, 17, 248, 0.6);
 }
 
-.table-drag-select td.color9 {
-  background-color: violet;
+.table-drag-select td .color8 {
+  background-color: rgba(87, 1, 148, 0.6);
+}
+
+.table-drag-select td .color9 {
+  background-color: rgba(238, 130, 180, 0.6);
 }
