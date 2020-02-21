@@ -1,4 +1,4 @@
-.input-modes {
+.game-controls {
   display: flex;
   justify-content: center;
 }
@@ -13,8 +13,36 @@
   background-color: lightseagreen;
 }
 
-table {
+.input-controls {
+  margin: 5px;
+}
+
+.input-control-button {
+  height: 30px;
+  width: 30px;
+}
+
+.container {
+  text-align: center;
+}
+
+.grid {
   margin:4em auto;
+  display: inline-block;
+  position: relative;
+}
+
+.galaxy {
+  position: absolute;
+  background-color: white;
+  border: 1px solid;
+  border-radius: 22px;
+  width: 22px;
+  height: 22px;
+  margin: -11px;
+}
+
+table {
   border-collapse: collapse;
 }
 
@@ -44,6 +72,10 @@ td {
 
   text-align:center;
   line-height: 50px;
+
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
 .table-drag-select td .color0 {

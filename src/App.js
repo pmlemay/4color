@@ -6,8 +6,23 @@ import './App.css';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    let numberOfRows = 4;
+    let numberOfColumns = 5;
+    let gridData = new Array(numberOfRows).fill((null)).map(() => new Array(numberOfColumns).fill(null).map(() => (
+      {
+        selected: false,
+        value: null,
+        cornerNote: null,
+        centerNote: null,
+        fixedValue: null
+      })));
+
     this.state = {
-      inputMode: 1
+      data: gridData,
+      inputMode: 1,
+      numberOfRows: numberOfRows,
+      numberOfColumns: numberOfColumns,
+      selection: []
     };
   }
 
@@ -15,9 +30,16 @@ class App extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board 
+          <Board
+            numberOfRows = {this.state.numberOfRows}
+            numberOfColumns = {this.state.numberOfColumns}
+            data = {this.state.data}
             inputMode={this.state.inputMode}
-          />
+            selection = {this.state.selection}
+            onChange={(data, selection) => {
+              this.setState({data, selection})}
+            }
+            />
         </div>
         <div className="game-controls">
           <div className='input-modes'>
@@ -35,7 +57,13 @@ class App extends React.Component {
             </InputMode>
           </div>
           <div className='input-controls'>
-            
+            <InputControl
+              input='*'
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
           </div>
         </div>
       </div>
@@ -44,17 +72,30 @@ class App extends React.Component {
 }
 
 class InputControl extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  handleInputClicked = (input) => {
+    const data = clone(this.props.data);
+
+    this.props.selection.forEach(element => {
+      data[element.row][element.column].value = input
+    });
+    this.props.onChange(data);
+  };
+
   render = () => {
     let {
       className = "input-control-button",
-      onClick
     } = this.props;
 
     return (
       <button 
         className={className}
-        onClick={onClick}> 
-        {this.props.children}
+        onClick={() => this.handleInputClicked(this.props.input)}
+        > 
+        {this.props.input}
       </button>
     );
   };
@@ -87,7 +128,6 @@ class TableDragSelect extends React.Component {
       selectionStarted: false,
       shouldAppend: false,
       ctrlKeyIsPressed: false,
-      selection: []
     };
   }
 
@@ -119,6 +159,7 @@ class TableDragSelect extends React.Component {
     onSelectionStart: PropTypes.func,
     onInput: PropTypes.func,
     onChange: PropTypes.func,
+
     children: props => {
       if (TableDragSelect.propTypes.data(props)) {
         return; // Let error be handled elsewhere
@@ -213,37 +254,42 @@ class TableDragSelect extends React.Component {
         data[i][j].selected = false;
       }
     }
-    this.setState({ selection: null, selectionStarted: false });
-    this.props.onChange(data); 
+    this.setState({ selectionStarted: false });
+    var selection = clone(this.props.selection);
+    selection = [];
+    this.props.onChange(data, selection); 
   }
-
+  
   handleTouchStartCell = e => {
     const isLeftClick = e.button === 0;
     const isTouch = e.type !== "mousedown";
     if (!this.state.selectionStarted && (isLeftClick || isTouch)) {
-      if(!eventIsInputButton(e)){
+      if(!this.eventIsInputButton(e)){
         this.resetSelection();
       }
       e.preventDefault();
-      const { row, column } = eventToCellLocation(e);
+      const { row, column } = this.eventToCellLocation(e);
       this.props.onSelectionStart({ row, column });
       this.setState(prevState => ({
         selectionStarted: true,
-        selection: [{ row, column }]
       }));
+
+      var selection = clone(this.props.selection);
+      selection = [{ row, column }];
+      this.props.onChange(this.props.data, selection);
     }
   };
 
   handleTouchMoveCell = e => {
     if (this.state.selectionStarted) {
       e.preventDefault();
-      const { row, column } = eventToCellLocation(e);
+      const { row, column } = this.eventToCellLocation(e);
       // Do nothing if we already added that cell to the selection
-      if(this.state.selection.some(e => e.row === row && e.column === column)) return;
+      if(this.props.selection.some(e => e.row === row && e.column === column)) return;
 
-      this.setState(prevState => ({
-        selection: [...prevState.selection, { row, column }]
-      }));
+      var selection = clone(this.props.selection);
+      selection = [...selection, { row, column }];
+      this.props.onChange(this.props.data, selection);
     }
   };
 
@@ -252,14 +298,14 @@ class TableDragSelect extends React.Component {
     const isTouch = e.type !== "mousedown";
     if (this.state.selectionStarted && (isLeftClick || isTouch)) {
       const data = clone(this.props.data);
-      this.state.selection.forEach(element => {
+      this.props.selection.forEach(element => {
         data[element.row][element.column].selected = true;
       });
       this.setState({ selectionStarted: false });
-      this.props.onChange(data);
+      this.props.onChange(data, this.props.selection);
     }
     else{
-      if(!eventIsInputButton(e)){
+      if(!this.eventIsInputButton(e)){
         this.resetSelection();
       }
     }
@@ -271,7 +317,7 @@ class TableDragSelect extends React.Component {
 
   handleKeyPressWindow = e => {
     e.preventDefault();
-    if (this.state.selection === null) return;
+    if (this.props.selection === null) return;
     this.setState({ctrlKeyIsPressed: e.ctrlKey})
 
     const data = clone(this.props.data);
@@ -285,7 +331,7 @@ class TableDragSelect extends React.Component {
     // Delete
     if(shouldDelete)
     {
-      this.state.selection.forEach(element => {
+      this.props.selection.forEach(element => {
         shouldUpdateData = true;
         data[element.row][element.column].cornerNote = valueToInsert
         data[element.row][element.column].centerNote = valueToInsert
@@ -296,39 +342,67 @@ class TableDragSelect extends React.Component {
     // Shift + Number
     else if (this.props.inputMode === 1 && e.shiftKey && isNumber) {
       shouldUpdateData = true;
-      this.state.selection.forEach(element => {
+      this.props.selection.forEach(element => {
         data[element.row][element.column].cornerNote = valueToInsert
       });
     }
      // Control + Number
     else if (this.props.inputMode === 1 && e.ctrlKey && isNumber) {
       shouldUpdateData = true;
-      this.state.selection.forEach(element => {
+      this.props.selection.forEach(element => {
         data[element.row][element.column].centerNote = valueToInsert
       });
     }
     // Number
     else if (this.props.inputMode === 1 && isNumber) {
       shouldUpdateData = true;
-      this.state.selection.forEach(element => {
+      this.props.selection.forEach(element => {
         data[element.row][element.column].value = valueToInsert
       });
     }
     // Color
     else if (this.props.inputMode === 2 && isNumber) {
       shouldUpdateData = true;
-      this.state.selection.forEach(element => {
+      this.props.selection.forEach(element => {
         data[element.row][element.column].color = valueToInsert
       });
     }
     
     if(shouldUpdateData){
-      this.props.onChange(data);
+      this.props.onChange(data, this.props.selection);
     }
   };
 
   isCellBeingSelected = (row, column) => {
-    return this.state.selectionStarted && this.state.selection.some(e => e.row === row && e.column === column);
+    return this.state.selectionStarted && this.props.selection.some(e => e.row === row && e.column === column);
+  };
+  
+  eventIsInputButton = e => {
+    return e.target.closest(".game-controls")
+  };
+
+  // Takes a mouse or touch event and returns the corresponding row and cell.
+  // Example:
+  // eventToCellLocation(event);
+  // returns {row: 2, column: 3}
+  eventToCellLocation = e => {
+    let target;
+    // For touchmove and touchend events, e.target and e.touches[n].target are
+    // wrong, so we have to rely on elementFromPoint(). For mouse clicks, we have
+    // to use e.target.
+    if (e.touches) {
+      const touch = e.touches[0];
+      target = document.elementFromPoint(touch.clientX, touch.clientY);
+    } else {
+      target = e.target;
+      while (target.tagName !== "TD") {
+        target = target.parentNode;
+      }
+    }
+    return {
+      row: target.parentNode.rowIndex,
+      column: target.cellIndex
+    };
   };
 }
 
@@ -425,179 +499,63 @@ class Cell extends React.Component {
   };
 }
 
-// Takes a mouse or touch event and returns the corresponding row and cell.
-// Example:
-// eventToCellLocation(event);
-// returns {row: 2, column: 3}
-const eventToCellLocation = e => {
-  let target;
-  // For touchmove and touchend events, e.target and e.touches[n].target are
-  // wrong, so we have to rely on elementFromPoint(). For mouse clicks, we have
-  // to use e.target.
-  if (e.touches) {
-    const touch = e.touches[0];
-    target = document.elementFromPoint(touch.clientX, touch.clientY);
-  } else {
-    target = e.target;
-    while (target.tagName !== "TD") {
-      target = target.parentNode;
-    }
-  }
-  return {
-    row: target.parentNode.rowIndex,
-    column: target.cellIndex
-  };
-};
-
-const eventIsInputButton = e => {
-    return e.target.className === "input-mode-button"
-}
-
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    let gridSize = 10;
-    let grid = new Array(gridSize).fill((null)).map(() => new Array(gridSize).fill(null).map(() => (
-      {
-        selected: false,
-        value: null,
-        cornerNote: null,
-        centerNote: null,
-        fixedValue: null
-      })));
 
     this.state = {
-      cells: grid
+      // galaxies: [
+      //   {i:1,j:2},
+      //   {i:2,j:12},{i:2,j:19},
+      //   {i:3,j:3},{i:3,j:9},{i:3,j:16},
+      //   {i:5,j:5},
+      //   {i:9,j:3},{i:9,j:14},{i:9,j:19},
+      //   {i:10,j:7},{i:10,j:10},{i:10,j:17},
+      //   {i:12,j:3},
+      //   {i:15,j:1},{i:15,j:13},
+      //   {i:17,j:3},{i:17,j:18},
+      //   {i:18,j:8},
+      //   {i:19,j:16}
+      // ]
     };
   }
 
-    render = () =>
-      <TableDragSelect
-        data={this.state.cells}
-        inputMode={this.props.inputMode}
-        onChange={cells => this.setState({ cells })}
-      >
-        <tr>
-        <td> </td>
-        <td>1 </td>
-        <td>1</td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>10 </td>
-        <td>10 </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 7</td>
-        <td>1 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td>14 </td>
-        <td>3 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>9 </td>
-        <td>9 </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>16 </td>
-        <td>16 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td>4 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>8 </td>
-        <td>8 </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td> </td>
-        <td>5 </td>
-        <td>9 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>4 </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>4 </td>
-        <td>7 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td>8 </td>
-        <td> 8</td>
-        <td> </td>
-        <td> </td>
-        <td>  </td>
-        <td> </td>
-        <td> </td>
-        <td> 5</td>
-        <td>5 </td>
-        </tr>
-        <tr>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td>3 </td>
-        <td>1 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        </tr>
-        <tr>
-        <td>1 </td>
-        <td>1 </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> 4</td>
-        <td> 4</td>
-        <td> </td>
-        </tr>
-      </TableDragSelect>
+  render = () => {
+    if(this.state.galaxies){
+      var galaxyMapping = this.state.galaxies.map(({i, j}, index) => {
+        // PointerEvents set to none so that we can click through to cells
+        const galaxyStyle = {top: i * 26.5, left: j * 26.5, 'pointerEvents': 'none'}
+        return <div key={index} className='galaxy' style={galaxyStyle}></div>
+      });
+    }
+
+    var rows = new Array(this.props.numberOfRows);
+    var columns = new Array(this.props.numberOfColumns);
+    var elements = [];
+    for (var i=0; i < rows.length; i++){
+      var cells = [];
+      for (var j=0; j < columns.length; j++){
+        cells.push(<td key={j}>{columns[j]}</td>);
+      }
+      elements.push(<tr key={i}>{cells}</tr>);
+    }
+
+    return <div className="container">
+      <div className='grid'>
+        {galaxyMapping}
+        <TableDragSelect
+          data={this.props.data}
+          selection={this.props.selection}
+          inputMode={this.props.inputMode}
+          onChange={(data, selection) => {
+            this.props.onChange(data, selection)}
+          }
+        >
+          {elements}
+        </TableDragSelect>
+      </div>
+    </div>
+  }
 }
 
 export default App;
