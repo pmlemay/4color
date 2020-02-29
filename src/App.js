@@ -6,15 +6,16 @@ import './App.css';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    let numberOfRows = 4;
-    let numberOfColumns = 5;
+    let numberOfRows = 10;
+    let numberOfColumns = 10;
     let gridData = new Array(numberOfRows).fill((null)).map(() => new Array(numberOfColumns).fill(null).map(() => (
       {
         selected: false,
         value: null,
         cornerNote: null,
         centerNote: null,
-        fixedValue: null
+        fixedValue: null,
+        border: []
       })));
 
     this.state = {
@@ -24,6 +25,41 @@ class App extends React.Component {
       numberOfColumns: numberOfColumns,
       selection: []
     };
+  }
+
+  ApplyBordersToSelection() {
+    const data = clone(this.state.data);
+
+    for (let i = 0; i < this.state.selection.length; i++) {
+      const selectedCell = this.state.selection[i];
+      const borderValue = 2;
+      let shouldBorderTop = true;
+      let shouldBorderRight = true;
+      let shouldBorderBottom = true;
+      let shouldBorderLeft = true;
+
+      if(this.state.selection.some(e => e.row === selectedCell.row - 1 && e.column === selectedCell.column))
+      {
+        shouldBorderTop = false;
+      }
+      if(this.state.selection.some(e => e.row === selectedCell.row && e.column === selectedCell.column + 1))
+      {
+        shouldBorderRight = false;
+      }
+      if(this.state.selection.some(e => e.row === selectedCell.row + 1 && e.column === selectedCell.column))
+      {
+        shouldBorderBottom = false;
+      }
+      if(this.state.selection.some(e => e.row === selectedCell.row && e.column === selectedCell.column - 1))
+      {
+        shouldBorderLeft = false;
+      }
+
+      // Apply bordering
+      data[selectedCell.row][selectedCell.column].border = [shouldBorderTop ? borderValue : 0, shouldBorderRight ? borderValue : 0, shouldBorderBottom ? borderValue : 0, shouldBorderLeft ? borderValue : 0]
+    }
+
+    this.setState({data: data});
   }
 
   render() {
@@ -37,8 +73,8 @@ class App extends React.Component {
             inputMode={this.state.inputMode}
             selection = {this.state.selection}
             onChange={(data, selection) => {
-              this.setState({data, selection})}
-            }
+              this.setState({data, selection})
+            }}
             />
         </div>
         <div className="game-controls">
@@ -59,11 +95,99 @@ class App extends React.Component {
           <div className='input-controls'>
             <InputControl
               input='*'
+              inputMode={this.state.inputMode}
               data={this.state.data}
               selection = {this.state.selection}
               onChange={data => this.setState({data})}
               >
             </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '0' : 'color0'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '1' : 'color1'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '2' : 'color2'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '3' : 'color3'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '4' : 'color4'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '5' : 'color5'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '6' : 'color6'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '7' : 'color7'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '8' : 'color8'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <InputControl
+              input={this.state.inputMode === 1 ? '9' : 'color9'} 
+              inputMode={this.state.inputMode}
+              data={this.state.data}
+              selection = {this.state.selection}
+              onChange={data => this.setState({data})}
+              >
+            </InputControl>
+            <ActionButton
+              text="Border selection"
+              data={this.state.data}
+              selection = {this.state.selection}
+              onClick={() => this.ApplyBordersToSelection()}
+              >
+            </ActionButton>
           </div>
         </div>
       </div>
@@ -71,31 +195,49 @@ class App extends React.Component {
   }
 }
 
-class InputControl extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+class ActionButton extends React.Component {
+  render = () => {
+    let {
+      className = "input-action",
+    } = this.props;
 
-  handleInputClicked = (input) => {
+    return (
+      <button 
+        className={className}
+        onClick={this.props.onClick}
+        >
+          {this.props.text}
+      </button>
+    );
+  };
+}
+
+class InputControl extends React.Component {
+  handleInputClicked = () => {
     const data = clone(this.props.data);
 
     this.props.selection.forEach(element => {
-      data[element.row][element.column].value = input
+      if(this.props.inputMode === 1) {
+        data[element.row][element.column].value = this.props.input
+      }
+      else if(this.props.inputMode === 2){
+        data[element.row][element.column].color = this.props.input.substring(5)
+      }
     });
     this.props.onChange(data);
   };
 
   render = () => {
     let {
-      className = "input-control-button",
+      className = `${this.props.input} input-action input-control-button`,
     } = this.props;
 
     return (
       <button 
         className={className}
-        onClick={() => this.handleInputClicked(this.props.input)}
-        > 
-        {this.props.input}
+        onClick={() => this.handleInputClicked()}
+        >
+        {this.props.inputMode !== 2 ? this.props.input : this.props.input.substring(5)}
       </button>
     );
   };
@@ -104,7 +246,7 @@ class InputControl extends React.Component {
 class InputMode extends React.Component {
   render = () => {
     let {
-      className = "input-mode-button",
+      className = "input-action input-mode-button",
       selected,
       onClick
     } = this.props;
@@ -233,6 +375,7 @@ class TableDragSelect extends React.Component {
               cornerNote={this.props.data[i][j].cornerNote}
               color={this.props.data[i][j].color}
               selected={this.props.data[i][j].selected}
+              border={this.props.data[i][j].border}
               beingSelected={this.isCellBeingSelected(i, j)}
               {...cell.props}
             >
@@ -255,9 +398,7 @@ class TableDragSelect extends React.Component {
       }
     }
     this.setState({ selectionStarted: false });
-    var selection = clone(this.props.selection);
-    selection = [];
-    this.props.onChange(data, selection); 
+    this.props.onChange(data, []); 
   }
   
   handleTouchStartCell = e => {
@@ -274,9 +415,7 @@ class TableDragSelect extends React.Component {
         selectionStarted: true,
       }));
 
-      var selection = clone(this.props.selection);
-      selection = [{ row, column }];
-      this.props.onChange(this.props.data, selection);
+      this.props.onChange(this.props.data, [{ row, column }]);
     }
   };
 
@@ -287,9 +426,7 @@ class TableDragSelect extends React.Component {
       // Do nothing if we already added that cell to the selection
       if(this.props.selection.some(e => e.row === row && e.column === column)) return;
 
-      var selection = clone(this.props.selection);
-      selection = [...selection, { row, column }];
-      this.props.onChange(this.props.data, selection);
+      this.props.onChange(this.props.data, [...this.props.selection, { row, column }]);
     }
   };
 
@@ -322,21 +459,20 @@ class TableDragSelect extends React.Component {
 
     const data = clone(this.props.data);
 
-    let shouldDelete = e.keyCode === 46 || e.keyCode === 8;
     let isNumpadNumber = e.code.indexOf("Numpad") !== -1
     let isNumber = (e.keyCode >= 48 && e.keyCode <= 57) || isNumpadNumber;
-    let valueToInsert = shouldDelete ? null : isNumpadNumber ? e.code.substring(6) : String.fromCharCode(e.keyCode);
+    let valueToInsert = isNumpadNumber ? e.code.substring(6) : String.fromCharCode(e.keyCode);
 
     let shouldUpdateData = false;
     // Delete
-    if(shouldDelete)
+    if(e.keyCode === 46 || e.keyCode === 8)
     {
       this.props.selection.forEach(element => {
         shouldUpdateData = true;
-        data[element.row][element.column].cornerNote = valueToInsert
-        data[element.row][element.column].centerNote = valueToInsert
-        data[element.row][element.column].value = valueToInsert
-        data[element.row][element.column].color = valueToInsert
+        data[element.row][element.column].cornerNote = null
+        data[element.row][element.column].centerNote = null
+        data[element.row][element.column].value = null
+        data[element.row][element.column].color = null
       });
     }
     // Shift + Number
@@ -378,7 +514,7 @@ class TableDragSelect extends React.Component {
   };
   
   eventIsInputButton = e => {
-    return e.target.closest(".game-controls")
+    return e.target.classList.contains("input-action")
   };
 
   // Takes a mouse or touch event and returns the corresponding row and cell.
@@ -414,7 +550,8 @@ class Cell extends React.Component {
     this.props.value !== nextProps.value ||
     this.props.centerNote !== nextProps.centerNote ||
     this.props.cornerNote !== nextProps.cornerNote ||
-    this.props.color !== nextProps.color;
+    this.props.color !== nextProps.color ||
+    this.props.border !== nextProps.border;
 
   componentDidMount = () => {
     // We need to call addEventListener ourselves so that we can pass
@@ -446,6 +583,7 @@ class Cell extends React.Component {
       centerNote,
       fixedValue,
       color,
+      border,
       ...props
     } = this.props;
     if (disabled) {
@@ -473,6 +611,14 @@ class Cell extends React.Component {
     {
       cellValue = value;
     }
+
+    const cellStyle = {
+      borderTop: `${border[0]}px solid`,
+      borderRight: `${border[1]}px solid`,
+      borderBottom: `${border[2]}px solid`,
+      borderLeft: `${border[3]}px solid`
+    }
+
     return (
       <td
         ref={td => (this.td = td)}
@@ -481,7 +627,7 @@ class Cell extends React.Component {
         onMouseMove={this.handleTouchMove}
         {...props}
       >
-        <div className={innerDivClassName}>{cellValue}</div>
+        <div className={innerDivClassName} style={cellStyle}>{cellValue}</div>
       </td>
     );
   };

@@ -71,49 +71,49 @@ td {
   margin-left: -1px;
 
   text-align:center;
-  line-height: 50px;
+  line-height: 46px;
 
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
 }
 
-.table-drag-select td .color0 {
+.color0 {
   background-color: rgba(0,0,0,0.6);
 }
 
-.table-drag-select td .color1 {
+.color1 {
   background-color: rgba(180, 180, 180, 0.6);
 }
 
-.table-drag-select td .color2 {
+.color2 {
   background-color: rgba(255,0,0,0.6);
 }
 
-.table-drag-select td .color3 {
+.color3 {
   background-color: rgba(248, 143, 6, 0.6);
 }
 
-.table-drag-select td .color4 {
+.color4 {
   background-color: rgba(253, 253, 14, 0.6);
 }
 
-.table-drag-select td .color5 {
+.color5 {
   background-color: rgba(72, 255, 0, 0.6);
 }
 
-.table-drag-select td .color6 {
+.color6 {
   background-color: rgba(0, 255, 255, 0.6);
 }
 
-.table-drag-select td .color7 {
+.color7 {
   background-color: rgba(0, 17, 248, 0.6);
 }
 
-.table-drag-select td .color8 {
+.color8 {
   background-color: rgba(87, 1, 148, 0.6);
 }
 
-.table-drag-select td .color9 {
+.color9 {
   background-color: rgba(238, 130, 180, 0.6);
 }
