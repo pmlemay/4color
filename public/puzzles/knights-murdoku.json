@@ -1,0 +1,952 @@
+{
+  "id": "knights-murdoku",
+  "title": "Knights Murdoku",
+  "author": "Caprazo",
+  "rules": [
+    "- Only 1 person can be per row and per column.",
+    "- \"Besides\" means same room and orthogonally adjacent",
+    "- \"South\" does not necessarily mean in the same column unless specified.",
+    "- Pawns cannot be occupied.",
+    "- Everyone has at least 2 other person in a knight move away from them except the left most person and the victim that only has 1. (Ignoring walls)"
+  ],
+  "clues": [
+    "A (Men   - Alfred) is north of Cory and is alone",
+    "B (Woman - Betty) is in the last 3 rows",
+    "C (Men   - Cory) has 2 out of his 3 neighbouring  rooms populated",
+    "D (Men   - Dylan) is alone in room 9",
+    "E (Woman - Ella) has a pawn south of her, in the same column. She is also south of Francis",
+    "F (Men   - Francis) is with a woman in room 1",
+    "G (Woman - Gina) has exactly 2 pawns in her row",
+    "H (Woman - Helen) is either east of Dylan or west of Cory",
+    "V (Men   - Vincent) is the victim and is alone with the killer"
+  ],
+  "difficulty": "Very hard",
+  "gridSize": {
+    "rows": 9,
+    "cols": 9
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "fixedColor": "1",
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room1",
+        "align": "top"
+      },
+      "image": "img0"
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "fixedColor": "1",
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "fixedColor": "1",
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "fixedColor": "1",
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "fixedColor": "1",
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "fixedColor": "1",
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 6,
+      "fixedColor": "4",
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ],
+      "label": {
+        "text": "Room2",
+        "align": "top"
+      }
+    },
+    {
+      "row": 0,
+      "col": 7,
+      "fixedColor": "4",
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 0,
+      "col": 8,
+      "fixedColor": "4",
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "fixedColor": "1",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "fixedColor": "1",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "fixedColor": "1",
+      "image": "img0"
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "fixedColor": "1"
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "fixedColor": "1",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 1,
+      "col": 5,
+      "fixedColor": "1",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 6,
+      "fixedColor": "1",
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 1,
+      "col": 7,
+      "fixedColor": "4",
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 8,
+      "fixedColor": "4",
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "fixedColor": "5",
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room3",
+        "align": "top"
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "fixedColor": "5",
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedColor": "1",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "fixedColor": "1",
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "fixedColor": "4",
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "fixedColor": "4",
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 6,
+      "fixedColor": "4",
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 7,
+      "fixedColor": "4"
+    },
+    {
+      "row": 2,
+      "col": 8,
+      "fixedColor": "4",
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "fixedColor": "5",
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "fixedColor": "6",
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room4",
+        "align": "top"
+      }
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "fixedColor": "4",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "fixedColor": "4",
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 6,
+      "fixedColor": "8",
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room5",
+        "align": "top"
+      }
+    },
+    {
+      "row": 3,
+      "col": 7,
+      "fixedColor": "4",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 8,
+      "fixedColor": "4",
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "fixedColor": "2",
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room6",
+        "align": "top"
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "fixedColor": "2",
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "fixedColor": "6",
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "fixedColor": "6",
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "fixedColor": "6",
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "fixedColor": "8",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 7,
+      "fixedColor": "8",
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 8,
+      "fixedColor": "8",
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "fixedColor": "2",
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "fixedColor": "8",
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ],
+      "label": {
+        "text": "Room7",
+        "align": "top"
+      }
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "fixedColor": "8",
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "fixedColor": "8",
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "fixedColor": "5",
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room8",
+        "align": "top"
+      }
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 6,
+      "fixedColor": "3",
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room9",
+        "align": "top"
+      }
+    },
+    {
+      "row": 5,
+      "col": 7,
+      "fixedColor": "8",
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 8,
+      "fixedColor": "5",
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "fixedColor": "3",
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "label": {
+        "text": "Room10",
+        "align": "top"
+      }
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "fixedColor": "3",
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 2,
+      "fixedColor": "5",
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 6,
+      "col": 3,
+      "fixedColor": "8",
+      "borders": [
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 4,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 5,
+      "fixedColor": "3",
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 6,
+      "fixedColor": "3",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 7,
+      "fixedColor": "3",
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 8,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 0,
+      "fixedColor": "3",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 7,
+      "col": 1,
+      "fixedColor": "3",
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 7,
+      "col": 2,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 7,
+      "col": 3,
+      "fixedColor": "8",
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 7,
+      "col": 4,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ],
+      "image": "img0"
+    },
+    {
+      "row": 7,
+      "col": 5,
+      "fixedColor": "3",
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "fixedColor": "5"
+    },
+    {
+      "row": 7,
+      "col": 7,
+      "fixedColor": "5"
+    },
+    {
+      "row": 7,
+      "col": 8,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 0,
+      "fixedColor": "6",
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ],
+      "label": {
+        "text": "Room11",
+        "align": "top"
+      }
+    },
+    {
+      "row": 8,
+      "col": 1,
+      "fixedColor": "6",
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 2,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 8,
+      "col": 3,
+      "fixedColor": "5",
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 4,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 5,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 6,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 7,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 8,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    }
+  ],
+  "createdAt": "2026-02-26",
+  "images": {
+    "img0": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACoUlEQVR4AeyZu4oUQRSGvaOCmBhp7CVUBANB1MwH8CEEE43MTQQNNPRdDDQ2UjDxHRQFAxEF/T5mhp2FralTVadnRXs5/1R1138uf1U31d176MA/8jcL+dsWcl6ReUUmmoEpL63T1HwT3FrCvuc4zLephDyn1NcFOMZQrk0h5AEliiu0B8HK3tP5DO4Dx2nyLFvIM0orzfhlxsQv2qdALk2OZQo5RknXwSY7w+AX8ArI1YfuuGUKcbZFraqzEFwNuYLDccsUcpJyBE3V7sKQK+iOW6aQlmq84Vv4VW6mkK9kEzQhkytC5BopU8g7kgmakMkVIXKNlCnEXHf8CaKFWw2ZLeRHNeMOoYW741XoZQsppNl12g1R7Do5epAtpLSrr9fpfSEi3HW/jf1MIUfJdA3UzE3wEiS5+tAdt0whFihqVR2BIOQKDsctU8hPynkLvoNN5mX1G4JcfeiOW6YQC7wdKOnhkiNXn+XhWJMpZFXJiVWn0Lp/1DgF1/LpKYSUsy1GHi2a3N9sIccD5X2CIyJcqDHLFvIikPYDHBHhQo1ZtpCLgbS+FYoINxBuQckWsoi6+de9Q2xmNY7uhxDfCtPzZgY8zyReABHzc5BcfSL8KidTyDmy+WGBpmofYcjVh+64ZQppqSb1ydfEGUK8THx28hOpMSNY3ez66GuMiF+RMyrEmX1C9HvAZ6cefMP3MTAWTZ+NCDlFyhvAHfolrbPbA+MIY9kSqt1GhHh5iPase3sYS+w9WjnbK8QXo6vEPgyyzFjGNHZzzF4hPicNXdOFSo1p7MJw+XSPEP8Dlf7Jc61EY5tj7VS92yOkHnUfGP+1EN+ze/aLFh9zNK1rz4r4Bf0NWaaEOUgRtx4h8ehbZM5CtjjZoVTzioSmaYukPwAAAP//KV540gAAAAZJREFUAwCAUGxlwxdCmQAAAABJRU5ErkJggg=="
+  }
+}

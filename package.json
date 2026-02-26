@@ -1,0 +1,27 @@
+{
+  "name": "4color",
+  "version": "1.0.0",
+  "private": true,
+  "homepage": "https://pmlemay.github.io/4color/",
+  "type": "module",
+  "scripts": {
+    "index": "node scripts/build-index.js",
+    "dev": "node scripts/build-index.js && vite",
+    "build": "node scripts/build-index.js && tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "gh-pages": "^6.2.0",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3"
+  }
+}

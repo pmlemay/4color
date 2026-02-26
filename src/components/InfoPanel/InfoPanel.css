@@ -1,0 +1,276 @@
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.info-back-link {
+  color: lightseagreen;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.info-back-link:hover {
+  text-decoration: underline;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.info-meta {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.info-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.info-collapsible {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+}
+
+.info-collapsible:hover {
+  color: var(--text);
+}
+
+.info-chevron {
+  display: inline-block;
+  font-size: 10px;
+  transition: transform 0.15s;
+}
+
+.info-chevron.open {
+  transform: rotate(90deg);
+}
+
+.info-rules {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+/* Editor-specific controls inside info panel */
+.info-editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-editor-field label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.info-editor-field input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  font-size: 13px;
+  background: var(--input-bg);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.info-editor-row {
+  display: flex;
+  gap: 6px;
+}
+
+.info-editor-row .info-editor-field {
+  flex: 1;
+}
+
+.info-editor-row .info-editor-field input {
+  width: 100%;
+}
+
+.info-btn {
+  width: 100%;
+  height: 30px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.info-btn:hover {
+  background: var(--btn-hover);
+}
+
+/* Rules/Clues list */
+.info-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.info-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.info-list-draggable {
+  border-radius: 4px;
+  padding: 2px 4px;
+  transition: background 0.15s;
+}
+
+.info-list-draggable:hover {
+  background: var(--btn-hover);
+}
+
+.info-list-draggable[draggable="true"] {
+  cursor: default;
+}
+
+.info-drag-handle {
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 11px;
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+  line-height: 1.4;
+  opacity: 0.5;
+  user-select: none;
+}
+
+.info-drag-handle:hover {
+  opacity: 1;
+}
+
+.info-list-editable {
+  cursor: text;
+  border-radius: 2px;
+}
+
+.info-list-editable:hover {
+  text-decoration: underline dotted var(--text-muted);
+}
+
+.info-edit-input {
+  flex: 1;
+  padding: 1px 4px;
+  border: 1px solid lightseagreen;
+  border-radius: 3px;
+  font-size: 13px;
+  background: var(--input-bg);
+  color: var(--text);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.info-list-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+.info-list-bullet {
+  cursor: pointer;
+}
+
+.info-word {
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 0.15s;
+}
+
+.info-word:hover {
+  opacity: 0.7;
+}
+
+.info-word-struck {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.info-list-remove {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+}
+
+.info-list-remove:hover {
+  background: var(--btn-hover);
+  color: var(--text);
+}
+
+.info-add-row {
+  display: flex;
+  gap: 4px;
+}
+
+.info-add-input {
+  flex: 1;
+  padding: 4px 6px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  font-size: 13px;
+  background: var(--input-bg);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.info-add-btn {
+  width: 30px;
+  height: 28px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-add-btn:hover {
+  background: var(--btn-hover);
+}

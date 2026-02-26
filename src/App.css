@@ -1,0 +1,157 @@
+/* Theme variables */
+:root,
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f5;
+  --text: #333333;
+  --text-muted: #888888;
+  --border: #d0d0d0;
+  --btn-bg: #f0f0f0;
+  --btn-bg-alt: #e8e8e8;
+  --btn-hover: #e0e0e0;
+  --card-bg: #ffffff;
+  --card-border: #dddddd;
+  --card-shadow: rgba(0, 0, 0, 0.12);
+  --input-bg: #ffffff;
+  --input-border: #cccccc;
+  --grid-border: #333333;
+  --selection: rgb(255, 255, 0);
+  --panel-bg: #f8f8f8;
+  --panel-border: #e0e0e0;
+}
+
+[data-theme="dark"] {
+  --bg: #1a1a2e;
+  --bg-alt: #16213e;
+  --text: #e0e0e0;
+  --text-muted: #999999;
+  --border: #555555;
+  --btn-bg: #2a2a4a;
+  --btn-bg-alt: #333360;
+  --btn-hover: #3a3a5a;
+  --card-bg: #22223a;
+  --card-border: #444466;
+  --card-shadow: rgba(0, 0, 0, 0.4);
+  --input-bg: #2a2a4a;
+  --input-border: #555577;
+  --grid-border: #888888;
+  --selection: rgba(255, 255, 0, 0.5);
+  --panel-bg: #16213e;
+  --panel-border: #2a2a4a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  transition: background 0.2s, color 0.2s;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#root {
+  height: 100vh;
+}
+
+/* 3-panel layout */
+.page-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.panel-left-wrapper {
+  display: flex;
+  height: 100vh;
+  position: relative;
+}
+
+.panel-left {
+  width: var(--panel-left-width, 400px);
+  min-width: 180px;
+  max-width: 800px;
+  height: 100vh;
+  background: var(--panel-bg);
+  border-right: none;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.panel-left-handle {
+  width: 6px;
+  height: 100vh;
+  cursor: col-resize;
+  background: var(--panel-border);
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s;
+}
+
+.panel-left-handle:hover,
+.panel-left-handle.dragging {
+  background: lightseagreen;
+}
+
+.panel-left-handle::after {
+  content: '⋮';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.panel-left-handle:hover::after,
+.panel-left-handle.dragging::after {
+  color: white;
+}
+
+@media (max-width: 1200px) {
+  .panel-left {
+    width: var(--panel-left-width, 300px);
+  }
+}
+
+@media (max-width: 900px) {
+  .panel-left {
+    width: var(--panel-left-width, 220px);
+  }
+}
+
+.panel-right {
+  width: 200px;
+  min-width: 200px;
+  height: 100vh;
+  background: var(--panel-bg);
+  border-left: 1px solid var(--panel-border);
+  overflow-y: auto;
+}
+
+.panel-center {
+  flex: 1;
+  height: 100vh;
+  overflow: auto;
+  padding: 20px;
+}
+
+/* Puzzle info link */
+.puzzle-info a {
+  color: lightseagreen;
+}
+
+.back-link {
+  color: lightseagreen;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}

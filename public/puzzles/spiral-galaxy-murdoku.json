@@ -1,0 +1,135 @@
+{
+  "id": "spiral-galaxy-murdoku",
+  "title": "Spiral Galaxy Murdoku",
+  "author": "Caprazo",
+  "rules": [
+    "1. Everyone is at the center of their room except the victim.",
+    "2. All occupied rooms have 180degrees rotational symmetry (around their center occupant).",
+    "3. All unoccupied rooms have exactly one black hole. All black holes are in unoccupied rooms. All black holes are shown."
+  ],
+  "clues": [
+    "A (Alfred) His room shares at least 1 border with G and K's room",
+    "B (Bobby) His room shares at least 1 border with E's room",
+    "C (Charles) There is exactly 2 columns between his room and A's Room (at their closest point)",
+    "D (Denis) is in a room that borders at least 2 occupied rooms",
+    "E (Eric) His room layout and orientation is the same than F's room",
+    "F (Felix) His room shares at least 1 border with I room",
+    "G (Gerard) is in a room of area 1 which no other room can be, occupied or not.",
+    "H (Hector) His room area is at least triple the area of C's room",
+    "I (Idris) His room shares at least 3 horizontal borders with B's room",
+    "J (Joel) is in a room with the same area as D's room",
+    "K (Khan) His room reaches at least 1 cell higher than C's room",
+    "V (Vinny) is the victim and is alone with the killer"
+  ],
+  "difficulty": "Very hard",
+  "gridSize": {
+    "rows": 12,
+    "cols": 12
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "image": "img0"
+    },
+    {
+      "row": 0,
+      "col": 8,
+      "fixedValue": "G"
+    },
+    {
+      "row": 1,
+      "col": 9,
+      "fixedValue": "A"
+    },
+    {
+      "row": 1,
+      "col": 11,
+      "image": "img0"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedValue": "C"
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "image": "img0"
+    },
+    {
+      "row": 3,
+      "col": 7,
+      "fixedValue": "K"
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "image": "img0"
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "fixedValue": "E"
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "fixedValue": "B"
+    },
+    {
+      "row": 5,
+      "col": 7,
+      "image": "img0"
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "fixedValue": "V"
+    },
+    {
+      "row": 7,
+      "col": 10,
+      "fixedValue": "F"
+    },
+    {
+      "row": 8,
+      "col": 4,
+      "fixedValue": "I"
+    },
+    {
+      "row": 9,
+      "col": 1,
+      "image": "img0"
+    },
+    {
+      "row": 9,
+      "col": 10,
+      "image": "img0"
+    },
+    {
+      "row": 9,
+      "col": 11,
+      "fixedValue": "J"
+    },
+    {
+      "row": 10,
+      "col": 4,
+      "image": "img0"
+    },
+    {
+      "row": 10,
+      "col": 6,
+      "fixedValue": "H"
+    },
+    {
+      "row": 11,
+      "col": 3,
+      "fixedValue": "D"
+    }
+  ],
+  "createdAt": "2026-02-26",
+  "images": {
+    "img0": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAFQElEQVR4AeyZd8i+UxjHHzN7r5A9IrIiSgmRUUSUkJ2RiGTrJwkZ2YpkS9nrH2QlJLMQMpJZ9t7z8/n1nMd1H/d83ud5+vX2vn2/93Vd51xnXM+5z7nPOe/cvWnyNxPInDaQMyMyHUdkVYI6Dz4EH4D3wJfgP31+jrwQLgjHhlG8Wh/Qu1PhTnA3uCfcDM7V5/rILeDP0OBOQ1bBMlV5temjCKS2ATK/hNtAO3kB8hxoQPsjc5i+Y57Yxp5EILEfJ2MY0I/IW+C3MMcjJNwGO2HSgaTOLYryFlwcOgraqAPsi/YqbI2pBrIWLT0K7UwdX8RnbRixHsZ3UHzPYxEYsQnGKbAVhg3kbGq34+8gt4dNcPK/jZNldkcmLJEU5A8w4i+MdeC8sBFdA9mBGu3MGchhcR8Ff4IJFyUF6dxBDHAImosFoh5dAvGddiJa4wk8nLSRJ5H2NWyDhXDyB1kWeSJMWBjlGBjhgrBKTCjT2wbiMK9LBVtBO38xUqzMI30fXFqXwu4CP5ZLZgUuz+wDsF+HtWgTiL/cZ9RiAM8hE95D+QhO9YvtKN5PPRGXBOMp9HxVI6mIpkBcVR6myIowweE3uDVSwghkXACs7jgfGf2oZkn/mXWBzMLtWejWAzEbrvv5hJydMYbHYlmd+dwpZNcFcjSeO8MIJ160x6mfHir/BN19HKIcVYG8hvvyMGJSI5HajHsx5+F8KaNMVgXitjz674Xh3EBUYtQZcV42roZlgdxFj/JN252kDYs3KfghHCvKArk1a3GXzG5rXoqjS7bnEQ9f6q+Q1hX5K15aPg/EA5BbiOic2zGvSncUji/J3JQ0l25EI9KcfKbvWbtVyQMp2wrESbZHv9Im4Q6gyufIqows3dfZTeWa/fSb+7JU5IE4P6LjlsE4DP1M2AZ+SKv8nq/KyNI9SX4T0s4NuuoyPhLzQFJ6kocnBXkd3Bi2wQY1TnvX5MUszzDR/ioa6IXvSlMgbtsp02v7OugrvUVRlrHu8iH6+1ol2xuapCd5Y1KUTYG4u9XvGh8dOD++H8OIBTD+hMNg16zQZdh/wwGaAhk4DqGsRBlXqMRfsOeBXeEWvtBpKvjfHGwKJK+AOiaODbMWvexzQ1tIbgrkjYJ3rzfsq5FV09rcLvP0U5CW40JWUyCeRWKBq6IxZv186n8CRvyG4U0mooimQK4uuvc8l2dJYzG9pcmvglx+D65qrSmQd7OCv2f2OMyNqHQWjPAc5HXRTTEx6k2B6OuZOm4ctzUx4yh2t7dTpxvLeMPoOcRVz7ut1civRJtAvPGL35Enqe1XGOE+KE+L+VW6G8ODyDSAfZARd2B4Q+PFR34LSVYRbQLx1166WKyXV+yFnb+ejWaulebj5HgKtMOoPfdOHq99jRwFtzLXkrECbESbQKzERuKNoPdc+a2Gv6yNOlEt00SXVo8I/up2/AsKXAm94LB+T4Vxr0dWNdoGYmP53ZL3TceGqm9A98vtRPVVyTd9ZDfiDzw8Ezkn4s6X5Hq0DcRajuDxAoy4AuNAmBA/mJuTaECe973sxiyFl9uHkqOvezTbwOyGLoFYs7+Wy6N6ohM9Hsh8TaJ9N47eqtvRMnoVez0+U0LXQOzkpyUtenVqJx/s5/l/xZfRTUOMH10DsUdOytVVSuhhx857C+Oy7abT181/uTl/SooMkjxGbz2wOirDBGIT7/uo4X7kGdBySJfQs5AG5IgmOrHvJT39o0j9aeyhMGwgbRtz9I7C2UOVgUW6k3UUHiN/yhh3IFPuYNsKZgJp+0tNym/ajMi/AAAA//+tftpKAAAABklEQVQDAPoa02XZxbgAAAAAAElFTkSuQmCC"
+  }
+}

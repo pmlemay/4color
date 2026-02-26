@@ -1,0 +1,129 @@
+.puzzle-list-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.puzzle-list-page h1 {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.puzzle-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.puzzle-list-theme-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.puzzle-list-theme-btn:hover {
+  background: var(--btn-hover);
+}
+
+.puzzle-list-actions {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.new-puzzle-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: lightseagreen;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.new-puzzle-btn:hover {
+  opacity: 0.9;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 40px;
+}
+
+.puzzle-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.puzzle-card-row {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+
+.puzzle-card-row:hover {
+  box-shadow: 0 2px 8px var(--card-shadow);
+}
+
+.puzzle-card {
+  display: block;
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: 0;
+  text-decoration: none;
+  color: inherit;
+  background: transparent;
+}
+
+.puzzle-card:hover {
+  background: var(--btn-hover);
+}
+
+.puzzle-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  border: none;
+  border-left: 1px solid var(--card-border);
+  background: transparent;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.puzzle-edit-btn:hover {
+  background: var(--btn-hover);
+  color: var(--text);
+}
+
+.puzzle-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.puzzle-meta {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
