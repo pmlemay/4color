@@ -31,6 +31,11 @@ export function useGrid(initialRows: number, initialCols: number) {
   const [grid, setGrid] = useState<CellData[][]>(() =>
     createEmptyGrid(initialRows, initialCols)
   )
+  // Ref mirror of grid state — always up-to-date after each render.
+  // Used by undo/redo to read current state without side effects inside updaters.
+  const gridRef = useRef(grid)
+  gridRef.current = grid
+
   const [selection, setSelection] = useState<CellPosition[]>([])
   const [inputMode, setInputModeRaw] = useState<InputMode>('normal')
   const undoStack = useRef<CellData[][][]>([])
@@ -57,38 +62,30 @@ export function useGrid(initialRows: number, initialCols: number) {
   }, [])
 
   const setGridWithUndo = useCallback((updater: CellData[][] | ((prev: CellData[][]) => CellData[][])) => {
-    setGrid(prev => {
-      undoStack.current.push(cloneForUndo(prev))
-      if (undoStack.current.length > MAX_UNDO) {
-        undoStack.current.shift()
-      }
-      redoStack.current = []
-      return typeof updater === 'function' ? updater(prev) : updater
-    })
+    // Push current state to undo BEFORE the updater — avoids side effects
+    // inside setGrid updater which React may call more than once (StrictMode)
+    undoStack.current.push(cloneForUndo(gridRef.current))
+    if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+    redoStack.current = []
+    setGrid(prev => typeof updater === 'function' ? updater(prev) : updater)
   }, [])
 
   const undo = useCallback(() => {
     const prev = undoStack.current.pop()
-    if (prev) {
-      setGrid(current => {
-        redoStack.current.push(cloneForUndo(current))
-        if (redoStack.current.length > MAX_UNDO) redoStack.current.shift()
-        return prev
-      })
-      setSelection([])
-    }
+    if (!prev) return
+    redoStack.current.push(cloneForUndo(gridRef.current))
+    if (redoStack.current.length > MAX_UNDO) redoStack.current.shift()
+    setGrid(prev)
+    setSelection([])
   }, [])
 
   const redo = useCallback(() => {
     const next = redoStack.current.pop()
-    if (next) {
-      setGrid(current => {
-        undoStack.current.push(cloneForUndo(current))
-        if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
-        return next
-      })
-      setSelection([])
-    }
+    if (!next) return
+    undoStack.current.push(cloneForUndo(gridRef.current))
+    if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+    setGrid(next)
+    setSelection([])
   }, [])
 
   const clearSelection = useCallback(() => {
