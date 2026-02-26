@@ -202,6 +202,13 @@ export function EditorPage() {
     setEditingText('')
   }, [editingItem, editingText])
 
+  const handleImageSelect = useCallback((index: number | null) => {
+    setSelectedImageIndex(index)
+    if (index !== null) {
+      gridState.setInputMode('normal')
+    }
+  }, [gridState])
+
   const handleImageApply = () => {
     if (selectedImageIndex === null || !imageLibrary[selectedImageIndex]) return
     gridState.applyImage(imageLibrary[selectedImageIndex])
@@ -409,7 +416,10 @@ export function EditorPage() {
       <aside className="panel-right">
         <Toolbar
           inputMode={gridState.inputMode}
-          onInputModeChange={gridState.setInputMode}
+          onInputModeChange={(mode) => {
+            gridState.setInputMode(mode)
+            if (mode !== 'normal') setSelectedImageIndex(null)
+          }}
           onColorSelect={c => {
             if (gridState.inputMode === 'fixedColor') gridState.applyFixedColor(c)
             else gridState.applyColor(c)
@@ -431,7 +441,7 @@ export function EditorPage() {
           onThemeToggle={toggleTheme}
           imageLibrary={imageLibrary}
           selectedImageIndex={selectedImageIndex}
-          onImageSelect={setSelectedImageIndex}
+          onImageSelect={handleImageSelect}
           onImageApply={handleImageApply}
           onImageRemove={gridState.removeImage}
           onImageImport={() => imageInputRef.current?.click()}

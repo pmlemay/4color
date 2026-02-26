@@ -1,5 +1,16 @@
 [
   {
+    "id": "dinner-party-murdoku",
+    "file": "dinner-party-murdoku.json",
+    "title": "Dinner Party Murdoku",
+    "author": "AI",
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Easy"
+  },
+  {
     "id": "sample-4-color-puzzle",
     "file": "sample-4color.json",
     "title": "4-Color #1",
