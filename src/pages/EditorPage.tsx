@@ -86,18 +86,17 @@ export function EditorPage() {
     const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', author, rules, clues, difficulty })
 
     if (puzzleId) {
-      // Editing an existing puzzle — save directly to puzzles folder
+      // Editing an existing puzzle — try saving directly in dev mode
       puzzle.id = puzzleId
-      const result = await savePuzzleToServer(puzzle)
-      if (result.ok) {
-        alert(`Saved to puzzles/${result.file}`)
-      } else {
-        alert(`Save failed: ${result.error}\nFalling back to download.`)
-        downloadPuzzleJSON(puzzle)
+      if (import.meta.env.DEV) {
+        const result = await savePuzzleToServer(puzzle)
+        if (result.ok) {
+          alert(`Saved to puzzles/${result.file}`)
+          return
+        }
       }
-    } else {
-      downloadPuzzleJSON(puzzle)
     }
+    downloadPuzzleJSON(puzzle)
   }
 
   const handleClearAll = () => {
