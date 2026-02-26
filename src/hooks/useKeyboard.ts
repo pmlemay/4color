@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { InputMode } from '../types'
+import { InputMode, MarkShape } from '../types'
 
 interface UseKeyboardOptions {
   inputMode: InputMode
@@ -13,6 +13,8 @@ interface UseKeyboardOptions {
   undo: () => void
   onEnter?: () => void
   onActiveColorChange?: (color: string) => void
+  onActiveMarkChange?: (mark: MarkShape | null) => void
+  toggleMark?: (shape: MarkShape) => void
 }
 
 // Map e.code to the unshifted key value (e.g. Shift+1 gives code "Digit1" → "1")
@@ -99,10 +101,20 @@ export function useKeyboard(options: UseKeyboardOptions) {
         case 'note':
           options.addNote(value)
           break
+        case 'mark': {
+          const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon']
+          const idx = parseInt(value) - 1
+          if (idx >= 0 && idx < SHAPES.length) {
+            const shape = SHAPES[idx]
+            options.onActiveMarkChange?.(shape)
+            options.toggleMark?.(shape)
+          }
+          break
+        }
       }
     }
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.onEnter, options.onActiveColorChange])
+  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark])
 }

@@ -71,6 +71,8 @@ export function EditorPage() {
     eraseColor: gridState.eraseColor,
     undo: gridState.undo,
     onActiveColorChange: gridState.setActiveColor,
+    onActiveMarkChange: gridState.setActiveMark,
+    toggleMark: gridState.toggleMark,
     onEnter: () => {
       if (selectedImageIndex !== null && imageLibrary[selectedImageIndex]) {
         gridState.applyImage(imageLibrary[selectedImageIndex])
@@ -113,6 +115,7 @@ export function EditorPage() {
           notes: [],
           color: cell.fixedColor ? cell.color : null,
           crossed: false,
+          mark: null,
           selected: false,
           borders: [...cell.fixedBorders] as [number, number, number, number],
         }))
@@ -395,6 +398,7 @@ export function EditorPage() {
           debug={debug}
           inputMode={gridState.inputMode}
           activeColor={gridState.activeColor}
+          activeMark={gridState.activeMark}
           clearSelection={gridState.clearSelection}
           commitSelection={gridState.commitSelection}
           onDragChange={gridState.onDragChange}
@@ -412,6 +416,10 @@ export function EditorPage() {
           onColorErase={gridState.eraseColor}
           activeColor={gridState.activeColor}
           onActiveColorChange={gridState.setActiveColor}
+          activeMark={gridState.activeMark}
+          onActiveMarkChange={gridState.setActiveMark}
+          onMarkSelect={shape => gridState.toggleMark(shape)}
+          onMarkErase={gridState.eraseMark}
           onLabelApply={(text, align) => gridState.applyLabel(text, align)}
           onLabelRemove={() => gridState.removeLabel()}
           onUndo={gridState.undo}

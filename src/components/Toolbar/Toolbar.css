@@ -116,6 +116,41 @@
   transform: scale(1.1);
 }
 
+.tb-mark-palette {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+}
+
+.mark-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  background: var(--btn-bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mark-swatch.mark-erase {
+  font-size: 14px;
+}
+
+.mark-swatch:hover {
+  border-color: var(--text);
+  transform: scale(1.1);
+}
+
+.mark-swatch.active-mark {
+  border-color: white;
+  box-shadow: 0 0 0 2px var(--text), 0 0 6px rgba(0,0,0,0.4);
+  transform: scale(1.1);
+}
+
 .tb-hint {
   font-size: 11px;
   color: var(--text-muted);

@@ -15,6 +15,7 @@ export interface CellData {
   color: string | null
   label: CellLabel | null
   crossed: boolean
+  mark: MarkShape | null
   selected: boolean
   image: string | null
 }
@@ -33,6 +34,7 @@ export interface PuzzleCellData {
   borders?: [number, number, number, number]
   label?: CellLabel
   crossed?: boolean
+  mark?: MarkShape
   image?: string
 }
 
@@ -58,4 +60,6 @@ export interface PuzzleIndexEntry {
   difficulty?: string
 }
 
-export type InputMode = 'normal' | 'color' | 'fixed' | 'fixedColor' | 'note' | 'label' | 'cross' | 'border'
+export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon'
+
+export type InputMode = 'normal' | 'color' | 'fixed' | 'fixedColor' | 'note' | 'label' | 'cross' | 'border' | 'mark'

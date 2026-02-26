@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { CellData, CellPosition, InputMode } from '../../types'
+import { CellData, CellPosition, InputMode, MarkShape } from '../../types'
 import { useDragSelect } from '../../hooks/useDragSelect'
 import { Cell } from './Cell'
 import './Grid.css'
@@ -10,16 +10,18 @@ interface GridProps {
   debug: boolean
   inputMode: InputMode
   activeColor: string | null
+  activeMark?: MarkShape | null
   clearSelection: () => void
   commitSelection: (sel: CellPosition[]) => void
   onDragChange?: (sel: CellPosition[]) => void
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, clearSelection, commitSelection, onDragChange }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const [, setRenderTick] = useState(0)
   const isColorDrag = (inputMode === 'color' || inputMode === 'fixedColor') && activeColor !== null
-  const isImmediateMode = inputMode === 'cross' || inputMode === 'border' || isColorDrag
+  const isMarkDrag = inputMode === 'mark' && activeMark != null
+  const isImmediateMode = inputMode === 'cross' || inputMode === 'border' || isColorDrag || isMarkDrag
 
   const dragSelect = useDragSelect({
     onSelectionStart: () => {

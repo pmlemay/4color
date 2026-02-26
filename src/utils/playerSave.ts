@@ -1,4 +1,4 @@
-import { CellData } from '../types'
+import { CellData, MarkShape } from '../types'
 
 interface SavedCell {
   row: number
@@ -7,6 +7,7 @@ interface SavedCell {
   notes?: string[]
   color?: string
   crossed?: boolean
+  mark?: MarkShape
 }
 
 interface PlayerSaveData {
@@ -27,13 +28,14 @@ export function savePlayerData(
   for (let r = 0; r < grid.length; r++) {
     for (let c = 0; c < grid[r].length; c++) {
       const cell = grid[r][c]
-      const hasInput = cell.value || cell.notes.length > 0 || cell.color || cell.crossed
+      const hasInput = cell.value || cell.notes.length > 0 || cell.color || cell.crossed || cell.mark
       if (!hasInput) continue
       const entry: SavedCell = { row: r, col: c }
       if (cell.value) entry.value = cell.value
       if (cell.notes.length > 0) entry.notes = cell.notes
       if (cell.color) entry.color = cell.color
       if (cell.crossed) entry.crossed = cell.crossed
+      if (cell.mark) entry.mark = cell.mark
       cells.push(entry)
     }
   }
@@ -70,6 +72,7 @@ export function applyPlayerData(grid: CellData[][], data: PlayerSaveData): CellD
     if (saved.notes) cell.notes = saved.notes
     if (saved.color) cell.color = saved.color
     if (saved.crossed) cell.crossed = saved.crossed
+    if (saved.mark) cell.mark = saved.mark
   }
   return newGrid
 }

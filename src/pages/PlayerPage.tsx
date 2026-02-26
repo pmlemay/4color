@@ -72,6 +72,8 @@ export function PlayerPage() {
     eraseColor: gridState.eraseColor,
     undo: gridState.undo,
     onActiveColorChange: gridState.setActiveColor,
+    onActiveMarkChange: gridState.setActiveMark,
+    toggleMark: gridState.toggleMark,
   })
 
   const handleClearPlayerInput = () => {
@@ -84,6 +86,7 @@ export function PlayerPage() {
           notes: cell.fixedValue ? cell.notes : [],
           color: cell.fixedValue ? cell.color : null,
           crossed: cell.fixedValue ? cell.crossed : false,
+          mark: cell.fixedValue ? cell.mark : null,
           borders: [...cell.fixedBorders] as [number, number, number, number],
         }))
       )
@@ -138,6 +141,7 @@ export function PlayerPage() {
           debug={debug}
           inputMode={gridState.inputMode}
           activeColor={gridState.activeColor}
+          activeMark={gridState.activeMark}
           clearSelection={gridState.clearSelection}
           commitSelection={gridState.commitSelection}
           onDragChange={gridState.onDragChange}
@@ -156,6 +160,10 @@ export function PlayerPage() {
           onErase={gridState.clearValues}
           theme={theme}
           onThemeToggle={toggleTheme}
+          activeMark={gridState.activeMark}
+          onActiveMarkChange={gridState.setActiveMark}
+          onMarkSelect={shape => gridState.toggleMark(shape)}
+          onMarkErase={gridState.eraseMark}
         />
       </aside>
     </div>

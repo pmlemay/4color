@@ -14,6 +14,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
       color: null,
       label: null,
       crossed: false,
+      mark: null,
       selected: false,
       image: null,
     }))
@@ -40,7 +41,7 @@ export function gridToPuzzle(
     for (let c = 0; c < grid[r].length; c++) {
       const cell = grid[r][c]
       const hasBorders = cell.borders.some(b => b > 0)
-      if (cell.fixedValue || cell.fixedColor || cell.color || hasBorders || cell.label || cell.crossed || cell.image) {
+      if (cell.fixedValue || cell.fixedColor || cell.color || hasBorders || cell.label || cell.crossed || cell.mark || cell.image) {
         const entry: PuzzleCellData = { row: r, col: c }
         if (cell.fixedValue) entry.fixedValue = cell.fixedValue
         if (cell.fixedColor) entry.fixedColor = cell.fixedColor
@@ -48,6 +49,7 @@ export function gridToPuzzle(
         if (hasBorders) entry.borders = cell.borders
         if (cell.label) entry.label = cell.label
         if (cell.crossed) entry.crossed = cell.crossed
+        if (cell.mark) entry.mark = cell.mark
         if (cell.image) entry.image = imageToId.get(cell.image)!
         cells.push(entry)
       }
@@ -84,6 +86,7 @@ export function puzzleToGrid(puzzle: PuzzleData): CellData[][] {
     }
     if (cell.label) grid[cell.row][cell.col].label = cell.label
     if (cell.crossed) grid[cell.row][cell.col].crossed = cell.crossed
+    if (cell.mark) grid[cell.row][cell.col].mark = cell.mark
     if (cell.image) {
       // Resolve image ID to base64, or use directly if it's already base64 (backward compat)
       grid[cell.row][cell.col].image = images[cell.image] ?? cell.image

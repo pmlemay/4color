@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { InputMode, LabelAlign } from '../../types'
+import { InputMode, LabelAlign, MarkShape } from '../../types'
 import './Toolbar.css'
 
 const PLAYER_MODES: { mode: InputMode; label: string }[] = [
@@ -8,7 +8,14 @@ const PLAYER_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'color', label: 'Color' },
   { mode: 'cross', label: 'X Cross' },
   { mode: 'border', label: 'Border' },
+  { mode: 'mark', label: 'Marks' },
 ]
+
+const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon']
+const MARK_LABELS: Record<MarkShape, string> = {
+  circle: '\u25CB', square: '\u25A1', triangle: '\u25B3',
+  diamond: '\u25C7', pentagon: '\u2B20', hexagon: '\u2B21',
+}
 
 const EDITOR_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'fixed', label: 'Fixed Normal' },
@@ -36,6 +43,10 @@ interface ToolbarProps {
   onImageApply?: () => void
   onImageRemove?: () => void
   onImageImport?: () => void
+  activeMark?: MarkShape | null
+  onActiveMarkChange?: (mark: MarkShape | null) => void
+  onMarkSelect?: (shape: MarkShape) => void
+  onMarkErase?: () => void
 }
 
 export function Toolbar({
@@ -58,6 +69,10 @@ export function Toolbar({
   onImageApply,
   onImageRemove,
   onImageImport,
+  activeMark = null,
+  onActiveMarkChange,
+  onMarkSelect,
+  onMarkErase,
 }: ToolbarProps) {
   const showPalette = inputMode === 'color' || inputMode === 'fixedColor'
   const showLabel = inputMode === 'label'
@@ -127,6 +142,44 @@ export function Toolbar({
           </div>
           {activeColor !== null && (
             <button className="tb-btn" onClick={() => onActiveColorChange?.(null)}>Deselect Color</button>
+          )}
+        </div>
+      )}
+
+      {inputMode === 'mark' && (
+        <div className="tb-section">
+          <div className="tb-section-title">Shape</div>
+          <div className="tb-mark-palette">
+            <button
+              className={`mark-swatch mark-erase ${activeMark === null ? 'active-mark' : ''}`}
+              onClick={() => {
+                onMarkErase?.()
+                onActiveMarkChange?.(null)
+              }}
+              title="Erase mark"
+            >
+              &#x2715;
+            </button>
+            {MARK_SHAPES.map(shape => (
+              <button
+                key={shape}
+                className={`mark-swatch ${activeMark === shape ? 'active-mark' : ''}`}
+                onClick={() => {
+                  if (activeMark === shape) {
+                    onActiveMarkChange?.(null)
+                  } else {
+                    onActiveMarkChange?.(shape)
+                    onMarkSelect?.(shape)
+                  }
+                }}
+                title={shape}
+              >
+                {MARK_LABELS[shape]}
+              </button>
+            ))}
+          </div>
+          {activeMark !== null && (
+            <button className="tb-btn" onClick={() => onActiveMarkChange?.(null)}>Deselect Shape</button>
           )}
         </div>
       )}
@@ -209,6 +262,7 @@ export function Toolbar({
         {inputMode === 'note' && 'Type to add/remove notes (max 16).'}
         {inputMode === 'cross' && 'Click/drag to toggle X marks.'}
         {inputMode === 'border' && 'Drag to create/remove borders.'}
+        {inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
       </div>
 
       <div className="tb-spacer" />

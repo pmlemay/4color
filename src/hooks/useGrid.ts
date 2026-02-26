@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { CellData, CellPosition, InputMode, LabelAlign } from '../types'
+import { CellData, CellPosition, InputMode, LabelAlign, MarkShape } from '../types'
 import { createEmptyGrid } from '../utils/puzzleIO'
 import { applyBordersToSelection } from '../utils/borders'
 
@@ -27,12 +27,19 @@ export function useGrid(initialRows: number, initialCols: number) {
   const borderDragBase = useRef<CellData[][] | null>(null) // pre-drag snapshot for border mode
   const borderDragRemoving = useRef(false)
   const colorDragActive = useRef(false)
+  const colorDragAction = useRef<string | null>(null) // target color value for this drag (null = erase)
+  const markDragActive = useRef(false)
+  const markDragAction = useRef<MarkShape | null>(null)
   const [activeColor, setActiveColor] = useState<string | null>(null)
+  const [activeMark, setActiveMark] = useState<MarkShape | null>(null)
 
   const setInputMode = useCallback((mode: InputMode) => {
     setInputModeRaw(mode)
     if (mode !== 'color' && mode !== 'fixedColor') {
       setActiveColor(null)
+    }
+    if (mode !== 'mark') {
+      setActiveMark(null)
     }
   }, [])
 
@@ -69,8 +76,14 @@ export function useGrid(initialRows: number, initialCols: number) {
           colorDragActive.current = true
           undoStack.current.push(cloneGrid(prev))
           if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          // Determine paint vs erase from the first cell (like cross mode)
+          if (isErase) {
+            colorDragAction.current = null
+          } else {
+            colorDragAction.current = prev[sel[0].row][sel[0].col][field] === activeColor ? null : activeColor
+          }
         }
-        const targetValue = isErase ? null : activeColor
+        const targetValue = colorDragAction.current
         const needsUpdate = sel.some(pos => prev[pos.row][pos.col][field] !== targetValue)
         if (!needsUpdate) return prev
         const newGrid = cloneGrid(prev)
@@ -90,12 +103,33 @@ export function useGrid(initialRows: number, initialCols: number) {
           if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
           crossAction.current = !prev[sel[0].row][sel[0].col].crossed
         }
-        const eligible = sel.filter(pos => !prev[pos.row][pos.col].value)
+        const eligible = sel.filter(pos => !prev[pos.row][pos.col].value && !prev[pos.row][pos.col].mark)
         const needsUpdate = eligible.some(pos => prev[pos.row][pos.col].crossed !== crossAction.current)
         if (!needsUpdate) return prev
         const newGrid = cloneGrid(prev)
         for (const pos of eligible) {
           newGrid[pos.row][pos.col].crossed = crossAction.current
+        }
+        return newGrid
+      })
+      return
+    }
+
+    if (inputMode === 'mark' && activeMark !== null) {
+      setGrid(prev => {
+        if (!markDragActive.current) {
+          markDragActive.current = true
+          undoStack.current.push(cloneGrid(prev))
+          if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          markDragAction.current = prev[sel[0].row][sel[0].col].mark === activeMark ? null : activeMark
+        }
+        const targetValue = markDragAction.current
+        const eligible = sel.filter(pos => !prev[pos.row][pos.col].crossed && !prev[pos.row][pos.col].value && prev[pos.row][pos.col].notes.length === 0)
+        const needsUpdate = eligible.some(pos => prev[pos.row][pos.col].mark !== targetValue)
+        if (!needsUpdate) return prev
+        const newGrid = cloneGrid(prev)
+        for (const pos of eligible) {
+          newGrid[pos.row][pos.col].mark = targetValue
         }
         return newGrid
       })
@@ -131,7 +165,7 @@ export function useGrid(initialRows: number, initialCols: number) {
       })
       return
     }
-  }, [inputMode, activeColor])
+  }, [inputMode, activeColor, activeMark])
 
   const commitSelection = useCallback((sel: CellPosition[]) => {
     // Color mode with active color: already applied live, reset flag
@@ -142,6 +176,11 @@ export function useGrid(initialRows: number, initialCols: number) {
     // Cross mode: already applied live during drag, just reset flag
     if (inputMode === 'cross') {
       crossDragActive.current = false
+      return
+    }
+    // Mark mode: already applied live during drag, just reset flag
+    if (inputMode === 'mark' && activeMark !== null) {
+      markDragActive.current = false
       return
     }
     // Border mode: already applied live during drag, just reset
@@ -160,7 +199,7 @@ export function useGrid(initialRows: number, initialCols: number) {
       return newGrid
     })
     setSelection(sel)
-  }, [inputMode, activeColor, setGridWithUndo])
+  }, [inputMode, activeColor, activeMark, setGridWithUndo])
 
   const applyValue = useCallback(
     (value: string) => {
@@ -295,11 +334,36 @@ export function useGrid(initialRows: number, initialCols: number) {
     if (selection.length === 0) return
     setGridWithUndo(prev => {
       const newGrid = cloneGrid(prev)
-      const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].value)
+      const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].value && !newGrid[pos.row][pos.col].mark)
       if (eligible.length === 0) return prev
       const allCrossed = eligible.every(pos => newGrid[pos.row][pos.col].crossed)
       for (const pos of eligible) {
         newGrid[pos.row][pos.col].crossed = !allCrossed
+      }
+      return newGrid
+    })
+  }, [selection, setGridWithUndo])
+
+  const toggleMark = useCallback((shape: MarkShape) => {
+    if (selection.length === 0) return
+    setGridWithUndo(prev => {
+      const newGrid = cloneGrid(prev)
+      const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].crossed && !newGrid[pos.row][pos.col].value && newGrid[pos.row][pos.col].notes.length === 0)
+      if (eligible.length === 0) return prev
+      const allHaveMark = eligible.every(pos => newGrid[pos.row][pos.col].mark === shape)
+      for (const pos of eligible) {
+        newGrid[pos.row][pos.col].mark = allHaveMark ? null : shape
+      }
+      return newGrid
+    })
+  }, [selection, setGridWithUndo])
+
+  const eraseMark = useCallback(() => {
+    if (selection.length === 0) return
+    setGridWithUndo(prev => {
+      const newGrid = cloneGrid(prev)
+      for (const pos of selection) {
+        newGrid[pos.row][pos.col].mark = null
       }
       return newGrid
     })
@@ -341,7 +405,7 @@ export function useGrid(initialRows: number, initialCols: number) {
         cell.notes = []
         cell.color = null
         cell.crossed = false
-        cell.image = null
+        cell.mark = null
         cell.borders = [...cell.fixedBorders] as [number, number, number, number]
       }
       return newGrid
@@ -385,6 +449,8 @@ export function useGrid(initialRows: number, initialCols: number) {
     setInputMode,
     activeColor,
     setActiveColor,
+    activeMark,
+    setActiveMark,
     clearSelection,
     commitSelection,
     onDragChange,
@@ -397,6 +463,8 @@ export function useGrid(initialRows: number, initialCols: number) {
     applyLabel,
     removeLabel,
     toggleCross,
+    toggleMark,
+    eraseMark,
     applyImage,
     removeImage,
     clearValues,

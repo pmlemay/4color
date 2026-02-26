@@ -1,5 +1,14 @@
 import React from 'react'
-import { CellData } from '../../types'
+import { CellData, MarkShape } from '../../types'
+
+const SHAPE_PATHS: Record<MarkShape, string> = {
+  circle:   'M25,8 a17,17 0 1,0 0.001,0 Z',
+  square:   'M8,8 h34 v34 h-34 Z',
+  triangle: 'M25,6 L44,42 L6,42 Z',
+  diamond:  'M25,6 L44,25 L25,44 L6,25 Z',
+  pentagon: 'M25,6 L43,20 L36,42 L14,42 L7,20 Z',
+  hexagon:  'M25,6 L41,15.5 L41,34.5 L25,44 L9,34.5 L9,15.5 Z',
+}
 
 interface CellProps {
   data: CellData
@@ -10,7 +19,7 @@ interface CellProps {
 }
 
 export const Cell = React.memo(function Cell({ data, beingSelected, debug, row, col }: CellProps) {
-  const { selected, value, notes, fixedValue, fixedColor, color, borders, label, crossed, image } = data
+  const { selected, value, notes, fixedValue, fixedColor, color, borders, label, crossed, mark, image } = data
 
   let tdClass = 'grid-cell cell-enabled'
   if (selected) tdClass += ' cell-selected'
@@ -36,6 +45,13 @@ export const Cell = React.memo(function Cell({ data, beingSelected, debug, row, 
       <div className={divClass} style={cellStyle}>
         {image && <img src={image} className="cell-image" alt="" draggable={false} />}
         {crossed && <span className="cell-cross">&times;</span>}
+        {mark && (
+          <span className="cell-mark" aria-hidden="true">
+            <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+              <path d={SHAPE_PATHS[mark]} fill="none" stroke="currentColor" strokeWidth="2.5" />
+            </svg>
+          </span>
+        )}
         {hasNotes && !displayValue && !crossed ? (
           <div className="notes-grid">
             {notes.map((n, i) => (
