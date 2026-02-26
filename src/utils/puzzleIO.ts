@@ -102,8 +102,10 @@ export function downloadPuzzleJSON(puzzle: PuzzleData) {
   const a = document.createElement('a')
   a.href = url
   a.download = `${puzzle.id}.json`
+  document.body.appendChild(a)
   a.click()
-  URL.revokeObjectURL(url)
+  document.body.removeChild(a)
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 export async function fetchPuzzleIndex(): Promise<PuzzleIndexEntry[]> {
