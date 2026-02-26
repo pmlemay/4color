@@ -21,6 +21,7 @@
     "V (Men   - Vincent) is the victim and is alone with the killer"
   ],
   "difficulty": "Very hard",
+  "tags": ["murdoku"],
   "gridSize": {
     "rows": 9,
     "cols": 9

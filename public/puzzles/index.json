@@ -3,7 +3,7 @@
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
-    "author": "AI",
+    "author": "Ai & Caprazo",
     "gridSize": {
       "rows": 6,
       "cols": 6
@@ -14,7 +14,7 @@
     "id": "sample-4-color-puzzle",
     "file": "sample-4color.json",
     "title": "4-Color #1",
-    "author": "AI",
+    "author": "Ai",
     "gridSize": {
       "rows": 6,
       "cols": 6

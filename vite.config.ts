@@ -46,6 +46,7 @@ function puzzleSavePlugin(): Plugin {
                 id: data.id, file: f, title: data.title, author: data.author, gridSize: data.gridSize,
               }
               if (data.difficulty) entry.difficulty = data.difficulty
+              if (data.tags) entry.tags = data.tags
               return entry
             })
             index.sort((a: any, b: any) => {

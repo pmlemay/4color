@@ -23,6 +23,7 @@ export function EditorPage() {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [difficulty, setDifficulty] = useState('')
+  const [tags, setTags] = useState<string[]>([])
   const [rules, setRules] = useState<string[]>([])
   const [clues, setClues] = useState<string[]>([])
   const [newRule, setNewRule] = useState('')
@@ -43,6 +44,7 @@ export function EditorPage() {
           setRows(puzzle.gridSize.rows)
           setCols(puzzle.gridSize.cols)
           setDifficulty(puzzle.difficulty || '')
+          setTags(puzzle.tags || [])
           setRules(puzzle.rules || [])
           setClues(puzzle.clues || [])
           gridState.setGrid(puzzleToGrid(puzzle))
@@ -83,7 +85,7 @@ export function EditorPage() {
 
   const handleSave = async () => {
     const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', author, rules, clues, difficulty })
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', author, rules, clues, difficulty, tags })
 
     if (puzzleId) {
       // Editing an existing puzzle — try saving directly in dev mode
@@ -225,6 +227,7 @@ export function EditorPage() {
         setRows(puzzle.gridSize.rows)
         setCols(puzzle.gridSize.cols)
         setDifficulty(puzzle.difficulty || '')
+        setTags(puzzle.tags || [])
         setRules(puzzle.rules || [])
         setClues(puzzle.clues || [])
         gridState.setGrid(puzzleToGrid(puzzle))
@@ -258,6 +261,14 @@ export function EditorPage() {
           <div className="info-editor-field">
             <label>Difficulty</label>
             <input value={difficulty} onChange={e => setDifficulty(e.target.value)} placeholder="e.g. Easy, Medium, Hard" />
+          </div>
+          <div className="info-editor-field">
+            <label>Tags</label>
+            <input
+              value={tags.join(', ')}
+              onChange={e => setTags(e.target.value.split(',').map(t => t.trim()).filter(Boolean))}
+              placeholder="e.g. murdoku, nurikabe"
+            />
           </div>
           <div className="info-editor-row">
             <div className="info-editor-field">

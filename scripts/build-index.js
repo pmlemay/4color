@@ -14,6 +14,7 @@ const index = files.map(f => {
     gridSize: data.gridSize,
   }
   if (data.difficulty) entry.difficulty = data.difficulty
+  if (data.tags) entry.tags = data.tags
   return entry
 })
 

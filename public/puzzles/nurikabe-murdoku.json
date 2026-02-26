@@ -27,6 +27,7 @@
     "V is the victim and alone with the killer."
   ],
   "difficulty": "Very hard",
+  "tags": ["murdoku", "nurikabe"],
   "gridSize": {
     "rows": 10,
     "cols": 10

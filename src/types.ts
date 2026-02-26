@@ -47,6 +47,7 @@ export interface PuzzleData {
   rules: string[]
   clues: string[]
   difficulty?: string
+  tags?: string[]
   images?: Record<string, string>
   createdAt: string
 }
@@ -58,6 +59,7 @@ export interface PuzzleIndexEntry {
   author: string
   gridSize: { rows: number; cols: number }
   difficulty?: string
+  tags?: string[]
 }
 
 export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon'

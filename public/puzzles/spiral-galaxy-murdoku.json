@@ -22,6 +22,7 @@
     "V (Vinny) is the victim and is alone with the killer"
   ],
   "difficulty": "Very hard",
+  "tags": ["murdoku", "spiral-galaxy"],
   "gridSize": {
     "rows": 12,
     "cols": 12

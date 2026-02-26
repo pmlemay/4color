@@ -1,13 +1,14 @@
 {
   "id": "sample-4-color-puzzle",
   "title": "4-Color #1",
-  "author": "AI",
+  "author": "Ai",
   "rules": [
     "Color each region so that no two adjacent regions share the same color.",
     "Use exactly 4 colors."
   ],
   "clues": [],
   "difficulty": "Easy",
+  "tags": ["4color"],
   "gridSize": {
     "rows": 6,
     "cols": 6

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PuzzleIndexEntry } from '../../types'
 import { fetchPuzzleIndex } from '../../utils/puzzleIO'
@@ -10,6 +10,8 @@ export function PuzzleList() {
   const { theme, toggle: toggleTheme } = useTheme()
   const [puzzles, setPuzzles] = useState<PuzzleIndexEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+  const [tagMode, setTagMode] = useState<'or' | 'and'>('or')
 
   useEffect(() => {
     fetchPuzzleIndex().then(data => {
@@ -17,6 +19,32 @@ export function PuzzleList() {
       setLoading(false)
     })
   }, [])
+
+  const allTags = useMemo(() => {
+    const tags = new Set<string>()
+    for (const p of puzzles) {
+      for (const t of p.tags || []) tags.add(t)
+    }
+    return [...tags].sort()
+  }, [puzzles])
+
+  const filteredPuzzles = useMemo(() => {
+    if (selectedTags.size === 0) return puzzles
+    return puzzles.filter(p => {
+      const pt = p.tags || []
+      if (tagMode === 'or') return pt.some(t => selectedTags.has(t))
+      return [...selectedTags].every(t => pt.includes(t))
+    })
+  }, [puzzles, selectedTags, tagMode])
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => {
+      const next = new Set(prev)
+      if (next.has(tag)) next.delete(tag)
+      else next.add(tag)
+      return next
+    })
+  }
 
   return (
     <div className="puzzle-list-page">
@@ -30,6 +58,29 @@ export function PuzzleList() {
         <Link to="/edit" className="new-puzzle-btn">Create New Puzzle</Link>
       </div>
 
+      {allTags.length > 0 && (
+        <div className="tag-filter-bar">
+          {allTags.map(tag => (
+            <button
+              key={tag}
+              className={`tag-chip${selectedTags.has(tag) ? ' selected' : ''}`}
+              onClick={() => toggleTag(tag)}
+            >
+              {tag}
+            </button>
+          ))}
+          {selectedTags.size >= 2 && (
+            <button
+              className="tag-mode-toggle"
+              onClick={() => setTagMode(m => m === 'or' ? 'and' : 'or')}
+              title={tagMode === 'or' ? 'Showing puzzles matching ANY tag' : 'Showing puzzles matching ALL tags'}
+            >
+              {tagMode.toUpperCase()}
+            </button>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <p>Loading puzzles...</p>
       ) : puzzles.length === 0 ? (
@@ -38,7 +89,7 @@ export function PuzzleList() {
         </p>
       ) : (
         <div className="puzzle-cards">
-          {puzzles.map(p => (
+          {filteredPuzzles.map(p => (
             <div key={p.id} className="puzzle-card-row">
               <Link to={`/play/${p.id}`} className="puzzle-card">
                 <h3>{p.title}</h3>
@@ -46,6 +97,11 @@ export function PuzzleList() {
                   by {p.author} &middot; {p.gridSize.rows}&times;{p.gridSize.cols}
                   {p.difficulty && <> &middot; {p.difficulty}</>}
                 </p>
+                {p.tags && p.tags.length > 0 && (
+                  <div className="puzzle-tags">
+                    {p.tags.map(t => <span key={t} className="puzzle-tag">{t}</span>)}
+                  </div>
+                )}
               </Link>
               {debug && <Link to={`/edit/${p.id}`} className="puzzle-edit-btn" title="Edit puzzle">&#9998;</Link>}
             </div>
