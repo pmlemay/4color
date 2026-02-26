@@ -11,6 +11,7 @@ interface UseKeyboardOptions {
   clearValues: () => void
   eraseColor?: () => void
   undo: () => void
+  redo: () => void
   onEnter?: () => void
   onActiveColorChange?: (color: string) => void
   onActiveMarkChange?: (mark: MarkShape | null) => void
@@ -42,6 +43,13 @@ export function useKeyboard(options: UseKeyboardOptions) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
         e.preventDefault()
         options.undo()
+        return
+      }
+
+      // Ctrl+Y redo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+        e.preventDefault()
+        options.redo()
         return
       }
 
@@ -116,5 +124,5 @@ export function useKeyboard(options: UseKeyboardOptions) {
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark])
+  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.redo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark])
 }

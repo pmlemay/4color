@@ -70,6 +70,7 @@ export function EditorPage() {
     clearValues: gridState.clearValues,
     eraseColor: gridState.eraseColor,
     undo: gridState.undo,
+    redo: gridState.redo,
     onActiveColorChange: gridState.setActiveColor,
     onActiveMarkChange: gridState.setActiveMark,
     toggleMark: gridState.toggleMark,
@@ -423,6 +424,7 @@ export function EditorPage() {
           onLabelApply={(text, align) => gridState.applyLabel(text, align)}
           onLabelRemove={() => gridState.removeLabel()}
           onUndo={gridState.undo}
+          onRedo={gridState.redo}
           onErase={gridState.clearValues}
           isEditor
           theme={theme}

@@ -71,6 +71,7 @@ export function PlayerPage() {
     clearValues: gridState.clearValues,
     eraseColor: gridState.eraseColor,
     undo: gridState.undo,
+    redo: gridState.redo,
     onActiveColorChange: gridState.setActiveColor,
     onActiveMarkChange: gridState.setActiveMark,
     toggleMark: gridState.toggleMark,
@@ -157,6 +158,7 @@ export function PlayerPage() {
           activeColor={gridState.activeColor}
           onActiveColorChange={gridState.setActiveColor}
           onUndo={gridState.undo}
+          onRedo={gridState.redo}
           onErase={gridState.clearValues}
           theme={theme}
           onThemeToggle={toggleTheme}

@@ -33,6 +33,7 @@ interface ToolbarProps {
   onLabelApply?: (text: string, align: LabelAlign) => void
   onLabelRemove?: () => void
   onUndo: () => void
+  onRedo: () => void
   onErase: () => void
   isEditor?: boolean
   theme: 'light' | 'dark'
@@ -59,6 +60,7 @@ export function Toolbar({
   onLabelApply,
   onLabelRemove,
   onUndo,
+  onRedo,
   onErase,
   isEditor = false,
   theme,
@@ -101,6 +103,7 @@ export function Toolbar({
         <div className="tb-section-title">Actions</div>
         <button className="tb-btn" onClick={onErase} title="Delete/Backspace">Erase (Del)</button>
         <button className="tb-btn" onClick={onUndo} title="Ctrl+Z">Undo (Ctrl+Z)</button>
+        <button className="tb-btn" onClick={onRedo} title="Ctrl+Y">Redo (Ctrl+Y)</button>
       </div>
 
       {showPalette && (

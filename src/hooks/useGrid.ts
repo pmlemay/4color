@@ -15,6 +15,18 @@ function cloneGrid(grid: CellData[][]): CellData[][] {
   })))
 }
 
+// Clone for undo/redo — strips transient `selected` flag so undo
+// snapshots don't contain stale selection state
+function cloneForUndo(grid: CellData[][]): CellData[][] {
+  return grid.map(row => row.map(cell => ({
+    ...cell,
+    selected: false,
+    notes: [...cell.notes],
+    borders: [...cell.borders] as [number, number, number, number],
+    fixedBorders: [...cell.fixedBorders] as [number, number, number, number],
+  })))
+}
+
 export function useGrid(initialRows: number, initialCols: number) {
   const [grid, setGrid] = useState<CellData[][]>(() =>
     createEmptyGrid(initialRows, initialCols)
@@ -22,6 +34,7 @@ export function useGrid(initialRows: number, initialCols: number) {
   const [selection, setSelection] = useState<CellPosition[]>([])
   const [inputMode, setInputModeRaw] = useState<InputMode>('normal')
   const undoStack = useRef<CellData[][][]>([])
+  const redoStack = useRef<CellData[][][]>([])
   const crossAction = useRef<boolean>(true) // true = add X, false = remove X
   const crossDragActive = useRef(false)
   const borderDragBase = useRef<CellData[][] | null>(null) // pre-drag snapshot for border mode
@@ -45,10 +58,11 @@ export function useGrid(initialRows: number, initialCols: number) {
 
   const setGridWithUndo = useCallback((updater: CellData[][] | ((prev: CellData[][]) => CellData[][])) => {
     setGrid(prev => {
-      undoStack.current.push(cloneGrid(prev))
+      undoStack.current.push(cloneForUndo(prev))
       if (undoStack.current.length > MAX_UNDO) {
         undoStack.current.shift()
       }
+      redoStack.current = []
       return typeof updater === 'function' ? updater(prev) : updater
     })
   }, [])
@@ -56,7 +70,24 @@ export function useGrid(initialRows: number, initialCols: number) {
   const undo = useCallback(() => {
     const prev = undoStack.current.pop()
     if (prev) {
-      setGrid(prev)
+      setGrid(current => {
+        redoStack.current.push(cloneForUndo(current))
+        if (redoStack.current.length > MAX_UNDO) redoStack.current.shift()
+        return prev
+      })
+      setSelection([])
+    }
+  }, [])
+
+  const redo = useCallback(() => {
+    const next = redoStack.current.pop()
+    if (next) {
+      setGrid(current => {
+        undoStack.current.push(cloneForUndo(current))
+        if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+        return next
+      })
+      setSelection([])
     }
   }, [])
 
@@ -74,8 +105,9 @@ export function useGrid(initialRows: number, initialCols: number) {
       setGrid(prev => {
         if (!colorDragActive.current) {
           colorDragActive.current = true
-          undoStack.current.push(cloneGrid(prev))
+          undoStack.current.push(cloneForUndo(prev))
           if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          redoStack.current = []
           // Determine paint vs erase from the first cell (like cross mode)
           if (isErase) {
             colorDragAction.current = null
@@ -99,8 +131,9 @@ export function useGrid(initialRows: number, initialCols: number) {
       setGrid(prev => {
         if (!crossDragActive.current) {
           crossDragActive.current = true
-          undoStack.current.push(cloneGrid(prev))
+          undoStack.current.push(cloneForUndo(prev))
           if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          redoStack.current = []
           crossAction.current = !prev[sel[0].row][sel[0].col].crossed
         }
         const eligible = sel.filter(pos => !prev[pos.row][pos.col].value && !prev[pos.row][pos.col].mark)
@@ -119,8 +152,9 @@ export function useGrid(initialRows: number, initialCols: number) {
       setGrid(prev => {
         if (!markDragActive.current) {
           markDragActive.current = true
-          undoStack.current.push(cloneGrid(prev))
+          undoStack.current.push(cloneForUndo(prev))
           if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          redoStack.current = []
           markDragAction.current = prev[sel[0].row][sel[0].col].mark === activeMark ? null : activeMark
         }
         const targetValue = markDragAction.current
@@ -141,8 +175,9 @@ export function useGrid(initialRows: number, initialCols: number) {
         if (!borderDragBase.current) {
           // First call — save base snapshot and push undo
           borderDragBase.current = cloneGrid(prev)
-          undoStack.current.push(cloneGrid(prev))
+          undoStack.current.push(cloneForUndo(prev))
           if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          redoStack.current = []
           // Determine if we're removing: check if first cell has user borders in base grid
           const firstCell = borderDragBase.current[sel[0].row][sel[0].col]
           borderDragRemoving.current = firstCell.borders.some((b, i) => b > 0 && firstCell.fixedBorders[i] === 0)
@@ -471,5 +506,6 @@ export function useGrid(initialRows: number, initialCols: number) {
     applyBorders,
     resetGrid,
     undo,
+    redo,
   }
 }
