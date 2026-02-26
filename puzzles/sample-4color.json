@@ -1,0 +1,378 @@
+{
+  "id": "sample-4-color-puzzle",
+  "title": "4-Color #1",
+  "author": "AI",
+  "rules": [
+    "Color each region so that no two adjacent regions share the same color.",
+    "Use exactly 4 colors."
+  ],
+  "clues": [],
+  "difficulty": "Easy",
+  "gridSize": {
+    "rows": 6,
+    "cols": 6
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 5,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "borders": [
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "borders": [
+        2,
+        2,
+        2,
+        2
+      ]
+    }
+  ],
+  "createdAt": "2026-02-26"
+}

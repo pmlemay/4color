@@ -1,0 +1,46 @@
+[
+  {
+    "id": "sample-4-color-puzzle",
+    "file": "sample-4color.json",
+    "title": "4-Color #1",
+    "author": "AI",
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Easy"
+  },
+  {
+    "id": "knights-murdoku",
+    "file": "knights-murdoku.json",
+    "title": "Knights Murdoku",
+    "author": "Caprazo",
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Very hard"
+  },
+  {
+    "id": "nurikabe-murdoku",
+    "file": "nurikabe-murdoku.json",
+    "title": "Nurikabe Murdoku",
+    "author": "Caprazo",
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Very hard"
+  },
+  {
+    "id": "spiral-galaxy-murdoku",
+    "file": "spiral-galaxy-murdoku.json",
+    "title": "Spiral Galaxy Murdoku",
+    "author": "Caprazo",
+    "gridSize": {
+      "rows": 12,
+      "cols": 12
+    },
+    "difficulty": "Very hard"
+  }
+]
