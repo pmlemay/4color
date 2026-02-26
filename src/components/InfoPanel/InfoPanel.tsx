@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import { Link } from 'react-router-dom'
 import './InfoPanel.css'
 
@@ -12,9 +12,9 @@ interface InfoPanelProps {
   backLink?: boolean
   children?: React.ReactNode
   struckRuleWords?: Set<string>
-  onStruckRuleWordsChange?: (s: Set<string>) => void
+  onStruckRuleWordsChange?: Dispatch<SetStateAction<Set<string>>>
   struckClueWords?: Set<string>
-  onStruckClueWordsChange?: (s: Set<string>) => void
+  onStruckClueWordsChange?: Dispatch<SetStateAction<Set<string>>>
 }
 
 export function InfoPanel({ title, author, gridSize, difficulty, rulesList, cluesList, backLink = true, children, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
