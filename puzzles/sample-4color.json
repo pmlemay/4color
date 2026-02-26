@@ -8,6 +8,7 @@
   ],
   "clues": [],
   "difficulty": "Easy",
+  "tags": ["4color"],
   "gridSize": {
     "rows": 6,
     "cols": 6

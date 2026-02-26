@@ -3,12 +3,15 @@
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
-    "author": "Ai",
+    "author": "Ai & Caprazo",
     "gridSize": {
       "rows": 6,
       "cols": 6
     },
-    "difficulty": "Easy"
+    "difficulty": "Easy",
+    "tags": [
+      "murdoku"
+    ]
   },
   {
     "id": "sample-4-color-puzzle",
@@ -19,7 +22,10 @@
       "rows": 6,
       "cols": 6
     },
-    "difficulty": "Easy"
+    "difficulty": "Easy",
+    "tags": [
+      "4color"
+    ]
   },
   {
     "id": "knights-murdoku",
@@ -30,7 +36,10 @@
       "rows": 9,
       "cols": 9
     },
-    "difficulty": "Very hard"
+    "difficulty": "Very hard",
+    "tags": [
+      "murdoku"
+    ]
   },
   {
     "id": "nurikabe-murdoku",
@@ -41,7 +50,11 @@
       "rows": 10,
       "cols": 10
     },
-    "difficulty": "Very hard"
+    "difficulty": "Very hard",
+    "tags": [
+      "murdoku",
+      "nurikabe"
+    ]
   },
   {
     "id": "spiral-galaxy-murdoku",
@@ -52,6 +65,10 @@
       "rows": 12,
       "cols": 12
     },
-    "difficulty": "Very hard"
+    "difficulty": "Very hard",
+    "tags": [
+      "murdoku",
+      "spiral-galaxy"
+    ]
   }
 ]

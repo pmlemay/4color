@@ -1,7 +1,7 @@
 {
   "id": "dinner-party-murdoku",
   "title": "Dinner Party Murdoku",
-  "author": "Ai",
+  "author": "Ai & Caprazo",
   "rules": [
     "- Only 1 person per row and per column.",
     "- \"Beside\" means in the same room and orthogonally adjacent."
@@ -15,6 +15,7 @@
     "V (Man   - Victor) is the victim and is alone with the killer."
   ],
   "difficulty": "Easy",
+  "tags": ["murdoku"],
   "gridSize": {
     "rows": 6,
     "cols": 6
