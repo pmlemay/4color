@@ -12,6 +12,7 @@ import { ResizableLeft } from '../components/ResizableLeft'
 import { fetchPuzzle, fetchPuzzleSolution, puzzleToGrid } from '../utils/puzzleIO'
 import { savePlayerData, loadPlayerData, clearPlayerData, applyPlayerData } from '../utils/playerSave'
 import { validate4Color, validateMurdoku } from '../utils/validate'
+import { useCompletions } from '../hooks/useCompletions'
 import { PuzzleData, PuzzleSolution } from '../types'
 
 export function PlayerPage() {
@@ -30,6 +31,7 @@ export function PlayerPage() {
   const [solution, setSolution] = useState<PuzzleSolution | null>(null)
 
   const { modalProps, showAlert, showConfirm } = useModal()
+  const { markCompleted } = useCompletions()
   const gridState = useGrid(1, 1)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const loaded = useRef(false)
@@ -123,12 +125,13 @@ export function PlayerPage() {
       return
     }
     if (result.valid) {
+      if (puzzleId) markCompleted(puzzleId)
       const clear = await showConfirm('Congratulations!', 'Puzzle Solved!', 'Clear Puzzle', 'Keep')
       if (clear) doClearPlayerInput()
     } else {
       await showAlert(result.error || 'Not quite right. Keep trying!', 'Not Quite')
     }
-  }, [gridState.grid, is4Color, isMurdoku, solution, showConfirm, showAlert])
+  }, [gridState.grid, is4Color, isMurdoku, solution, showConfirm, showAlert, puzzleId, markCompleted])
 
   if (loading) return <p style={{ textAlign: 'center', marginTop: 40 }}>Loading puzzle...</p>
   if (error || !puzzle) {
