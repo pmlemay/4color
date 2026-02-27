@@ -197,6 +197,26 @@
   flex: 1;
 }
 
+.tb-submit {
+  padding-bottom: 8px;
+}
+
+.tb-submit-btn {
+  width: 100%;
+  padding: 8px 16px;
+  background: lightseagreen;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tb-submit-btn:hover {
+  opacity: 0.9;
+}
+
 .tb-theme-toggle {
   border-top: 1px solid var(--border);
   padding-top: 8px;

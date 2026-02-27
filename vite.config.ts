@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { writeFileSync, readdirSync, readFileSync } from 'fs'
+import { writeFileSync, readdirSync, readFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import type { Plugin } from 'vite'
 
@@ -57,6 +57,32 @@ function puzzleSavePlugin(): Plugin {
             })
             writeFileSync(join(puzzlesDir, 'index.json'), JSON.stringify(index, null, 2) + '\n')
 
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ ok: true, file: targetFile }))
+          } catch (e: unknown) {
+            res.statusCode = 500
+            res.end(JSON.stringify({ ok: false, error: String(e) }))
+          }
+        })
+      })
+
+      server.middlewares.use('/api/save-solution', (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405
+          res.end('Method not allowed')
+          return
+        }
+        let body = ''
+        req.on('data', chunk => { body += chunk })
+        req.on('end', () => {
+          try {
+            const solution = JSON.parse(body)
+            const safeId = String(solution.id).replace(/[^a-z0-9_-]/gi, '_')
+            if (!safeId) { res.statusCode = 400; res.end('Invalid id'); return }
+            const dir = join(__dirname, 'public', 'puzzles', 'solutions')
+            mkdirSync(dir, { recursive: true })
+            const targetFile = `${safeId}-solution.json`
+            writeFileSync(join(dir, targetFile), JSON.stringify(solution, null, 2) + '\n')
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify({ ok: true, file: targetFile }))
           } catch (e: unknown) {

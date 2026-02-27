@@ -59,7 +59,7 @@ export const Cell = React.memo(function Cell({ data, beingSelected, debug, row, 
             ))}
           </div>
         ) : (
-          !crossed && displayValue
+          !crossed && displayValue && <span className="cell-value">{displayValue}</span>
         )}
         {label && (
           <span className={`cell-label cell-label-${label.align}`}>

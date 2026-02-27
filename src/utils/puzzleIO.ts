@@ -1,4 +1,4 @@
-import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry } from '../types'
+import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule } from '../types'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -23,7 +23,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
 
 export function gridToPuzzle(
   grid: CellData[][],
-  meta: { id: string; title: string; author: string; rules: string[]; clues: string[]; difficulty: string; tags: string[] }
+  meta: { id: string; title: string; author: string; rules: string[]; clues: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[] }
 ): PuzzleData {
   // Build deduplicated image map: base64 → id
   const imageToId = new Map<string, string>()
@@ -70,6 +70,7 @@ export function gridToPuzzle(
     createdAt: new Date().toISOString().split('T')[0],
   }
   if (Object.keys(images).length > 0) puzzle.images = images
+  if (meta.autoCrossRules?.length) puzzle.autoCrossRules = meta.autoCrossRules
   return puzzle
 }
 
@@ -114,6 +115,32 @@ export async function fetchPuzzleIndex(): Promise<PuzzleIndexEntry[]> {
   return res.json()
 }
 
+export async function saveSolutionToServer(solution: PuzzleSolution): Promise<{ ok: boolean; file?: string; error?: string }> {
+  try {
+    const res = await fetch('/api/save-solution', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(solution),
+    })
+    return res.json()
+  } catch {
+    return { ok: false, error: 'Server not available (only works in dev mode)' }
+  }
+}
+
+export function downloadSolutionJSON(solution: PuzzleSolution) {
+  const json = JSON.stringify(solution, null, 2)
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${solution.id}-solution.json`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
 export async function savePuzzleToServer(puzzle: PuzzleData): Promise<{ ok: boolean; file?: string; error?: string }> {
   try {
     const res = await fetch('/api/save-puzzle', {
@@ -124,6 +151,17 @@ export async function savePuzzleToServer(puzzle: PuzzleData): Promise<{ ok: bool
     return res.json()
   } catch {
     return { ok: false, error: 'Server not available (only works in dev mode)' }
+  }
+}
+
+export async function fetchPuzzleSolution(id: string): Promise<PuzzleSolution | null> {
+  try {
+    const res = await fetch(`${BASE}puzzles/solutions/${id}-solution.json`)
+    if (!res.ok) return null
+    const text = await res.text()
+    return JSON.parse(text)
+  } catch {
+    return null
   }
 }
 

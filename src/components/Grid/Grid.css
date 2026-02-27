@@ -61,6 +61,12 @@
   z-index: 0;
 }
 
+/* Cell value and notes — above images */
+.cell-value {
+  position: relative;
+  z-index: 1;
+}
+
 /* Big X cross */
 .cell-cross {
   position: absolute;
@@ -96,6 +102,8 @@
 
 /* Notes grid */
 .notes-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);

@@ -15,6 +15,7 @@ const index = files.map(f => {
   }
   if (data.difficulty) entry.difficulty = data.difficulty
   if (data.tags) entry.tags = data.tags
+  if (data.autoCrossRules?.length) entry.autoCrossRules = data.autoCrossRules
   return entry
 })
 

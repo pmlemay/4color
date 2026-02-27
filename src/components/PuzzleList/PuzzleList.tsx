@@ -12,6 +12,7 @@ export function PuzzleList() {
   const [loading, setLoading] = useState(true)
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
   const [tagMode, setTagMode] = useState<'or' | 'and'>('or')
+  const [selectedDifficulties, setSelectedDifficulties] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     fetchPuzzleIndex().then(data => {
@@ -28,20 +29,48 @@ export function PuzzleList() {
     return [...tags].sort()
   }, [puzzles])
 
+  const allDifficulties = useMemo(() => {
+    const order = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard']
+    const diffs = new Set<string>()
+    for (const p of puzzles) {
+      if (p.difficulty) diffs.add(p.difficulty)
+    }
+    const sorted = order.filter(d => diffs.has(d))
+    for (const d of diffs) {
+      if (!sorted.includes(d)) sorted.push(d)
+    }
+    return sorted
+  }, [puzzles])
+
   const filteredPuzzles = useMemo(() => {
-    if (selectedTags.size === 0) return puzzles
-    return puzzles.filter(p => {
-      const pt = p.tags || []
-      if (tagMode === 'or') return pt.some(t => selectedTags.has(t))
-      return [...selectedTags].every(t => pt.includes(t))
-    })
-  }, [puzzles, selectedTags, tagMode])
+    let result = puzzles
+    if (selectedTags.size > 0) {
+      result = result.filter(p => {
+        const pt = p.tags || []
+        if (tagMode === 'or') return pt.some(t => selectedTags.has(t))
+        return [...selectedTags].every(t => pt.includes(t))
+      })
+    }
+    if (selectedDifficulties.size > 0) {
+      result = result.filter(p => p.difficulty != null && selectedDifficulties.has(p.difficulty))
+    }
+    return result
+  }, [puzzles, selectedTags, tagMode, selectedDifficulties])
 
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => {
       const next = new Set(prev)
       if (next.has(tag)) next.delete(tag)
       else next.add(tag)
+      return next
+    })
+  }
+
+  const toggleDifficulty = (d: string) => {
+    setSelectedDifficulties(prev => {
+      const next = new Set(prev)
+      if (next.has(d)) next.delete(d)
+      else next.add(d)
       return next
     })
   }
@@ -58,25 +87,42 @@ export function PuzzleList() {
         <Link to="/edit" className="new-puzzle-btn">Create New Puzzle</Link>
       </div>
 
-      {allTags.length > 0 && (
-        <div className="tag-filter-bar">
-          {allTags.map(tag => (
-            <button
-              key={tag}
-              className={`tag-chip${selectedTags.has(tag) ? ' selected' : ''}`}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </button>
-          ))}
-          {selectedTags.size >= 2 && (
-            <button
-              className="tag-mode-toggle"
-              onClick={() => setTagMode(m => m === 'or' ? 'and' : 'or')}
-              title={tagMode === 'or' ? 'Showing puzzles matching ANY tag' : 'Showing puzzles matching ALL tags'}
-            >
-              {tagMode.toUpperCase()}
-            </button>
+      {(allTags.length > 0 || allDifficulties.length > 0) && (
+        <div className="filter-bars">
+          {allDifficulties.length > 0 && (
+            <div className="tag-filter-bar">
+              {allDifficulties.map(d => (
+                <button
+                  key={d}
+                  className={`tag-chip difficulty${selectedDifficulties.has(d) ? ' selected' : ''}`}
+                  onClick={() => toggleDifficulty(d)}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          )}
+          {allTags.length > 0 && (
+            <div className="tag-filter-bar">
+              {allTags.map(tag => (
+                <button
+                  key={tag}
+                  className={`tag-chip${selectedTags.has(tag) ? ' selected' : ''}`}
+                  onClick={() => toggleTag(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+              {selectedTags.size >= 2 && (
+                <button
+                  className="tag-mode-toggle"
+                  onClick={() => setTagMode(m => m === 'or' ? 'and' : 'or')}
+                  title={tagMode === 'or' ? 'Showing puzzles matching ANY tag' : 'Showing puzzles matching ALL tags'}
+                >
+                  {tagMode.toUpperCase()}
+                </button>
+              )}
+            </div>
           )}
         </div>
       )}

@@ -48,6 +48,7 @@ interface ToolbarProps {
   onActiveMarkChange?: (mark: MarkShape | null) => void
   onMarkSelect?: (shape: MarkShape) => void
   onMarkErase?: () => void
+  onSubmit?: () => void
 }
 
 export function Toolbar({
@@ -75,6 +76,7 @@ export function Toolbar({
   onActiveMarkChange,
   onMarkSelect,
   onMarkErase,
+  onSubmit,
 }: ToolbarProps) {
   const showPalette = inputMode === 'color' || inputMode === 'fixedColor'
   const showLabel = inputMode === 'label'
@@ -269,6 +271,11 @@ export function Toolbar({
       </div>
 
       <div className="tb-spacer" />
+      {onSubmit && (
+        <div className="tb-submit">
+          <button className="tb-submit-btn" onClick={onSubmit}>Submit</button>
+        </div>
+      )}
       <div className="tb-theme-toggle">
         <button className="tb-btn" onClick={onThemeToggle} title="Toggle theme">
           {theme === 'light' ? '\u263E Dark' : '\u2600 Light'}

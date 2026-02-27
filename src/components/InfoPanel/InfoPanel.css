@@ -86,7 +86,8 @@
   letter-spacing: 0.5px;
 }
 
-.info-editor-field input {
+.info-editor-field input,
+.info-editor-field select {
   width: 100%;
   padding: 4px 6px;
   border: 1px solid var(--input-border);
@@ -272,5 +273,86 @@
 }
 
 .info-add-btn:hover {
+  background: var(--btn-hover);
+}
+
+.tag-input-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 3px 4px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  background: var(--input-bg);
+  position: relative;
+  cursor: text;
+}
+
+.tag-input-wrapper:focus-within {
+  border-color: lightseagreen;
+}
+
+.tag-input-pill {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: lightseagreen;
+  color: white;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.tag-input-pill button {
+  border: none;
+  background: none;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 1px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.tag-input-pill button:hover {
+  opacity: 1;
+}
+
+.tag-input-bare {
+  flex: 1;
+  min-width: 60px;
+  border: none !important;
+  background: transparent !important;
+  padding: 2px 2px !important;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+}
+
+.tag-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card-bg, var(--bg));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.tag-suggestion {
+  padding: 5px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.tag-suggestion:hover,
+.tag-suggestion.active {
   background: var(--btn-hover);
 }

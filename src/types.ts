@@ -48,6 +48,7 @@ export interface PuzzleData {
   clues: string[]
   difficulty?: string
   tags?: string[]
+  autoCrossRules?: AutoCrossRule[]
   images?: Record<string, string>
   createdAt: string
 }
@@ -60,8 +61,18 @@ export interface PuzzleIndexEntry {
   gridSize: { rows: number; cols: number }
   difficulty?: string
   tags?: string[]
+  autoCrossRules?: AutoCrossRule[]
 }
 
 export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon'
 
+export type AutoCrossRule = 'king' | 'rook' | 'bishop' | 'knight'
+
 export type InputMode = 'normal' | 'color' | 'fixed' | 'fixedColor' | 'note' | 'label' | 'cross' | 'border' | 'mark'
+
+/** Solution file: maps "row,col" to expected value/borders */
+export interface PuzzleSolution {
+  id: string
+  cells: Record<string, string>
+  borders?: Record<string, [number, number, number, number]>
+}

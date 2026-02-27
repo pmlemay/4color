@@ -128,12 +128,18 @@
   color: var(--text-muted);
 }
 
+.filter-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
 .tag-filter-bar {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 20px;
 }
 
 .tag-chip {
@@ -154,6 +160,11 @@
   background: lightseagreen;
   color: white;
   border-color: lightseagreen;
+}
+
+.tag-chip.difficulty.selected {
+  background: #e67e22;
+  border-color: #e67e22;
 }
 
 .tag-mode-toggle {

@@ -1,7 +1,8 @@
 import { useState, useCallback, useRef } from 'react'
-import { CellData, CellPosition, InputMode, LabelAlign, MarkShape } from '../types'
+import { CellData, CellPosition, InputMode, LabelAlign, MarkShape, AutoCrossRule } from '../types'
 import { createEmptyGrid } from '../utils/puzzleIO'
 import { applyBordersToSelection } from '../utils/borders'
+import { getAutoCrossTargets } from '../utils/autoCross'
 
 const MAX_NOTES = 16
 const MAX_UNDO = 500
@@ -50,6 +51,11 @@ export function useGrid(initialRows: number, initialCols: number) {
   const markDragAction = useRef<MarkShape | null>(null)
   const [activeColor, setActiveColor] = useState<string | null>(null)
   const [activeMark, setActiveMark] = useState<MarkShape | null>(null)
+  const autoCrossRulesRef = useRef<AutoCrossRule[]>([])
+
+  const setAutoCrossRules = useCallback((rules: AutoCrossRule[]) => {
+    autoCrossRulesRef.current = rules
+  }, [])
 
   const setInputMode = useCallback((mode: InputMode) => {
     setInputModeRaw(mode)
@@ -241,8 +247,22 @@ export function useGrid(initialRows: number, initialCols: number) {
         const allHaveValue = selection.every(
           pos => newGrid[pos.row][pos.col].value === value
         )
+        const newValue = allHaveValue ? null : value
         for (const pos of selection) {
-          newGrid[pos.row][pos.col].value = allHaveValue ? null : value
+          newGrid[pos.row][pos.col].value = newValue
+        }
+        // Auto-cross: when setting a value (not erasing), cross eligible cells
+        const rules = autoCrossRulesRef.current
+        if (newValue !== null && rules.length > 0) {
+          const rows = newGrid.length
+          const cols = newGrid[0].length
+          const targets = getAutoCrossTargets(selection, rules, rows, cols)
+          for (const t of targets) {
+            const cell = newGrid[t.row][t.col]
+            if (!cell.value && !cell.fixedValue && !cell.mark) {
+              cell.crossed = true
+            }
+          }
         }
         return newGrid
       })
@@ -502,6 +522,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     clearValues,
     applyBorders,
     resetGrid,
+    setAutoCrossRules,
     undo,
     redo,
   }
