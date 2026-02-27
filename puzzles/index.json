@@ -3,7 +3,7 @@
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
-    "author": "Ai & Caprazo",
+    "author": "Ai & PmLemay",
     "gridSize": {
       "rows": 6,
       "cols": 6
@@ -48,7 +48,7 @@
     "id": "starbattle-murdoku",
     "file": "starbattle-murdoku.json",
     "title": "StarBattle Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 8,
       "cols": 8
@@ -67,7 +67,7 @@
     "id": "knights-murdoku",
     "file": "knights-murdoku.json",
     "title": "Knights Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 9,
       "cols": 9
@@ -81,10 +81,25 @@
     ]
   },
   {
+    "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
+    "file": "nurikabe-112481-from-puzsq-logicpuzzle-app.json",
+    "title": "Nurikabe 112481 (from puzsq.logicpuzzle.app)",
+    "author": "土刃",
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "nurikabe"
+    ],
+    "forcedInputLayout": "nurikabe"
+  },
+  {
     "id": "nurikabe-murdoku",
     "file": "nurikabe-murdoku.json",
     "title": "Nurikabe Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 10,
       "cols": 10
@@ -102,7 +117,7 @@
     "id": "spiral-galaxy-murdoku",
     "file": "spiral-galaxy-murdoku.json",
     "title": "Spiral Galaxy Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 12,
       "cols": 12

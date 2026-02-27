@@ -1,7 +1,7 @@
 {
   "id": "nurikabe-murdoku",
   "title": "Nurikabe Murdoku",
-  "author": "Caprazo",
+  "author": "PmLemay",
   "rules": [
     "Only 1 person can be per row and per column.",
     "\"beside\" means orthogonally connected and in the same room",
