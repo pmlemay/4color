@@ -45,6 +45,25 @@
     ]
   },
   {
+    "id": "starbattle-murdoku",
+    "file": "starbattle-murdoku.json",
+    "title": "StarBattle Murdoku",
+    "author": "Caprazo",
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "star-battle",
+      "murdoku"
+    ],
+    "autoCrossRules": [
+      "king",
+      "rook"
+    ]
+  },
+  {
     "id": "knights-murdoku",
     "file": "knights-murdoku.json",
     "title": "Knights Murdoku",
