@@ -3,7 +3,7 @@
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
-    "author": "Ai & Caprazo",
+    "author": "Ai & PmLemay",
     "gridSize": {
       "rows": 6,
       "cols": 6
@@ -11,9 +11,6 @@
     "difficulty": "Easy",
     "tags": [
       "murdoku"
-    ],
-    "autoCrossRules": [
-      "rook"
     ]
   },
   {
@@ -48,7 +45,7 @@
     "id": "starbattle-murdoku",
     "file": "starbattle-murdoku.json",
     "title": "StarBattle Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 8,
       "cols": 8
@@ -57,17 +54,13 @@
     "tags": [
       "star-battle",
       "murdoku"
-    ],
-    "autoCrossRules": [
-      "king",
-      "rook"
     ]
   },
   {
     "id": "knights-murdoku",
     "file": "knights-murdoku.json",
     "title": "Knights Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 9,
       "cols": 9
@@ -75,16 +68,27 @@
     "difficulty": "Very hard",
     "tags": [
       "murdoku"
-    ],
-    "autoCrossRules": [
-      "rook"
+    ]
+  },
+  {
+    "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
+    "file": "nurikabe-112481-from-puzsq-logicpuzzle-app.json",
+    "title": "Nurikabe 112481 (from puzsq.logicpuzzle.app)",
+    "author": "土刃",
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "nurikabe"
     ]
   },
   {
     "id": "nurikabe-murdoku",
     "file": "nurikabe-murdoku.json",
     "title": "Nurikabe Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 10,
       "cols": 10
@@ -93,16 +97,13 @@
     "tags": [
       "murdoku",
       "nurikabe"
-    ],
-    "autoCrossRules": [
-      "rook"
     ]
   },
   {
     "id": "spiral-galaxy-murdoku",
     "file": "spiral-galaxy-murdoku.json",
     "title": "Spiral Galaxy Murdoku",
-    "author": "Caprazo",
+    "author": "PmLemay",
     "gridSize": {
       "rows": 12,
       "cols": 12

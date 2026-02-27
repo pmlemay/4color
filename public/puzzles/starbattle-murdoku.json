@@ -1,7 +1,7 @@
 {
   "id": "starbattle-murdoku",
   "title": "StarBattle Murdoku",
-  "author": "Caprazo",
+  "author": "PmLemay",
   "rules": [
     "1 person per row, 1 person per column",
     "Benches can be seated, statues cannot.",
@@ -659,7 +659,7 @@
         0
       ],
       "label": {
-        "text": "Amulatory",
+        "text": "Ambulatory",
         "align": "bottom"
       }
     },

@@ -46,6 +46,10 @@
   color: var(--text-muted);
 }
 
+.sidebar-spacer {
+  flex: 1;
+}
+
 .auth-btn-full {
   width: 100%;
   text-align: center;
@@ -108,6 +112,28 @@
   color: lightseagreen;
 }
 
+/* Top bar */
+.puzzle-list-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.discord-link {
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.discord-link:hover {
+  color: #5865F2;
+  background: var(--btn-hover);
+}
+
 /* Header */
 .puzzle-list-main h1 {
   text-align: center;
@@ -165,6 +191,22 @@
   text-align: center;
   color: var(--text-muted);
   margin-top: 40px;
+}
+
+/* Puzzle sections */
+.puzzle-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.puzzle-section-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
 }
 
 /* Puzzle cards */
@@ -325,6 +367,14 @@
   margin-left: 6px;
   color: lightseagreen;
   font-size: 16px;
+}
+
+.completion-time {
+  margin-left: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: normal;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Account modal */

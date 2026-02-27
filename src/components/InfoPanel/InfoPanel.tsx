@@ -1,6 +1,10 @@
-import { useState, type Dispatch, type SetStateAction } from 'react'
+import { useState, useEffect, type Dispatch, type SetStateAction } from 'react'
 import { Link } from 'react-router-dom'
 import './InfoPanel.css'
+
+function isTranslated(): boolean {
+  return /googtrans=\/en\/[^;]/.test(document.cookie)
+}
 
 interface InfoPanelProps {
   title?: string
@@ -10,6 +14,7 @@ interface InfoPanelProps {
   rulesList?: string[]
   cluesList?: string[]
   backLink?: boolean
+  headerRight?: React.ReactNode
   children?: React.ReactNode
   struckRuleWords?: Set<string>
   onStruckRuleWordsChange?: Dispatch<SetStateAction<Set<string>>>
@@ -17,12 +22,19 @@ interface InfoPanelProps {
   onStruckClueWordsChange?: Dispatch<SetStateAction<Set<string>>>
 }
 
-export function InfoPanel({ title, author, gridSize, difficulty, rulesList, cluesList, backLink = true, children, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
+export function InfoPanel({ title, author, gridSize, difficulty, rulesList, cluesList, backLink = true, headerRight, children, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
   // Internal state used when not controlled (e.g. editor mode)
   const [internalStruckRules, setInternalStruckRules] = useState<Set<string>>(new Set())
   const [internalStruckClues, setInternalStruckClues] = useState<Set<string>>(new Set())
   const [rulesOpen, setRulesOpen] = useState(true)
   const [cluesOpen, setCluesOpen] = useState(true)
+  const [translated, setTranslated] = useState(isTranslated)
+
+  useEffect(() => {
+    // Re-check translation state periodically (cookie changes after translate triggers)
+    const id = setInterval(() => setTranslated(isTranslated()), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   const struckRuleWords = controlledStruckRules ?? internalStruckRules
   const setStruckRuleWords = onStruckRuleWordsChange ?? setInternalStruckRules
@@ -70,8 +82,11 @@ export function InfoPanel({ title, author, gridSize, difficulty, rulesList, clue
 
   return (
     <div className="info-panel">
-      {backLink && (
-        <Link to="/" className="info-back-link">&larr; Puzzles</Link>
+      {(backLink || headerRight) && (
+        <div className="info-header-row">
+          {backLink && <Link to="/" className="info-back-link">&larr; Puzzles</Link>}
+          {headerRight && <div className="info-header-right">{headerRight}</div>}
+        </div>
       )}
 
       {title && (
@@ -94,8 +109,8 @@ export function InfoPanel({ title, author, gridSize, difficulty, rulesList, clue
           {rulesOpen && (
             <ul className="info-list">
               {rulesList.map((rule, i) => (
-                <li key={i} className="info-list-text info-list-bullet" onClick={() => toggleAllWords(rule, i, struckRuleWords, setStruckRuleWords)}>
-                  {renderStrikableText(rule, i, struckRuleWords, setStruckRuleWords)}
+                <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(rule, i, struckRuleWords, setStruckRuleWords)}>
+                  {translated ? rule : renderStrikableText(rule, i, struckRuleWords, setStruckRuleWords)}
                 </li>
               ))}
             </ul>
@@ -112,8 +127,8 @@ export function InfoPanel({ title, author, gridSize, difficulty, rulesList, clue
           {cluesOpen && (
             <ul className="info-list">
               {cluesList.map((clue, i) => (
-                <li key={i} className="info-list-text info-list-bullet" onClick={() => toggleAllWords(clue, i, struckClueWords, setStruckClueWords)}>
-                  {renderStrikableText(clue, i, struckClueWords, setStruckClueWords)}
+                <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(clue, i, struckClueWords, setStruckClueWords)}>
+                  {translated ? clue : renderStrikableText(clue, i, struckClueWords, setStruckClueWords)}
                 </li>
               ))}
             </ul>

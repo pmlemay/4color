@@ -3,22 +3,24 @@ import { InputMode, LabelAlign, MarkShape } from '../../types'
 import './Toolbar.css'
 
 const PLAYER_MODES: { mode: InputMode; label: string }[] = [
-  { mode: 'normal', label: 'Normal' },
+  { mode: 'normal', label: 'Normal (N)' },
   { mode: 'note', label: 'Note (Shift+Key)' },
-  { mode: 'color', label: 'Color' },
-  { mode: 'cross', label: 'X Cross' },
-  { mode: 'border', label: 'Border' },
-  { mode: 'mark', label: 'Marks' },
+  { mode: 'color', label: 'Color (C)' },
+  { mode: 'cross', label: 'X Cross (X)' },
+  { mode: 'border', label: 'Border (B)' },
+  { mode: 'mark', label: 'Marks (M)' },
 ]
 
-const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon']
+const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'dot']
 const MARK_LABELS: Record<MarkShape, string> = {
   circle: '\u25CB', square: '\u25A1', triangle: '\u25B3',
   diamond: '\u25C7', pentagon: '\u2B20', hexagon: '\u2B21',
+  dot: '\u25CF',
 }
 
 const EDITOR_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'fixed', label: 'Fixed Normal' },
+  { mode: 'fixedDouble', label: 'Fixed 2-Digit' },
   { mode: 'fixedColor', label: 'Fixed Color' },
   { mode: 'label', label: 'Label' },
 ]
@@ -49,6 +51,7 @@ interface ToolbarProps {
   onMarkSelect?: (shape: MarkShape) => void
   onMarkErase?: () => void
   onSubmit?: () => void
+  forcedInputLayout?: string
 }
 
 export function Toolbar({
@@ -77,6 +80,7 @@ export function Toolbar({
   onMarkSelect,
   onMarkErase,
   onSubmit,
+  forcedInputLayout,
 }: ToolbarProps) {
   const showPalette = inputMode === 'color' || inputMode === 'fixedColor'
   const showLabel = inputMode === 'label'
@@ -88,7 +92,7 @@ export function Toolbar({
     <button
       key={m.mode}
       className={`tb-btn ${inputMode === m.mode ? 'selected' : ''}`}
-      onClick={() => onInputModeChange(m.mode)}
+      onClick={() => onInputModeChange(inputMode === m.mode ? 'normal' : m.mode)}
     >
       {m.label}
     </button>
@@ -96,10 +100,12 @@ export function Toolbar({
 
   return (
     <div className="toolbar">
+      {!forcedInputLayout && (
       <div className="tb-section">
         <div className="tb-section-title">Input Mode</div>
         {PLAYER_MODES.map(renderModeBtn)}
       </div>
+      )}
 
       <div className="tb-section">
         <div className="tb-section-title">Actions</div>
@@ -108,7 +114,7 @@ export function Toolbar({
         <button className="tb-btn" onClick={onRedo} title="Ctrl+Y">Redo (Ctrl+Y)</button>
       </div>
 
-      {showPalette && (
+      {showPalette && !forcedInputLayout && (
         <div className="tb-section">
           <div className="tb-section-title">Colors</div>
           <div className="tb-palette">
@@ -151,7 +157,7 @@ export function Toolbar({
         </div>
       )}
 
-      {inputMode === 'mark' && (
+      {inputMode === 'mark' && !forcedInputLayout && (
         <div className="tb-section">
           <div className="tb-section-title">Shape</div>
           <div className="tb-mark-palette">
@@ -259,15 +265,17 @@ export function Toolbar({
       )}
 
       <div className="tb-hint">
-        {inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
-        {inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
         {inputMode === 'fixed' && 'Type any key for fixed clue.'}
+        {inputMode === 'fixedDouble' && 'Type two digits for a 2-digit fixed clue.'}
         {inputMode === 'fixedColor' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
         {inputMode === 'label' && 'Enter text, pick alignment, Apply.'}
-        {inputMode === 'note' && 'Type to add/remove notes (max 16).'}
-        {inputMode === 'cross' && 'Click/drag to toggle X marks.'}
-        {inputMode === 'border' && 'Drag to create/remove borders.'}
-        {inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
+        {forcedInputLayout && inputMode !== 'fixed' && inputMode !== 'fixedDouble' && inputMode !== 'fixedColor' && inputMode !== 'label' && 'Left-click: paint black. Right-click: toggle dot.'}
+        {!forcedInputLayout && inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
+        {!forcedInputLayout && inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
+        {!forcedInputLayout && inputMode === 'note' && 'Type to add/remove notes (max 16).'}
+        {!forcedInputLayout && inputMode === 'cross' && 'Click/drag to toggle X marks.'}
+        {!forcedInputLayout && inputMode === 'border' && 'Drag to create/remove borders.'}
+        {!forcedInputLayout && inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
       </div>
 
       <div className="tb-spacer" />

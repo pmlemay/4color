@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { InputMode, MarkShape } from '../types'
 
 interface UseKeyboardOptions {
@@ -16,6 +16,8 @@ interface UseKeyboardOptions {
   onActiveColorChange?: (color: string) => void
   onActiveMarkChange?: (mark: MarkShape | null) => void
   toggleMark?: (shape: MarkShape) => void
+  hasSelection?: boolean
+  onInputModeChange?: (mode: InputMode) => void
 }
 
 // Map e.code to the unshifted key value (e.g. Shift+1 gives code "Digit1" → "1")
@@ -34,6 +36,15 @@ function getKeyValue(e: KeyboardEvent): string | null {
 }
 
 export function useKeyboard(options: UseKeyboardOptions) {
+  const doubleDigitBuffer = useRef<string | null>(null)
+
+  // Clear buffer when leaving fixedDouble mode
+  useEffect(() => {
+    if (options.inputMode !== 'fixedDouble') {
+      doubleDigitBuffer.current = null
+    }
+  }, [options.inputMode])
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       // Don't intercept when typing in input fields
@@ -67,6 +78,17 @@ export function useKeyboard(options: UseKeyboardOptions) {
         return
       }
 
+      // Mode switching hotkeys when no cells are selected
+      if (!e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && options.hasSelection === false && options.onInputModeChange) {
+        const MODE_KEYS: Record<string, InputMode> = { N: 'normal', C: 'color', X: 'cross', B: 'border', M: 'mark' }
+        const upper = e.key.toUpperCase()
+        if (upper in MODE_KEYS) {
+          e.preventDefault()
+          options.onInputModeChange(MODE_KEYS[upper])
+          return
+        }
+      }
+
       const value = getKeyValue(e)
       if (!value) return
       e.preventDefault()
@@ -97,6 +119,16 @@ export function useKeyboard(options: UseKeyboardOptions) {
         case 'fixed':
           options.applyFixedValue(value)
           break
+        case 'fixedDouble':
+          if (value >= '0' && value <= '9') {
+            if (doubleDigitBuffer.current === null) {
+              doubleDigitBuffer.current = value
+            } else {
+              options.applyFixedValue(doubleDigitBuffer.current + value)
+              doubleDigitBuffer.current = null
+            }
+          }
+          break
         case 'fixedColor':
           if (value === '0') {
             options.onActiveColorChange?.(value)
@@ -110,7 +142,7 @@ export function useKeyboard(options: UseKeyboardOptions) {
           options.addNote(value)
           break
         case 'mark': {
-          const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon']
+          const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'dot']
           const idx = parseInt(value) - 1
           if (idx >= 0 && idx < SHAPES.length) {
             const shape = SHAPES[idx]
@@ -124,5 +156,5 @@ export function useKeyboard(options: UseKeyboardOptions) {
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.redo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark])
+  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.redo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark, options.hasSelection, options.onInputModeChange])
 }

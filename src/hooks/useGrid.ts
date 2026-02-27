@@ -52,9 +52,14 @@ export function useGrid(initialRows: number, initialCols: number) {
   const [activeColor, setActiveColor] = useState<string | null>(null)
   const [activeMark, setActiveMark] = useState<MarkShape | null>(null)
   const autoCrossRulesRef = useRef<AutoCrossRule[]>([])
+  const forcedInputLayoutRef = useRef('')
 
   const setAutoCrossRules = useCallback((rules: AutoCrossRule[]) => {
     autoCrossRulesRef.current = rules
+  }, [])
+
+  const setForcedInputLayout = useCallback((layout: string) => {
+    forcedInputLayoutRef.current = layout
   }, [])
 
   const setInputMode = useCallback((mode: InputMode) => {
@@ -119,11 +124,15 @@ export function useGrid(initialRows: number, initialCols: number) {
           }
         }
         const targetValue = colorDragAction.current
-        const needsUpdate = sel.some(pos => prev[pos.row][pos.col][field] !== targetValue)
+        const isNurikabe = forcedInputLayoutRef.current === 'nurikabe'
+        const needsUpdate = sel.some(pos => prev[pos.row][pos.col][field] !== targetValue || (isNurikabe && targetValue && prev[pos.row][pos.col].mark === 'dot'))
         if (!needsUpdate) return prev
         const newGrid = cloneGrid(prev)
         for (const pos of sel) {
           newGrid[pos.row][pos.col][field] = targetValue
+          if (isNurikabe && targetValue) {
+            newGrid[pos.row][pos.col].mark = null
+          }
         }
         return newGrid
       })
@@ -523,6 +532,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     applyBorders,
     resetGrid,
     setAutoCrossRules,
+    setForcedInputLayout,
     undo,
     redo,
   }

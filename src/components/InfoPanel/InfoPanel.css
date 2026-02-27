@@ -6,14 +6,30 @@
   overflow-y: auto;
 }
 
+.info-header-row {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+}
+
 .info-back-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
   color: lightseagreen;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
+  padding: 6px 0;
 }
 
 .info-back-link:hover {
   text-decoration: underline;
+}
+
+.info-header-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .info-section {
@@ -109,6 +125,19 @@
 
 .info-editor-row .info-editor-field input {
   width: 100%;
+}
+
+.info-timer {
+  text-align: center;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  padding: 4px 0;
+  font-family: monospace;
+}
+
+.info-timer.completed {
+  color: lightseagreen;
 }
 
 .info-btn {

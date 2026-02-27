@@ -49,6 +49,7 @@ export interface PuzzleData {
   difficulty?: string
   tags?: string[]
   autoCrossRules?: AutoCrossRule[]
+  forcedInputLayout?: string
   images?: Record<string, string>
   createdAt: string
 }
@@ -62,17 +63,19 @@ export interface PuzzleIndexEntry {
   difficulty?: string
   tags?: string[]
   autoCrossRules?: AutoCrossRule[]
+  forcedInputLayout?: string
 }
 
-export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon'
+export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'dot'
 
 export type AutoCrossRule = 'king' | 'rook' | 'bishop' | 'knight'
 
-export type InputMode = 'normal' | 'color' | 'fixed' | 'fixedColor' | 'note' | 'label' | 'cross' | 'border' | 'mark'
+export type InputMode = 'normal' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'mark'
 
 /** Solution file: maps "row,col" to expected value/borders */
 export interface PuzzleSolution {
   id: string
   cells: Record<string, string>
   borders?: Record<string, [number, number, number, number]>
+  colors?: Record<string, string>
 }

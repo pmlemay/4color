@@ -14,9 +14,11 @@ interface GridProps {
   clearSelection: () => void
   commitSelection: (sel: CellPosition[]) => void
   onDragChange?: (sel: CellPosition[]) => void
+  onRightClickCell?: (pos: CellPosition) => void
+  forcedInputLayout?: string
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onRightClickCell, forcedInputLayout }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const [, setRenderTick] = useState(0)
   const isColorDrag = (inputMode === 'color' || inputMode === 'fixedColor') && activeColor !== null
@@ -40,6 +42,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       beingSelected.current = []
       commitSelection(sel)
     },
+    onRightClickCell,
   })
 
   useEffect(() => {
@@ -60,6 +63,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
         onMouseMove={dragSelect.handleCellMouseMove}
         onTouchStart={dragSelect.handleTouchStart}
         onTouchMove={dragSelect.handleTouchMove}
+        onContextMenu={forcedInputLayout ? (e) => e.preventDefault() : undefined}
       >
         <tbody>
           {grid.map((row, ri) => (

@@ -1,7 +1,7 @@
 {
   "id": "knights-murdoku",
   "title": "Knights Murdoku",
-  "author": "Caprazo",
+  "author": "PmLemay",
   "rules": [
     "- Only 1 person can be per row and per column.",
     "- \"Besides\" means same room and orthogonally adjacent",

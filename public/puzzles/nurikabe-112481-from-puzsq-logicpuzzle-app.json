@@ -1,0 +1,61 @@
+{
+  "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
+  "title": "Nurikabe 112481 (from puzsq.logicpuzzle.app)",
+  "author": "土刃",
+  "rules": [
+    "Each island contains exactly one clue.",
+    "The number of squares in each island equals the value of the clue.",
+    "All islands are isolated from each other horizontally and vertically.",
+    "There are no shaded areas of 2x2 or larger.",
+    "When completed, all walls form a continuous path."
+  ],
+  "clues": [],
+  "difficulty": "Medium",
+  "tags": [
+    "nurikabe"
+  ],
+  "autoCrossRules": [],
+  "forcedInputLayout": "nurikabe",
+  "gridSize": {
+    "rows": 10,
+    "cols": 10
+  },
+  "cells": [
+    {
+      "row": 2,
+      "col": 0,
+      "fixedValue": "1"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedValue": "1"
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "fixedValue": "4"
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "fixedValue": "32"
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "fixedValue": "9"
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "fixedValue": "2"
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "fixedValue": "4"
+    }
+  ],
+  "createdAt": "2026-02-27"
+}

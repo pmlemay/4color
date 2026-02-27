@@ -14,6 +14,7 @@ interface PlayerSaveData {
   cells: SavedCell[]
   struckRules: string[]
   struckClues: string[]
+  elapsedMs?: number
 }
 
 const STORAGE_PREFIX = '4color:play:'
@@ -23,6 +24,7 @@ export function savePlayerData(
   grid: CellData[][],
   struckRules: Set<string>,
   struckClues: Set<string>,
+  elapsedMs?: number,
 ) {
   const cells: SavedCell[] = []
   for (let r = 0; r < grid.length; r++) {
@@ -43,6 +45,7 @@ export function savePlayerData(
     cells,
     struckRules: Array.from(struckRules),
     struckClues: Array.from(struckClues),
+    elapsedMs,
   }
   try {
     localStorage.setItem(STORAGE_PREFIX + puzzleId, JSON.stringify(data))

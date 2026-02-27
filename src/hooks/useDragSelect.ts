@@ -5,11 +5,14 @@ interface UseDragSelectOptions {
   onSelectionStart: () => void
   onSelectionChange: (selection: CellPosition[]) => void
   onSelectionEnd: (selection: CellPosition[]) => void
+  onRightClickCell?: (pos: CellPosition) => void
 }
 
 export function useDragSelect(options: UseDragSelectOptions) {
   const dragging = useRef(false)
+  const rightDragging = useRef(false)
   const currentSelection = useRef<CellPosition[]>([])
+  const rightSelection = useRef<CellPosition[]>([])
   const ctrlHeld = useRef(false)
 
   const getCellFromEvent = useCallback((e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent): CellPosition | null => {
@@ -34,9 +37,21 @@ export function useDragSelect(options: UseDragSelectOptions) {
   }, [])
 
   const handleCellMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button !== 0) return
     // Don't start drag if clicking on a control button
     if ((e.target as HTMLElement).closest('.toolbar')) return
+
+    if (e.button === 2 && options.onRightClickCell) {
+      e.preventDefault()
+      const pos = getCellFromEvent(e)
+      if (pos) {
+        rightDragging.current = true
+        rightSelection.current = [pos]
+        options.onRightClickCell(pos)
+      }
+      return
+    }
+
+    if (e.button !== 0) return
 
     e.preventDefault()
     ctrlHeld.current = e.ctrlKey
@@ -54,6 +69,15 @@ export function useDragSelect(options: UseDragSelectOptions) {
   }, [getCellFromEvent, options])
 
   const handleCellMouseMove = useCallback((e: React.MouseEvent) => {
+    if (rightDragging.current) {
+      e.preventDefault()
+      const pos = getCellFromEvent(e)
+      if (!pos) return
+      if (rightSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
+      rightSelection.current = [...rightSelection.current, pos]
+      options.onRightClickCell?.(pos)
+      return
+    }
     if (!dragging.current) return
     e.preventDefault()
     const pos = getCellFromEvent(e)
@@ -64,6 +88,11 @@ export function useDragSelect(options: UseDragSelectOptions) {
   }, [getCellFromEvent, options])
 
   const handleMouseUp = useCallback(() => {
+    if (rightDragging.current) {
+      rightDragging.current = false
+      rightSelection.current = []
+      return
+    }
     if (dragging.current) {
       dragging.current = false
       options.onSelectionEnd(currentSelection.current)

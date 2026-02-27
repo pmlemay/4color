@@ -9,8 +9,9 @@ import { Toolbar } from '../components/Toolbar/Toolbar'
 import { InfoPanel } from '../components/InfoPanel/InfoPanel'
 import { Modal } from '../components/Modal/Modal'
 import { ResizableLeft } from '../components/ResizableLeft'
+import { LanguagePicker } from '../components/LanguagePicker'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution } from '../utils/puzzleIO'
-import { PuzzleData, PuzzleSolution, CellData, AutoCrossRule } from '../types'
+import { PuzzleData, PuzzleSolution, CellData, CellPosition, AutoCrossRule } from '../types'
 
 export function EditorPage() {
   const { puzzleId } = useParams()
@@ -35,6 +36,7 @@ export function EditorPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [autoCrossRules, setAutoCrossRulesState] = useState<AutoCrossRule[]>([])
+  const [forcedInputLayout, setForcedInputLayout] = useState('')
   const [tagInput, setTagInput] = useState('')
   const [tagSuggestionIndex, setTagSuggestionIndex] = useState(-1)
   const tagInputRef = useRef<HTMLInputElement>(null)
@@ -67,6 +69,7 @@ export function EditorPage() {
           setDifficulty(puzzle.difficulty || '')
           setTags(puzzle.tags || [])
           setAutoCrossRulesState(puzzle.autoCrossRules || [])
+          setForcedInputLayout(puzzle.forcedInputLayout || '')
           setRules(puzzle.rules || [])
           setClues(puzzle.clues || [])
           gridState.setGrid(puzzleToGrid(puzzle))
@@ -88,6 +91,14 @@ export function EditorPage() {
     gridState.setAutoCrossRules(autoCrossRules)
   }, [autoCrossRules])
 
+  useEffect(() => {
+    gridState.setForcedInputLayout(forcedInputLayout)
+    if (forcedInputLayout === 'nurikabe') {
+      gridState.setInputMode('color')
+      gridState.setActiveColor('9')
+    }
+  }, [forcedInputLayout])
+
   useKeyboard({
     inputMode: gridState.inputMode,
     applyValue: gridState.applyValue,
@@ -102,6 +113,8 @@ export function EditorPage() {
     onActiveColorChange: gridState.setActiveColor,
     onActiveMarkChange: gridState.setActiveMark,
     toggleMark: gridState.toggleMark,
+    hasSelection: gridState.selection.length > 0,
+    onInputModeChange: gridState.setInputMode,
     onEnter: () => {
       if (selectedImageIndex !== null && imageLibrary[selectedImageIndex]) {
         gridState.applyImage(imageLibrary[selectedImageIndex])
@@ -152,7 +165,7 @@ export function EditorPage() {
   const handleSave = async () => {
     if (!difficulty) { await showAlert('Please select a difficulty before saving.'); return }
     const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', author, rules, clues, difficulty, tags, autoCrossRules })
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', author, rules, clues, difficulty, tags, autoCrossRules, forcedInputLayout: forcedInputLayout || undefined })
 
     if (puzzleId) {
       puzzle.id = puzzleId
@@ -227,11 +240,16 @@ export function EditorPage() {
         borders: [...cell.fixedBorders] as [number, number, number, number],
       })))
     )
-    gridState.setInputMode('normal')
+    if (forcedInputLayout === 'nurikabe') {
+      gridState.setInputMode('color')
+      gridState.setActiveColor('9')
+    } else {
+      gridState.setInputMode('normal')
+    }
     // Load existing solution if any (only when puzzle is on server)
     if (puzzleId) {
       const existing = await fetchPuzzleSolution(puzzleId)
-      if (existing && (Object.keys(existing.cells).length > 0 || Object.keys(existing.borders || {}).length > 0)) {
+      if (existing && (Object.keys(existing.cells).length > 0 || Object.keys(existing.borders || {}).length > 0 || Object.keys(existing.colors || {}).length > 0)) {
         gridState.setGrid(prev => {
           const next = prev.map(row => row.map(cell => ({ ...cell })))
           for (const [key, val] of Object.entries(existing.cells)) {
@@ -242,6 +260,12 @@ export function EditorPage() {
             for (const [key, b] of Object.entries(existing.borders)) {
               const [r, c] = key.split(',').map(Number)
               if (next[r]?.[c]) next[r][c].borders = b
+            }
+          }
+          if (existing.colors) {
+            for (const [key, col] of Object.entries(existing.colors)) {
+              const [r, c] = key.split(',').map(Number)
+              if (next[r]?.[c]) next[r][c].color = col
             }
           }
           return next
@@ -271,6 +295,7 @@ export function EditorPage() {
     }
     const cells: Record<string, string> = {}
     const borders: Record<string, [number, number, number, number]> = {}
+    const colors: Record<string, string> = {}
     for (let r = 0; r < gridState.grid.length; r++) {
       for (let c = 0; c < gridState.grid[r].length; c++) {
         const cell = gridState.grid[r][c]
@@ -280,13 +305,15 @@ export function EditorPage() {
         if (b[0] !== fb[0] || b[1] !== fb[1] || b[2] !== fb[2] || b[3] !== fb[3]) {
           borders[`${r},${c}`] = b
         }
+        if (cell.color && !cell.fixedColor) colors[`${r},${c}`] = cell.color
       }
     }
-    if (Object.keys(cells).length === 0 && Object.keys(borders).length === 0) {
-      await showAlert('No solution values or borders entered.'); return
+    if (Object.keys(cells).length === 0 && Object.keys(borders).length === 0 && Object.keys(colors).length === 0) {
+      await showAlert('No solution values, borders, or colors entered.'); return
     }
     const solution: PuzzleSolution = { id: solutionId, cells }
     if (Object.keys(borders).length > 0) solution.borders = borders
+    if (Object.keys(colors).length > 0) solution.colors = colors
     if (import.meta.env.DEV) {
       const result = await saveSolutionToServer(solution)
       if (result.ok) {
@@ -382,6 +409,17 @@ export function EditorPage() {
     }
   }, [gridState])
 
+  const handleRightClickCell = useCallback((pos: CellPosition) => {
+    if (forcedInputLayout !== 'nurikabe') return
+    gridState.setGrid(prev => {
+      const next = prev.map(row => row.map(cell => ({ ...cell })))
+      const cell = next[pos.row][pos.col]
+      cell.mark = cell.mark === 'dot' ? null : 'dot'
+      if (cell.mark === 'dot') cell.color = null
+      return next
+    })
+  }, [forcedInputLayout, gridState])
+
   const handleImageApply = () => {
     if (selectedImageIndex === null || !imageLibrary[selectedImageIndex]) return
     gridState.applyImage(imageLibrary[selectedImageIndex])
@@ -402,6 +440,7 @@ export function EditorPage() {
         setDifficulty(puzzle.difficulty || '')
         setTags(puzzle.tags || [])
         setAutoCrossRulesState(puzzle.autoCrossRules || [])
+        setForcedInputLayout(puzzle.forcedInputLayout || '')
         setRules(puzzle.rules || [])
         setClues(puzzle.clues || [])
         gridState.setGrid(puzzleToGrid(puzzle))
@@ -423,7 +462,7 @@ export function EditorPage() {
   return (
     <div className="page-layout">
       <ResizableLeft>
-        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink>
+        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink headerRight={<LanguagePicker />}>
           {solutionMode ? (<>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>
               Place the correct values for each cell. Only normal inputs (values) and borders will be saved as the solution.
@@ -513,6 +552,13 @@ export function EditorPage() {
                   </label>
                 ))}
               </div>
+            </div>
+            <div className="info-editor-field">
+              <label>Forced Input Layout</label>
+              <select value={forcedInputLayout} onChange={e => setForcedInputLayout(e.target.value)}>
+                <option value="">— None —</option>
+                <option value="nurikabe">Nurikabe</option>
+              </select>
             </div>
             <div className="info-editor-row">
               <div className="info-editor-field">
@@ -666,6 +712,8 @@ export function EditorPage() {
           clearSelection={gridState.clearSelection}
           commitSelection={gridState.commitSelection}
           onDragChange={gridState.onDragChange}
+          onRightClickCell={forcedInputLayout ? handleRightClickCell : undefined}
+          forcedInputLayout={forcedInputLayout || undefined}
         />
       </main>
 
@@ -673,7 +721,12 @@ export function EditorPage() {
         <Toolbar
           inputMode={gridState.inputMode}
           onInputModeChange={(mode) => {
-            gridState.setInputMode(mode)
+            if (mode === 'normal' && forcedInputLayout === 'nurikabe') {
+              gridState.setInputMode('color')
+              gridState.setActiveColor('9')
+            } else {
+              gridState.setInputMode(mode)
+            }
             if (mode !== 'normal') setSelectedImageIndex(null)
           }}
           onColorSelect={c => {
@@ -701,6 +754,7 @@ export function EditorPage() {
           onImageApply={handleImageApply}
           onImageRemove={gridState.removeImage}
           onImageImport={() => imageInputRef.current?.click()}
+          forcedInputLayout={forcedInputLayout || undefined}
         />
       </aside>
 

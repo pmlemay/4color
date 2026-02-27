@@ -5,16 +5,18 @@ import { fetchPuzzleIndex } from '../../utils/puzzleIO'
 import { useTheme } from '../../hooks/useTheme'
 import { useAuth } from '../../contexts/AuthContext'
 import { useCompletions } from '../../hooks/useCompletions'
+import { formatTime } from '../../utils/formatTime'
 import { useLeaderboard } from '../../hooks/useLeaderboard'
 import { useModal } from '../../hooks/useModal'
 import { Modal } from '../Modal/Modal'
+import { LanguagePicker } from '../LanguagePicker'
 import './PuzzleList.css'
 
 export function PuzzleList() {
   const debug = new URLSearchParams(window.location.hash.split('?')[1] || '').get('debug') === 'true'
   const { theme, toggle: toggleTheme } = useTheme()
   const { user, signIn, signOut } = useAuth()
-  const { completedPuzzleIds, displayName, setDisplayName } = useCompletions()
+  const { completedPuzzleIds, completionTimes, displayName, setDisplayName } = useCompletions()
   const leaderboard = useLeaderboard(10)
   const { modalProps, showConfirm } = useModal()
   const [showAccount, setShowAccount] = useState(false)
@@ -72,6 +74,27 @@ export function PuzzleList() {
     return result
   }, [puzzles, selectedTags, tagMode, selectedDifficulties, hideCompleted, completedPuzzleIds])
 
+  const groupedPuzzles = useMemo(() => {
+    const order = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard']
+    const groups: { difficulty: string; puzzles: typeof filteredPuzzles }[] = []
+    const byDiff = new Map<string, typeof filteredPuzzles>()
+    for (const p of filteredPuzzles) {
+      const d = p.difficulty || 'Unrated'
+      if (!byDiff.has(d)) byDiff.set(d, [])
+      byDiff.get(d)!.push(p)
+    }
+    for (const d of order) {
+      if (byDiff.has(d)) {
+        groups.push({ difficulty: d, puzzles: byDiff.get(d)! })
+        byDiff.delete(d)
+      }
+    }
+    for (const [d, puzzles] of byDiff) {
+      groups.push({ difficulty: d, puzzles })
+    }
+    return groups
+  }, [filteredPuzzles])
+
   const toggleTag = (tag: string) => {
     setSelectedTags(prev => {
       const next = new Set(prev)
@@ -95,7 +118,7 @@ export function PuzzleList() {
       <aside className="puzzle-list-sidebar">
         <div className="sidebar-section">
           {user ? (
-            <button className="auth-btn auth-btn-full" onClick={() => { setEditingName(displayName); setShowAccount(true) }}>
+            <button className="auth-btn auth-btn-full notranslate" onClick={() => { setEditingName(displayName); setShowAccount(true) }}>
               {displayName || user.displayName || 'User'}
             </button>
           ) : (
@@ -113,21 +136,32 @@ export function PuzzleList() {
               {leaderboard.map((entry, i) => (
                 <li key={entry.uid} className={`leaderboard-entry${user && entry.uid === user.uid ? ' leaderboard-self' : ''}`}>
                   <span className="leaderboard-rank">{i + 1}.</span>
-                  <span className="leaderboard-name">{entry.displayName}</span>
+                  <span className="leaderboard-name notranslate">{entry.displayName}</span>
                   <span className="leaderboard-count">{entry.count}</span>
                 </li>
               ))}
             </ol>
           )}
         </div>
+        <div className="sidebar-spacer" />
       </aside>
 
       <div className="puzzle-list-main">
-        <div className="puzzle-list-header">
-          <h1>4Color Puzzles</h1>
+        <div className="puzzle-list-topbar">
+          <span
+            className="discord-link notranslate"
+            title="Click to copy Discord username"
+            onClick={() => { navigator.clipboard.writeText('pmlemay'); alert('Copied pmlemay to clipboard!') }}
+          >
+            Contact me on Discord : pmlemay
+          </span>
+          <LanguagePicker />
           <button className="puzzle-list-theme-btn" onClick={toggleTheme} title="Toggle theme">
             {theme === 'light' ? '\u263E' : '\u2600'}
           </button>
+        </div>
+        <div className="puzzle-list-header">
+          <h1>4Color Puzzles</h1>
         </div>
         <div className="puzzle-list-actions">
           <Link to="/edit" className="new-puzzle-btn">Create New Puzzle</Link>
@@ -187,22 +221,28 @@ export function PuzzleList() {
             No puzzles yet. <Link to="/edit">Create one</Link> to get started!
           </p>
         ) : (
-          <div className="puzzle-cards">
-            {filteredPuzzles.map(p => (
-              <div key={p.id} className="puzzle-card-row">
-                <Link to={`/play/${p.id}`} className={`puzzle-card${completedPuzzleIds.has(p.id) ? ' puzzle-completed' : ''}`}>
-                  <h3>{p.title}{completedPuzzleIds.has(p.id) && <span className="completed-badge" title="Completed">&#10003;</span>}</h3>
-                  {p.difficulty && <p className="puzzle-difficulty">{p.difficulty}</p>}
-                  <p className="puzzle-meta">
-                    by {p.author} &middot; {p.gridSize.rows}&times;{p.gridSize.cols}
-                  </p>
-                  {p.tags && p.tags.length > 0 && (
-                    <div className="puzzle-tags">
-                      {p.tags.map(t => <span key={t} className="puzzle-tag">{t}</span>)}
+          <div className="puzzle-sections">
+            {groupedPuzzles.map(group => (
+              <div key={group.difficulty} className="puzzle-section">
+                <h2 className="puzzle-section-title">{group.difficulty}</h2>
+                <div className="puzzle-cards">
+                  {group.puzzles.map(p => (
+                    <div key={p.id} className="puzzle-card-row">
+                      <Link to={`/play/${p.id}`} className={`puzzle-card${completedPuzzleIds.has(p.id) ? ' puzzle-completed' : ''}`}>
+                        <h3>{p.title}{completedPuzzleIds.has(p.id) && <span className="completed-badge" title="Completed">&#10003;</span>}{completionTimes.has(p.id) && <span className="completion-time">{formatTime(completionTimes.get(p.id)!)}</span>}</h3>
+                        <p className="puzzle-meta">
+                          by {p.author} &middot; {p.gridSize.rows}&times;{p.gridSize.cols}
+                        </p>
+                        {p.tags && p.tags.length > 0 && (
+                          <div className="puzzle-tags">
+                            {p.tags.map(t => <span key={t} className="puzzle-tag">{t}</span>)}
+                          </div>
+                        )}
+                      </Link>
+                      {debug && <Link to={`/edit/${p.id}`} className="puzzle-edit-btn" title="Edit puzzle">&#9998;</Link>}
                     </div>
-                  )}
-                </Link>
-                {debug && <Link to={`/edit/${p.id}`} className="puzzle-edit-btn" title="Edit puzzle">&#9998;</Link>}
+                  ))}
+                </div>
               </div>
             ))}
           </div>

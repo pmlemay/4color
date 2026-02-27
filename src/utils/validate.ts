@@ -104,7 +104,7 @@ export function validate4Color(grid: CellData[][]): { valid: boolean; error?: st
   return { valid: true }
 }
 
-export function validateMurdoku(grid: CellData[][], solution: PuzzleSolution): { valid: boolean; error?: string } {
+export function validateSolution(grid: CellData[][], solution: PuzzleSolution): { valid: boolean; error?: string } {
   const total = Object.keys(solution.cells).length
 
   // Count all normal inputs on the grid (regardless of position/correctness)
@@ -129,8 +129,23 @@ export function validateMurdoku(grid: CellData[][], solution: PuzzleSolution): {
     }
   }
 
-  if (filled !== total || borderFilled !== borderTotal) {
-    return { valid: false, error: `Not ready: ${filled}/${total} values, ${borderFilled}/${borderTotal} borders.` }
+  // Count expected solution colors
+  const colorTotal = Object.keys(solution.colors || {}).length
+  let colorFilled = 0
+  if (colorTotal > 0) {
+    for (const [key] of Object.entries(solution.colors!)) {
+      const [r, c] = key.split(',').map(Number)
+      const cell = grid[r]?.[c]
+      if (cell?.color || cell?.fixedColor) colorFilled++
+    }
+  }
+
+  if (filled !== total || borderFilled !== borderTotal || colorFilled !== colorTotal) {
+    const parts: string[] = []
+    if (total > 0) parts.push(`${filled}/${total} values`)
+    if (borderTotal > 0) parts.push(`${borderFilled}/${borderTotal} borders`)
+    if (colorTotal > 0) parts.push(`${colorFilled}/${colorTotal} colors`)
+    return { valid: false, error: `Not ready: ${parts.join(', ')}.` }
   }
 
   // Everything filled — now validate correctness
@@ -148,6 +163,15 @@ export function validateMurdoku(grid: CellData[][], solution: PuzzleSolution): {
       const [r, c] = key.split(',').map(Number)
       const b = grid[r]?.[c]?.borders
       if (!b || b[0] !== expected[0] || b[1] !== expected[1] || b[2] !== expected[2] || b[3] !== expected[3]) wrong++
+    }
+  }
+
+  if (solution.colors) {
+    for (const [key, expected] of Object.entries(solution.colors)) {
+      const [r, c] = key.split(',').map(Number)
+      const cell = grid[r]?.[c]
+      const actual = cell?.color || cell?.fixedColor || null
+      if (actual !== expected) wrong++
     }
   }
 
