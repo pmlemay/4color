@@ -1,19 +1,5 @@
 [
   {
-    "id": "sample-4-color-puzzle",
-    "file": "4color#1.json",
-    "title": "4-Color #1",
-    "author": "Ai",
-    "gridSize": {
-      "rows": 6,
-      "cols": 6
-    },
-    "difficulty": "Easy",
-    "tags": [
-      "4color"
-    ]
-  },
-  {
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
@@ -31,8 +17,22 @@
     ]
   },
   {
+    "id": "sample-4-color-puzzle",
+    "file": "sample-4-color-puzzle.json",
+    "title": "4-Color #1",
+    "author": "Ai",
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "4color"
+    ]
+  },
+  {
     "id": "hard-4color",
-    "file": "4color#2.json",
+    "file": "hard-4color.json",
     "title": "4-Color #2",
     "author": "Ai",
     "gridSize": {
