@@ -1,5 +1,19 @@
 [
   {
+    "id": "sample-4-color-puzzle",
+    "file": "4color#1.json",
+    "title": "4-Color #1",
+    "author": "Ai",
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "4color"
+    ]
+  },
+  {
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
@@ -11,18 +25,21 @@
     "difficulty": "Easy",
     "tags": [
       "murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
     ]
   },
   {
-    "id": "sample-4-color-puzzle",
-    "file": "sample-4color.json",
-    "title": "4-Color #1",
+    "id": "hard-4color",
+    "file": "4color#2.json",
+    "title": "4-Color #2",
     "author": "Ai",
     "gridSize": {
-      "rows": 6,
-      "cols": 6
+      "rows": 8,
+      "cols": 8
     },
-    "difficulty": "Easy",
+    "difficulty": "Medium",
     "tags": [
       "4color"
     ]
@@ -39,6 +56,9 @@
     "difficulty": "Very hard",
     "tags": [
       "murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
     ]
   },
   {
@@ -54,6 +74,9 @@
     "tags": [
       "murdoku",
       "nurikabe"
+    ],
+    "autoCrossRules": [
+      "rook"
     ]
   },
   {

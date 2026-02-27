@@ -21,7 +21,12 @@
     "V (Men   - Vincent) is the victim and is alone with the killer"
   ],
   "difficulty": "Very hard",
-  "tags": ["murdoku"],
+  "tags": [
+    "murdoku"
+  ],
+  "autoCrossRules": [
+    "rook"
+  ],
   "gridSize": {
     "rows": 9,
     "cols": 9
@@ -946,7 +951,7 @@
       ]
     }
   ],
-  "createdAt": "2026-02-26",
+  "createdAt": "2026-02-27",
   "images": {
     "img0": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACoUlEQVR4AeyZu4oUQRSGvaOCmBhp7CVUBANB1MwH8CEEE43MTQQNNPRdDDQ2UjDxHRQFAxEF/T5mhp2FralTVadnRXs5/1R1138uf1U31d176MA/8jcL+dsWcl6ReUUmmoEpL63T1HwT3FrCvuc4zLephDyn1NcFOMZQrk0h5AEliiu0B8HK3tP5DO4Dx2nyLFvIM0orzfhlxsQv2qdALk2OZQo5RknXwSY7w+AX8ArI1YfuuGUKcbZFraqzEFwNuYLDccsUcpJyBE3V7sKQK+iOW6aQlmq84Vv4VW6mkK9kEzQhkytC5BopU8g7kgmakMkVIXKNlCnEXHf8CaKFWw2ZLeRHNeMOoYW741XoZQsppNl12g1R7Do5epAtpLSrr9fpfSEi3HW/jf1MIUfJdA3UzE3wEiS5+tAdt0whFihqVR2BIOQKDsctU8hPynkLvoNN5mX1G4JcfeiOW6YQC7wdKOnhkiNXn+XhWJMpZFXJiVWn0Lp/1DgF1/LpKYSUsy1GHi2a3N9sIccD5X2CIyJcqDHLFvIikPYDHBHhQo1ZtpCLgbS+FYoINxBuQckWsoi6+de9Q2xmNY7uhxDfCtPzZgY8zyReABHzc5BcfSL8KidTyDmy+WGBpmofYcjVh+64ZQppqSb1ydfEGUK8THx28hOpMSNY3ez66GuMiF+RMyrEmX1C9HvAZ6cefMP3MTAWTZ+NCDlFyhvAHfolrbPbA+MIY9kSqt1GhHh5iPase3sYS+w9WjnbK8QXo6vEPgyyzFjGNHZzzF4hPicNXdOFSo1p7MJw+XSPEP8Dlf7Jc61EY5tj7VS92yOkHnUfGP+1EN+ze/aLFh9zNK1rz4r4Bf0NWaaEOUgRtx4h8ehbZM5CtjjZoVTzioSmaYukPwAAAP//KV540gAAAAZJREFUAwCAUGxlwxdCmQAAAABJRU5ErkJggg=="
   }
