@@ -269,7 +269,7 @@ export function Toolbar({
         {inputMode === 'fixedDouble' && 'Type two digits for a 2-digit fixed clue.'}
         {inputMode === 'fixedColor' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
         {inputMode === 'label' && 'Enter text, pick alignment, Apply.'}
-        {forcedInputLayout && inputMode !== 'fixed' && inputMode !== 'fixedDouble' && inputMode !== 'fixedColor' && inputMode !== 'label' && 'Left-click: paint black. Right-click: toggle dot.'}
+        {forcedInputLayout && inputMode !== 'fixed' && inputMode !== 'fixedDouble' && inputMode !== 'fixedColor' && inputMode !== 'label' && (<><div>Left-click: black &rarr; dot &rarr; clear</div><div>Right-click: toggle dot</div></>)}
         {!forcedInputLayout && inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
         {!forcedInputLayout && inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
         {!forcedInputLayout && inputMode === 'note' && 'Type to add/remove notes (max 16).'}

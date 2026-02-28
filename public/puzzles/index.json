@@ -11,6 +11,9 @@
     "difficulty": "Easy",
     "tags": [
       "murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
     ]
   },
   {
@@ -54,6 +57,10 @@
     "tags": [
       "star-battle",
       "murdoku"
+    ],
+    "autoCrossRules": [
+      "king",
+      "rook"
     ]
   },
   {
@@ -68,6 +75,9 @@
     "difficulty": "Very hard",
     "tags": [
       "murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
     ]
   },
   {
@@ -82,7 +92,8 @@
     "difficulty": "Medium",
     "tags": [
       "nurikabe"
-    ]
+    ],
+    "forcedInputLayout": "nurikabe"
   },
   {
     "id": "nurikabe-murdoku",
@@ -97,6 +108,9 @@
     "tags": [
       "murdoku",
       "nurikabe"
+    ],
+    "autoCrossRules": [
+      "rook"
     ]
   },
   {

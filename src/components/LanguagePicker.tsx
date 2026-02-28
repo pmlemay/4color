@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 const LANGUAGES = [
   { code: '', label: 'English' },
@@ -51,12 +52,14 @@ export function LanguagePicker() {
   const [current, setCurrent] = useState(getCurrentLang)
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const btnRef = useRef<HTMLButtonElement>(null)
   const [menuPos, setMenuPos] = useState<{ top: number; right: number } | null>(null)
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      const target = e.target as Node
+      if (ref.current && !ref.current.contains(target) && (!menuRef.current || !menuRef.current.contains(target))) {
         setOpen(false)
       }
     }
@@ -78,8 +81,8 @@ export function LanguagePicker() {
       <button ref={btnRef} className="lang-picker-btn" onClick={() => setOpen(o => !o)} title="Change language">
         {currentLabel}
       </button>
-      {open && menuPos && (
-        <div className="lang-picker-menu" style={{ position: 'fixed', top: menuPos.top, right: menuPos.right }}>
+      {open && menuPos && createPortal(
+        <div ref={menuRef} className="lang-picker-menu" style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}>
           {LANGUAGES.map(lang => (
             <button
               key={lang.code}
@@ -93,7 +96,8 @@ export function LanguagePicker() {
               {lang.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

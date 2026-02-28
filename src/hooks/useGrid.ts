@@ -504,6 +504,7 @@ export function useGrid(initialRows: number, initialCols: number) {
   return {
     grid,
     setGrid,
+    setGridWithUndo,
     selection,
     setSelection,
     inputMode,

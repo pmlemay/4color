@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 import { CellPosition } from '../types'
 
 interface UseDragSelectOptions {
@@ -6,6 +6,7 @@ interface UseDragSelectOptions {
   onSelectionChange: (selection: CellPosition[]) => void
   onSelectionEnd: (selection: CellPosition[]) => void
   onRightClickCell?: (pos: CellPosition) => void
+  isPinching?: boolean
 }
 
 export function useDragSelect(options: UseDragSelectOptions) {
@@ -14,19 +15,29 @@ export function useDragSelect(options: UseDragSelectOptions) {
   const currentSelection = useRef<CellPosition[]>([])
   const rightSelection = useRef<CellPosition[]>([])
   const ctrlHeld = useRef(false)
+  const tableRef = useRef<HTMLTableElement>(null)
+  // Keep options in a ref so native listeners always see latest callbacks
+  const optionsRef = useRef(options)
+  optionsRef.current = options
 
-  const getCellFromEvent = useCallback((e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent): CellPosition | null => {
-    let target: HTMLElement | null
-    if ('touches' in e && e.touches.length > 0) {
-      const touch = e.touches[0]
-      target = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement
-    } else if ('target' in e) {
-      target = e.target as HTMLElement
-      while (target && target.tagName !== 'TD') {
-        target = target.parentElement
-      }
-    } else {
-      return null
+  const getCellFromPoint = (x: number, y: number): CellPosition | null => {
+    let target = document.elementFromPoint(x, y) as HTMLElement | null
+    if (!target) return null
+    while (target && target.tagName !== 'TD') {
+      target = target.parentElement
+    }
+    if (!target || target.tagName !== 'TD') return null
+    const td = target as HTMLTableCellElement
+    const row = (td.parentElement as HTMLTableRowElement)?.rowIndex
+    const col = td.cellIndex
+    if (row == null || col == null || row < 0 || col < 0) return null
+    return { row, col }
+  }
+
+  const getCellFromEvent = useCallback((e: React.MouseEvent | MouseEvent): CellPosition | null => {
+    let target = e.target as HTMLElement | null
+    while (target && target.tagName !== 'TD') {
+      target = target.parentElement
     }
     if (!target || target.tagName !== 'TD') return null
     const td = target as HTMLTableCellElement
@@ -37,16 +48,15 @@ export function useDragSelect(options: UseDragSelectOptions) {
   }, [])
 
   const handleCellMouseDown = useCallback((e: React.MouseEvent) => {
-    // Don't start drag if clicking on a control button
     if ((e.target as HTMLElement).closest('.toolbar')) return
 
-    if (e.button === 2 && options.onRightClickCell) {
+    if (e.button === 2 && optionsRef.current.onRightClickCell) {
       e.preventDefault()
       const pos = getCellFromEvent(e)
       if (pos) {
         rightDragging.current = true
         rightSelection.current = [pos]
-        options.onRightClickCell(pos)
+        optionsRef.current.onRightClickCell(pos)
       }
       return
     }
@@ -57,16 +67,16 @@ export function useDragSelect(options: UseDragSelectOptions) {
     ctrlHeld.current = e.ctrlKey
 
     if (!e.ctrlKey) {
-      options.onSelectionStart()
+      optionsRef.current.onSelectionStart()
     }
 
     const pos = getCellFromEvent(e)
     if (pos) {
       dragging.current = true
       currentSelection.current = [pos]
-      options.onSelectionChange([pos])
+      optionsRef.current.onSelectionChange([pos])
     }
-  }, [getCellFromEvent, options])
+  }, [getCellFromEvent])
 
   const handleCellMouseMove = useCallback((e: React.MouseEvent) => {
     if (rightDragging.current) {
@@ -75,7 +85,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
       if (!pos) return
       if (rightSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
       rightSelection.current = [...rightSelection.current, pos]
-      options.onRightClickCell?.(pos)
+      optionsRef.current.onRightClickCell?.(pos)
       return
     }
     if (!dragging.current) return
@@ -84,8 +94,8 @@ export function useDragSelect(options: UseDragSelectOptions) {
     if (!pos) return
     if (currentSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
     currentSelection.current = [...currentSelection.current, pos]
-    options.onSelectionChange(currentSelection.current)
-  }, [getCellFromEvent, options])
+    optionsRef.current.onSelectionChange(currentSelection.current)
+  }, [getCellFromEvent])
 
   const handleMouseUp = useCallback(() => {
     if (rightDragging.current) {
@@ -95,38 +105,53 @@ export function useDragSelect(options: UseDragSelectOptions) {
     }
     if (dragging.current) {
       dragging.current = false
-      options.onSelectionEnd(currentSelection.current)
+      optionsRef.current.onSelectionEnd(currentSelection.current)
     }
-  }, [options])
+  }, [])
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if ((e.target as HTMLElement).closest('.toolbar')) return
-    e.preventDefault()
-    options.onSelectionStart()
-    const pos = getCellFromEvent(e)
-    if (pos) {
-      dragging.current = true
-      currentSelection.current = [pos]
-      options.onSelectionChange([pos])
+  // Attach touch listeners natively with { passive: false } so preventDefault works
+  useEffect(() => {
+    const table = tableRef.current
+    if (!table) return
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if ((e.target as HTMLElement).closest('.toolbar')) return
+      if (optionsRef.current.isPinching || e.touches.length >= 2) return
+      e.preventDefault()
+      optionsRef.current.onSelectionStart()
+      const touch = e.touches[0]
+      const pos = getCellFromPoint(touch.clientX, touch.clientY)
+      if (pos) {
+        dragging.current = true
+        currentSelection.current = [pos]
+        optionsRef.current.onSelectionChange([pos])
+      }
     }
-  }, [getCellFromEvent, options])
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!dragging.current) return
-    e.preventDefault()
-    const pos = getCellFromEvent(e)
-    if (!pos) return
-    if (currentSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
-    currentSelection.current = [...currentSelection.current, pos]
-    options.onSelectionChange(currentSelection.current)
-  }, [getCellFromEvent, options])
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!dragging.current || optionsRef.current.isPinching || e.touches.length >= 2) return
+      e.preventDefault()
+      const touch = e.touches[0]
+      const pos = getCellFromPoint(touch.clientX, touch.clientY)
+      if (!pos) return
+      if (currentSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
+      currentSelection.current = [...currentSelection.current, pos]
+      optionsRef.current.onSelectionChange(currentSelection.current)
+    }
+
+    table.addEventListener('touchstart', handleTouchStart, { passive: false })
+    table.addEventListener('touchmove', handleTouchMove, { passive: false })
+    return () => {
+      table.removeEventListener('touchstart', handleTouchStart)
+      table.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [])
 
   return {
+    tableRef,
     handleCellMouseDown,
     handleCellMouseMove,
     handleMouseUp,
-    handleTouchStart,
-    handleTouchMove,
     ctrlHeld,
   }
 }

@@ -20,7 +20,7 @@ interface CellProps {
 }
 
 export const Cell = React.memo(function Cell({ data, beingSelected, debug, row, col }: CellProps) {
-  const { selected, value, notes, fixedValue, fixedColor, color, borders, label, crossed, mark, image } = data
+  const { selected, value, notes, fixedValue, fixedColor, color, borders, fixedBorders, label, crossed, mark, image } = data
 
   let tdClass = 'grid-cell cell-enabled'
   if (selected) tdClass += ' cell-selected'
@@ -31,11 +31,15 @@ export const Cell = React.memo(function Cell({ data, beingSelected, debug, row, 
   else if (color) divClass += ` color${color}`
   if (fixedValue) divClass += ' cell-fixed-value'
 
+  // Fixed borders: thick (5px), user borders: medium (3px), none: 0
+  const renderBorder = (i: number) =>
+    borders[i] > 0 ? (fixedBorders[i] > 0 ? 3 : 2) : 0
+
   const cellStyle: React.CSSProperties = {
-    borderTopWidth: `${borders[0]}px`,
-    borderRightWidth: `${borders[1]}px`,
-    borderBottomWidth: `${borders[2]}px`,
-    borderLeftWidth: `${borders[3]}px`,
+    borderTopWidth: `${renderBorder(0)}px`,
+    borderRightWidth: `${renderBorder(1)}px`,
+    borderBottomWidth: `${renderBorder(2)}px`,
+    borderLeftWidth: `${renderBorder(3)}px`,
   }
 
   const displayValue = fixedValue || value || ''

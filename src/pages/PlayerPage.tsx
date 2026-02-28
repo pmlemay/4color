@@ -1,14 +1,20 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { useGrid } from '../hooks/useGrid'
 import { useKeyboard } from '../hooks/useKeyboard'
 import { useTheme } from '../hooks/useTheme'
 import { useModal } from '../hooks/useModal'
+import { useIsMobile } from '../hooks/useIsMobile'
+import { useGridScale } from '../hooks/useGridScale'
 import { Grid } from '../components/Grid/Grid'
 import { Toolbar } from '../components/Toolbar/Toolbar'
+import { InputPanel } from '../components/InputPanel/InputPanel'
 import { InfoPanel } from '../components/InfoPanel/InfoPanel'
+import { CluesBar } from '../components/CluesBar'
 import { Modal } from '../components/Modal/Modal'
 import { ResizableLeft } from '../components/ResizableLeft'
+import { MobileHeader } from '../components/MobileHeader'
+import { SlidePanel } from '../components/SlidePanel'
 import { LanguagePicker } from '../components/LanguagePicker'
 import { fetchPuzzle, fetchPuzzleSolution, puzzleToGrid } from '../utils/puzzleIO'
 import { savePlayerData, loadPlayerData, clearPlayerData, applyPlayerData } from '../utils/playerSave'
@@ -16,7 +22,7 @@ import { validate4Color, validateSolution } from '../utils/validate'
 import { useCompletions } from '../hooks/useCompletions'
 import { useTimer } from '../hooks/useTimer'
 import { formatTime } from '../utils/formatTime'
-import { CellPosition, PuzzleData, PuzzleSolution } from '../types'
+import { CellData, CellPosition, PuzzleData, PuzzleSolution } from '../types'
 
 export function PlayerPage() {
   const { puzzleId } = useParams()
@@ -25,6 +31,8 @@ export function PlayerPage() {
   const debug = searchParams.get('debug') === 'true'
 
   const { theme, toggle: toggleTheme } = useTheme()
+  const isMobile = useIsMobile()
+  const [menuOpen, setMenuOpen] = useState(false)
   const [puzzle, setPuzzle] = useState<PuzzleData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -48,6 +56,22 @@ export function PlayerPage() {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const loaded = useRef(false)
   const [puzzleCompleted, setPuzzleCompleted] = useState(false)
+
+  const gridRows = puzzle?.gridSize?.rows || 1
+  const gridCols = puzzle?.gridSize?.cols || 1
+  const gridScale = useGridScale({ rows: gridRows, cols: gridCols })
+
+  const valueSet = useMemo(() => {
+    if (!puzzle) return []
+    if (solution?.cells && Object.keys(solution.cells).length > 0) {
+      return [...new Set(Object.values(solution.cells))].sort()
+    }
+    const maxDim = Math.max(puzzle.gridSize.rows, puzzle.gridSize.cols)
+    const vals: string[] = []
+    for (let i = 1; i <= maxDim && i <= 9; i++) vals.push(String(i))
+    for (let i = 10; i <= maxDim; i++) vals.push(String.fromCharCode(55 + i)) // A=10, B=11, etc
+    return vals
+  }, [puzzle, solution])
 
   useEffect(() => {
     if (!puzzleId) return
@@ -159,6 +183,7 @@ export function PlayerPage() {
 
   const forcedInputLayout = puzzle?.forcedInputLayout || ''
 
+  // Nurikabe right-click: toggle dot (PC only, preserved)
   const handleRightClickCell = useCallback((pos: CellPosition) => {
     if (forcedInputLayout !== 'nurikabe') return
     gridState.setGrid(prev => {
@@ -169,6 +194,52 @@ export function PlayerPage() {
       return next
     })
   }, [forcedInputLayout, gridState])
+
+  // Nurikabe immediate-mode drag: determine action from first cell, apply to all
+  const nurikabeDragActive = useRef(false)
+  const nurikabeDragAction = useRef<'black' | 'dot' | 'clear'>('black')
+
+  const nurikabeOnDragChange = useCallback((sel: CellPosition[]) => {
+    if (sel.length === 0) return
+    const isFirst = !nurikabeDragActive.current
+    const setter = isFirst ? gridState.setGridWithUndo : gridState.setGrid
+    if (isFirst) nurikabeDragActive.current = true
+
+    setter((prev: CellData[][]) => {
+      if (isFirst) {
+        // Determine action from first cell's current state
+        const firstCell = prev[sel[0].row]?.[sel[0].col]
+        if (!firstCell || firstCell.fixedValue) return prev
+        if (firstCell.color === '9' && !firstCell.mark) {
+          nurikabeDragAction.current = 'dot'
+        } else if (firstCell.mark === 'dot') {
+          nurikabeDragAction.current = 'clear'
+        } else {
+          nurikabeDragAction.current = 'black'
+        }
+      }
+
+      const action = nurikabeDragAction.current
+      const next = prev.map(row => row.map(cell => ({ ...cell })))
+      let changed = false
+      for (const pos of sel) {
+        const cell = next[pos.row]?.[pos.col]
+        if (!cell || cell.fixedValue) continue
+        if (action === 'black' && (cell.color !== '9' || cell.mark)) {
+          cell.color = '9'; cell.mark = null; changed = true
+        } else if (action === 'dot' && (cell.mark !== 'dot' || cell.color)) {
+          cell.color = null; cell.mark = 'dot'; changed = true
+        } else if (action === 'clear' && (cell.color || cell.mark)) {
+          cell.color = null; cell.mark = null; changed = true
+        }
+      }
+      return changed ? next : prev
+    })
+  }, [gridState])
+
+  const nurikabeCommitSelection = useCallback((_sel: CellPosition[]) => {
+    nurikabeDragActive.current = false
+  }, [])
 
   const is4Color = puzzle?.tags?.includes('4color') ?? false
   const canSubmit = is4Color || !!solution
@@ -193,6 +264,8 @@ export function PlayerPage() {
     }
   }, [gridState.grid, is4Color, solution, showConfirm, showAlert, puzzleId, markCompleted, timer])
 
+  const isNurikabe = forcedInputLayout === 'nurikabe'
+
   if (loading) return <p style={{ textAlign: 'center', marginTop: 40 }}>Loading puzzle...</p>
   if (error || !puzzle) {
     return (
@@ -203,72 +276,173 @@ export function PlayerPage() {
     )
   }
 
+  const timerDisplay = puzzleCompleted
+    ? puzzleId && completionTimes.has(puzzleId)
+      ? <div className="info-timer completed">{formatTime(completionTimes.get(puzzleId)!)}</div>
+      : null
+    : <div className="info-timer">{timer.formatted}</div>
+
+  const infoPanelContent = (
+    <InfoPanel
+      title={puzzle.title}
+      author={puzzle.author}
+      gridSize={puzzle.gridSize}
+      difficulty={puzzle.difficulty}
+      rulesList={puzzle.rules}
+      cluesList={puzzle.clues}
+      backLink={!isMobile}
+      headerRight={<LanguagePicker />}
+      struckRuleWords={struckRuleWords}
+      onStruckRuleWordsChange={setStruckRuleWords}
+      struckClueWords={struckClueWords}
+      onStruckClueWordsChange={setStruckClueWords}
+    >
+      {!isMobile && timerDisplay}
+      <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
+      {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+    </InfoPanel>
+  )
+
+  const metaPanelContent = (
+    <InfoPanel
+      title={puzzle.title}
+      author={puzzle.author}
+      gridSize={puzzle.gridSize}
+      difficulty={puzzle.difficulty}
+      rulesList={puzzle.rules}
+      backLink={false}
+      headerRight={<LanguagePicker />}
+      struckRuleWords={struckRuleWords}
+      onStruckRuleWordsChange={setStruckRuleWords}
+    >
+      {timerDisplay}
+      <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
+      {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+    </InfoPanel>
+  )
+
+  const gridElement = (
+    <Grid
+      grid={gridState.grid}
+      selection={gridState.selection}
+      debug={debug}
+      inputMode={isNurikabe ? 'cross' : gridState.inputMode}
+      activeColor={isNurikabe ? null : gridState.activeColor}
+      activeMark={gridState.activeMark}
+      clearSelection={gridState.clearSelection}
+      commitSelection={isNurikabe ? nurikabeCommitSelection : gridState.commitSelection}
+      onDragChange={isNurikabe ? nurikabeOnDragChange : gridState.onDragChange}
+      onRightClickCell={forcedInputLayout ? handleRightClickCell : undefined}
+      forcedInputLayout={forcedInputLayout || undefined}
+      isPinching={gridScale.isPinching}
+    />
+  )
+
+  const inputPanel = (
+    <InputPanel
+      inputMode={gridState.inputMode}
+      onInputModeChange={gridState.setInputMode}
+      onValueInput={gridState.applyValue}
+      onNoteInput={gridState.addNote}
+      valueSet={valueSet}
+      onColorSelect={c => gridState.applyColor(c)}
+      onColorErase={gridState.eraseColor}
+      activeColor={gridState.activeColor}
+      onActiveColorChange={gridState.setActiveColor}
+      activeMark={gridState.activeMark}
+      onActiveMarkChange={gridState.setActiveMark}
+      onMarkSelect={shape => gridState.toggleMark(shape)}
+      onMarkErase={gridState.eraseMark}
+      onUndo={gridState.undo}
+      onRedo={gridState.redo}
+      onErase={gridState.clearValues}
+      onSubmit={canSubmit ? handleSubmit : undefined}
+      forcedInputLayout={forcedInputLayout || undefined}
+    />
+  )
+
+  if (isMobile) {
+    return (
+      <div className="mobile-layout">
+        <MobileHeader
+          title={puzzle.title}
+          timerDisplay={timerDisplay}
+          onMenuToggle={() => setMenuOpen(o => !o)}
+        />
+
+        {puzzle.clues && puzzle.clues.length > 0 && (
+          <CluesBar
+            cluesList={puzzle.clues}
+            struckClueWords={struckClueWords}
+            onStruckClueWordsChange={setStruckClueWords}
+          />
+        )}
+
+        <div
+          className="grid-scale-area"
+          ref={gridScale.containerRef}
+          onMouseDown={e => {
+            if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
+              gridState.clearSelection()
+            }
+          }}
+        >
+          <div className="grid-scale-wrapper" style={gridScale.style}>
+            {gridElement}
+          </div>
+        </div>
+
+        {inputPanel}
+
+        <SlidePanel open={menuOpen} onClose={() => setMenuOpen(false)}>
+          {metaPanelContent}
+        </SlidePanel>
+
+        <Modal {...modalProps} />
+      </div>
+    )
+  }
+
   return (
     <div className="page-layout">
       <ResizableLeft>
-        <InfoPanel
-          title={puzzle.title}
-          author={puzzle.author}
-          gridSize={puzzle.gridSize}
-          difficulty={puzzle.difficulty}
-          rulesList={puzzle.rules}
-          cluesList={puzzle.clues}
-          backLink
-          headerRight={<LanguagePicker />}
-          struckRuleWords={struckRuleWords}
-          onStruckRuleWordsChange={setStruckRuleWords}
-          struckClueWords={struckClueWords}
-          onStruckClueWordsChange={setStruckClueWords}
-        >
-          {puzzleCompleted
-            ? puzzleId && completionTimes.has(puzzleId) && <div className="info-timer completed">{formatTime(completionTimes.get(puzzleId)!)}</div>
-            : <div className="info-timer">{timer.formatted}</div>
-          }
-          <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
-          {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
-        </InfoPanel>
+        {infoPanelContent}
       </ResizableLeft>
 
-      <main
-        className="panel-center"
-        onMouseDown={e => {
-          if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
-            gridState.clearSelection()
-          }
-        }}
-      >
-        <Grid
-          grid={gridState.grid}
-          selection={gridState.selection}
-          debug={debug}
-          inputMode={gridState.inputMode}
-          activeColor={gridState.activeColor}
-          activeMark={gridState.activeMark}
-          clearSelection={gridState.clearSelection}
-          commitSelection={gridState.commitSelection}
-          onDragChange={gridState.onDragChange}
-          onRightClickCell={forcedInputLayout ? handleRightClickCell : undefined}
-          forcedInputLayout={forcedInputLayout || undefined}
-        />
-      </main>
+      <div className="panel-center-col">
+        <div
+          className="grid-scale-area"
+          ref={gridScale.containerRef}
+          onMouseDown={e => {
+            if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
+              gridState.clearSelection()
+            }
+          }}
+        >
+          <div className="grid-scale-wrapper" style={gridScale.style}>
+            {gridElement}
+          </div>
+        </div>
+      </div>
 
       <aside className="panel-right">
         <Toolbar
+          isEditor={false}
+          theme={theme}
+          onThemeToggle={toggleTheme}
           inputMode={gridState.inputMode}
           onInputModeChange={gridState.setInputMode}
           onColorSelect={c => gridState.applyColor(c)}
           onColorErase={gridState.eraseColor}
           activeColor={gridState.activeColor}
           onActiveColorChange={gridState.setActiveColor}
-          onUndo={gridState.undo}
-          onRedo={gridState.redo}
-          onErase={gridState.clearValues}
-          theme={theme}
-          onThemeToggle={toggleTheme}
           activeMark={gridState.activeMark}
           onActiveMarkChange={gridState.setActiveMark}
           onMarkSelect={shape => gridState.toggleMark(shape)}
           onMarkErase={gridState.eraseMark}
+          onUndo={gridState.undo}
+          onRedo={gridState.redo}
+          onErase={gridState.clearValues}
           onSubmit={canSubmit ? handleSubmit : undefined}
           forcedInputLayout={forcedInputLayout || undefined}
         />

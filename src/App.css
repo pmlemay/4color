@@ -14,7 +14,7 @@
   --card-shadow: rgba(0, 0, 0, 0.12);
   --input-bg: #ffffff;
   --input-border: #cccccc;
-  --grid-border: #333333;
+  --grid-border: #d0d0d0;
   --selection: rgb(255, 255, 0);
   --panel-bg: #f8f8f8;
   --panel-border: #e0e0e0;
@@ -34,7 +34,7 @@
   --card-shadow: rgba(0, 0, 0, 0.4);
   --input-bg: #2a2a4a;
   --input-border: #555577;
-  --grid-border: #888888;
+  --grid-border: #444444;
   --selection: rgba(255, 255, 0, 0.5);
   --panel-bg: #16213e;
   --panel-border: #2a2a4a;
@@ -53,10 +53,13 @@ body {
   transition: background 0.2s, color 0.2s;
   overflow: hidden;
   height: 100vh;
+  height: 100dvh;
+  touch-action: manipulation;
 }
 
 #root {
   height: 100vh;
+  height: 100dvh;
 }
 
 /* Hide Google Translate default UI */
@@ -211,6 +214,133 @@ body {
   padding: 20px;
 }
 
+/* Desktop: center column with grid + input panel at bottom */
+.panel-center-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 0;
+}
+
+/* Grid scaling area — contains the transform-scaled grid */
+.grid-scale-area {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 0;
+}
+
+.grid-scale-wrapper {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Mobile layout */
+.mobile-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Mobile header */
+.mobile-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--panel-border);
+  flex-shrink: 0;
+  min-height: 44px;
+}
+
+.mobile-menu-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  border-radius: 4px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mobile-back-btn {
+  color: lightseagreen;
+  text-decoration: none;
+  font-size: 26px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.mobile-header-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-header-timer {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.mobile-header-timer .info-timer {
+  font-size: 14px;
+  padding: 0;
+}
+
+/* Slide panel (mobile info panel overlay) */
+.slide-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background 0.25s;
+}
+
+.slide-panel-backdrop.open {
+  background: rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.slide-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  max-width: 85vw;
+  background: var(--panel-bg);
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  overflow-y: auto;
+  z-index: 101;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+}
+
+.slide-panel.open {
+  transform: translateX(0);
+}
+
 /* Puzzle info link */
 .puzzle-info a {
   color: lightseagreen;
@@ -224,4 +354,27 @@ body {
 
 .back-link:hover {
   text-decoration: underline;
+}
+
+/* Clues bar (mobile) */
+.clues-bar {
+  flex-shrink: 0;
+  max-height: 90px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--panel-border);
+  padding: 4px 10px;
+  background: var(--panel-bg);
+}
+
+.clues-bar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.clues-bar-item {
+  padding: 2px 0;
+  cursor: pointer;
 }

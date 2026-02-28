@@ -16,9 +16,10 @@ interface GridProps {
   onDragChange?: (sel: CellPosition[]) => void
   onRightClickCell?: (pos: CellPosition) => void
   forcedInputLayout?: string
+  isPinching?: boolean
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onRightClickCell, forcedInputLayout }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onRightClickCell, forcedInputLayout, isPinching }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const [, setRenderTick] = useState(0)
   const isColorDrag = (inputMode === 'color' || inputMode === 'fixedColor') && activeColor !== null
@@ -43,6 +44,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       commitSelection(sel)
     },
     onRightClickCell,
+    isPinching,
   })
 
   useEffect(() => {
@@ -59,10 +61,9 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
     <div className="grid-container">
       <table
         className="puzzle-grid"
+        ref={dragSelect.tableRef}
         onMouseDown={dragSelect.handleCellMouseDown}
         onMouseMove={dragSelect.handleCellMouseMove}
-        onTouchStart={dragSelect.handleTouchStart}
-        onTouchMove={dragSelect.handleTouchMove}
         onContextMenu={forcedInputLayout ? (e) => e.preventDefault() : undefined}
       >
         <tbody>

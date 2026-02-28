@@ -1,0 +1,246 @@
+.input-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--panel-border);
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+/* Mode tabs row */
+.ip-modes {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ip-mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 32px;
+  flex-shrink: 0;
+}
+
+.ip-mode-btn:hover {
+  background: var(--btn-hover);
+}
+
+.ip-mode-btn.selected {
+  background: lightseagreen;
+  color: white;
+  border-color: lightseagreen;
+}
+
+.ip-mode-icon {
+  font-size: 14px;
+}
+
+.ip-mode-label {
+  font-size: 11px;
+}
+
+/* Context row */
+.ip-context {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+/* Values row */
+.ip-values {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 2px 0;
+}
+
+.ip-val-btn {
+  min-width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ip-val-btn:hover {
+  background: var(--btn-hover);
+}
+
+.ip-val-btn:active {
+  background: lightseagreen;
+  color: white;
+}
+
+/* Colors row */
+.ip-colors {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 2px;
+}
+
+.ip-color-swatch {
+  min-width: 36px;
+  height: 36px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 3px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ip-color-swatch.color-erase {
+  background: var(--btn-bg);
+  color: var(--text);
+  text-shadow: none;
+}
+
+.ip-color-swatch.active-color {
+  border-color: white;
+  box-shadow: 0 0 0 2px var(--text), 0 0 6px rgba(0,0,0,0.4);
+}
+
+/* Marks row */
+.ip-marks {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 2px;
+}
+
+.ip-mark-swatch {
+  min-width: 36px;
+  height: 36px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+  background: var(--btn-bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ip-mark-swatch.active-mark {
+  border-color: white;
+  box-shadow: 0 0 0 2px var(--text), 0 0 6px rgba(0,0,0,0.4);
+}
+
+/* Hint text for border/cross modes */
+.ip-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+/* Actions row */
+.ip-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.ip-action-btn {
+  min-width: 40px;
+  height: 34px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ip-action-btn:hover {
+  background: var(--btn-hover);
+}
+
+.ip-action-btn:active {
+  background: var(--btn-hover);
+}
+
+.ip-submit-btn {
+  margin-left: auto;
+  padding: 6px 20px;
+  height: 34px;
+  background: lightseagreen;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ip-submit-btn:hover {
+  opacity: 0.9;
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px) {
+  .input-panel {
+    padding: 4px 6px;
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+
+  .ip-val-btn {
+    min-width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .ip-color-swatch,
+  .ip-mark-swatch {
+    min-width: 32px;
+    height: 32px;
+  }
+
+  .ip-mode-btn {
+    padding: 3px 6px;
+    min-height: 28px;
+  }
+
+  .ip-mode-label {
+    display: none;
+  }
+
+  .ip-mode-icon {
+    font-size: 16px;
+  }
+}
