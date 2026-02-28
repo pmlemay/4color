@@ -131,10 +131,14 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
         setIsPinching(true)
         pinchStartDist.current = getTouchDist(e.touches[0], e.touches[1])
         pinchStartZoom.current = zoomLevelRef.current
-      } else if (e.touches.length === 1 && zoomLevelRef.current > 1.05) {
-        isPanning.current = true
-        panStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-        panStartOffset.current = { ...panRef.current }
+      } else if (e.touches.length === 1) {
+        // Pan if zoomed in, or if touch started outside the grid
+        const onGrid = !!(e.target as HTMLElement).closest?.('.puzzle-grid')
+        if (zoomLevelRef.current > 1.05 || !onGrid) {
+          isPanning.current = true
+          panStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+          panStartOffset.current = { ...panRef.current }
+        }
       }
     }
 
