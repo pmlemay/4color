@@ -356,6 +356,18 @@ body {
   text-decoration: underline;
 }
 
+/* Completion sign-in prompt */
+.completion-signin-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.completion-actions {
+  flex-wrap: wrap;
+}
+
 /* Clues bar (mobile) */
 .clues-bar {
   flex-shrink: 0;

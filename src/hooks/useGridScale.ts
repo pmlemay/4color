@@ -54,28 +54,33 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     setPan({ x: 0, y: 0 })
   }, [rows, cols])
 
-  // Scroll: Ctrl+scroll = zoom, plain scroll = pan
+  // Scroll wheel = zoom toward cursor position
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       const el = containerRef.current
       if (!el || !el.contains(e.target as Node)) return
+      e.preventDefault()
+      e.stopPropagation()
 
-      if (e.ctrlKey || e.metaKey) {
-        // Zoom
-        e.preventDefault()
-        e.stopPropagation()
-        setZoomLevel(prev => {
-          const delta = -e.deltaY * ZOOM_SENSITIVITY
-          return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta))
-        })
-      } else {
-        // Pan
-        e.preventDefault()
-        setPan(prev => ({
-          x: prev.x - e.deltaX,
-          y: prev.y - e.deltaY,
-        }))
-      }
+      const oldZoom = zoomLevelRef.current
+      const delta = -e.deltaY * ZOOM_SENSITIVITY
+      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, oldZoom + delta))
+      if (newZoom === oldZoom) return
+
+      // Zoom toward cursor: adjust pan so the point under the cursor stays fixed
+      const rect = el.getBoundingClientRect()
+      const cx = e.clientX - rect.left - rect.width / 2
+      const cy = e.clientY - rect.top - rect.height / 2
+      const oldScale = fitScaleRef.current * oldZoom
+      const newScale = fitScaleRef.current * newZoom
+      const ratio = newScale / oldScale
+      const oldPan = panRef.current
+
+      setPan({
+        x: cx - ratio * (cx - oldPan.x),
+        y: cy - ratio * (cy - oldPan.y),
+      })
+      setZoomLevel(newZoom)
     }
 
     window.addEventListener('wheel', handleWheel, { passive: false, capture: true })
@@ -179,7 +184,9 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     }
   }, [])
 
-  // Refs for use in touch/mouse handlers (avoid stale closures)
+  // Refs for use in touch/mouse/wheel handlers (avoid stale closures)
+  const fitScaleRef = useRef(fitScale)
+  fitScaleRef.current = fitScale
   const zoomLevelRef = useRef(zoomLevel)
   zoomLevelRef.current = zoomLevel
   const panRef = useRef(pan)

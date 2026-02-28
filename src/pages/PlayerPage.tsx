@@ -22,6 +22,7 @@ import { validate4Color, validateSolution } from '../utils/validate'
 import { useCompletions } from '../hooks/useCompletions'
 import { useTimer } from '../hooks/useTimer'
 import { formatTime } from '../utils/formatTime'
+import { useAuth } from '../contexts/AuthContext'
 import { CellData, CellPosition, PuzzleData, PuzzleSolution } from '../types'
 
 export function PlayerPage() {
@@ -31,8 +32,10 @@ export function PlayerPage() {
   const debug = searchParams.get('debug') === 'true'
 
   const { theme, toggle: toggleTheme } = useTheme()
+  const { user, signIn } = useAuth()
   const isMobile = useIsMobile()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [completionStep, setCompletionStep] = useState<'none' | 'signin' | 'keepclear'>('none')
   const [puzzle, setPuzzle] = useState<PuzzleData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -56,6 +59,7 @@ export function PlayerPage() {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const loaded = useRef(false)
   const [puzzleCompleted, setPuzzleCompleted] = useState(false)
+  const pendingCompletion = useRef<{ puzzleId: string; timeMs: number } | null>(null)
 
   const gridRows = puzzle?.gridSize?.rows || 1
   const gridCols = puzzle?.gridSize?.cols || 1
@@ -119,6 +123,15 @@ export function PlayerPage() {
       timerRef.current.pause()
     }
   }, [puzzleId, completedPuzzleIds, puzzleCompleted])
+
+  // After sign-in, persist any pending completion
+  useEffect(() => {
+    if (user && pendingCompletion.current) {
+      const { puzzleId: pid, timeMs } = pendingCompletion.current
+      pendingCompletion.current = null
+      markCompleted(pid, timeMs)
+    }
+  }, [user, markCompleted])
 
   // Auto-save on changes (debounced)
   useEffect(() => {
@@ -255,14 +268,39 @@ export function PlayerPage() {
     }
     if (result.valid) {
       timer.pause()
-      if (puzzleId) markCompleted(puzzleId, timer.elapsedMs)
+      const timeMs = timer.elapsedMs
       setPuzzleCompleted(true)
-      const clear = await showConfirm('Congratulations!', 'Puzzle Solved!', 'Clear Puzzle', 'Keep')
-      if (clear) doClearPlayerInput()
+      if (puzzleId) {
+        if (user) {
+          markCompleted(puzzleId, timeMs)
+          setCompletionStep('keepclear')
+        } else {
+          pendingCompletion.current = { puzzleId, timeMs }
+          setCompletionStep('signin')
+        }
+      }
     } else {
       await showAlert(result.error || 'Not quite right. Keep trying!', 'Not Quite')
     }
-  }, [gridState.grid, is4Color, solution, showConfirm, showAlert, puzzleId, markCompleted, timer])
+  }, [gridState.grid, is4Color, solution, showAlert, puzzleId, markCompleted, timer, user])
+
+  const handleCompletionSignIn = async () => {
+    try { await signIn() } catch { /* user closed popup */ }
+    setCompletionStep('keepclear')
+  }
+
+  const handleCompletionIgnore = () => {
+    setCompletionStep('keepclear')
+  }
+
+  const handleCompletionKeep = () => {
+    setCompletionStep('none')
+  }
+
+  const handleCompletionClear = () => {
+    doClearPlayerInput()
+    setCompletionStep('none')
+  }
 
   const isNurikabe = forcedInputLayout === 'nurikabe'
 
@@ -275,6 +313,29 @@ export function PlayerPage() {
       </div>
     )
   }
+
+  const completionModal = completionStep !== 'none' && (
+    <div className="modal-backdrop" onMouseDown={() => {}}>
+      <div className="modal-card" onMouseDown={e => e.stopPropagation()}>
+        <h3 className="modal-title">Puzzle Solved!</h3>
+        <p className="modal-message">Congratulations!</p>
+        {completionStep === 'signin' ? (
+          <div className="completion-signin">
+            <p className="completion-signin-text">Save your completed puzzles and times by signing in.</p>
+            <div className="modal-actions completion-actions">
+              <button className="modal-btn" onClick={handleCompletionIgnore}>Ignore</button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleCompletionSignIn}>Sign in with Google</button>
+            </div>
+          </div>
+        ) : (
+          <div className="modal-actions">
+            <button className="modal-btn" onClick={handleCompletionKeep}>Keep</button>
+            <button className="modal-btn modal-btn-confirm" onClick={handleCompletionClear}>Clear Puzzle</button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 
   const timerDisplay = puzzleCompleted
     ? puzzleId && completionTimes.has(puzzleId)
@@ -398,6 +459,7 @@ export function PlayerPage() {
           {metaPanelContent}
         </SlidePanel>
 
+        {completionModal}
         <Modal {...modalProps} />
       </div>
     )
@@ -448,6 +510,7 @@ export function PlayerPage() {
         />
       </aside>
 
+      {completionModal}
       <Modal {...modalProps} />
     </div>
   )
