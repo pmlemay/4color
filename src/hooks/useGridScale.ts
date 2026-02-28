@@ -24,6 +24,7 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
   const panStart = useRef({ x: 0, y: 0 })
   const panStartOffset = useRef({ x: 0, y: 0 })
   const isPanning = useRef(false)
+  const isMiddleDragging = useRef(false)
 
   const gridW = cols * CELL_SIZE + GRID_PADDING
   const gridH = rows * CELL_SIZE + GRID_PADDING
@@ -53,22 +54,69 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     setPan({ x: 0, y: 0 })
   }, [rows, cols])
 
-  // Ctrl+scroll zoom (PC) — on window with capture to beat browser zoom
+  // Scroll: Ctrl+scroll = zoom, plain scroll = pan
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (!e.ctrlKey && !e.metaKey) return
       const el = containerRef.current
       if (!el || !el.contains(e.target as Node)) return
-      e.preventDefault()
-      e.stopPropagation()
-      setZoomLevel(prev => {
-        const delta = -e.deltaY * ZOOM_SENSITIVITY
-        return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta))
-      })
+
+      if (e.ctrlKey || e.metaKey) {
+        // Zoom
+        e.preventDefault()
+        e.stopPropagation()
+        setZoomLevel(prev => {
+          const delta = -e.deltaY * ZOOM_SENSITIVITY
+          return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, prev + delta))
+        })
+      } else {
+        // Pan
+        e.preventDefault()
+        setPan(prev => ({
+          x: prev.x - e.deltaX,
+          y: prev.y - e.deltaY,
+        }))
+      }
     }
 
     window.addEventListener('wheel', handleWheel, { passive: false, capture: true })
     return () => window.removeEventListener('wheel', handleWheel, { capture: true })
+  }, [])
+
+  // Middle-mouse-button drag to pan (PC)
+  useEffect(() => {
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.button !== 1) return // middle button only
+      const el = containerRef.current
+      if (!el || !el.contains(e.target as Node)) return
+      e.preventDefault()
+      isMiddleDragging.current = true
+      panStart.current = { x: e.clientX, y: e.clientY }
+      panStartOffset.current = { ...panRef.current }
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isMiddleDragging.current) return
+      e.preventDefault()
+      const dx = e.clientX - panStart.current.x
+      const dy = e.clientY - panStart.current.y
+      setPan({
+        x: panStartOffset.current.x + dx,
+        y: panStartOffset.current.y + dy,
+      })
+    }
+
+    const handleMouseUp = (e: MouseEvent) => {
+      if (e.button === 1) isMiddleDragging.current = false
+    }
+
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
   }, [])
 
   // Pinch-to-zoom + pan (mobile) — use document-level listeners to avoid stale ref
@@ -127,13 +175,12 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     }
   }, [])
 
-  // Refs for use in touch handlers (avoid stale closures)
+  // Refs for use in touch/mouse handlers (avoid stale closures)
   const zoomLevelRef = useRef(zoomLevel)
   zoomLevelRef.current = zoomLevel
   const panRef = useRef(pan)
   panRef.current = pan
 
-  // Clamp pan so grid doesn't go completely off-screen
   const effectiveScale = fitScale * zoomLevel
 
   const resetZoom = useCallback(() => {

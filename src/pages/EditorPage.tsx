@@ -10,6 +10,7 @@ import { InfoPanel } from '../components/InfoPanel/InfoPanel'
 import { Modal } from '../components/Modal/Modal'
 import { ResizableLeft } from '../components/ResizableLeft'
 import { LanguagePicker } from '../components/LanguagePicker'
+import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution } from '../utils/puzzleIO'
 import { PuzzleData, PuzzleSolution, CellData, CellPosition, AutoCrossRule } from '../types'
 
@@ -47,6 +48,7 @@ export function EditorPage() {
 
   const { modalProps, showAlert, showConfirm } = useModal()
   const gridState = useGrid(rows, cols)
+  const gridScale = useGridScale({ rows, cols })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
 
@@ -694,28 +696,34 @@ export function EditorPage() {
         </InfoPanel>
       </ResizableLeft>
 
-      <main
-        className="panel-center"
-        onMouseDown={e => {
-          if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
-            gridState.clearSelection()
-          }
-        }}
-      >
-        <Grid
-          grid={gridState.grid}
-          selection={gridState.selection}
-          debug={debug}
-          inputMode={gridState.inputMode}
-          activeColor={gridState.activeColor}
-          activeMark={gridState.activeMark}
-          clearSelection={gridState.clearSelection}
-          commitSelection={gridState.commitSelection}
-          onDragChange={gridState.onDragChange}
-          onRightClickCell={forcedInputLayout ? handleRightClickCell : undefined}
-          forcedInputLayout={forcedInputLayout || undefined}
-        />
-      </main>
+      <div className="panel-center-col">
+        <div
+          className="grid-scale-area"
+          ref={gridScale.containerRef}
+          onMouseDown={e => {
+            if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
+              gridState.clearSelection()
+            }
+          }}
+        >
+          <div className="grid-scale-wrapper" style={gridScale.style}>
+            <Grid
+              grid={gridState.grid}
+              selection={gridState.selection}
+              debug={debug}
+              inputMode={gridState.inputMode}
+              activeColor={gridState.activeColor}
+              activeMark={gridState.activeMark}
+              clearSelection={gridState.clearSelection}
+              commitSelection={gridState.commitSelection}
+              onDragChange={gridState.onDragChange}
+              onRightClickCell={forcedInputLayout ? handleRightClickCell : undefined}
+              forcedInputLayout={forcedInputLayout || undefined}
+              isPinching={gridScale.isPinching}
+            />
+          </div>
+        </div>
+      </div>
 
       <aside className="panel-right">
         <Toolbar
