@@ -147,7 +147,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
       const pos = getCellFromPoint(touch.clientX, touch.clientY)
       if (pos) {
         pendingTouchPos.current = pos
-        touchStartTimer.current = setTimeout(commitTouchStart, 80)
+        touchStartTimer.current = setTimeout(commitTouchStart, 150)
       }
     }
 
@@ -158,11 +158,18 @@ export function useDragSelect(options: UseDragSelectOptions) {
         dragging.current = false
         return
       }
-      // If pending touch hasn't committed yet, commit it now (finger moved = not a pinch)
+      // If pending touch hasn't committed yet, only commit if finger moved to a different cell
       if (pendingTouchPos.current && touchStartTimer.current) {
-        clearTimeout(touchStartTimer.current)
-        touchStartTimer.current = null
-        commitTouchStart()
+        const touch = e.touches[0]
+        const pos = getCellFromPoint(touch.clientX, touch.clientY)
+        if (pos && (pos.row !== pendingTouchPos.current.row || pos.col !== pendingTouchPos.current.col)) {
+          // Moved to a new cell — this is a real drag, commit
+          clearTimeout(touchStartTimer.current)
+          touchStartTimer.current = null
+          commitTouchStart()
+        }
+        // Otherwise ignore small movement within same cell (could be pinch jitter)
+        return
       }
       if (!dragging.current) return
       e.preventDefault()
