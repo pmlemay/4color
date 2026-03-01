@@ -110,26 +110,61 @@ export function useDragSelect(options: UseDragSelectOptions) {
   }, [])
 
   // Attach touch listeners natively with { passive: false } so preventDefault works
+  // Delay touch start to avoid triggering actions when a pinch is starting
+  const touchStartTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pendingTouchPos = useRef<CellPosition | null>(null)
+
   useEffect(() => {
     const table = tableRef.current
     if (!table) return
 
+    const commitTouchStart = () => {
+      const pos = pendingTouchPos.current
+      if (!pos) return
+      pendingTouchPos.current = null
+      optionsRef.current.onSelectionStart()
+      dragging.current = true
+      currentSelection.current = [pos]
+      optionsRef.current.onSelectionChange([pos])
+    }
+
+    const cancelPendingTouch = () => {
+      if (touchStartTimer.current) {
+        clearTimeout(touchStartTimer.current)
+        touchStartTimer.current = null
+      }
+      pendingTouchPos.current = null
+    }
+
     const handleTouchStart = (e: TouchEvent) => {
       if ((e.target as HTMLElement).closest('.toolbar')) return
-      if (optionsRef.current.isPinching || e.touches.length >= 2) return
+      if (optionsRef.current.isPinching || e.touches.length >= 2) {
+        cancelPendingTouch()
+        return
+      }
       e.preventDefault()
-      optionsRef.current.onSelectionStart()
       const touch = e.touches[0]
       const pos = getCellFromPoint(touch.clientX, touch.clientY)
       if (pos) {
-        dragging.current = true
-        currentSelection.current = [pos]
-        optionsRef.current.onSelectionChange([pos])
+        pendingTouchPos.current = pos
+        touchStartTimer.current = setTimeout(commitTouchStart, 80)
       }
     }
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!dragging.current || optionsRef.current.isPinching || e.touches.length >= 2) return
+      // If a second finger appeared, cancel pending touch
+      if (optionsRef.current.isPinching || e.touches.length >= 2) {
+        cancelPendingTouch()
+        dragging.current = false
+        return
+      }
+      // If pending touch hasn't committed yet, commit it now (finger moved = not a pinch)
+      if (pendingTouchPos.current && touchStartTimer.current) {
+        clearTimeout(touchStartTimer.current)
+        touchStartTimer.current = null
+        commitTouchStart()
+      }
+      if (!dragging.current) return
       e.preventDefault()
       const touch = e.touches[0]
       const pos = getCellFromPoint(touch.clientX, touch.clientY)
@@ -144,6 +179,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
     return () => {
       table.removeEventListener('touchstart', handleTouchStart)
       table.removeEventListener('touchmove', handleTouchMove)
+      cancelPendingTouch()
     }
   }, [])
 

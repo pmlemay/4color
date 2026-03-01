@@ -29,3 +29,9 @@ index.sort((a, b) => {
 
 writeFileSync(join(puzzlesDir, 'index.json'), JSON.stringify(index, null, 2) + '\n')
 console.log(`Built puzzle index: ${index.length} puzzle(s)`)
+
+// Write version.json for auto-update detection
+const publicDir = join(import.meta.dirname, '..', 'public')
+const version = { buildTime: Date.now() }
+writeFileSync(join(publicDir, 'version.json'), JSON.stringify(version) + '\n')
+console.log(`Wrote version.json: ${version.buildTime}`)
