@@ -23,7 +23,6 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
   const pinchStartZoom = useRef(1)
   const panStart = useRef({ x: 0, y: 0 })
   const panStartOffset = useRef({ x: 0, y: 0 })
-  const isPanning = useRef(false)
   const isMiddleDragging = useRef(false)
 
   const gridW = cols * CELL_SIZE + GRID_PADDING
@@ -124,10 +123,17 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     }
   }, [])
 
-  // Pinch-to-zoom + pan (mobile) — use document-level listeners to avoid stale ref
+  // Pinch-to-zoom centered on midpoint (mobile) — no single-finger pan
   useEffect(() => {
     const getTouchDist = (t1: Touch, t2: Touch) =>
       Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY)
+    const getTouchMid = (t1: Touch, t2: Touch) => ({
+      x: (t1.clientX + t2.clientX) / 2,
+      y: (t1.clientY + t2.clientY) / 2,
+    })
+
+    const pinchStartMid = { x: 0, y: 0 }
+    const pinchStartPan = { x: 0, y: 0 }
 
     const handleTouchStart = (e: TouchEvent) => {
       const el = containerRef.current
@@ -136,41 +142,46 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
         setIsPinching(true)
         pinchStartDist.current = getTouchDist(e.touches[0], e.touches[1])
         pinchStartZoom.current = zoomLevelRef.current
-      } else if (e.touches.length === 1) {
-        // Pan if zoomed in, or if touch started outside the grid
-        const onGrid = !!(e.target as HTMLElement).closest?.('.puzzle-grid')
-        if (zoomLevelRef.current > 1.05 || !onGrid) {
-          isPanning.current = true
-          panStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-          panStartOffset.current = { ...panRef.current }
-        }
+        const mid = getTouchMid(e.touches[0], e.touches[1])
+        const rect = el.getBoundingClientRect()
+        pinchStartMid.x = mid.x - rect.left - rect.width / 2
+        pinchStartMid.y = mid.y - rect.top - rect.height / 2
+        pinchStartPan.x = panRef.current.x
+        pinchStartPan.y = panRef.current.y
       }
     }
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 2) {
-        e.preventDefault()
-        const dist = getTouchDist(e.touches[0], e.touches[1])
-        const ratio = dist / pinchStartDist.current
-        const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, pinchStartZoom.current * ratio))
-        setZoomLevel(newZoom)
-      } else if (e.touches.length === 1 && isPanning.current) {
-        e.preventDefault()
-        const dx = e.touches[0].clientX - panStart.current.x
-        const dy = e.touches[0].clientY - panStart.current.y
-        setPan({
-          x: panStartOffset.current.x + dx,
-          y: panStartOffset.current.y + dy,
-        })
-      }
+      if (e.touches.length !== 2) return
+      e.preventDefault()
+      const el = containerRef.current
+      if (!el) return
+
+      const dist = getTouchDist(e.touches[0], e.touches[1])
+      const ratio = dist / pinchStartDist.current
+      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, pinchStartZoom.current * ratio))
+
+      // Current midpoint relative to container center
+      const mid = getTouchMid(e.touches[0], e.touches[1])
+      const rect = el.getBoundingClientRect()
+      const cx = mid.x - rect.left - rect.width / 2
+      const cy = mid.y - rect.top - rect.height / 2
+
+      // Pan so the point under the original midpoint follows the fingers
+      const oldScale = fitScaleRef.current * pinchStartZoom.current
+      const newScale = fitScaleRef.current * newZoom
+      const scaleRatio = newScale / oldScale
+
+      setPan({
+        x: cx - scaleRatio * (pinchStartMid.x - pinchStartPan.x),
+        y: cy - scaleRatio * (pinchStartMid.y - pinchStartPan.y),
+      })
+      setZoomLevel(newZoom)
     }
 
     const handleTouchEnd = (e: TouchEvent) => {
       if (e.touches.length < 2) {
         setTimeout(() => setIsPinching(false), 50)
-      }
-      if (e.touches.length === 0) {
-        isPanning.current = false
       }
     }
 
