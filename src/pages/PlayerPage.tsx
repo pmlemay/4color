@@ -346,7 +346,7 @@ export function PlayerPage() {
   const infoPanelContent = (
     <InfoPanel
       title={puzzle.title}
-      author={puzzle.author}
+      authors={puzzle.authors}
       gridSize={puzzle.gridSize}
       difficulty={puzzle.difficulty}
       rulesList={puzzle.rules}
@@ -367,7 +367,7 @@ export function PlayerPage() {
   const metaPanelContent = (
     <InfoPanel
       title={puzzle.title}
-      author={puzzle.author}
+      authors={puzzle.authors}
       gridSize={puzzle.gridSize}
       difficulty={puzzle.difficulty}
       rulesList={puzzle.rules}

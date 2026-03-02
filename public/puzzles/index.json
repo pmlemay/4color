@@ -3,7 +3,10 @@
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
-    "author": "Ai & PmLemay",
+    "authors": [
+      "Ai",
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 6,
       "cols": 6
@@ -20,12 +23,14 @@
     "id": "sample-4-color-puzzle",
     "file": "sample-4-color-puzzle.json",
     "title": "4-Color #1",
-    "author": "Ai",
+    "authors": [
+      "Ai"
+    ],
     "gridSize": {
       "rows": 6,
       "cols": 6
     },
-    "difficulty": "Easy",
+    "difficulty": "Very easy",
     "tags": [
       "4color"
     ]
@@ -34,12 +39,14 @@
     "id": "hard-4color",
     "file": "hard-4color.json",
     "title": "4-Color #2",
-    "author": "Ai",
+    "authors": [
+      "Ai"
+    ],
     "gridSize": {
       "rows": 8,
       "cols": 8
     },
-    "difficulty": "Medium",
+    "difficulty": "Easy",
     "tags": [
       "4color"
     ]
@@ -48,7 +55,9 @@
     "id": "starbattle-murdoku",
     "file": "starbattle-murdoku.json",
     "title": "StarBattle Murdoku",
-    "author": "PmLemay",
+    "authors": [
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 8,
       "cols": 8
@@ -67,7 +76,9 @@
     "id": "knights-murdoku",
     "file": "knights-murdoku.json",
     "title": "Knights Murdoku",
-    "author": "PmLemay",
+    "authors": [
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 9,
       "cols": 9
@@ -84,7 +95,9 @@
     "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
     "file": "nurikabe-112481-from-puzsq-logicpuzzle-app.json",
     "title": "Nurikabe 112481 (from puzsq.logicpuzzle.app)",
-    "author": "土刃",
+    "authors": [
+      "土刃"
+    ],
     "gridSize": {
       "rows": 10,
       "cols": 10
@@ -99,7 +112,9 @@
     "id": "nurikabe-murdoku",
     "file": "nurikabe-murdoku.json",
     "title": "Nurikabe Murdoku",
-    "author": "PmLemay",
+    "authors": [
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 10,
       "cols": 10
@@ -117,7 +132,9 @@
     "id": "spiral-galaxy-murdoku",
     "file": "spiral-galaxy-murdoku.json",
     "title": "Spiral Galaxy Murdoku",
-    "author": "PmLemay",
+    "authors": [
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 12,
       "cols": 12

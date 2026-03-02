@@ -23,7 +23,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
 
 export function gridToPuzzle(
   grid: CellData[][],
-  meta: { id: string; title: string; author: string; rules: string[]; clues: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; forcedInputLayout?: string }
+  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; forcedInputLayout?: string }
 ): PuzzleData {
   // Build deduplicated image map: base64 → id
   const imageToId = new Map<string, string>()

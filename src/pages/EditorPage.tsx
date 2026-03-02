@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom'
 import { useGrid } from '../hooks/useGrid'
 import { useKeyboard } from '../hooks/useKeyboard'
@@ -10,6 +10,7 @@ import { InfoPanel } from '../components/InfoPanel/InfoPanel'
 import { Modal } from '../components/Modal/Modal'
 import { ResizableLeft } from '../components/ResizableLeft'
 import { LanguagePicker } from '../components/LanguagePicker'
+import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution } from '../utils/puzzleIO'
 import { PuzzleData, PuzzleSolution, CellData, CellPosition, AutoCrossRule } from '../types'
@@ -26,7 +27,7 @@ export function EditorPage() {
   const [rows, setRows] = useState(paramRows)
   const [cols, setCols] = useState(paramCols)
   const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
+  const [authors, setAuthors] = useState<string[]>([])
   const [difficulty, setDifficulty] = useState('')
   const [tags, setTags] = useState<string[]>([])
   const [rules, setRules] = useState<string[]>([])
@@ -36,11 +37,9 @@ export function EditorPage() {
   const [imageLibrary, setImageLibrary] = useState<string[]>([])
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [knownTags, setKnownTags] = useState<string[]>([])
+  const [knownAuthors, setKnownAuthors] = useState<string[]>([])
   const [autoCrossRules, setAutoCrossRulesState] = useState<AutoCrossRule[]>([])
   const [forcedInputLayout, setForcedInputLayout] = useState('')
-  const [tagInput, setTagInput] = useState('')
-  const [tagSuggestionIndex, setTagSuggestionIndex] = useState(-1)
-  const tagInputRef = useRef<HTMLInputElement>(null)
 
   const [editorPuzzleId, setEditorPuzzleId] = useState(puzzleId || '')
   const [solutionMode, setSolutionMode] = useState(false)
@@ -54,9 +53,14 @@ export function EditorPage() {
 
   useEffect(() => {
     fetchPuzzleIndex().then(entries => {
-      const all = new Set<string>()
-      for (const e of entries) for (const t of e.tags || []) all.add(t)
-      setKnownTags([...all].sort())
+      const allTags = new Set<string>()
+      const allAuthors = new Set<string>()
+      for (const e of entries) {
+        for (const t of e.tags || []) allTags.add(t)
+        for (const a of e.authors || []) allAuthors.add(a)
+      }
+      setKnownTags([...allTags].sort())
+      setKnownAuthors([...allAuthors].sort())
     })
   }, [])
 
@@ -65,7 +69,7 @@ export function EditorPage() {
       fetchPuzzle(puzzleId).then(puzzle => {
         if (puzzle) {
           setTitle(puzzle.title)
-          setAuthor(puzzle.author)
+          setAuthors(puzzle.authors || [])
           setRows(puzzle.gridSize.rows)
           setCols(puzzle.gridSize.cols)
           setDifficulty(puzzle.difficulty || '')
@@ -124,50 +128,10 @@ export function EditorPage() {
     },
   })
 
-  const tagSuggestions = useMemo(() => {
-    const q = tagInput.toLowerCase().trim()
-    if (!q) return []
-    return knownTags.filter(t => t.toLowerCase().includes(q) && !tags.includes(t))
-  }, [tagInput, knownTags, tags])
-
-  const addTag = (tag: string) => {
-    const t = tag.trim().toLowerCase()
-    if (t && !tags.includes(t)) setTags(prev => [...prev, t])
-    setTagInput('')
-    setTagSuggestionIndex(-1)
-    tagInputRef.current?.focus()
-  }
-
-  const removeTag = (tag: string) => {
-    setTags(prev => prev.filter(t => t !== tag))
-  }
-
-  const handleTagKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      if (tagSuggestionIndex >= 0 && tagSuggestions[tagSuggestionIndex]) {
-        addTag(tagSuggestions[tagSuggestionIndex])
-      } else if (tagInput.trim()) {
-        addTag(tagInput)
-      }
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      setTagSuggestionIndex(i => Math.min(i + 1, tagSuggestions.length - 1))
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      setTagSuggestionIndex(i => Math.max(i - 1, -1))
-    } else if (e.key === 'Backspace' && !tagInput && tags.length > 0) {
-      removeTag(tags[tags.length - 1])
-    } else if (e.key === 'Escape') {
-      setTagInput('')
-      setTagSuggestionIndex(-1)
-    }
-  }
-
   const handleSave = async () => {
     if (!difficulty) { await showAlert('Please select a difficulty before saving.'); return }
     const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', author, rules, clues, difficulty, tags, autoCrossRules, forcedInputLayout: forcedInputLayout || undefined })
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, rules, clues, difficulty, tags, autoCrossRules, forcedInputLayout: forcedInputLayout || undefined })
 
     if (puzzleId) {
       puzzle.id = puzzleId
@@ -436,7 +400,7 @@ export function EditorPage() {
         const puzzle: PuzzleData = JSON.parse(reader.result as string)
         setEditorPuzzleId(puzzle.id)
         setTitle(puzzle.title)
-        setAuthor(puzzle.author)
+        setAuthors(puzzle.authors || [])
         setRows(puzzle.gridSize.rows)
         setCols(puzzle.gridSize.cols)
         setDifficulty(puzzle.difficulty || '')
@@ -488,8 +452,8 @@ export function EditorPage() {
               <input value={title} onChange={e => setTitle(e.target.value)} placeholder="My Puzzle" />
             </div>
             <div className="info-editor-field">
-              <label>Author</label>
-              <input value={author} onChange={e => setAuthor(e.target.value)} />
+              <label>Authors</label>
+              <PillInput values={authors} onChange={setAuthors} known={knownAuthors} placeholder="Add authors..." />
             </div>
             <div className="info-editor-field">
               <label>Difficulty</label>
@@ -504,36 +468,7 @@ export function EditorPage() {
             </div>
             <div className="info-editor-field">
               <label>Tags</label>
-              <div className="tag-input-wrapper">
-                {tags.map(t => (
-                  <span key={t} className="tag-input-pill">
-                    {t}
-                    <button onClick={() => removeTag(t)}>&times;</button>
-                  </span>
-                ))}
-                <input
-                  ref={tagInputRef}
-                  value={tagInput}
-                  onChange={e => { setTagInput(e.target.value); setTagSuggestionIndex(-1) }}
-                  onKeyDown={handleTagKeyDown}
-                  onBlur={() => setTimeout(() => setTagSuggestionIndex(-1), 150)}
-                  placeholder={tags.length === 0 ? 'Add tags...' : ''}
-                  className="tag-input-bare"
-                />
-                {tagSuggestions.length > 0 && (
-                  <div className="tag-suggestions">
-                    {tagSuggestions.map((s, i) => (
-                      <div
-                        key={s}
-                        className={`tag-suggestion${i === tagSuggestionIndex ? ' active' : ''}`}
-                        onMouseDown={() => addTag(s)}
-                      >
-                        {s}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <PillInput values={tags} onChange={setTags} known={knownTags} placeholder="Add tags..." />
             </div>
             <div className="info-editor-field">
               <label>Auto-Cross Rules</label>

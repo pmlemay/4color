@@ -41,7 +41,7 @@ export interface PuzzleCellData {
 export interface PuzzleData {
   id: string
   title: string
-  author: string
+  authors: string[]
   gridSize: { rows: number; cols: number }
   cells: PuzzleCellData[]
   rules: string[]
@@ -58,7 +58,7 @@ export interface PuzzleIndexEntry {
   id: string
   file: string
   title: string
-  author: string
+  authors: string[]
   gridSize: { rows: number; cols: number }
   difficulty?: string
   tags?: string[]

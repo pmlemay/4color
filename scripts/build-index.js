@@ -10,7 +10,7 @@ const index = files.map(f => {
     id: data.id,
     file: f,
     title: data.title,
-    author: data.author,
+    authors: data.authors || (data.author ? [data.author] : []),
     gridSize: data.gridSize,
   }
   if (data.difficulty) entry.difficulty = data.difficulty

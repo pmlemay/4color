@@ -26,6 +26,7 @@ export function PuzzleList() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
   const [tagMode, setTagMode] = useState<'or' | 'and'>('or')
   const [selectedDifficulties, setSelectedDifficulties] = useState<Set<string>>(new Set())
+  const [selectedAuthors, setSelectedAuthors] = useState<Set<string>>(new Set())
   const [hideCompleted, setHideCompleted] = useState(false)
 
   useEffect(() => {
@@ -41,6 +42,14 @@ export function PuzzleList() {
       for (const t of p.tags || []) tags.add(t)
     }
     return [...tags].sort()
+  }, [puzzles])
+
+  const allAuthors = useMemo(() => {
+    const authors = new Set<string>()
+    for (const p of puzzles) {
+      for (const a of p.authors || []) authors.add(a)
+    }
+    return [...authors].sort()
   }, [puzzles])
 
   const allDifficulties = useMemo(() => {
@@ -68,11 +77,14 @@ export function PuzzleList() {
     if (selectedDifficulties.size > 0) {
       result = result.filter(p => p.difficulty != null && selectedDifficulties.has(p.difficulty))
     }
+    if (selectedAuthors.size > 0) {
+      result = result.filter(p => (p.authors || []).some(a => selectedAuthors.has(a)))
+    }
     if (hideCompleted) {
       result = result.filter(p => !completedPuzzleIds.has(p.id))
     }
     return result
-  }, [puzzles, selectedTags, tagMode, selectedDifficulties, hideCompleted, completedPuzzleIds])
+  }, [puzzles, selectedTags, tagMode, selectedDifficulties, selectedAuthors, hideCompleted, completedPuzzleIds])
 
   const groupedPuzzles = useMemo(() => {
     const order = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard']
@@ -100,6 +112,15 @@ export function PuzzleList() {
       const next = new Set(prev)
       if (next.has(tag)) next.delete(tag)
       else next.add(tag)
+      return next
+    })
+  }
+
+  const toggleAuthor = (a: string) => {
+    setSelectedAuthors(prev => {
+      const next = new Set(prev)
+      if (next.has(a)) next.delete(a)
+      else next.add(a)
       return next
     })
   }
@@ -167,7 +188,7 @@ export function PuzzleList() {
           <Link to="/edit" className="new-puzzle-btn">Create New Puzzle</Link>
         </div>
 
-        {(allTags.length > 0 || allDifficulties.length > 0) && (
+        {(allTags.length > 0 || allDifficulties.length > 0 || allAuthors.length > 0) && (
           <div className="filter-bars">
             <div className="tag-filter-bar">
               {completedPuzzleIds.size > 0 && (<>
@@ -191,6 +212,7 @@ export function PuzzleList() {
             </div>
             {allTags.length > 0 && (
               <div className="tag-filter-bar">
+                <span className="filter-label">Tags:</span>
                 {allTags.map(tag => (
                   <button
                     key={tag}
@@ -209,6 +231,20 @@ export function PuzzleList() {
                     {tagMode.toUpperCase()}
                   </button>
                 )}
+              </div>
+            )}
+            {allAuthors.length > 0 && (
+              <div className="tag-filter-bar">
+                <span className="filter-label">Author:</span>
+                {allAuthors.map(a => (
+                  <button
+                    key={a}
+                    className={`tag-chip notranslate${selectedAuthors.has(a) ? ' selected' : ''}`}
+                    onClick={() => toggleAuthor(a)}
+                  >
+                    {a}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -231,7 +267,7 @@ export function PuzzleList() {
                       <Link to={`/play/${p.id}`} className={`puzzle-card${completedPuzzleIds.has(p.id) ? ' puzzle-completed' : ''}`}>
                         <h3>{p.title}{completedPuzzleIds.has(p.id) && <span className="completed-badge" title="Completed">&#10003;</span>}{completionTimes.has(p.id) && <span className="completion-time">{formatTime(completionTimes.get(p.id)!)}</span>}</h3>
                         <p className="puzzle-meta">
-                          by {p.author} &middot; {p.gridSize.rows}&times;{p.gridSize.cols}
+                          by {(p.authors || []).join(', ')} &middot; {p.gridSize.rows}&times;{p.gridSize.cols}
                         </p>
                         {p.tags && p.tags.length > 0 && (
                           <div className="puzzle-tags">

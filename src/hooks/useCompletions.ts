@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { doc, getDoc, onSnapshot, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../contexts/AuthContext'
 
@@ -9,8 +9,6 @@ export function useCompletions() {
   const [completionTimes, setCompletionTimes] = useState<Map<string, number>>(new Map())
   const [displayName, setDisplayNameState] = useState<string>('')
   // Ref mirror so callbacks can check current state without re-create
-  const completedRef = useRef(completedPuzzleIds)
-  completedRef.current = completedPuzzleIds
   const timesRef = useRef(completionTimes)
   timesRef.current = completionTimes
 
@@ -24,15 +22,21 @@ export function useCompletions() {
     return onSnapshot(ref, snap => {
       if (snap.exists()) {
         const data = snap.data()
-        const ids = data.puzzleIds || []
-        setCompletedPuzzleIds(new Set(ids))
-        setDisplayNameState(data.displayName || user.displayName || '')
-        const times = data.times || {}
-        setCompletionTimes(new Map(Object.entries(times) as [string, number][]))
-        // Fix count if it drifted out of sync with array length
-        if (data.count !== ids.length) {
-          updateDoc(ref, { count: ids.length }).catch(() => {})
+        let times: Record<string, number> = data.times || {}
+        // Migrate legacy puzzleIds into times if needed
+        const legacyIds: string[] = data.puzzleIds || []
+        if (legacyIds.length > 0) {
+          const migrated = { ...times }
+          for (const id of legacyIds) {
+            if (!(id in migrated)) migrated[id] = 0
+          }
+          times = migrated
+          updateDoc(ref, { times: migrated, puzzleIds: [] }).catch(() => {})
         }
+        const timesMap = new Map(Object.entries(times) as [string, number][])
+        setCompletionTimes(timesMap)
+        setCompletedPuzzleIds(new Set(timesMap.keys()))
+        setDisplayNameState(data.displayName || user.displayName || '')
       } else {
         setCompletedPuzzleIds(new Set())
         setCompletionTimes(new Map())
@@ -47,57 +51,36 @@ export function useCompletions() {
 
   const markCompleted = useCallback(async (puzzleId: string, timeMs?: number) => {
     if (!user) return
-    // Skip if already completed
-    if (completedRef.current.has(puzzleId)) return
+    if (timesRef.current.has(puzzleId)) return
+    const time = timeMs ?? 0
     const ref = doc(db, 'completions_index', user.uid)
     try {
-      // Read current to get accurate count
       const snap = await getDoc(ref)
       if (snap.exists()) {
         const data = snap.data()
-        const ids: string[] = data.puzzleIds || []
-        if (ids.includes(puzzleId)) return // already there
-        const update: Record<string, unknown> = {
-          puzzleIds: arrayUnion(puzzleId),
-          count: ids.length + 1,
-        }
-        // Only store time if provided and not already stored
-        if (timeMs != null && !(data.times && data.times[puzzleId])) {
-          update[`times.${puzzleId}`] = timeMs
-        }
-        await updateDoc(ref, update)
+        const times: Record<string, number> = data.times || {}
+        if (puzzleId in times) return
+        await updateDoc(ref, { [`times.${puzzleId}`]: time, count: Object.keys(times).length + 1 })
       } else {
         const name = user.displayName || 'Anonymous'
-        const newDoc: Record<string, unknown> = { uid: user.uid, puzzleIds: [puzzleId], count: 1, displayName: name }
-        if (timeMs != null) {
-          newDoc.times = { [puzzleId]: timeMs }
-        }
-        await setDoc(ref, newDoc)
+        await setDoc(ref, { uid: user.uid, times: { [puzzleId]: time }, count: 1, displayName: name })
       }
     } catch {
-      // Fallback: try creating the doc
       const name = user.displayName || 'Anonymous'
-      const newDoc: Record<string, unknown> = { uid: user.uid, puzzleIds: [puzzleId], count: 1, displayName: name }
-      if (timeMs != null) {
-        newDoc.times = { [puzzleId]: timeMs }
-      }
-      await setDoc(ref, newDoc).catch(() => {})
+      await setDoc(ref, { uid: user.uid, times: { [puzzleId]: time }, count: 1, displayName: name }).catch(() => {})
     }
   }, [user])
 
   const unmarkCompleted = useCallback(async (puzzleId: string) => {
     if (!user) return
-    if (!completedRef.current.has(puzzleId)) return
+    if (!timesRef.current.has(puzzleId)) return
     const ref = doc(db, 'completions_index', user.uid)
     try {
       const snap = await getDoc(ref)
       if (snap.exists()) {
-        const ids: string[] = snap.data().puzzleIds || []
-        const newCount = Math.max(0, ids.filter(id => id !== puzzleId).length)
-        await updateDoc(ref, {
-          puzzleIds: arrayRemove(puzzleId),
-          count: newCount,
-        })
+        const times: Record<string, number> = { ...snap.data().times }
+        delete times[puzzleId]
+        await updateDoc(ref, { times, count: Object.keys(times).length })
       }
     } catch {
       // ignore
@@ -112,7 +95,7 @@ export function useCompletions() {
     try {
       await updateDoc(ref, { displayName: trimmed })
     } catch {
-      await setDoc(ref, { uid: user.uid, puzzleIds: [], count: 0, displayName: trimmed })
+      await setDoc(ref, { uid: user.uid, displayName: trimmed }, { merge: true })
     }
   }, [user])
 

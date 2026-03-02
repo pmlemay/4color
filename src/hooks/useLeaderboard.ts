@@ -21,15 +21,17 @@ export function useLeaderboard(maxEntries = 10) {
       const results: LeaderboardEntry[] = []
       snap.forEach(doc => {
         const data = doc.data()
-        if (data.count > 0) {
+        const count = data.times ? Object.keys(data.times).length : data.count || 0
+        if (count > 0) {
           results.push({
             uid: doc.id,
             displayName: data.displayName || 'Anonymous',
-            count: data.count,
+            count,
           })
         }
       })
-      setEntries(results)
+      results.sort((a, b) => b.count - a.count)
+      setEntries(results.slice(0, maxEntries))
     }, () => {
       // Firestore error — ignore silently
       setEntries([])

@@ -1,7 +1,7 @@
 {
   "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
   "title": "Nurikabe 112481 (from puzsq.logicpuzzle.app)",
-  "author": "土刃",
+  "authors": ["土刃"],
   "rules": [
     "Each island contains exactly one clue.",
     "The number of squares in each island equals the value of the clue.",

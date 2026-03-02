@@ -8,7 +8,7 @@ function isTranslated(): boolean {
 
 interface InfoPanelProps {
   title?: string
-  author?: string
+  authors?: string[]
   gridSize?: { rows: number; cols: number }
   difficulty?: string
   rulesList?: string[]
@@ -22,7 +22,7 @@ interface InfoPanelProps {
   onStruckClueWordsChange?: Dispatch<SetStateAction<Set<string>>>
 }
 
-export function InfoPanel({ title, author, gridSize, difficulty, rulesList, cluesList, backLink = true, headerRight, children, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
+export function InfoPanel({ title, authors, gridSize, difficulty, rulesList, cluesList, backLink = true, headerRight, children, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
   // Internal state used when not controlled (e.g. editor mode)
   const [internalStruckRules, setInternalStruckRules] = useState<Set<string>>(new Set())
   const [internalStruckClues, setInternalStruckClues] = useState<Set<string>>(new Set())
@@ -92,7 +92,7 @@ export function InfoPanel({ title, author, gridSize, difficulty, rulesList, clue
       {title && (
         <div className="info-section">
           <h2 className="info-title">{title}</h2>
-          {author && <p className="info-meta">by {author}</p>}
+          {authors && authors.length > 0 && <p className="info-meta">by {authors.join(', ')}</p>}
           {gridSize && (
             <p className="info-meta">{gridSize.rows}&times;{gridSize.cols}</p>
           )}
