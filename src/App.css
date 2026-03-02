@@ -376,6 +376,19 @@ body {
   border-bottom: 1px solid var(--panel-border);
   padding: 4px 10px;
   background: var(--panel-bg);
+  position: relative;
+}
+
+.clues-bar--shadow-top {
+  box-shadow: inset 0 6px 6px -4px rgba(0, 0, 0, 0.2);
+}
+
+.clues-bar--shadow-bottom {
+  box-shadow: inset 0 -6px 6px -4px rgba(0, 0, 0, 0.2);
+}
+
+.clues-bar--shadow-top.clues-bar--shadow-bottom {
+  box-shadow: inset 0 6px 6px -4px rgba(0, 0, 0, 0.2), inset 0 -6px 6px -4px rgba(0, 0, 0, 0.2);
 }
 
 .clues-bar-list {

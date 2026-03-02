@@ -138,7 +138,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
 
     const handleTouchStart = (e: TouchEvent) => {
       if ((e.target as HTMLElement).closest('.toolbar')) return
-      if (optionsRef.current.isPinching || e.touches.length >= 2) {
+      if (e.touches.length >= 2) {
         cancelPendingTouch()
         return
       }
@@ -152,10 +152,15 @@ export function useDragSelect(options: UseDragSelectOptions) {
     }
 
     const handleTouchMove = (e: TouchEvent) => {
-      // If a second finger appeared, cancel pending touch
-      if (optionsRef.current.isPinching || e.touches.length >= 2) {
+      // If a second finger appeared, cancel pending touch and revert any committed drag
+      if (e.touches.length >= 2) {
         cancelPendingTouch()
-        dragging.current = false
+        if (dragging.current) {
+          dragging.current = false
+          // Fire empty selection end to revert any partial changes
+          currentSelection.current = []
+          optionsRef.current.onSelectionEnd([])
+        }
         return
       }
       // If pending touch hasn't committed yet, only commit if finger moved to a different cell

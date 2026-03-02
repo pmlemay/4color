@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react'
+import { useRef, useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react'
 
 interface CluesBarProps {
   cluesList: string[]
@@ -7,6 +7,30 @@ interface CluesBarProps {
 }
 
 export function CluesBar({ cluesList, struckClueWords, onStruckClueWordsChange }: CluesBarProps) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollUp, setCanScrollUp] = useState(false)
+  const [canScrollDown, setCanScrollDown] = useState(false)
+
+  const updateShadows = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setCanScrollUp(el.scrollTop > 0)
+    setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 1)
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    updateShadows()
+    el.addEventListener('scroll', updateShadows, { passive: true })
+    const ro = new ResizeObserver(updateShadows)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', updateShadows)
+      ro.disconnect()
+    }
+  }, [updateShadows, cluesList])
+
   if (!cluesList.length) return null
 
   const toggleWord = (key: string) => {
@@ -48,8 +72,14 @@ export function CluesBar({ cluesList, struckClueWords, onStruckClueWordsChange }
     })
   }
 
+  const shadowClass = [
+    'clues-bar',
+    canScrollUp ? 'clues-bar--shadow-top' : '',
+    canScrollDown ? 'clues-bar--shadow-bottom' : '',
+  ].filter(Boolean).join(' ')
+
   return (
-    <div className="clues-bar">
+    <div className={shadowClass} ref={scrollRef}>
       <ul className="clues-bar-list">
         {cluesList.map((clue, i) => (
           <li key={i} className="clues-bar-item" onClick={() => toggleAllWords(clue, i)}>
