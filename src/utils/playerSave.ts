@@ -14,6 +14,7 @@ interface PlayerSaveData {
   cells: SavedCell[]
   struckRules: string[]
   struckClues: string[]
+  struckSpecialRules?: string[]
   elapsedMs?: number
 }
 
@@ -24,6 +25,7 @@ export function savePlayerData(
   grid: CellData[][],
   struckRules: Set<string>,
   struckClues: Set<string>,
+  struckSpecialRules?: Set<string>,
   elapsedMs?: number,
 ) {
   const cells: SavedCell[] = []
@@ -45,6 +47,7 @@ export function savePlayerData(
     cells,
     struckRules: Array.from(struckRules),
     struckClues: Array.from(struckClues),
+    struckSpecialRules: struckSpecialRules ? Array.from(struckSpecialRules) : undefined,
     elapsedMs,
   }
   try {

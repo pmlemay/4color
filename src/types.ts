@@ -46,6 +46,7 @@ export interface PuzzleData {
   cells: PuzzleCellData[]
   rules: string[]
   clues: string[]
+  specialRules?: string[]
   difficulty?: string
   tags?: string[]
   autoCrossRules?: AutoCrossRule[]

@@ -9,7 +9,9 @@ import { Toolbar } from '../components/Toolbar/Toolbar'
 import { InfoPanel } from '../components/InfoPanel/InfoPanel'
 import { Modal } from '../components/Modal/Modal'
 import { ResizableLeft } from '../components/ResizableLeft'
+import { ResizableRight } from '../components/ResizableRight'
 import { LanguagePicker } from '../components/LanguagePicker'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution } from '../utils/puzzleIO'
@@ -30,8 +32,10 @@ export function EditorPage() {
   const [authors, setAuthors] = useState<string[]>([])
   const [difficulty, setDifficulty] = useState('')
   const [tags, setTags] = useState<string[]>([])
+  const [specialRules, setSpecialRules] = useState<string[]>([])
   const [rules, setRules] = useState<string[]>([])
   const [clues, setClues] = useState<string[]>([])
+  const [newSpecialRule, setNewSpecialRule] = useState('')
   const [newRule, setNewRule] = useState('')
   const [newClue, setNewClue] = useState('')
   const [imageLibrary, setImageLibrary] = useState<string[]>([])
@@ -76,6 +80,7 @@ export function EditorPage() {
           setTags(puzzle.tags || [])
           setAutoCrossRulesState(puzzle.autoCrossRules || [])
           setForcedInputLayout(puzzle.forcedInputLayout || '')
+          setSpecialRules(puzzle.specialRules || [])
           setRules(puzzle.rules || [])
           setClues(puzzle.clues || [])
           gridState.setGrid(puzzleToGrid(puzzle))
@@ -131,7 +136,7 @@ export function EditorPage() {
   const handleSave = async () => {
     if (!difficulty) { await showAlert('Please select a difficulty before saving.'); return }
     const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, rules, clues, difficulty, tags, autoCrossRules, forcedInputLayout: forcedInputLayout || undefined })
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, forcedInputLayout: forcedInputLayout || undefined })
 
     if (puzzleId) {
       puzzle.id = puzzleId
@@ -320,12 +325,12 @@ export function EditorPage() {
     e.target.value = ''
   }
 
-  const [editingItem, setEditingItem] = useState<{ type: 'rule' | 'clue'; index: number } | null>(null)
+  const [editingItem, setEditingItem] = useState<{ type: 'specialRule' | 'rule' | 'clue'; index: number } | null>(null)
   const [editingText, setEditingText] = useState('')
-  const dragItem = useRef<{ type: 'rule' | 'clue'; index: number } | null>(null)
+  const dragItem = useRef<{ type: 'specialRule' | 'rule' | 'clue'; index: number } | null>(null)
   const dragOverItem = useRef<number | null>(null)
 
-  const handleDragStart = useCallback((type: 'rule' | 'clue', index: number) => {
+  const handleDragStart = useCallback((type: 'specialRule' | 'rule' | 'clue', index: number) => {
     dragItem.current = { type, index }
   }, [])
 
@@ -334,12 +339,12 @@ export function EditorPage() {
     dragOverItem.current = index
   }, [])
 
-  const handleDrop = useCallback((type: 'rule' | 'clue') => {
+  const handleDrop = useCallback((type: 'specialRule' | 'rule' | 'clue') => {
     if (!dragItem.current || dragOverItem.current === null || dragItem.current.type !== type) return
     const from = dragItem.current.index
     const to = dragOverItem.current
     if (from === to) return
-    const setter = type === 'rule' ? setRules : setClues
+    const setter = type === 'specialRule' ? setSpecialRules : type === 'rule' ? setRules : setClues
     setter(prev => {
       const items = [...prev]
       const [moved] = items.splice(from, 1)
@@ -350,7 +355,7 @@ export function EditorPage() {
     dragOverItem.current = null
   }, [])
 
-  const startEditing = useCallback((type: 'rule' | 'clue', index: number, text: string) => {
+  const startEditing = useCallback((type: 'specialRule' | 'rule' | 'clue', index: number, text: string) => {
     setEditingItem({ type, index })
     setEditingText(text)
   }, [])
@@ -358,7 +363,7 @@ export function EditorPage() {
   const commitEdit = useCallback(() => {
     if (!editingItem) return
     const trimmed = editingText.trim()
-    const setter = editingItem.type === 'rule' ? setRules : setClues
+    const setter = editingItem.type === 'specialRule' ? setSpecialRules : editingItem.type === 'rule' ? setRules : setClues
     if (trimmed) {
       setter(prev => prev.map((item, i) => i === editingItem.index ? trimmed : item))
     } else {
@@ -435,7 +440,7 @@ export function EditorPage() {
   return (
     <div className="page-layout">
       <ResizableLeft>
-        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink headerRight={<LanguagePicker />}>
+        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}>
           {solutionMode ? (<>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>
               Place the correct values for each cell. Only normal inputs (values) and borders will be saved as the solution.
@@ -536,6 +541,55 @@ export function EditorPage() {
               style={{ display: 'none' }}
               onChange={handleImageImport}
             />
+
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
+
+            <div className="info-section-title" style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Special Rules</div>
+            {specialRules.map((rule, i) => (
+              <div
+                key={i}
+                className="info-list-item info-list-draggable"
+                draggable
+                onDragStart={() => handleDragStart('specialRule', i)}
+                onDragOver={e => handleDragOver(e, i)}
+                onDrop={() => handleDrop('specialRule')}
+              >
+                <span className="info-drag-handle" title="Drag to reorder">&#x2630;</span>
+                {editingItem?.type === 'specialRule' && editingItem.index === i ? (
+                  <input
+                    className="info-edit-input"
+                    value={editingText}
+                    onChange={e => setEditingText(e.target.value)}
+                    onBlur={commitEdit}
+                    onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') { setEditingItem(null); setEditingText('') } }}
+                    autoFocus
+                  />
+                ) : (
+                  <span className="info-list-text info-list-editable" onClick={() => startEditing('specialRule', i, rule)}>{rule}</span>
+                )}
+                <button className="info-list-remove" onClick={() => setSpecialRules(specialRules.filter((_, j) => j !== i))} title="Remove">&times;</button>
+              </div>
+            ))}
+            <div className="info-add-row">
+              <input
+                className="info-add-input"
+                value={newSpecialRule}
+                onChange={e => setNewSpecialRule(e.target.value)}
+                placeholder="Add a special rule..."
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && newSpecialRule.trim()) {
+                    setSpecialRules([...specialRules, newSpecialRule.trim()])
+                    setNewSpecialRule('')
+                  }
+                }}
+              />
+              <button className="info-add-btn" onClick={() => {
+                if (newSpecialRule.trim()) {
+                  setSpecialRules([...specialRules, newSpecialRule.trim()])
+                  setNewSpecialRule('')
+                }
+              }}>+</button>
+            </div>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
 
@@ -667,7 +721,7 @@ export function EditorPage() {
         </div>
       </div>
 
-      <aside className="panel-right">
+      <ResizableRight>
         <Toolbar
           inputMode={gridState.inputMode}
           onInputModeChange={(mode) => {
@@ -696,8 +750,6 @@ export function EditorPage() {
           onRedo={gridState.redo}
           onErase={gridState.clearValues}
           isEditor={!solutionMode}
-          theme={theme}
-          onThemeToggle={toggleTheme}
           imageLibrary={imageLibrary}
           selectedImageIndex={selectedImageIndex}
           onImageSelect={handleImageSelect}
@@ -707,7 +759,7 @@ export function EditorPage() {
           onIconAdd={handleIconAdd}
           forcedInputLayout={forcedInputLayout || undefined}
         />
-      </aside>
+      </ResizableRight>
 
       <Modal {...modalProps} />
     </div>

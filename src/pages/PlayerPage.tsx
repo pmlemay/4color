@@ -13,9 +13,11 @@ import { InfoPanel } from '../components/InfoPanel/InfoPanel'
 import { CluesBar } from '../components/CluesBar'
 import { Modal } from '../components/Modal/Modal'
 import { ResizableLeft } from '../components/ResizableLeft'
+import { ResizableRight } from '../components/ResizableRight'
 import { MobileHeader } from '../components/MobileHeader'
 import { SlidePanel } from '../components/SlidePanel'
 import { LanguagePicker } from '../components/LanguagePicker'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { fetchPuzzle, fetchPuzzleSolution, puzzleToGrid } from '../utils/puzzleIO'
 import { savePlayerData, loadPlayerData, clearPlayerData, applyPlayerData } from '../utils/playerSave'
 import { validate4Color, validateSolution } from '../utils/validate'
@@ -40,6 +42,7 @@ export function PlayerPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
+  const [struckSpecialRuleWords, setStruckSpecialRuleWords] = useState<Set<string>>(new Set())
   const [struckRuleWords, setStruckRuleWords] = useState<Set<string>>(new Set())
   const [struckClueWords, setStruckClueWords] = useState<Set<string>>(new Set())
   const [solution, setSolution] = useState<PuzzleSolution | null>(null)
@@ -52,6 +55,8 @@ export function PlayerPage() {
   timerRef.current = timer
   const gridRef = useRef(gridState.grid)
   gridRef.current = gridState.grid
+  const struckSpecialRuleWordsRef = useRef(struckSpecialRuleWords)
+  struckSpecialRuleWordsRef.current = struckSpecialRuleWords
   const struckRuleWordsRef = useRef(struckRuleWords)
   struckRuleWordsRef.current = struckRuleWords
   const struckClueWordsRef = useRef(struckClueWords)
@@ -87,6 +92,7 @@ export function PlayerPage() {
         let savedElapsedMs = 0
         if (saved) {
           grid = applyPlayerData(grid, saved)
+          setStruckSpecialRuleWords(new Set(saved.struckSpecialRules || []))
           setStruckRuleWords(new Set(saved.struckRules))
           setStruckClueWords(new Set(saved.struckClues))
           savedElapsedMs = saved.elapsedMs || 0
@@ -138,16 +144,16 @@ export function PlayerPage() {
     if (!puzzleId || !loaded.current) return
     if (saveTimer.current) clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(() => {
-      savePlayerData(puzzleId, gridState.grid, struckRuleWords, struckClueWords, timerRef.current.elapsedMs)
+      savePlayerData(puzzleId, gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, timerRef.current.elapsedMs)
     }, 500)
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current) }
-  }, [gridState.grid, struckRuleWords, struckClueWords, puzzleId])
+  }, [gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, puzzleId])
 
   // Save timer on unmount (covers leaving without any grid changes)
   useEffect(() => {
     return () => {
       if (puzzleId && loaded.current) {
-        savePlayerData(puzzleId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, timerRef.current.elapsedMs)
+        savePlayerData(puzzleId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, struckSpecialRuleWordsRef.current, timerRef.current.elapsedMs)
       }
     }
   }, [puzzleId])
@@ -349,10 +355,13 @@ export function PlayerPage() {
       authors={puzzle.authors}
       gridSize={puzzle.gridSize}
       difficulty={puzzle.difficulty}
+      specialRulesList={puzzle.specialRules}
       rulesList={puzzle.rules}
       cluesList={puzzle.clues}
       backLink={!isMobile}
-      headerRight={<LanguagePicker />}
+      headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
+      struckSpecialRuleWords={struckSpecialRuleWords}
+      onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
       struckRuleWords={struckRuleWords}
       onStruckRuleWordsChange={setStruckRuleWords}
       struckClueWords={struckClueWords}
@@ -370,9 +379,12 @@ export function PlayerPage() {
       authors={puzzle.authors}
       gridSize={puzzle.gridSize}
       difficulty={puzzle.difficulty}
+      specialRulesList={puzzle.specialRules}
       rulesList={puzzle.rules}
       backLink={false}
-      headerRight={<LanguagePicker />}
+      headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
+      struckSpecialRuleWords={struckSpecialRuleWords}
+      onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
       struckRuleWords={struckRuleWords}
       onStruckRuleWordsChange={setStruckRuleWords}
     >
@@ -431,9 +443,12 @@ export function PlayerPage() {
           onMenuToggle={() => setMenuOpen(o => !o)}
         />
 
-        {puzzle.clues && puzzle.clues.length > 0 && (
+        {((puzzle.clues && puzzle.clues.length > 0) || (puzzle.specialRules && puzzle.specialRules.length > 0)) && (
           <CluesBar
-            cluesList={puzzle.clues}
+            specialRulesList={puzzle.specialRules}
+            struckSpecialRuleWords={struckSpecialRuleWords}
+            onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
+            cluesList={puzzle.clues || []}
             struckClueWords={struckClueWords}
             onStruckClueWordsChange={setStruckClueWords}
           />
@@ -487,11 +502,9 @@ export function PlayerPage() {
         </div>
       </div>
 
-      <aside className="panel-right">
+      <ResizableRight>
         <Toolbar
           isEditor={false}
-          theme={theme}
-          onThemeToggle={toggleTheme}
           inputMode={gridState.inputMode}
           onInputModeChange={gridState.setInputMode}
           onColorSelect={c => gridState.applyColor(c)}
@@ -508,7 +521,7 @@ export function PlayerPage() {
           onSubmit={canSubmit ? handleSubmit : undefined}
           forcedInputLayout={forcedInputLayout || undefined}
         />
-      </aside>
+      </ResizableRight>
 
       {completionModal}
       <Modal {...modalProps} />

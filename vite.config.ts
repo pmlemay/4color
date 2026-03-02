@@ -4,9 +4,42 @@ import { writeFileSync, readdirSync, readFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import type { Plugin } from 'vite'
 
+function rebuildPuzzleIndex() {
+  const puzzlesDir = join(__dirname, 'public', 'puzzles')
+  const files = readdirSync(puzzlesDir).filter(f => f.endsWith('.json') && f !== 'index.json')
+  const index = files.map(f => {
+    const data = JSON.parse(readFileSync(join(puzzlesDir, f), 'utf-8'))
+    const entry: Record<string, unknown> = {
+      id: data.id,
+      file: f,
+      title: data.title,
+      authors: data.authors || (data.author ? [data.author] : []),
+      gridSize: data.gridSize,
+    }
+    if (data.difficulty) entry.difficulty = data.difficulty
+    if (data.tags) entry.tags = data.tags
+    if (data.autoCrossRules?.length) entry.autoCrossRules = data.autoCrossRules
+    if (data.forcedInputLayout) entry.forcedInputLayout = data.forcedInputLayout
+    return entry
+  })
+  index.sort((a: any, b: any) => {
+    const sizeA = a.gridSize.rows * a.gridSize.cols
+    const sizeB = b.gridSize.rows * b.gridSize.cols
+    if (sizeA !== sizeB) return sizeA - sizeB
+    return (a.difficulty || '').localeCompare(b.difficulty || '')
+  })
+  writeFileSync(join(puzzlesDir, 'index.json'), JSON.stringify(index, null, 2) + '\n')
+
+  const publicDir = join(__dirname, 'public')
+  writeFileSync(join(publicDir, 'version.json'), JSON.stringify({ buildTime: Date.now() }) + '\n')
+}
+
 function puzzleSavePlugin(): Plugin {
   return {
     name: 'puzzle-save',
+    buildStart() {
+      rebuildPuzzleIndex()
+    },
     configureServer(server) {
       server.middlewares.use('/api/save-puzzle', (req, res) => {
         if (req.method !== 'POST') {
@@ -39,23 +72,7 @@ function puzzleSavePlugin(): Plugin {
             writeFileSync(join(puzzlesDir, targetFile), JSON.stringify(puzzle, null, 2) + '\n')
 
             // Rebuild index
-            const allFiles = readdirSync(puzzlesDir).filter(f => f.endsWith('.json') && f !== 'index.json')
-            const index = allFiles.map(f => {
-              const data = JSON.parse(readFileSync(join(puzzlesDir, f), 'utf-8'))
-              const entry: Record<string, unknown> = {
-                id: data.id, file: f, title: data.title, author: data.author, gridSize: data.gridSize,
-              }
-              if (data.difficulty) entry.difficulty = data.difficulty
-              if (data.tags) entry.tags = data.tags
-              return entry
-            })
-            index.sort((a: any, b: any) => {
-              const sizeA = a.gridSize.rows * a.gridSize.cols
-              const sizeB = b.gridSize.rows * b.gridSize.cols
-              if (sizeA !== sizeB) return sizeA - sizeB
-              return (a.difficulty || '').localeCompare(b.difficulty || '')
-            })
-            writeFileSync(join(puzzlesDir, 'index.json'), JSON.stringify(index, null, 2) + '\n')
+            rebuildPuzzleIndex()
 
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify({ ok: true, file: targetFile }))

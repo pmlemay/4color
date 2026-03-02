@@ -148,23 +148,6 @@
   position: relative;
 }
 
-.puzzle-list-theme-btn {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--border);
-  background: var(--btn-bg);
-  color: var(--text);
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.puzzle-list-theme-btn:hover {
-  background: var(--btn-hover);
-}
 
 /* Actions */
 .puzzle-list-actions {
@@ -295,6 +278,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 8px;
 }
 
@@ -443,7 +427,12 @@
   }
   .leaderboard-list {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
+    overflow-x: auto;
+  }
+  .leaderboard-entry {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 }

@@ -11,21 +11,26 @@ interface InfoPanelProps {
   authors?: string[]
   gridSize?: { rows: number; cols: number }
   difficulty?: string
+  specialRulesList?: string[]
   rulesList?: string[]
   cluesList?: string[]
   backLink?: boolean
   headerRight?: React.ReactNode
   children?: React.ReactNode
+  struckSpecialRuleWords?: Set<string>
+  onStruckSpecialRuleWordsChange?: Dispatch<SetStateAction<Set<string>>>
   struckRuleWords?: Set<string>
   onStruckRuleWordsChange?: Dispatch<SetStateAction<Set<string>>>
   struckClueWords?: Set<string>
   onStruckClueWordsChange?: Dispatch<SetStateAction<Set<string>>>
 }
 
-export function InfoPanel({ title, authors, gridSize, difficulty, rulesList, cluesList, backLink = true, headerRight, children, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
+export function InfoPanel({ title, authors, gridSize, difficulty, specialRulesList, rulesList, cluesList, backLink = true, headerRight, children, struckSpecialRuleWords: controlledStruckSpecialRules, onStruckSpecialRuleWordsChange, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
   // Internal state used when not controlled (e.g. editor mode)
+  const [internalStruckSpecialRules, setInternalStruckSpecialRules] = useState<Set<string>>(new Set())
   const [internalStruckRules, setInternalStruckRules] = useState<Set<string>>(new Set())
   const [internalStruckClues, setInternalStruckClues] = useState<Set<string>>(new Set())
+  const [specialRulesOpen, setSpecialRulesOpen] = useState(true)
   const [rulesOpen, setRulesOpen] = useState(true)
   const [cluesOpen, setCluesOpen] = useState(true)
   const [translated, setTranslated] = useState(isTranslated)
@@ -36,6 +41,8 @@ export function InfoPanel({ title, authors, gridSize, difficulty, rulesList, clu
     return () => clearInterval(id)
   }, [])
 
+  const struckSpecialRuleWords = controlledStruckSpecialRules ?? internalStruckSpecialRules
+  const setStruckSpecialRuleWords = onStruckSpecialRuleWordsChange ?? setInternalStruckSpecialRules
   const struckRuleWords = controlledStruckRules ?? internalStruckRules
   const setStruckRuleWords = onStruckRuleWordsChange ?? setInternalStruckRules
   const struckClueWords = controlledStruckClues ?? internalStruckClues
@@ -111,6 +118,24 @@ export function InfoPanel({ title, authors, gridSize, difficulty, rulesList, clu
               {rulesList.map((rule, i) => (
                 <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(rule, i, struckRuleWords, setStruckRuleWords)}>
                   {translated ? rule : renderStrikableText(rule, i, struckRuleWords, setStruckRuleWords)}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {specialRulesList && specialRulesList.length > 0 && (
+        <div className="info-section">
+          <div className="info-section-title info-collapsible" onClick={() => setSpecialRulesOpen(o => !o)}>
+            <span className={`info-chevron ${specialRulesOpen ? 'open' : ''}`}>&#9656;</span>
+            Special Rules
+          </div>
+          {specialRulesOpen && (
+            <ul className="info-list">
+              {specialRulesList.map((rule, i) => (
+                <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(rule, i, struckSpecialRuleWords, setStruckSpecialRuleWords)}>
+                  {translated ? rule : renderStrikableText(rule, i, struckSpecialRuleWords, setStruckSpecialRuleWords)}
                 </li>
               ))}
             </ul>

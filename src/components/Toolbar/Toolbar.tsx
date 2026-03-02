@@ -39,8 +39,6 @@ interface ToolbarProps {
   onRedo: () => void
   onErase: () => void
   isEditor?: boolean
-  theme: 'light' | 'dark'
-  onThemeToggle: () => void
   imageLibrary?: string[]
   selectedImageIndex?: number | null
   onImageSelect?: (index: number | null) => void
@@ -69,8 +67,6 @@ export function Toolbar({
   onRedo,
   onErase,
   isEditor = false,
-  theme,
-  onThemeToggle,
   imageLibrary = [],
   selectedImageIndex = null,
   onImageSelect,
@@ -103,6 +99,20 @@ export function Toolbar({
 
   return (
     <div className="toolbar">
+      <div className="tb-hint tb-hint-sticky">
+        {inputMode === 'fixed' && 'Type any key for fixed clue.'}
+        {inputMode === 'fixedDouble' && 'Type two digits for a 2-digit fixed clue.'}
+        {inputMode === 'fixedColor' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
+        {inputMode === 'label' && 'Enter text, pick alignment, Apply.'}
+        {forcedInputLayout && inputMode !== 'fixed' && inputMode !== 'fixedDouble' && inputMode !== 'fixedColor' && inputMode !== 'label' && (<><div>Left-click: black &rarr; dot &rarr; clear</div><div>Right-click: toggle dot</div></>)}
+        {!forcedInputLayout && inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
+        {!forcedInputLayout && inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
+        {!forcedInputLayout && inputMode === 'note' && 'Type to add/remove notes (max 16).'}
+        {!forcedInputLayout && inputMode === 'cross' && 'Click/drag to toggle X marks.'}
+        {!forcedInputLayout && inputMode === 'border' && 'Drag to create/remove borders.'}
+        {!forcedInputLayout && inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
+      </div>
+
       {!forcedInputLayout && (
       <div className="tb-section">
         <div className="tb-section-title">Input Mode</div>
@@ -201,7 +211,46 @@ export function Toolbar({
       {isEditor && (
         <div className="tb-section">
           <div className="tb-section-title">Editor</div>
-          {EDITOR_MODES.map(renderModeBtn)}
+          {EDITOR_MODES.map(m => (
+            <div key={m.mode}>
+              {renderModeBtn(m)}
+              {m.mode === 'label' && showLabel && (
+                <div className="tb-label-fields">
+                  <input
+                    className="tb-input"
+                    value={labelText}
+                    onChange={e => setLabelText(e.target.value)}
+                    placeholder="Label text..."
+                  />
+                  <div className="tb-row">
+                    <button
+                      className={`tb-btn-sm ${labelAlign === 'top' ? 'selected' : ''}`}
+                      onClick={() => setLabelAlign('top')}
+                    >
+                      Top
+                    </button>
+                    <button
+                      className={`tb-btn-sm ${labelAlign === 'bottom' ? 'selected' : ''}`}
+                      onClick={() => setLabelAlign('bottom')}
+                    >
+                      Bottom
+                    </button>
+                  </div>
+                  <button
+                    className="tb-btn"
+                    onClick={() => {
+                      if (labelText.trim()) onLabelApply?.(labelText.trim(), labelAlign)
+                    }}
+                  >
+                    Apply
+                  </button>
+                  <button className="tb-btn" onClick={() => onLabelRemove?.()}>
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
 
@@ -227,65 +276,15 @@ export function Toolbar({
             <button className="tb-btn" onClick={onImageApply}>Apply to Cells</button>
           )}
           <button className="tb-btn" onClick={onImageRemove}>Remove Image</button>
-          {onIconAdd && (
-            <>
-              <div className="tb-section-title" style={{ marginTop: 8 }}>Icon Library</div>
-              <IconBrowser onIconAdd={onIconAdd} />
-            </>
-          )}
         </div>
       )}
 
-      {showLabel && (
+      {isEditor && onIconAdd && (
         <div className="tb-section">
-          <div className="tb-section-title">Label</div>
-          <input
-            className="tb-input"
-            value={labelText}
-            onChange={e => setLabelText(e.target.value)}
-            placeholder="Label text..."
-          />
-          <div className="tb-row">
-            <button
-              className={`tb-btn-sm ${labelAlign === 'top' ? 'selected' : ''}`}
-              onClick={() => setLabelAlign('top')}
-            >
-              Top
-            </button>
-            <button
-              className={`tb-btn-sm ${labelAlign === 'bottom' ? 'selected' : ''}`}
-              onClick={() => setLabelAlign('bottom')}
-            >
-              Bottom
-            </button>
-          </div>
-          <button
-            className="tb-btn"
-            onClick={() => {
-              if (labelText.trim()) onLabelApply?.(labelText.trim(), labelAlign)
-            }}
-          >
-            Apply
-          </button>
-          <button className="tb-btn" onClick={() => onLabelRemove?.()}>
-            Remove
-          </button>
+          <div className="tb-section-title">Icon Library</div>
+          <IconBrowser onIconAdd={onIconAdd} />
         </div>
       )}
-
-      <div className="tb-hint">
-        {inputMode === 'fixed' && 'Type any key for fixed clue.'}
-        {inputMode === 'fixedDouble' && 'Type two digits for a 2-digit fixed clue.'}
-        {inputMode === 'fixedColor' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
-        {inputMode === 'label' && 'Enter text, pick alignment, Apply.'}
-        {forcedInputLayout && inputMode !== 'fixed' && inputMode !== 'fixedDouble' && inputMode !== 'fixedColor' && inputMode !== 'label' && (<><div>Left-click: black &rarr; dot &rarr; clear</div><div>Right-click: toggle dot</div></>)}
-        {!forcedInputLayout && inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
-        {!forcedInputLayout && inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
-        {!forcedInputLayout && inputMode === 'note' && 'Type to add/remove notes (max 16).'}
-        {!forcedInputLayout && inputMode === 'cross' && 'Click/drag to toggle X marks.'}
-        {!forcedInputLayout && inputMode === 'border' && 'Drag to create/remove borders.'}
-        {!forcedInputLayout && inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
-      </div>
 
       <div className="tb-spacer" />
       {onSubmit && (
@@ -293,11 +292,6 @@ export function Toolbar({
           <button className="tb-submit-btn" onClick={onSubmit}>Submit</button>
         </div>
       )}
-      <div className="tb-theme-toggle">
-        <button className="tb-btn" onClick={onThemeToggle} title="Toggle theme">
-          {theme === 'light' ? '\u263E Dark' : '\u2600 Light'}
-        </button>
-      </div>
     </div>
   )
 }

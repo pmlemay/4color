@@ -23,7 +23,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
 
 export function gridToPuzzle(
   grid: CellData[][],
-  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; forcedInputLayout?: string }
+  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; specialRules?: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; forcedInputLayout?: string }
 ): PuzzleData {
   // Build deduplicated image map: base64 → id
   const imageToId = new Map<string, string>()
@@ -70,6 +70,7 @@ export function gridToPuzzle(
     createdAt: new Date().toISOString().split('T')[0],
   }
   if (Object.keys(images).length > 0) puzzle.images = images
+  if (meta.specialRules?.length) puzzle.specialRules = meta.specialRules
   if (meta.autoCrossRules?.length) puzzle.autoCrossRules = meta.autoCrossRules
   if (meta.forcedInputLayout) puzzle.forcedInputLayout = meta.forcedInputLayout
   return puzzle

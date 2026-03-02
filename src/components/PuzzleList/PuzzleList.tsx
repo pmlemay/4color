@@ -10,6 +10,7 @@ import { useLeaderboard } from '../../hooks/useLeaderboard'
 import { useModal } from '../../hooks/useModal'
 import { Modal } from '../Modal/Modal'
 import { LanguagePicker } from '../LanguagePicker'
+import { ThemeToggle } from '../ThemeToggle'
 import './PuzzleList.css'
 
 export function PuzzleList() {
@@ -177,9 +178,7 @@ export function PuzzleList() {
             Contact me on Discord : pmlemay
           </span>
           <LanguagePicker />
-          <button className="puzzle-list-theme-btn" onClick={toggleTheme} title="Toggle theme">
-            {theme === 'light' ? '\u263E' : '\u2600'}
-          </button>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>
         <div className="puzzle-list-header">
           <h1>4Color Puzzles</h1>
@@ -235,7 +234,7 @@ export function PuzzleList() {
             )}
             {allAuthors.length > 0 && (
               <div className="tag-filter-bar">
-                <span className="filter-label">Author:</span>
+                <span className="filter-label">Authors:</span>
                 {allAuthors.map(a => (
                   <button
                     key={a}

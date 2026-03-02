@@ -92,7 +92,6 @@ body {
   color: var(--text);
   cursor: pointer;
   font-size: 12px;
-  width: 100%;
   text-align: left;
 }
 
@@ -200,13 +199,51 @@ body {
   }
 }
 
+.panel-right-wrapper {
+  display: flex;
+  height: 100vh;
+  position: relative;
+}
+
 .panel-right {
-  width: 200px;
-  min-width: 200px;
+  width: var(--panel-right-width, 200px);
+  min-width: 160px;
+  max-width: 600px;
   height: 100vh;
   background: var(--panel-bg);
   border-left: 1px solid var(--panel-border);
   overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.panel-right-handle {
+  width: 6px;
+  height: 100vh;
+  cursor: col-resize;
+  background: var(--panel-border);
+  transition: background 0.15s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.panel-right-handle:hover,
+.panel-right-handle.dragging {
+  background: lightseagreen;
+}
+
+.panel-right-handle::after {
+  content: '⋮';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.panel-right-handle:hover::after,
+.panel-right-handle.dragging::after {
+  color: white;
 }
 
 .panel-center {
@@ -404,4 +441,15 @@ body {
 .clues-bar-item {
   padding: 2px 0;
   cursor: pointer;
+}
+
+.clues-bar-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 0;
 }
