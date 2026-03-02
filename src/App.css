@@ -18,6 +18,7 @@
   --selection: rgb(255, 255, 0);
   --panel-bg: #f8f8f8;
   --panel-border: #e0e0e0;
+  --icon-invert: none;
 }
 
 [data-theme="dark"] {
@@ -38,6 +39,7 @@
   --selection: rgba(255, 255, 0, 0.5);
   --panel-bg: #16213e;
   --panel-border: #2a2a4a;
+  --icon-invert: invert(1);
 }
 
 * {

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { InputMode, LabelAlign, MarkShape } from '../../types'
+import { IconBrowser } from './IconBrowser'
 import './Toolbar.css'
 
 const PLAYER_MODES: { mode: InputMode; label: string }[] = [
@@ -50,6 +51,7 @@ interface ToolbarProps {
   onActiveMarkChange?: (mark: MarkShape | null) => void
   onMarkSelect?: (shape: MarkShape) => void
   onMarkErase?: () => void
+  onIconAdd?: (base64: string) => void
   onSubmit?: () => void
   forcedInputLayout?: string
 }
@@ -79,6 +81,7 @@ export function Toolbar({
   onActiveMarkChange,
   onMarkSelect,
   onMarkErase,
+  onIconAdd,
   onSubmit,
   forcedInputLayout,
 }: ToolbarProps) {
@@ -224,6 +227,12 @@ export function Toolbar({
             <button className="tb-btn" onClick={onImageApply}>Apply to Cells</button>
           )}
           <button className="tb-btn" onClick={onImageRemove}>Remove Image</button>
+          {onIconAdd && (
+            <>
+              <div className="tb-section-title" style={{ marginTop: 8 }}>Icon Library</div>
+              <IconBrowser onIconAdd={onIconAdd} />
+            </>
+          )}
         </div>
       )}
 

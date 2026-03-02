@@ -386,6 +386,13 @@ export function EditorPage() {
     })
   }, [forcedInputLayout, gridState])
 
+  const handleIconAdd = useCallback((base64: string) => {
+    setImageLibrary(prev => {
+      if (prev.includes(base64)) return prev
+      return [...prev, base64]
+    })
+  }, [])
+
   const handleImageApply = () => {
     if (selectedImageIndex === null || !imageLibrary[selectedImageIndex]) return
     gridState.applyImage(imageLibrary[selectedImageIndex])
@@ -697,6 +704,7 @@ export function EditorPage() {
           onImageApply={handleImageApply}
           onImageRemove={gridState.removeImage}
           onImageImport={() => imageInputRef.current?.click()}
+          onIconAdd={handleIconAdd}
           forcedInputLayout={forcedInputLayout || undefined}
         />
       </aside>

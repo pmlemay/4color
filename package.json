@@ -5,6 +5,7 @@
   "homepage": "https://pmlemay.github.io/4color/",
   "type": "module",
   "scripts": {
+    "icons": "node scripts/build-icons.js",
     "index": "node scripts/build-index.js",
     "dev": "node scripts/build-index.js && vite",
     "build": "node scripts/build-index.js && tsc && vite build",
