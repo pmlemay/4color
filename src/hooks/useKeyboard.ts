@@ -18,6 +18,8 @@ interface UseKeyboardOptions {
   toggleMark?: (shape: MarkShape) => void
   hasSelection?: boolean
   onInputModeChange?: (mode: InputMode) => void
+  puzzleType?: string
+  isEditor?: boolean
 }
 
 // Map e.code to the unshifted key value (e.g. Shift+1 gives code "Digit1" → "1")
@@ -78,10 +80,34 @@ export function useKeyboard(options: UseKeyboardOptions) {
         return
       }
 
-      // Mode switching hotkeys when no cells are selected
-      if (!e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && options.hasSelection === false && options.onInputModeChange) {
-        const MODE_KEYS: Record<string, InputMode> = { N: 'normal', C: 'color', X: 'cross', B: 'border', M: 'mark' }
+      // Editor Ctrl+Key shortcuts for fixed modes
+      if (options.isEditor && (e.ctrlKey || e.metaKey) && !e.altKey && options.onInputModeChange) {
         const upper = e.key.toUpperCase()
+        const CTRL_EDITOR_MODES: Record<string, InputMode> = {
+          N: 'fixed',
+          D: 'fixedDouble',
+          B: 'fixedBorder',
+          E: 'fixedEdge',
+          M: 'fixedMark',
+          L: 'label',
+        }
+        // Ctrl+Shift+C for fixedColor (Ctrl+C is copy)
+        if (e.shiftKey && upper === 'C') {
+          e.preventDefault()
+          options.onInputModeChange('fixedColor')
+          return
+        }
+        if (!e.shiftKey && upper in CTRL_EDITOR_MODES) {
+          e.preventDefault()
+          options.onInputModeChange(CTRL_EDITOR_MODES[upper])
+          return
+        }
+      }
+
+      // Mode switching hotkeys (bare keys) when no cells are selected
+      if (!e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && options.hasSelection === false && options.onInputModeChange) {
+        const upper = e.key.toUpperCase()
+        const MODE_KEYS: Record<string, InputMode> = { S: 'suggested', N: 'normal', C: 'color', X: 'cross', B: 'border', E: 'edge', M: 'mark' }
         if (upper in MODE_KEYS) {
           e.preventDefault()
           options.onInputModeChange(MODE_KEYS[upper])
@@ -142,7 +168,7 @@ export function useKeyboard(options: UseKeyboardOptions) {
           options.addNote(value)
           break
         case 'mark': {
-          const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'dot']
+          const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot']
           const idx = parseInt(value) - 1
           if (idx >= 0 && idx < SHAPES.length) {
             const shape = SHAPES[idx]
@@ -156,5 +182,5 @@ export function useKeyboard(options: UseKeyboardOptions) {
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.redo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark, options.hasSelection, options.onInputModeChange])
+  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.redo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark, options.hasSelection, options.onInputModeChange, options.puzzleType, options.isEditor])
 }

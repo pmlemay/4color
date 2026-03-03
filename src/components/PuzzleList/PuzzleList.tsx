@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PuzzleIndexEntry } from '../../types'
 import { fetchPuzzleIndex } from '../../utils/puzzleIO'
@@ -30,11 +30,35 @@ export function PuzzleList() {
   const [selectedAuthors, setSelectedAuthors] = useState<Set<string>>(new Set())
   const [hideCompleted, setHideCompleted] = useState(false)
 
+  const mainRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     fetchPuzzleIndex().then(data => {
       setPuzzles(data)
       setLoading(false)
     })
+  }, [])
+
+  // Restore scroll position after puzzles load
+  useEffect(() => {
+    if (!loading && mainRef.current) {
+      const saved = sessionStorage.getItem('puzzleListScroll')
+      if (saved) {
+        const el = mainRef.current
+        requestAnimationFrame(() => { el.scrollTop = Number(saved) })
+      }
+    }
+  }, [loading])
+
+  // Save scroll position on scroll
+  useEffect(() => {
+    const el = mainRef.current
+    if (!el) return
+    const onScroll = () => {
+      sessionStorage.setItem('puzzleListScroll', String(el.scrollTop))
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
   }, [])
 
   const allTags = useMemo(() => {
@@ -168,7 +192,7 @@ export function PuzzleList() {
         <div className="sidebar-spacer" />
       </aside>
 
-      <div className="puzzle-list-main">
+      <div className="puzzle-list-main" ref={mainRef}>
         <div className="puzzle-list-topbar">
           <span
             className="discord-link notranslate"

@@ -1,4 +1,4 @@
-import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule } from '../types'
+import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule, MarkShape } from '../types'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -15,6 +15,10 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
       label: null,
       crossed: false,
       mark: null,
+      fixedMark: null,
+      fixedEdgeMarks: [null, null, null, null] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
+      fixedVertexMarks: [null, null, null, null] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
+      edgeCrosses: [false, false, false, false] as [boolean, boolean, boolean, boolean],
       selected: false,
       image: null,
     }))
@@ -23,7 +27,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
 
 export function gridToPuzzle(
   grid: CellData[][],
-  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; specialRules?: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; forcedInputLayout?: string }
+  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; specialRules?: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; puzzleType?: string; clickActionLeft?: string; clickActionRight?: string }
 ): PuzzleData {
   // Build deduplicated image map: base64 → id
   const imageToId = new Map<string, string>()
@@ -41,7 +45,9 @@ export function gridToPuzzle(
     for (let c = 0; c < grid[r].length; c++) {
       const cell = grid[r][c]
       const hasBorders = cell.borders.some(b => b > 0)
-      if (cell.fixedValue || cell.fixedColor || cell.color || hasBorders || cell.label || cell.crossed || cell.mark || cell.image) {
+      const hasFixedEdgeMarks = cell.fixedEdgeMarks.some(m => m !== null)
+      const hasFixedVertexMarks = cell.fixedVertexMarks.some(m => m !== null)
+      if (cell.fixedValue || cell.fixedColor || cell.color || hasBorders || cell.label || cell.crossed || cell.mark || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image) {
         const entry: PuzzleCellData = { row: r, col: c }
         if (cell.fixedValue) entry.fixedValue = cell.fixedValue
         if (cell.fixedColor) entry.fixedColor = cell.fixedColor
@@ -50,6 +56,9 @@ export function gridToPuzzle(
         if (cell.label) entry.label = cell.label
         if (cell.crossed) entry.crossed = cell.crossed
         if (cell.mark) entry.mark = cell.mark
+        if (cell.fixedMark) entry.fixedMark = cell.fixedMark
+        if (hasFixedEdgeMarks) entry.fixedEdgeMarks = cell.fixedEdgeMarks
+        if (hasFixedVertexMarks) entry.fixedVertexMarks = cell.fixedVertexMarks
         if (cell.image) entry.image = imageToId.get(cell.image)!
         cells.push(entry)
       }
@@ -72,7 +81,9 @@ export function gridToPuzzle(
   if (Object.keys(images).length > 0) puzzle.images = images
   if (meta.specialRules?.length) puzzle.specialRules = meta.specialRules
   if (meta.autoCrossRules?.length) puzzle.autoCrossRules = meta.autoCrossRules
-  if (meta.forcedInputLayout) puzzle.forcedInputLayout = meta.forcedInputLayout
+  if (meta.puzzleType) puzzle.puzzleType = meta.puzzleType
+  if (meta.clickActionLeft) puzzle.clickActionLeft = meta.clickActionLeft
+  if (meta.clickActionRight) puzzle.clickActionRight = meta.clickActionRight
   return puzzle
 }
 
@@ -90,6 +101,9 @@ export function puzzleToGrid(puzzle: PuzzleData): CellData[][] {
     if (cell.label) grid[cell.row][cell.col].label = cell.label
     if (cell.crossed) grid[cell.row][cell.col].crossed = cell.crossed
     if (cell.mark) grid[cell.row][cell.col].mark = cell.mark
+    if (cell.fixedMark) grid[cell.row][cell.col].fixedMark = cell.fixedMark
+    if (cell.fixedEdgeMarks) grid[cell.row][cell.col].fixedEdgeMarks = [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
+    if (cell.fixedVertexMarks) grid[cell.row][cell.col].fixedVertexMarks = [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
     if (cell.image) {
       // Resolve image ID to base64, or use directly if it's already base64 (backward compat)
       grid[cell.row][cell.col].image = images[cell.image] ?? cell.image
@@ -167,6 +181,25 @@ export async function fetchPuzzleSolution(id: string): Promise<PuzzleSolution | 
   }
 }
 
+/** Default click actions for each puzzle type */
+export const PUZZLE_TYPE_DEFAULTS: Record<string, { left: string; right: string }> = {
+  nurikabe: { left: 'color:9', right: 'mark:dot' },
+  heyawake: { left: 'color:9', right: 'color:5' },
+  starbattle: { left: 'mark:star', right: 'cross' },
+}
+
+/** Migrate legacy forcedInputLayout to puzzleType + click actions */
+export function migratePuzzleType(puzzle: PuzzleData): void {
+  if (!puzzle.puzzleType && puzzle.forcedInputLayout) {
+    puzzle.puzzleType = puzzle.forcedInputLayout
+    const defaults = PUZZLE_TYPE_DEFAULTS[puzzle.forcedInputLayout]
+    if (defaults) {
+      if (!puzzle.clickActionLeft) puzzle.clickActionLeft = defaults.left
+      if (!puzzle.clickActionRight) puzzle.clickActionRight = defaults.right
+    }
+  }
+}
+
 export async function fetchPuzzle(id: string): Promise<PuzzleData | null> {
   // Look up the actual filename from the index (id may differ from filename)
   const index = await fetchPuzzleIndex()
@@ -174,5 +207,7 @@ export async function fetchPuzzle(id: string): Promise<PuzzleData | null> {
   const file = entry?.file ?? `${id}.json`
   const res = await fetch(`${BASE}puzzles/${file}`)
   if (!res.ok) return null
-  return res.json()
+  const puzzle: PuzzleData = await res.json()
+  migratePuzzleType(puzzle)
+  return puzzle
 }

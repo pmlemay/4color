@@ -4,36 +4,38 @@ function getEffectiveColor(cell: CellData): string | null {
   return cell.color || cell.fixedColor || null
 }
 
-/** Find connected regions based on fixed borders (0 = no wall = same region) */
-function findRegions(grid: CellData[][]): number[][] {
-  const rows = grid.length
-  const cols = grid[0].length
+type BorderLookup = (r: number, c: number) => [number, number, number, number]
+
+/**
+ * Find connected regions using a border lookup function.
+ * A wall exists between two adjacent cells if EITHER side reports a border > 0.
+ */
+function findRegionsFromBorders(rows: number, cols: number, getBorder: BorderLookup): number[][] {
   const regionMap: number[][] = Array.from({ length: rows }, () => Array(cols).fill(-1))
   let regionId = 0
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       if (regionMap[r][c] !== -1) continue
-      // BFS flood fill within fixed borders (puzzle-defined region boundaries)
       const queue: [number, number][] = [[r, c]]
       regionMap[r][c] = regionId
       while (queue.length > 0) {
         const [cr, cc] = queue.shift()!
-        const b = grid[cr][cc].fixedBorders
-        // top
-        if (cr > 0 && b[0] === 0 && regionMap[cr - 1][cc] === -1) {
+        const b = getBorder(cr, cc)
+        // top — wall if this cell's top > 0 OR neighbor's bottom > 0
+        if (cr > 0 && regionMap[cr - 1][cc] === -1 && b[0] === 0 && getBorder(cr - 1, cc)[2] === 0) {
           regionMap[cr - 1][cc] = regionId; queue.push([cr - 1, cc])
         }
         // right
-        if (cc < cols - 1 && b[1] === 0 && regionMap[cr][cc + 1] === -1) {
+        if (cc < cols - 1 && regionMap[cr][cc + 1] === -1 && b[1] === 0 && getBorder(cr, cc + 1)[3] === 0) {
           regionMap[cr][cc + 1] = regionId; queue.push([cr, cc + 1])
         }
         // bottom
-        if (cr < rows - 1 && b[2] === 0 && regionMap[cr + 1][cc] === -1) {
+        if (cr < rows - 1 && regionMap[cr + 1][cc] === -1 && b[2] === 0 && getBorder(cr + 1, cc)[0] === 0) {
           regionMap[cr + 1][cc] = regionId; queue.push([cr + 1, cc])
         }
         // left
-        if (cc > 0 && b[3] === 0 && regionMap[cr][cc - 1] === -1) {
+        if (cc > 0 && regionMap[cr][cc - 1] === -1 && b[3] === 0 && getBorder(cr, cc - 1)[1] === 0) {
           regionMap[cr][cc - 1] = regionId; queue.push([cr, cc - 1])
         }
       }
@@ -41,6 +43,33 @@ function findRegions(grid: CellData[][]): number[][] {
     }
   }
   return regionMap
+}
+
+/** Find connected regions based on fixed borders */
+function findRegions(grid: CellData[][]): number[][] {
+  return findRegionsFromBorders(grid.length, grid[0].length, (r, c) => grid[r][c].fixedBorders)
+}
+
+/**
+ * Check if two region maps define the same partitioning (cell groupings match,
+ * even if region IDs differ).
+ */
+function regionsMatch(map1: number[][], map2: number[][]): boolean {
+  const rows = map1.length
+  const cols = map1[0].length
+  const fwd = new Map<number, number>() // map1 region → map2 region
+  const rev = new Map<number, number>() // map2 region → map1 region
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const a = map1[r][c]
+      const b = map2[r][c]
+      if (fwd.has(a)) { if (fwd.get(a) !== b) return false }
+      else fwd.set(a, b)
+      if (rev.has(b)) { if (rev.get(b) !== a) return false }
+      else rev.set(b, a)
+    }
+  }
+  return true
 }
 
 export function validate4Color(grid: CellData[][]): { valid: boolean; error?: string } {
@@ -117,15 +146,24 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     }
   }
 
-  // Count expected solution borders
-  const borderTotal = Object.keys(solution.borders || {}).length
-  let borderFilled = 0
-  if (borderTotal > 0) {
-    for (const [key, expected] of Object.entries(solution.borders!)) {
-      const [r, c] = key.split(',').map(Number)
-      const b = grid[r]?.[c]?.borders
-      const fb = grid[r]?.[c]?.fixedBorders
-      if (b && fb && (b[0] !== fb[0] || b[1] !== fb[1] || b[2] !== fb[2] || b[3] !== fb[3])) borderFilled++
+  // Region-based border check: compare zones formed by expected borders vs player borders.
+  // A wall exists if EITHER side of a shared edge has a border, so single-sided and
+  // dual-sided solution files both work. The player can also skip redundant interior
+  // borders as long as the zones are correctly enclosed.
+  let bordersReady = true
+  let borderProgress = ''
+  if (solution.borders) {
+    const solutionBorderLookup: BorderLookup = (r, c) => {
+      const key = `${r},${c}`
+      if (solution.borders![key]) return solution.borders![key]
+      return grid[r][c].fixedBorders
+    }
+    const playerBorderLookup: BorderLookup = (r, c) => grid[r][c].borders
+    const expectedRegions = findRegionsFromBorders(rows, cols, solutionBorderLookup)
+    const actualRegions = findRegionsFromBorders(rows, cols, playerBorderLookup)
+    if (!regionsMatch(expectedRegions, actualRegions)) {
+      bordersReady = false
+      borderProgress = 'borders incomplete'
     }
   }
 
@@ -140,10 +178,10 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     }
   }
 
-  if (filled !== total || borderFilled !== borderTotal || colorFilled !== colorTotal) {
+  if (filled !== total || !bordersReady || colorFilled !== colorTotal) {
     const parts: string[] = []
     if (total > 0) parts.push(`${filled}/${total} values`)
-    if (borderTotal > 0) parts.push(`${borderFilled}/${borderTotal} borders`)
+    if (borderProgress) parts.push(borderProgress)
     if (colorTotal > 0) parts.push(`${colorFilled}/${colorTotal} colors`)
     return { valid: false, error: `Not ready: ${parts.join(', ')}.` }
   }
@@ -158,13 +196,7 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     if (!actual || actual.toUpperCase() !== expected.toUpperCase()) wrong++
   }
 
-  if (solution.borders) {
-    for (const [key, expected] of Object.entries(solution.borders)) {
-      const [r, c] = key.split(',').map(Number)
-      const b = grid[r]?.[c]?.borders
-      if (!b || b[0] !== expected[0] || b[1] !== expected[1] || b[2] !== expected[2] || b[3] !== expected[3]) wrong++
-    }
-  }
+  // Borders already validated via region comparison above — if we got here, they match
 
   if (solution.colors) {
     for (const [key, expected] of Object.entries(solution.colors)) {

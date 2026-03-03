@@ -8,6 +8,8 @@ interface SavedCell {
   color?: string
   crossed?: boolean
   mark?: MarkShape
+  borders?: [number, number, number, number]
+  edgeCrosses?: [boolean, boolean, boolean, boolean]
 }
 
 interface PlayerSaveData {
@@ -32,7 +34,9 @@ export function savePlayerData(
   for (let r = 0; r < grid.length; r++) {
     for (let c = 0; c < grid[r].length; c++) {
       const cell = grid[r][c]
-      const hasInput = cell.value || cell.notes.length > 0 || cell.color || cell.crossed || cell.mark
+      const hasUserBorders = cell.borders.some((b, i) => b !== cell.fixedBorders[i])
+      const hasEdgeCrosses = cell.edgeCrosses.some(x => x)
+      const hasInput = cell.value || cell.notes.length > 0 || cell.color || cell.crossed || cell.mark || hasUserBorders || hasEdgeCrosses
       if (!hasInput) continue
       const entry: SavedCell = { row: r, col: c }
       if (cell.value) entry.value = cell.value
@@ -40,6 +44,8 @@ export function savePlayerData(
       if (cell.color) entry.color = cell.color
       if (cell.crossed) entry.crossed = cell.crossed
       if (cell.mark) entry.mark = cell.mark
+      if (hasUserBorders) entry.borders = [...cell.borders] as [number, number, number, number]
+      if (hasEdgeCrosses) entry.edgeCrosses = [...cell.edgeCrosses] as [boolean, boolean, boolean, boolean]
       cells.push(entry)
     }
   }
@@ -79,6 +85,8 @@ export function applyPlayerData(grid: CellData[][], data: PlayerSaveData): CellD
     if (saved.color) cell.color = saved.color
     if (saved.crossed) cell.crossed = saved.crossed
     if (saved.mark) cell.mark = saved.mark
+    if (saved.borders) cell.borders = [...saved.borders] as [number, number, number, number]
+    if (saved.edgeCrosses) cell.edgeCrosses = [...saved.edgeCrosses] as [boolean, boolean, boolean, boolean]
   }
   return newGrid
 }

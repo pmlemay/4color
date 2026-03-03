@@ -1,13 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 
 const BASE = import.meta.env.BASE_URL
 
 interface IconEntry {
   n: string  // name
   f: string  // filename
+  c?: string // category
 }
 
 let cachedIndex: IconEntry[] | null = null
+let cachedCategories: string[] | null = null
 
 const PAGE_SIZE = 40
 
@@ -22,10 +24,12 @@ const ICON_PRESETS = [
 export function IconBrowser({ onIconAdd }: { onIconAdd: (base64: string) => void }) {
   const [icons, setIcons] = useState<IconEntry[]>(cachedIndex || [])
   const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('')
   const [limit, setLimit] = useState(PAGE_SIZE)
   const [loading, setLoading] = useState(!cachedIndex)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [iconColor, setIconColor] = useState('#000000')
+  const [categories, setCategories] = useState<string[]>(cachedCategories || [])
 
   useEffect(() => {
     if (cachedIndex) return
@@ -34,20 +38,29 @@ export function IconBrowser({ onIconAdd }: { onIconAdd: (base64: string) => void
       .then((data: IconEntry[]) => {
         cachedIndex = data
         setIcons(data)
+        const cats = [...new Set(data.map(e => e.c).filter(Boolean) as string[])].sort()
+        cachedCategories = cats
+        setCategories(cats)
       })
       .catch(() => setIcons([]))
       .finally(() => setLoading(false))
   }, [])
 
-  const filtered = search
-    ? icons.filter(ic => ic.n.includes(search.toLowerCase()))
-    : icons
+  const filtered = useMemo(() => {
+    let result = icons
+    if (category) result = result.filter(ic => ic.c === category)
+    if (search) {
+      const q = search.toLowerCase()
+      result = result.filter(ic => ic.n.includes(q) || (ic.c && ic.c.toLowerCase().includes(q)))
+    }
+    return result
+  }, [icons, search, category])
 
   const visible = filtered.slice(0, limit)
   const hasMore = filtered.length > limit
 
-  // Reset pagination when search changes
-  useEffect(() => { setLimit(PAGE_SIZE) }, [search])
+  // Reset pagination when filters change
+  useEffect(() => { setLimit(PAGE_SIZE) }, [search, category])
 
   const handleClick = (icon: IconEntry) => {
     const img = new Image()
@@ -104,7 +117,15 @@ export function IconBrowser({ onIconAdd }: { onIconAdd: (base64: string) => void
         onChange={e => setSearch(e.target.value)}
         placeholder="Search icons..."
       />
-      <div className="tb-icon-meta">{filtered.length} icons{search && ' found'}</div>
+      <select
+        className="tb-input tb-icon-search"
+        value={category}
+        onChange={e => setCategory(e.target.value)}
+      >
+        <option value="">All categories</option>
+        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+      </select>
+      <div className="tb-icon-meta">{filtered.length} icons{(search || category) && ' found'}</div>
       <div className="tb-icon-scroll">
         <div className="tb-icon-results">
           {visible.map(icon => (
@@ -112,9 +133,9 @@ export function IconBrowser({ onIconAdd }: { onIconAdd: (base64: string) => void
               key={icon.n}
               className="tb-icon-thumb"
               onClick={() => handleClick(icon)}
-              title={humanize(icon.n)}
+              title={icon.c ? `${humanize(icon.n)} (${icon.c})` : humanize(icon.n)}
             >
-              <img src={`${BASE}icons/${icon.f}`} alt={icon.n} draggable={false} />
+              <img src={`${BASE}icons/${icon.f}`} alt={icon.n} draggable={false} loading="lazy" />
             </button>
           ))}
         </div>

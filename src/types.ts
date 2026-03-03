@@ -16,6 +16,10 @@ export interface CellData {
   label: CellLabel | null
   crossed: boolean
   mark: MarkShape | null
+  fixedMark: MarkShape | null
+  fixedEdgeMarks: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null] // [top, right, bottom, left]
+  fixedVertexMarks: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null] // [TL, TR, BR, BL]
+  edgeCrosses: [boolean, boolean, boolean, boolean] // [top, right, bottom, left]
   selected: boolean
   image: string | null
 }
@@ -35,6 +39,9 @@ export interface PuzzleCellData {
   label?: CellLabel
   crossed?: boolean
   mark?: MarkShape
+  fixedMark?: MarkShape
+  fixedEdgeMarks?: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
+  fixedVertexMarks?: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
   image?: string
 }
 
@@ -50,7 +57,10 @@ export interface PuzzleData {
   difficulty?: string
   tags?: string[]
   autoCrossRules?: AutoCrossRule[]
-  forcedInputLayout?: string
+  puzzleType?: string
+  clickActionLeft?: string
+  clickActionRight?: string
+  forcedInputLayout?: string // backward compat only
   images?: Record<string, string>
   createdAt: string
 }
@@ -64,14 +74,24 @@ export interface PuzzleIndexEntry {
   difficulty?: string
   tags?: string[]
   autoCrossRules?: AutoCrossRule[]
-  forcedInputLayout?: string
+  puzzleType?: string
+  clickActionLeft?: string
+  clickActionRight?: string
+  forcedInputLayout?: string // backward compat only
 }
 
-export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'dot'
+export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'star' | 'dot'
 
 export type AutoCrossRule = 'king' | 'rook' | 'bishop' | 'knight'
 
-export type InputMode = 'normal' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'mark'
+export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark'
+
+/** Identifies a single edge of a cell: side 0=top, 1=right, 2=bottom, 3=left */
+export interface EdgeDescriptor {
+  row: number
+  col: number
+  side: 0 | 1 | 2 | 3
+}
 
 /** Solution file: maps "row,col" to expected value/borders */
 export interface PuzzleSolution {

@@ -14,8 +14,8 @@ import { LanguagePicker } from '../components/LanguagePicker'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
-import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution } from '../utils/puzzleIO'
-import { PuzzleData, PuzzleSolution, CellData, CellPosition, AutoCrossRule } from '../types'
+import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
+import { PuzzleData, PuzzleSolution, CellData, CellPosition, InputMode, AutoCrossRule, MarkShape } from '../types'
 
 export function EditorPage() {
   const { puzzleId } = useParams()
@@ -43,7 +43,9 @@ export function EditorPage() {
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [knownAuthors, setKnownAuthors] = useState<string[]>([])
   const [autoCrossRules, setAutoCrossRulesState] = useState<AutoCrossRule[]>([])
-  const [forcedInputLayout, setForcedInputLayout] = useState('')
+  const [puzzleType, setPuzzleType] = useState('')
+  const [clickActionLeft, setClickActionLeft] = useState('')
+  const [clickActionRight, setClickActionRight] = useState('cross')
 
   const [editorPuzzleId, setEditorPuzzleId] = useState(puzzleId || '')
   const [solutionMode, setSolutionMode] = useState(false)
@@ -79,7 +81,9 @@ export function EditorPage() {
           setDifficulty(puzzle.difficulty || '')
           setTags(puzzle.tags || [])
           setAutoCrossRulesState(puzzle.autoCrossRules || [])
-          setForcedInputLayout(puzzle.forcedInputLayout || '')
+          setPuzzleType(puzzle.puzzleType || '')
+          setClickActionLeft(puzzle.clickActionLeft || '')
+          setClickActionRight(puzzle.clickActionRight || 'cross')
           setSpecialRules(puzzle.specialRules || [])
           setRules(puzzle.rules || [])
           setClues(puzzle.clues || [])
@@ -102,13 +106,74 @@ export function EditorPage() {
     gridState.setAutoCrossRules(autoCrossRules)
   }, [autoCrossRules])
 
-  useEffect(() => {
-    gridState.setForcedInputLayout(forcedInputLayout)
-    if (forcedInputLayout === 'nurikabe') {
-      gridState.setInputMode('color')
-      gridState.setActiveColor('9')
+  const HEYAWAKE_RULES = [
+    'Shade some cells so that no two shaded cells are orthogonally adjacent and the remaining unshaded cells form one orthogonally connected area.',
+    'Numbered regions must contain the indicated amount of shaded cells.',
+    'A line of consecutive unshaded cells may not cross more than one bold border.',
+  ]
+  const NURIKABE_RULES = [
+    'Each island (dots) contains exactly one clue.',
+    'The number of squares in each island equals the value of the clue.',
+    'All islands are isolated from each other horizontally and vertically.',
+    'There are no shaded (black) areas of 2x2 or larger.',
+    'When completed, all shaded cells form a continuous path.',
+  ]
+  const STARBATTLE_RULES = [
+    'Place stars in the grid so that each row, column, and bold-outlined region contains the indicated number of stars.',
+    'Stars may not touch each other, not even diagonally.',
+  ]
+  const PUZZLE_TYPE_RULES: Record<string, string[]> = {
+    heyawake: HEYAWAKE_RULES,
+    nurikabe: NURIKABE_RULES,
+    starbattle: STARBATTLE_RULES,
+  }
+  const prevPuzzleType = useRef(puzzleType)
+
+  const handlePuzzleTypeChange = useCallback((newType: string) => {
+    setPuzzleType(newType)
+    // Auto-populate click actions from defaults
+    const defaults = PUZZLE_TYPE_DEFAULTS[newType]
+    if (defaults) {
+      setClickActionLeft(defaults.left)
+      setClickActionRight(defaults.right)
+    } else {
+      setClickActionLeft('')
+      setClickActionRight('cross')
     }
-  }, [forcedInputLayout])
+  }, [])
+
+  useEffect(() => {
+    gridState.setPuzzleType(puzzleType)
+    if (clickActionLeft) {
+      gridState.setInputMode('suggested')
+    }
+    if (puzzleType === 'starbattle') {
+      if (!autoCrossRules.includes('king')) {
+        setAutoCrossRulesState(prev => prev.includes('king') ? prev : [...prev, 'king'])
+      }
+    }
+
+    const prev = prevPuzzleType.current
+    const prevRules = PUZZLE_TYPE_RULES[prev] || []
+    const nextRules = PUZZLE_TYPE_RULES[puzzleType] || []
+
+    // Remove old layout rules when switching away
+    if (prevRules.length > 0 && puzzleType !== prev) {
+      const removeSet = new Set(prevRules)
+      setRules(r => r.filter(rule => !removeSet.has(rule)))
+    }
+
+    // Add new layout rules when switching to
+    if (nextRules.length > 0 && puzzleType !== prev) {
+      setRules(r => {
+        const existing = new Set(r)
+        const toAdd = nextRules.filter(rule => !existing.has(rule))
+        return toAdd.length > 0 ? [...r, ...toAdd] : r
+      })
+    }
+
+    prevPuzzleType.current = puzzleType
+  }, [puzzleType])
 
   useKeyboard({
     inputMode: gridState.inputMode,
@@ -126,6 +191,8 @@ export function EditorPage() {
     toggleMark: gridState.toggleMark,
     hasSelection: gridState.selection.length > 0,
     onInputModeChange: gridState.setInputMode,
+    puzzleType,
+    isEditor: true,
     onEnter: () => {
       if (selectedImageIndex !== null && imageLibrary[selectedImageIndex]) {
         gridState.applyImage(imageLibrary[selectedImageIndex])
@@ -136,7 +203,7 @@ export function EditorPage() {
   const handleSave = async () => {
     if (!difficulty) { await showAlert('Please select a difficulty before saving.'); return }
     const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, forcedInputLayout: forcedInputLayout || undefined })
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined })
 
     if (puzzleId) {
       puzzle.id = puzzleId
@@ -159,25 +226,7 @@ export function EditorPage() {
     }
   }
 
-  const handleClearPlayerInput = async () => {
-    if (!await showConfirm('Clear all player input? Puzzle layout (fixed values, colors, borders, images, labels) will be kept.', 'Clear Player Input')) return
-    gridState.setGrid(prev =>
-      prev.map(row =>
-        row.map(cell => ({
-          ...cell,
-          value: null,
-          notes: [],
-          color: cell.fixedColor ? cell.color : null,
-          crossed: false,
-          mark: null,
-          selected: false,
-          borders: [...cell.fixedBorders] as [number, number, number, number],
-        }))
-      )
-    )
-  }
-
-  const handleClearSolutionInput = () => {
+  const clearPlayerInput = useCallback(() => {
     gridState.setGrid(prev =>
       prev.map(row =>
         row.map(cell => ({
@@ -188,10 +237,20 @@ export function EditorPage() {
           crossed: false,
           mark: null,
           selected: false,
+          edgeCrosses: [false, false, false, false] as [boolean, boolean, boolean, boolean],
           borders: [...cell.fixedBorders] as [number, number, number, number],
         }))
       )
     )
+  }, [gridState])
+
+  const handleClearPlayerInput = async () => {
+    if (!await showConfirm('Clear all player input? Puzzle layout (fixed values, colors, borders, images, labels) will be kept.', 'Clear Player Input')) return
+    clearPlayerInput()
+  }
+
+  const handleClearSolutionInput = () => {
+    clearPlayerInput()
   }
 
   function extractPuzzleDefinition(grid: CellData[][]): object {
@@ -203,17 +262,13 @@ export function EditorPage() {
   const handleEnterSolutionMode = async () => {
     const snapshot = JSON.stringify(extractPuzzleDefinition(gridState.grid))
     setPuzzleSnapshot(snapshot)
-    // Clear player input
-    gridState.setGrid(prev =>
-      prev.map(row => row.map(cell => ({
-        ...cell,
-        value: null, notes: [], color: null, crossed: false, mark: null, selected: false,
-        borders: [...cell.fixedBorders] as [number, number, number, number],
-      })))
-    )
-    if (forcedInputLayout === 'nurikabe') {
+    clearPlayerInput()
+    if (puzzleType === 'nurikabe' || puzzleType === 'heyawake') {
       gridState.setInputMode('color')
       gridState.setActiveColor('9')
+    } else if (puzzleType === 'starbattle') {
+      gridState.setInputMode('mark')
+      gridState.setActiveMark('star')
     } else {
       gridState.setInputMode('normal')
     }
@@ -247,14 +302,7 @@ export function EditorPage() {
   }
 
   const handleExitSolutionMode = () => {
-    // Clear solution input and return to editor
-    gridState.setGrid(prev =>
-      prev.map(row => row.map(cell => ({
-        ...cell,
-        value: null, notes: [], color: null, crossed: false, mark: null, selected: false,
-        borders: [...cell.fixedBorders] as [number, number, number, number],
-      })))
-    )
+    clearPlayerInput()
     setSolutionMode(false)
   }
 
@@ -380,16 +428,101 @@ export function EditorPage() {
     }
   }, [gridState])
 
+  const applyClickAction = useCallback((pos: CellPosition, action: string, gs: typeof gridState) => {
+    if (!action) return
+    if (action.startsWith('color:')) {
+      const colorVal = action.split(':')[1]
+      gs.setGrid(prev => {
+        const next = prev.map(row => row.map(cell => ({ ...cell })))
+        const cell = next[pos.row][pos.col]
+        cell.color = cell.color === colorVal ? null : colorVal
+        if (cell.color) cell.mark = null
+        return next
+      })
+    } else if (action.startsWith('mark:')) {
+      const markVal = action.split(':')[1] as import('../types').MarkShape
+      gs.setGrid(prev => {
+        const next = prev.map(row => row.map(cell => ({ ...cell })))
+        const cell = next[pos.row][pos.col]
+        cell.mark = cell.mark === markVal ? null : markVal
+        if (cell.mark) cell.color = null
+        return next
+      })
+    } else if (action === 'cross') {
+      gs.setGrid(prev => {
+        const next = prev.map(row => row.map(cell => ({ ...cell })))
+        const cell = next[pos.row][pos.col]
+        cell.crossed = !cell.crossed
+        if (cell.crossed) cell.mark = null
+        return next
+      })
+    }
+  }, [])
+
   const handleRightClickCell = useCallback((pos: CellPosition) => {
-    if (forcedInputLayout !== 'nurikabe') return
-    gridState.setGrid(prev => {
-      const next = prev.map(row => row.map(cell => ({ ...cell })))
-      const cell = next[pos.row][pos.col]
-      cell.mark = cell.mark === 'dot' ? null : 'dot'
-      if (cell.mark === 'dot') cell.color = null
-      return next
-    })
-  }, [forcedInputLayout, gridState])
+    applyClickAction(pos, clickActionRight, gridState)
+  }, [clickActionRight, gridState, applyClickAction])
+
+  // Map click action string to the effective inputMode / activeColor / activeMark
+  const suggestedEffectiveMode: InputMode = (() => {
+    if (!clickActionLeft) return 'normal'
+    if (clickActionLeft.startsWith('color:')) return 'color'
+    if (clickActionLeft.startsWith('mark:')) return 'mark'
+    if (clickActionLeft === 'cross') return 'cross'
+    return 'normal'
+  })()
+  const suggestedActiveColor = clickActionLeft?.startsWith('color:') ? clickActionLeft.split(':')[1] : null
+  const suggestedActiveMark = clickActionLeft?.startsWith('mark:') ? clickActionLeft.split(':')[1] as MarkShape : null
+
+  const isSuggestedMode = gridState.inputMode === 'suggested'
+
+  // Wrap drag handlers so suggested mode applies click actions directly
+  const suggestedProcessed = useRef<Set<string>>(new Set())
+
+  const applyClickActionToCell = useCallback((prev: CellData[][], pos: CellPosition, action: string): CellData[][] => {
+    const next = prev.map(row => row.map(cell => ({ ...cell })))
+    const cell = next[pos.row][pos.col]
+    if (action.startsWith('color:')) {
+      const colorVal = action.split(':')[1]
+      cell.color = cell.color === colorVal ? null : colorVal
+      if (cell.color) cell.mark = null
+    } else if (action.startsWith('mark:')) {
+      const markVal = action.split(':')[1] as MarkShape
+      cell.mark = cell.mark === markVal ? null : markVal
+      if (cell.mark) cell.color = null
+    } else if (action === 'cross') {
+      cell.crossed = !cell.crossed
+      if (cell.crossed) cell.mark = null
+    }
+    return next
+  }, [])
+
+  const handleDragChange = useCallback((sel: CellPosition[]) => {
+    if (!isSuggestedMode || !clickActionLeft) {
+      gridState.onDragChange(sel)
+      return
+    }
+    for (const pos of sel) {
+      const key = `${pos.row},${pos.col}`
+      if (suggestedProcessed.current.has(key)) continue
+      suggestedProcessed.current.add(key)
+      const setter = suggestedProcessed.current.size === 1 ? gridState.setGridWithUndo : gridState.setGrid
+      setter(prev => applyClickActionToCell(prev, pos, clickActionLeft))
+    }
+  }, [isSuggestedMode, clickActionLeft, gridState, applyClickActionToCell])
+
+  const handleCommitSelection = useCallback((sel: CellPosition[]) => {
+    if (isSuggestedMode) {
+      suggestedProcessed.current.clear()
+      return
+    }
+    gridState.commitSelection(sel)
+  }, [isSuggestedMode, gridState])
+
+  const handleClearSelection = useCallback(() => {
+    suggestedProcessed.current.clear()
+    gridState.clearSelection()
+  }, [gridState])
 
   const handleIconAdd = useCallback((base64: string) => {
     setImageLibrary(prev => {
@@ -410,6 +543,7 @@ export function EditorPage() {
     reader.onload = () => {
       try {
         const puzzle: PuzzleData = JSON.parse(reader.result as string)
+        migratePuzzleType(puzzle)
         setEditorPuzzleId(puzzle.id)
         setTitle(puzzle.title)
         setAuthors(puzzle.authors || [])
@@ -418,7 +552,9 @@ export function EditorPage() {
         setDifficulty(puzzle.difficulty || '')
         setTags(puzzle.tags || [])
         setAutoCrossRulesState(puzzle.autoCrossRules || [])
-        setForcedInputLayout(puzzle.forcedInputLayout || '')
+        setPuzzleType(puzzle.puzzleType || '')
+        setClickActionLeft(puzzle.clickActionLeft || '')
+        setClickActionRight(puzzle.clickActionRight || 'cross')
         setRules(puzzle.rules || [])
         setClues(puzzle.clues || [])
         gridState.setGrid(puzzleToGrid(puzzle))
@@ -503,10 +639,74 @@ export function EditorPage() {
               </div>
             </div>
             <div className="info-editor-field">
-              <label>Forced Input Layout</label>
-              <select value={forcedInputLayout} onChange={e => setForcedInputLayout(e.target.value)}>
+              <label>Puzzle Type</label>
+              <select value={puzzleType} onChange={e => handlePuzzleTypeChange(e.target.value)}>
                 <option value="">— None —</option>
                 <option value="nurikabe">Nurikabe</option>
+                <option value="heyawake">Heyawake</option>
+                <option value="starbattle">Star Battle</option>
+              </select>
+            </div>
+            <div className="info-editor-field">
+              <label>Left Click Action</label>
+              <select value={clickActionLeft} onChange={e => setClickActionLeft(e.target.value)}>
+                <option value="">None</option>
+                <optgroup label="Colors">
+                  <option value="color:0">Gray</option>
+                  <option value="color:1">Red</option>
+                  <option value="color:2">Pink</option>
+                  <option value="color:3">Orange</option>
+                  <option value="color:4">Yellow</option>
+                  <option value="color:5">Green</option>
+                  <option value="color:6">Cyan</option>
+                  <option value="color:7">Blue</option>
+                  <option value="color:8">Purple</option>
+                  <option value="color:9">Black</option>
+                </optgroup>
+                <optgroup label="Marks">
+                  <option value="mark:circle">Circle</option>
+                  <option value="mark:square">Square</option>
+                  <option value="mark:triangle">Triangle</option>
+                  <option value="mark:diamond">Diamond</option>
+                  <option value="mark:pentagon">Pentagon</option>
+                  <option value="mark:hexagon">Hexagon</option>
+                  <option value="mark:star">Star</option>
+                  <option value="mark:dot">Dot</option>
+                </optgroup>
+                <optgroup label="Other">
+                  <option value="cross">Cross</option>
+                </optgroup>
+              </select>
+            </div>
+            <div className="info-editor-field">
+              <label>Right Click Action</label>
+              <select value={clickActionRight} onChange={e => setClickActionRight(e.target.value)}>
+                <option value="">None</option>
+                <optgroup label="Colors">
+                  <option value="color:0">Gray</option>
+                  <option value="color:1">Red</option>
+                  <option value="color:2">Pink</option>
+                  <option value="color:3">Orange</option>
+                  <option value="color:4">Yellow</option>
+                  <option value="color:5">Green</option>
+                  <option value="color:6">Cyan</option>
+                  <option value="color:7">Blue</option>
+                  <option value="color:8">Purple</option>
+                  <option value="color:9">Black</option>
+                </optgroup>
+                <optgroup label="Marks">
+                  <option value="mark:circle">Circle</option>
+                  <option value="mark:square">Square</option>
+                  <option value="mark:triangle">Triangle</option>
+                  <option value="mark:diamond">Diamond</option>
+                  <option value="mark:pentagon">Pentagon</option>
+                  <option value="mark:hexagon">Hexagon</option>
+                  <option value="mark:star">Star</option>
+                  <option value="mark:dot">Dot</option>
+                </optgroup>
+                <optgroup label="Other">
+                  <option value="cross">Cross</option>
+                </optgroup>
               </select>
             </div>
             <div className="info-editor-row">
@@ -541,55 +741,6 @@ export function EditorPage() {
               style={{ display: 'none' }}
               onChange={handleImageImport}
             />
-
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
-
-            <div className="info-section-title" style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Special Rules</div>
-            {specialRules.map((rule, i) => (
-              <div
-                key={i}
-                className="info-list-item info-list-draggable"
-                draggable
-                onDragStart={() => handleDragStart('specialRule', i)}
-                onDragOver={e => handleDragOver(e, i)}
-                onDrop={() => handleDrop('specialRule')}
-              >
-                <span className="info-drag-handle" title="Drag to reorder">&#x2630;</span>
-                {editingItem?.type === 'specialRule' && editingItem.index === i ? (
-                  <input
-                    className="info-edit-input"
-                    value={editingText}
-                    onChange={e => setEditingText(e.target.value)}
-                    onBlur={commitEdit}
-                    onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') { setEditingItem(null); setEditingText('') } }}
-                    autoFocus
-                  />
-                ) : (
-                  <span className="info-list-text info-list-editable" onClick={() => startEditing('specialRule', i, rule)}>{rule}</span>
-                )}
-                <button className="info-list-remove" onClick={() => setSpecialRules(specialRules.filter((_, j) => j !== i))} title="Remove">&times;</button>
-              </div>
-            ))}
-            <div className="info-add-row">
-              <input
-                className="info-add-input"
-                value={newSpecialRule}
-                onChange={e => setNewSpecialRule(e.target.value)}
-                placeholder="Add a special rule..."
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && newSpecialRule.trim()) {
-                    setSpecialRules([...specialRules, newSpecialRule.trim()])
-                    setNewSpecialRule('')
-                  }
-                }}
-              />
-              <button className="info-add-btn" onClick={() => {
-                if (newSpecialRule.trim()) {
-                  setSpecialRules([...specialRules, newSpecialRule.trim()])
-                  setNewSpecialRule('')
-                }
-              }}>+</button>
-            </div>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
 
@@ -636,6 +787,55 @@ export function EditorPage() {
                 if (newRule.trim()) {
                   setRules([...rules, newRule.trim()])
                   setNewRule('')
+                }
+              }}>+</button>
+            </div>
+
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
+
+            <div className="info-section-title" style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>Special Rules</div>
+            {specialRules.map((rule, i) => (
+              <div
+                key={i}
+                className="info-list-item info-list-draggable"
+                draggable
+                onDragStart={() => handleDragStart('specialRule', i)}
+                onDragOver={e => handleDragOver(e, i)}
+                onDrop={() => handleDrop('specialRule')}
+              >
+                <span className="info-drag-handle" title="Drag to reorder">&#x2630;</span>
+                {editingItem?.type === 'specialRule' && editingItem.index === i ? (
+                  <input
+                    className="info-edit-input"
+                    value={editingText}
+                    onChange={e => setEditingText(e.target.value)}
+                    onBlur={commitEdit}
+                    onKeyDown={e => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') { setEditingItem(null); setEditingText('') } }}
+                    autoFocus
+                  />
+                ) : (
+                  <span className="info-list-text info-list-editable" onClick={() => startEditing('specialRule', i, rule)}>{rule}</span>
+                )}
+                <button className="info-list-remove" onClick={() => setSpecialRules(specialRules.filter((_, j) => j !== i))} title="Remove">&times;</button>
+              </div>
+            ))}
+            <div className="info-add-row">
+              <input
+                className="info-add-input"
+                value={newSpecialRule}
+                onChange={e => setNewSpecialRule(e.target.value)}
+                placeholder="Add a special rule..."
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && newSpecialRule.trim()) {
+                    setSpecialRules([...specialRules, newSpecialRule.trim()])
+                    setNewSpecialRule('')
+                  }
+                }}
+              />
+              <button className="info-add-btn" onClick={() => {
+                if (newSpecialRule.trim()) {
+                  setSpecialRules([...specialRules, newSpecialRule.trim()])
+                  setNewSpecialRule('')
                 }
               }}>+</button>
             </div>
@@ -707,14 +907,17 @@ export function EditorPage() {
               grid={gridState.grid}
               selection={gridState.selection}
               debug={debug}
-              inputMode={gridState.inputMode}
-              activeColor={gridState.activeColor}
-              activeMark={gridState.activeMark}
-              clearSelection={gridState.clearSelection}
-              commitSelection={gridState.commitSelection}
-              onDragChange={gridState.onDragChange}
-              onRightClickCell={forcedInputLayout ? handleRightClickCell : undefined}
-              forcedInputLayout={forcedInputLayout || undefined}
+              inputMode={isSuggestedMode ? suggestedEffectiveMode : gridState.inputMode}
+              activeColor={isSuggestedMode ? suggestedActiveColor : gridState.activeColor}
+              activeMark={isSuggestedMode ? suggestedActiveMark : gridState.activeMark}
+              clearSelection={handleClearSelection}
+              commitSelection={handleCommitSelection}
+              onDragChange={handleDragChange}
+              onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
+              onCommitEdges={gridState.commitEdges}
+              onCommitFixedEdges={gridState.commitFixedEdges}
+              onToggleEdgeCross={gridState.toggleEdgeCross}
+              onToggleFixedMark={gridState.toggleFixedMark}
               isPinching={gridScale.isPinching}
             />
           </div>
@@ -725,12 +928,7 @@ export function EditorPage() {
         <Toolbar
           inputMode={gridState.inputMode}
           onInputModeChange={(mode) => {
-            if (mode === 'normal' && forcedInputLayout === 'nurikabe') {
-              gridState.setInputMode('color')
-              gridState.setActiveColor('9')
-            } else {
-              gridState.setInputMode(mode)
-            }
+            gridState.setInputMode(mode)
             if (mode !== 'normal') setSelectedImageIndex(null)
           }}
           onColorSelect={c => {
@@ -757,7 +955,12 @@ export function EditorPage() {
           onImageRemove={gridState.removeImage}
           onImageImport={() => imageInputRef.current?.click()}
           onIconAdd={handleIconAdd}
-          forcedInputLayout={forcedInputLayout || undefined}
+          puzzleType={puzzleType || undefined}
+          clickActionLeft={clickActionLeft || undefined}
+          clickActionRight={clickActionRight || undefined}
+          onClickActionLeftChange={setClickActionLeft}
+          onClickActionRightChange={setClickActionRight}
+          puzzleHasClickActions={!!puzzleType}
         />
       </ResizableRight>
 

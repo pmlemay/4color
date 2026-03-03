@@ -44,6 +44,9 @@ export function PillInput({ values, onChange, known, placeholder }: PillInputPro
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
       setSuggestionIndex(i => Math.max(i - 1, -1))
+    } else if (e.key === 'Tab' && suggestions.length > 0) {
+      e.preventDefault()
+      add(suggestionIndex >= 0 ? suggestions[suggestionIndex] : suggestions[0])
     } else if (e.key === 'Backspace' && !input && values.length > 0) {
       remove(values[values.length - 1])
     } else if (e.key === 'Escape') {
@@ -65,7 +68,7 @@ export function PillInput({ values, onChange, known, placeholder }: PillInputPro
         value={input}
         onChange={e => { setInput(e.target.value); setSuggestionIndex(-1) }}
         onKeyDown={handleKeyDown}
-        onBlur={() => setTimeout(() => setSuggestionIndex(-1), 150)}
+        onBlur={() => { if (input.trim()) add(input); setTimeout(() => setSuggestionIndex(-1), 150) }}
         placeholder={values.length === 0 ? (placeholder ?? '') : ''}
         className="tag-input-bare"
       />

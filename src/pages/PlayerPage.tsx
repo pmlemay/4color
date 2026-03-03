@@ -25,7 +25,8 @@ import { useCompletions } from '../hooks/useCompletions'
 import { useTimer } from '../hooks/useTimer'
 import { formatTime } from '../utils/formatTime'
 import { useAuth } from '../contexts/AuthContext'
-import { CellData, CellPosition, PuzzleData, PuzzleSolution } from '../types'
+import { CellData, CellPosition, InputMode, PuzzleData, PuzzleSolution, AutoCrossRule, MarkShape } from '../types'
+import { PUZZLE_TYPE_DEFAULTS } from '../utils/puzzleIO'
 
 export function PlayerPage() {
   const { puzzleId } = useParams()
@@ -99,10 +100,13 @@ export function PlayerPage() {
         }
         gridState.setGrid(grid)
         gridState.setAutoCrossRules(data.autoCrossRules || [])
-        gridState.setForcedInputLayout(data.forcedInputLayout || '')
-        if (data.forcedInputLayout === 'nurikabe') {
-          gridState.setInputMode('color')
-          gridState.setActiveColor('9')
+        gridState.setPuzzleType(data.puzzleType || '')
+        // Initialize click actions from puzzle data
+        if (data.clickActionLeft) setClickActionLeft(data.clickActionLeft)
+        if (data.clickActionRight) setClickActionRight(data.clickActionRight)
+        // Pre-select suggested mode if puzzle has click actions
+        if (data.clickActionLeft) {
+          gridState.setInputMode('suggested')
         }
         // Fetch solution file if it exists (for murdoku etc.)
         fetchPuzzleSolution(puzzleId).then(sol => { if (sol) setSolution(sol) })
@@ -158,6 +162,12 @@ export function PlayerPage() {
     }
   }, [puzzleId])
 
+  const puzzleType = puzzle?.puzzleType || ''
+  const puzzleHasClickActions = !!(puzzle?.clickActionLeft)
+  const [clickActionLeft, setClickActionLeft] = useState('')
+  const [clickActionRight, setClickActionRight] = useState('cross')
+  const autoCrossRules: AutoCrossRule[] = puzzle?.autoCrossRules || []
+
   useKeyboard({
     inputMode: gridState.inputMode,
     applyValue: gridState.applyValue,
@@ -174,6 +184,7 @@ export function PlayerPage() {
     toggleMark: gridState.toggleMark,
     hasSelection: gridState.selection.length > 0,
     onInputModeChange: gridState.setInputMode,
+    puzzleType,
   })
 
   const doClearPlayerInput = () => {
@@ -181,11 +192,12 @@ export function PlayerPage() {
       prev.map(row =>
         row.map(cell => ({
           ...cell,
-          value: cell.fixedValue ? cell.value : null,
-          notes: cell.fixedValue ? cell.notes : [],
-          color: cell.fixedValue ? cell.color : null,
-          crossed: cell.fixedValue ? cell.crossed : false,
-          mark: cell.fixedValue ? cell.mark : null,
+          value: null,
+          notes: [],
+          color: null,
+          crossed: false,
+          mark: null,
+          edgeCrosses: [false, false, false, false] as [boolean, boolean, boolean, boolean],
           borders: [...cell.fixedBorders] as [number, number, number, number],
         }))
       )
@@ -200,68 +212,98 @@ export function PlayerPage() {
     doClearPlayerInput()
   }
 
-  const forcedInputLayout = puzzle?.forcedInputLayout || ''
-
-  // Nurikabe right-click: toggle dot (PC only, preserved)
-  const handleRightClickCell = useCallback((pos: CellPosition) => {
-    if (forcedInputLayout !== 'nurikabe') return
-    gridState.setGrid(prev => {
-      const next = prev.map(row => row.map(cell => ({ ...cell })))
-      const cell = next[pos.row][pos.col]
-      cell.mark = cell.mark === 'dot' ? null : 'dot'
-      if (cell.mark === 'dot') cell.color = null
-      return next
-    })
-  }, [forcedInputLayout, gridState])
-
-  // Nurikabe immediate-mode drag: determine action from first cell, apply to all
-  const nurikabeDragActive = useRef(false)
-  const nurikabeDragAction = useRef<'black' | 'dot' | 'clear'>('black')
-
-  const nurikabeOnDragChange = useCallback((sel: CellPosition[]) => {
-    if (sel.length === 0) return
-    const isFirst = !nurikabeDragActive.current
-    const setter = isFirst ? gridState.setGridWithUndo : gridState.setGrid
-    if (isFirst) nurikabeDragActive.current = true
-
-    setter((prev: CellData[][]) => {
-      if (isFirst) {
-        // Determine action from first cell's current state
-        const firstCell = prev[sel[0].row]?.[sel[0].col]
-        if (!firstCell || firstCell.fixedValue) return prev
-        if (firstCell.color === '9' && !firstCell.mark) {
-          nurikabeDragAction.current = 'dot'
-        } else if (firstCell.mark === 'dot') {
-          nurikabeDragAction.current = 'clear'
-        } else {
-          nurikabeDragAction.current = 'black'
-        }
-      }
-
-      const action = nurikabeDragAction.current
-      const next = prev.map(row => row.map(cell => ({ ...cell })))
-      let changed = false
-      for (const pos of sel) {
-        const cell = next[pos.row]?.[pos.col]
-        if (!cell || cell.fixedValue) continue
-        if (action === 'black' && (cell.color !== '9' || cell.mark)) {
-          cell.color = '9'; cell.mark = null; changed = true
-        } else if (action === 'dot' && (cell.mark !== 'dot' || cell.color)) {
-          cell.color = null; cell.mark = 'dot'; changed = true
-        } else if (action === 'clear' && (cell.color || cell.mark)) {
-          cell.color = null; cell.mark = null; changed = true
-        }
-      }
-      return changed ? next : prev
-    })
-  }, [gridState])
-
-  const nurikabeCommitSelection = useCallback((_sel: CellPosition[]) => {
-    nurikabeDragActive.current = false
+  // Click action: apply a click action string to a cell (toggle)
+  const applyClickActionToCell = useCallback((prev: CellData[][], pos: CellPosition, action: string): CellData[][] => {
+    const next = prev.map(row => row.map(cell => ({ ...cell })))
+    const cell = next[pos.row][pos.col]
+    if (action.startsWith('color:')) {
+      const colorVal = action.split(':')[1]
+      cell.color = cell.color === colorVal ? null : colorVal
+      if (cell.color) cell.mark = null
+    } else if (action.startsWith('mark:')) {
+      const markVal = action.split(':')[1] as MarkShape
+      cell.mark = cell.mark === markVal ? null : markVal
+      if (cell.mark) cell.color = null
+    } else if (action === 'cross') {
+      cell.crossed = !cell.crossed
+      if (cell.crossed) cell.mark = null
+    }
+    return next
   }, [])
+
+  // Check if a cell matches a given action state
+  const cellMatchesAction = useCallback((cell: CellData, action: string): boolean => {
+    if (action.startsWith('color:')) return cell.color === action.split(':')[1]
+    if (action.startsWith('mark:')) return cell.mark === action.split(':')[1]
+    if (action === 'cross') return cell.crossed
+    return false
+  }, [])
+
+  // Force-apply an action (always ON, not toggle), clearing conflicting state
+  const forceApplyAction = useCallback((prev: CellData[][], pos: CellPosition, action: string): CellData[][] => {
+    const next = prev.map(row => row.map(cell => ({ ...cell })))
+    const cell = next[pos.row][pos.col]
+    // Clear all action state first
+    cell.color = null
+    cell.mark = null
+    cell.crossed = false
+    // Apply the action
+    if (action.startsWith('color:')) {
+      cell.color = action.split(':')[1]
+    } else if (action.startsWith('mark:')) {
+      cell.mark = action.split(':')[1] as MarkShape
+    } else if (action === 'cross') {
+      cell.crossed = true
+    }
+    return next
+  }, [])
+
+  // Clear all click-action-related state from a cell
+  const clearCellActions = useCallback((prev: CellData[][], pos: CellPosition): CellData[][] => {
+    const next = prev.map(row => row.map(cell => ({ ...cell })))
+    const cell = next[pos.row][pos.col]
+    cell.color = null
+    cell.mark = null
+    cell.crossed = false
+    return next
+  }, [])
+
+  // Right-click handler
+  const handleRightClickCell = useCallback((pos: CellPosition) => {
+    if (!clickActionRight) return
+    gridState.setGrid(prev => applyClickActionToCell(prev, pos, clickActionRight))
+  }, [clickActionRight, gridState, applyClickActionToCell])
+
+  const isTouchDragRef = useRef(false)
+
+  // Map click action string to the effective inputMode / activeColor / activeMark
+  const suggestedEffectiveMode: InputMode = (() => {
+    if (!clickActionLeft) return 'normal'
+    if (clickActionLeft.startsWith('color:')) return 'color'
+    if (clickActionLeft.startsWith('mark:')) return 'mark'
+    if (clickActionLeft === 'cross') return 'cross'
+    return 'normal'
+  })()
+  const suggestedActiveColor = clickActionLeft?.startsWith('color:') ? clickActionLeft.split(':')[1] : null
+  const suggestedActiveMark = clickActionLeft?.startsWith('mark:') ? clickActionLeft.split(':')[1] as MarkShape : null
 
   const is4Color = puzzle?.tags?.includes('4color') ?? false
   const canSubmit = is4Color || !!solution
+
+  const triggerCompletion = useCallback(() => {
+    timer.pause()
+    const timeMs = timer.elapsedMs
+    setPuzzleCompleted(true)
+    if (puzzleId) {
+      if (user) {
+        markCompleted(puzzleId, timeMs)
+        setCompletionStep('keepclear')
+      } else {
+        pendingCompletion.current = { puzzleId, timeMs }
+        setCompletionStep('signin')
+      }
+    }
+  }, [puzzleId, markCompleted, timer, user])
 
   const handleSubmit = useCallback(async () => {
     let result: { valid: boolean; error?: string }
@@ -273,22 +315,34 @@ export function PlayerPage() {
       return
     }
     if (result.valid) {
-      timer.pause()
-      const timeMs = timer.elapsedMs
-      setPuzzleCompleted(true)
-      if (puzzleId) {
-        if (user) {
-          markCompleted(puzzleId, timeMs)
-          setCompletionStep('keepclear')
-        } else {
-          pendingCompletion.current = { puzzleId, timeMs }
-          setCompletionStep('signin')
-        }
-      }
+      triggerCompletion()
     } else {
       await showAlert(result.error || 'Not quite right. Keep trying!', 'Not Quite')
     }
-  }, [gridState.grid, is4Color, solution, showAlert, puzzleId, markCompleted, timer, user])
+  }, [gridState.grid, is4Color, solution, showAlert, triggerCompletion])
+
+  // Auto-validate after every grid change — silently trigger completion
+  // only on the transition from invalid → valid (not while already valid)
+  const wasValid = useRef(false)
+  useEffect(() => {
+    if (!canSubmit) return
+    let result: { valid: boolean }
+    if (is4Color) {
+      result = validate4Color(gridState.grid)
+    } else if (solution) {
+      result = validateSolution(gridState.grid, solution)
+    } else {
+      return
+    }
+    if (result.valid) {
+      if (!wasValid.current) {
+        wasValid.current = true
+        triggerCompletion()
+      }
+    } else {
+      wasValid.current = false
+    }
+  }, [gridState.grid, canSubmit, is4Color, solution, triggerCompletion])
 
   const handleCompletionSignIn = async () => {
     try { await signIn() } catch { /* user closed popup */ }
@@ -308,7 +362,68 @@ export function PlayerPage() {
     setCompletionStep('none')
   }
 
-  const isNurikabe = forcedInputLayout === 'nurikabe'
+  const isSuggestedMode = gridState.inputMode === 'suggested'
+
+  // Wrap drag handlers so suggested mode applies click actions directly
+  // (useGrid's onDragChange/commitSelection don't know about 'suggested' inputMode)
+  const suggestedProcessed = useRef<Set<string>>(new Set())
+  const touchCycleAction = useRef<string | null>(null) // determined action for touch drag: action string or 'clear'
+
+  const handleDragChange = useCallback((sel: CellPosition[]) => {
+    if (!isSuggestedMode || !clickActionLeft) {
+      gridState.onDragChange(sel)
+      return
+    }
+    const isTouch = isTouchDragRef.current
+
+    for (const pos of sel) {
+      const key = `${pos.row},${pos.col}`
+      if (suggestedProcessed.current.has(key)) continue
+      suggestedProcessed.current.add(key)
+      const isFirst = suggestedProcessed.current.size === 1
+      const setter = isFirst ? gridState.setGridWithUndo : gridState.setGrid
+
+      if (isTouch) {
+        // Touch: cycle through left action → right action → clear
+        setter(prev => {
+          const cell = prev[pos.row][pos.col]
+          let action: string
+          if (isFirst) {
+            // First cell determines the cycle action for the entire drag
+            if (cellMatchesAction(cell, clickActionLeft)) {
+              action = clickActionRight || 'clear'
+            } else if (clickActionRight && cellMatchesAction(cell, clickActionRight)) {
+              action = 'clear'
+            } else {
+              action = clickActionLeft
+            }
+            touchCycleAction.current = action
+          } else {
+            action = touchCycleAction.current || clickActionLeft
+          }
+          if (action === 'clear') return clearCellActions(prev, pos)
+          return forceApplyAction(prev, pos, action)
+        })
+      } else {
+        // Mouse: left click toggles left action
+        setter(prev => applyClickActionToCell(prev, pos, clickActionLeft))
+      }
+    }
+  }, [isSuggestedMode, clickActionLeft, clickActionRight, gridState, applyClickActionToCell, cellMatchesAction, forceApplyAction, clearCellActions])
+
+  const handleCommitSelection = useCallback((sel: CellPosition[]) => {
+    if (isSuggestedMode) {
+      suggestedProcessed.current.clear()
+      touchCycleAction.current = null
+      return
+    }
+    gridState.commitSelection(sel)
+  }, [isSuggestedMode, gridState])
+
+  const handleClearSelection = useCallback(() => {
+    suggestedProcessed.current.clear()
+    gridState.clearSelection()
+  }, [gridState])
 
   if (loading) return <p style={{ textAlign: 'center', marginTop: 40 }}>Loading puzzle...</p>
   if (error || !puzzle) {
@@ -399,15 +514,17 @@ export function PlayerPage() {
       grid={gridState.grid}
       selection={gridState.selection}
       debug={debug}
-      inputMode={isNurikabe ? 'cross' : gridState.inputMode}
-      activeColor={isNurikabe ? null : gridState.activeColor}
-      activeMark={gridState.activeMark}
-      clearSelection={gridState.clearSelection}
-      commitSelection={isNurikabe ? nurikabeCommitSelection : gridState.commitSelection}
-      onDragChange={isNurikabe ? nurikabeOnDragChange : gridState.onDragChange}
-      onRightClickCell={forcedInputLayout ? handleRightClickCell : undefined}
-      forcedInputLayout={forcedInputLayout || undefined}
+      inputMode={isSuggestedMode ? suggestedEffectiveMode : gridState.inputMode}
+      activeColor={isSuggestedMode ? suggestedActiveColor : gridState.activeColor}
+      activeMark={isSuggestedMode ? suggestedActiveMark : gridState.activeMark}
+      clearSelection={handleClearSelection}
+      commitSelection={handleCommitSelection}
+      onDragChange={handleDragChange}
+      onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
+      onCommitEdges={gridState.commitEdges}
+      onToggleEdgeCross={gridState.toggleEdgeCross}
       isPinching={gridScale.isPinching}
+      isTouchDragRef={isTouchDragRef}
     />
   )
 
@@ -430,7 +547,8 @@ export function PlayerPage() {
       onRedo={gridState.redo}
       onErase={gridState.clearValues}
       onSubmit={canSubmit ? handleSubmit : undefined}
-      forcedInputLayout={forcedInputLayout || undefined}
+      puzzleType={puzzleType || undefined}
+      puzzleHasClickActions={puzzleHasClickActions}
     />
   )
 
@@ -519,7 +637,12 @@ export function PlayerPage() {
           onRedo={gridState.redo}
           onErase={gridState.clearValues}
           onSubmit={canSubmit ? handleSubmit : undefined}
-          forcedInputLayout={forcedInputLayout || undefined}
+          puzzleType={puzzleType || undefined}
+          clickActionLeft={clickActionLeft || undefined}
+          clickActionRight={clickActionRight || undefined}
+          onClickActionLeftChange={setClickActionLeft}
+          onClickActionRightChange={setClickActionRight}
+          puzzleHasClickActions={puzzleHasClickActions}
         />
       </ResizableRight>
 

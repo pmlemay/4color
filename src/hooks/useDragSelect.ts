@@ -1,12 +1,14 @@
 import { useRef, useCallback, useEffect } from 'react'
 import { CellPosition } from '../types'
+import { getCellPositionFromPoint } from '../utils/gridHitTest'
 
 interface UseDragSelectOptions {
   onSelectionStart: () => void
-  onSelectionChange: (selection: CellPosition[]) => void
+  onSelectionChange: (selection: CellPosition[], isTouch: boolean) => void
   onSelectionEnd: (selection: CellPosition[]) => void
   onRightClickCell?: (pos: CellPosition) => void
   isPinching?: boolean
+  touchEnabled?: boolean
 }
 
 export function useDragSelect(options: UseDragSelectOptions) {
@@ -21,30 +23,27 @@ export function useDragSelect(options: UseDragSelectOptions) {
   optionsRef.current = options
 
   const getCellFromPoint = (x: number, y: number): CellPosition | null => {
-    let target = document.elementFromPoint(x, y) as HTMLElement | null
-    if (!target) return null
-    while (target && target.tagName !== 'TD') {
-      target = target.parentElement
-    }
-    if (!target || target.tagName !== 'TD') return null
-    const td = target as HTMLTableCellElement
-    const row = (td.parentElement as HTMLTableRowElement)?.rowIndex
-    const col = td.cellIndex
-    if (row == null || col == null || row < 0 || col < 0) return null
-    return { row, col }
+    const table = tableRef.current
+    if (!table) return null
+    return getCellPositionFromPoint(x, y, table)
   }
 
   const getCellFromEvent = useCallback((e: React.MouseEvent | MouseEvent): CellPosition | null => {
+    // Try direct target first (fast path)
     let target = e.target as HTMLElement | null
     while (target && target.tagName !== 'TD') {
       target = target.parentElement
     }
-    if (!target || target.tagName !== 'TD') return null
-    const td = target as HTMLTableCellElement
-    const row = (td.parentElement as HTMLTableRowElement)?.rowIndex
-    const col = td.cellIndex
-    if (row == null || col == null || row < 0 || col < 0) return null
-    return { row, col }
+    if (target && target.tagName === 'TD') {
+      const td = target as HTMLTableCellElement
+      const row = (td.parentElement as HTMLTableRowElement)?.rowIndex
+      const col = td.cellIndex
+      if (row != null && col != null && row >= 0 && col >= 0) return { row, col }
+    }
+    // Fallback: find nearest cell (for clicks just outside the grid)
+    const table = tableRef.current
+    if (!table) return null
+    return getCellPositionFromPoint(e.clientX, e.clientY, table)
   }, [])
 
   const handleCellMouseDown = useCallback((e: React.MouseEvent) => {
@@ -65,7 +64,6 @@ export function useDragSelect(options: UseDragSelectOptions) {
 
     e.preventDefault()
     ctrlHeld.current = e.ctrlKey
-
     if (!e.ctrlKey) {
       optionsRef.current.onSelectionStart()
     }
@@ -74,7 +72,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
     if (pos) {
       dragging.current = true
       currentSelection.current = [pos]
-      optionsRef.current.onSelectionChange([pos])
+      optionsRef.current.onSelectionChange([pos], false)
     }
   }, [getCellFromEvent])
 
@@ -94,7 +92,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
     if (!pos) return
     if (currentSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
     currentSelection.current = [...currentSelection.current, pos]
-    optionsRef.current.onSelectionChange(currentSelection.current)
+    optionsRef.current.onSelectionChange(currentSelection.current, false)
   }, [getCellFromEvent])
 
   const handleMouseUp = useCallback(() => {
@@ -125,7 +123,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
       optionsRef.current.onSelectionStart()
       dragging.current = true
       currentSelection.current = [pos]
-      optionsRef.current.onSelectionChange([pos])
+      optionsRef.current.onSelectionChange([pos], true)
     }
 
     const cancelPendingTouch = () => {
@@ -137,6 +135,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
     }
 
     const handleTouchStart = (e: TouchEvent) => {
+      if (optionsRef.current.touchEnabled === false) return
       if ((e.target as HTMLElement).closest('.toolbar')) return
       if (e.touches.length >= 2) {
         cancelPendingTouch()
@@ -183,7 +182,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
       if (!pos) return
       if (currentSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
       currentSelection.current = [...currentSelection.current, pos]
-      optionsRef.current.onSelectionChange(currentSelection.current)
+      optionsRef.current.onSelectionChange(currentSelection.current, true)
     }
 
     table.addEventListener('touchstart', handleTouchStart, { passive: false })

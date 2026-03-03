@@ -3,11 +3,12 @@
  * Build script for game-icons.net icon library.
  *
  * Usage:
- *   node scripts/build-icons.js <path-to-cloned-game-icons-repo>
+ *   node scripts/build-icons.js <path-to-game-icons-repo> [path-to-list-categories.txt]
  *
  * Expects the repo from https://github.com/game-icons/icons.git
+ * Optionally accepts list-categories.txt from https://github.com/ArnoldSmith86/gameicons-metadata
  * Processes SVGs to black-on-transparent and writes them to public/icons/.
- * Generates public/icons/index.json as the catalog.
+ * Generates public/icons/index.json as the catalog (with optional category field).
  */
 
 import fs from 'fs'
@@ -45,6 +46,23 @@ function walkSvgs(dir) {
 const svgFiles = walkSvgs(resolvedRepo)
 console.log(`Found ${svgFiles.length} SVG files`)
 
+// Load category metadata from gameicons-metadata repo (if available)
+// Format: "Category: author/icon-name" per line
+const categoryMap = new Map() // icon-name -> category
+const categoriesPath = process.argv[3]
+if (categoriesPath && fs.existsSync(categoriesPath)) {
+  const lines = fs.readFileSync(categoriesPath, 'utf-8').split('\n')
+  for (const line of lines) {
+    const match = line.match(/^(.+?):\s*\S+\/(.+)$/)
+    if (match) {
+      categoryMap.set(match[2].trim(), match[1].trim())
+    }
+  }
+  console.log(`Loaded ${categoryMap.size} category mappings`)
+} else {
+  console.log('No categories file provided (pass as second arg). Skipping category metadata.')
+}
+
 const seen = new Map() // name -> source path (for dedup)
 const index = []
 
@@ -57,7 +75,11 @@ for (const svgPath of svgFiles) {
 
   let content = fs.readFileSync(svgPath, 'utf-8')
 
-  // Remove background rect (typically the first rect with fill="#000" that covers the whole viewBox)
+  // Remove background elements:
+  // - <path d="M0 0h512v512H0z"/> (no fill attr, defaults to black)
+  // - <path d="M0 0h512v512H0z" fill="#000"/> variants
+  // - <rect> with fill="#000" covering the viewBox
+  content = content.replace(/<path[^>]*d=["']M0 0h512v512H0z["'][^>]*\/?\s*>/gi, '')
   content = content.replace(/<rect[^>]*fill=["']#000["'][^>]*\/?\s*>/gi, '')
 
   // Recolor white fills to black (the actual icon paths)
@@ -67,7 +89,10 @@ for (const svgPath of svgFiles) {
   const outFile = `${name}.svg`
   fs.writeFileSync(path.join(outDir, outFile), content)
 
-  index.push({ n: name, f: outFile })
+  const entry = { n: name, f: outFile }
+  const cat = categoryMap.get(name)
+  if (cat) entry.c = cat
+  index.push(entry)
 }
 
 // Sort alphabetically

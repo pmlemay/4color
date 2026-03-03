@@ -1,11 +1,11 @@
 import { InputMode, MarkShape } from '../../types'
 import './InputPanel.css'
 
-const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'dot']
+const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot']
 const MARK_LABELS: Record<MarkShape, string> = {
   circle: '\u25CB', square: '\u25A1', triangle: '\u25B3',
   diamond: '\u25C7', pentagon: '\u2B20', hexagon: '\u2B21',
-  dot: '\u25CF',
+  star: '\u2605', dot: '\u25CF',
 }
 
 interface InputPanelProps {
@@ -26,7 +26,8 @@ interface InputPanelProps {
   onRedo: () => void
   onErase: () => void
   onSubmit?: () => void
-  forcedInputLayout?: string
+  puzzleType?: string
+  puzzleHasClickActions?: boolean
 }
 
 const PLAYER_MODES: { mode: InputMode; label: string; icon: string }[] = [
@@ -35,6 +36,7 @@ const PLAYER_MODES: { mode: InputMode; label: string; icon: string }[] = [
   { mode: 'color', label: 'Color', icon: '🎨' },
   { mode: 'cross', label: 'Cross', icon: '✕' },
   { mode: 'border', label: 'Border', icon: '▢' },
+  { mode: 'edge', label: 'Edge', icon: '⊟' },
   { mode: 'mark', label: 'Mark', icon: '◯' },
 ]
 
@@ -56,7 +58,8 @@ export function InputPanel({
   onRedo,
   onErase,
   onSubmit,
-  forcedInputLayout,
+  puzzleType,
+  puzzleHasClickActions = false,
 }: InputPanelProps) {
   const isNoteMode = inputMode === 'note'
   const isColorMode = inputMode === 'color'
@@ -73,25 +76,32 @@ export function InputPanel({
   return (
     <div className="input-panel" onMouseDown={e => e.preventDefault()}>
       {/* Row 1: Mode tabs */}
-      {!forcedInputLayout && (
-        <div className="ip-modes">
-          {PLAYER_MODES.map(m => (
-            <button
-              key={m.mode}
-              className={`ip-mode-btn ${inputMode === m.mode ? 'selected' : ''}`}
-              onClick={() => onInputModeChange(inputMode === m.mode ? 'normal' : m.mode)}
-            >
-              <span className="ip-mode-icon">{m.icon}</span>
-              <span className="ip-mode-label">{m.label}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="ip-modes">
+        {puzzleHasClickActions && (
+          <button
+            className={`ip-mode-btn ${inputMode === 'suggested' ? 'selected' : ''}`}
+            onClick={() => onInputModeChange(inputMode === 'suggested' ? 'normal' : 'suggested')}
+          >
+            <span className="ip-mode-icon">&#x2728;</span>
+            <span className="ip-mode-label">Suggested</span>
+          </button>
+        )}
+        {PLAYER_MODES.map(m => (
+          <button
+            key={m.mode}
+            className={`ip-mode-btn ${inputMode === m.mode ? 'selected' : ''}`}
+            onClick={() => onInputModeChange(inputMode === m.mode ? 'normal' : m.mode)}
+          >
+            <span className="ip-mode-icon">{m.icon}</span>
+            <span className="ip-mode-label">{m.label}</span>
+          </button>
+        ))}
+      </div>
 
       {/* Row 2: Context-sensitive buttons */}
       <div className="ip-context">
         {/* Values (normal + note mode) */}
-        {(inputMode === 'normal' || isNoteMode) && !forcedInputLayout && (
+        {(inputMode === 'normal' || isNoteMode) && (
           <div className="ip-values">
             {valueSet.map(v => (
               <button key={v} className="ip-val-btn" onClick={() => handleValueTap(v)}>
@@ -102,7 +112,7 @@ export function InputPanel({
         )}
 
         {/* Color swatches */}
-        {isColorMode && !forcedInputLayout && (
+        {isColorMode && (
           <div className="ip-colors">
             <button
               className={`ip-color-swatch color-erase ${activeColor === '0' ? 'active-color' : ''}`}
@@ -138,7 +148,7 @@ export function InputPanel({
         )}
 
         {/* Mark shapes */}
-        {isMarkMode && !forcedInputLayout && (
+        {isMarkMode && (
           <div className="ip-marks">
             <button
               className={`ip-mark-swatch ${activeMark === null ? 'active-mark' : ''}`}
@@ -165,15 +175,21 @@ export function InputPanel({
           </div>
         )}
 
-        {/* Nurikabe: tap cycles empty→black→dot→empty, no swatches needed */}
-        {forcedInputLayout === 'nurikabe' && (
+        {/* Suggested mode hint */}
+        {inputMode === 'suggested' && puzzleType === 'nurikabe' && (
           <div className="ip-hint">Tap: black &rarr; dot &rarr; clear</div>
         )}
+        {inputMode === 'suggested' && puzzleType === 'heyawake' && (
+          <div className="ip-hint">Tap: black &rarr; green &rarr; clear</div>
+        )}
+        {inputMode === 'suggested' && puzzleType === 'starbattle' && (
+          <div className="ip-hint">Tap: star &rarr; X &rarr; clear</div>
+        )}
 
-        {/* Border and cross modes: no extra context buttons, just the mode is enough */}
-        {(inputMode === 'cross' || inputMode === 'border') && !forcedInputLayout && (
+        {/* Border, edge and cross modes: no extra context buttons, just the mode is enough */}
+        {(inputMode === 'cross' || inputMode === 'border' || inputMode === 'edge') && (
           <div className="ip-hint">
-            {inputMode === 'cross' ? 'Tap/drag cells to toggle X marks' : 'Drag between cells to create borders'}
+            {inputMode === 'cross' ? 'Tap/drag cells to toggle X marks' : inputMode === 'edge' ? 'Drag edges to toggle individual borders' : 'Drag between cells to create borders'}
           </div>
         )}
       </div>

@@ -16,7 +16,10 @@ const index = files.map(f => {
   if (data.difficulty) entry.difficulty = data.difficulty
   if (data.tags) entry.tags = data.tags
   if (data.autoCrossRules?.length) entry.autoCrossRules = data.autoCrossRules
-  if (data.forcedInputLayout) entry.forcedInputLayout = data.forcedInputLayout
+  if (data.puzzleType) entry.puzzleType = data.puzzleType
+  else if (data.forcedInputLayout) entry.puzzleType = data.forcedInputLayout
+  if (data.clickActionLeft) entry.clickActionLeft = data.clickActionLeft
+  if (data.clickActionRight) entry.clickActionRight = data.clickActionRight
   return entry
 })
 

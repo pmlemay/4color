@@ -1,6 +1,8 @@
 .grid-container {
   position: relative;
   display: inline-block;
+  padding: 15px;
+  margin: -15px;
 }
 
 .puzzle-grid {
@@ -8,6 +10,7 @@
   border-collapse: collapse;
   user-select: none;
   -webkit-user-select: none;
+  backface-visibility: hidden;
 }
 
 .puzzle-grid td {
@@ -23,18 +26,45 @@
 }
 
 .cell-inner {
-  height: calc(100% + 2px);
-  width: calc(100% + 2px);
-  margin-left: -1px;
-  margin-top: -1px;
+  height: 100%;
+  width: 100%;
   text-align: center;
   line-height: 48px;
   box-sizing: border-box;
-  border-style: solid;
-  border-color: var(--text);
-  border-width: 0;
   font-size: 20px;
   position: relative;
+}
+
+/* Borders rendered as overlay bars so they don't shift cell content */
+.cell-border {
+  position: absolute;
+  background-color: var(--text);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.cell-border-top {
+  top: -1px;
+  left: -1px;
+  right: -1px;
+}
+
+.cell-border-right {
+  top: -1px;
+  right: -1px;
+  bottom: -1px;
+}
+
+.cell-border-bottom {
+  bottom: -1px;
+  left: -1px;
+  right: -1px;
+}
+
+.cell-border-left {
+  top: -1px;
+  left: -1px;
+  bottom: -1px;
 }
 
 .cell-fixed-value {
@@ -174,4 +204,184 @@
 .color6 { background-color: rgba(0, 188, 212, 0.55); }    /* Cyan */
 .color7 { background-color: rgba(30, 136, 229, 0.55); }   /* Blue */
 .color8 { background-color: rgba(126, 87, 194, 0.55); }   /* Purple */
-.color9 { background-color: rgba(40, 40, 40, 0.85); }     /* Near-black */
+.color9 { background-color: rgba(20, 20, 20, 0.92); }     /* Near-black */
+
+/* Edge draft overlays */
+.edge-draft {
+  position: absolute;
+  background-color: lightseagreen;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.edge-draft-top {
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.edge-draft-right {
+  top: 0;
+  right: -1px;
+  bottom: 0;
+  width: 3px;
+}
+
+.edge-draft-bottom {
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.edge-draft-left {
+  top: 0;
+  left: -1px;
+  bottom: 0;
+  width: 3px;
+}
+
+/* Edge cross marks (small X on edges) */
+.edge-x {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+  font-size: 10px;
+  line-height: 1;
+  color: #e44;
+  font-weight: bold;
+  transform: translate(-50%, -50%);
+}
+
+.edge-x-top {
+  top: -1px;
+  left: 50%;
+}
+
+.edge-x-right {
+  top: calc(50% - 1px);
+  right: 0;
+  left: auto;
+  transform: translate(50%, -50%);
+}
+
+.edge-x-bottom {
+  bottom: 1px;
+  top: auto;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.edge-x-left {
+  top: calc(50% - 1px);
+  left: 0;
+}
+
+/* Fixed marks (editor-placed puzzle decorations) */
+.fixed-mark {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.75;
+}
+
+.fixed-mark svg {
+  display: block;
+}
+
+/* Center fixed mark — same size as player marks */
+.fixed-mark-center {
+  inset: 0;
+}
+
+.fixed-mark-center svg {
+  width: 34px;
+  height: 34px;
+}
+
+/* Edge fixed marks — positioned at edge midpoints */
+.fixed-mark-edge-top,
+.fixed-mark-edge-right,
+.fixed-mark-edge-bottom,
+.fixed-mark-edge-left {
+  width: 34px;
+  height: 34px;
+}
+
+.fixed-mark-edge-top svg,
+.fixed-mark-edge-right svg,
+.fixed-mark-edge-bottom svg,
+.fixed-mark-edge-left svg {
+  width: 34px;
+  height: 34px;
+}
+
+.fixed-mark-edge-top {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fixed-mark-edge-right {
+  top: 50%;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.fixed-mark-edge-bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.fixed-mark-edge-left {
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+/* Vertex fixed marks — positioned at corners */
+.fixed-mark-vertex-tl,
+.fixed-mark-vertex-tr,
+.fixed-mark-vertex-br,
+.fixed-mark-vertex-bl {
+  width: 34px;
+  height: 34px;
+}
+
+.fixed-mark-vertex-tl svg,
+.fixed-mark-vertex-tr svg,
+.fixed-mark-vertex-br svg,
+.fixed-mark-vertex-bl svg {
+  width: 34px;
+  height: 34px;
+}
+
+.fixed-mark-vertex-tl {
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.fixed-mark-vertex-tr {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+}
+
+.fixed-mark-vertex-br {
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+}
+
+.fixed-mark-vertex-bl {
+  bottom: 0;
+  left: 0;
+  transform: translate(-50%, 50%);
+}

@@ -9,21 +9,25 @@ const PLAYER_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'color', label: 'Color (C)' },
   { mode: 'cross', label: 'X Cross (X)' },
   { mode: 'border', label: 'Border (B)' },
+  { mode: 'edge', label: 'Edge (E)' },
   { mode: 'mark', label: 'Marks (M)' },
 ]
 
-const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'dot']
+const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot']
 const MARK_LABELS: Record<MarkShape, string> = {
   circle: '\u25CB', square: '\u25A1', triangle: '\u25B3',
   diamond: '\u25C7', pentagon: '\u2B20', hexagon: '\u2B21',
-  dot: '\u25CF',
+  star: '\u2605', dot: '\u25CF',
 }
 
 const EDITOR_MODES: { mode: InputMode; label: string }[] = [
-  { mode: 'fixed', label: 'Fixed Normal' },
-  { mode: 'fixedDouble', label: 'Fixed 2-Digit' },
-  { mode: 'fixedColor', label: 'Fixed Color' },
-  { mode: 'label', label: 'Label' },
+  { mode: 'fixed', label: 'Fixed Normal (Ctrl+N)' },
+  { mode: 'fixedDouble', label: 'Fixed 2-Digit (Ctrl+D)' },
+  { mode: 'fixedColor', label: 'Fixed Color (Ctrl+Shift+C)' },
+  { mode: 'fixedBorder', label: 'Fixed Border (Ctrl+B)' },
+  { mode: 'fixedEdge', label: 'Fixed Edge (Ctrl+E)' },
+  { mode: 'fixedMark', label: 'Fixed Mark (Ctrl+M)' },
+  { mode: 'label', label: 'Label (Ctrl+L)' },
 ]
 
 interface ToolbarProps {
@@ -51,7 +55,12 @@ interface ToolbarProps {
   onMarkErase?: () => void
   onIconAdd?: (base64: string) => void
   onSubmit?: () => void
-  forcedInputLayout?: string
+  puzzleType?: string
+  clickActionLeft?: string
+  clickActionRight?: string
+  onClickActionLeftChange?: (action: string) => void
+  onClickActionRightChange?: (action: string) => void
+  puzzleHasClickActions?: boolean
 }
 
 export function Toolbar({
@@ -79,7 +88,12 @@ export function Toolbar({
   onMarkErase,
   onIconAdd,
   onSubmit,
-  forcedInputLayout,
+  puzzleType,
+  clickActionLeft,
+  clickActionRight,
+  onClickActionLeftChange,
+  onClickActionRightChange,
+  puzzleHasClickActions = false,
 }: ToolbarProps) {
   const showPalette = inputMode === 'color' || inputMode === 'fixedColor'
   const showLabel = inputMode === 'label'
@@ -103,31 +117,106 @@ export function Toolbar({
         {inputMode === 'fixed' && 'Type any key for fixed clue.'}
         {inputMode === 'fixedDouble' && 'Type two digits for a 2-digit fixed clue.'}
         {inputMode === 'fixedColor' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
+        {inputMode === 'fixedMark' && (activeMark !== null ? 'Click cell center, edge, or corner to place/remove mark.' : 'Select a shape, then click cell center, edge, or corner.')}
         {inputMode === 'label' && 'Enter text, pick alignment, Apply.'}
-        {forcedInputLayout && inputMode !== 'fixed' && inputMode !== 'fixedDouble' && inputMode !== 'fixedColor' && inputMode !== 'label' && (<><div>Left-click: black &rarr; dot &rarr; clear</div><div>Right-click: toggle dot</div></>)}
-        {!forcedInputLayout && inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
-        {!forcedInputLayout && inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
-        {!forcedInputLayout && inputMode === 'note' && 'Type to add/remove notes (max 16).'}
-        {!forcedInputLayout && inputMode === 'cross' && 'Click/drag to toggle X marks.'}
-        {!forcedInputLayout && inputMode === 'border' && 'Drag to create/remove borders.'}
-        {!forcedInputLayout && inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
+        {inputMode === 'suggested' && puzzleType === 'nurikabe' && (<><div>Left-click: toggle black. Right-click: toggle dot</div><div>Touch: black &rarr; dot &rarr; clear</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'heyawake' && (<><div>Left-click: toggle black. Right-click: toggle green</div><div>Touch: black &rarr; green &rarr; clear</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'starbattle' && (<><div>Left-click: toggle star. Right-click: toggle X</div><div>Touch: star &rarr; X &rarr; clear</div></>)}
+        {inputMode === 'suggested' && !puzzleType && (clickActionLeft ? 'Custom click actions configured.' : 'Select click actions below.')}
+        {inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
+        {inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
+        {inputMode === 'note' && 'Type to add/remove notes (max 16).'}
+        {inputMode === 'cross' && 'Click/drag to toggle X marks.'}
+        {inputMode === 'border' && 'Drag to create/remove borders.'}
+        {inputMode === 'edge' && 'Click/drag edges to toggle individual borders.'}
+        {inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
       </div>
 
-      {!forcedInputLayout && (
       <div className="tb-section">
         <div className="tb-section-title">Input Mode</div>
+        {renderModeBtn({ mode: 'suggested', label: puzzleHasClickActions ? 'Suggested (S)' : 'Custom (S)' })}
         {PLAYER_MODES.map(renderModeBtn)}
       </div>
+
+      {inputMode === 'suggested' && !puzzleHasClickActions && (onClickActionLeftChange || onClickActionRightChange) && (
+        <div className="tb-section">
+          <div className="tb-section-title">Click Actions</div>
+          <div className="tb-click-actions">
+            <label className="tb-click-action-label">
+              Left Click
+              <select
+                className="tb-click-action-select"
+                value={clickActionLeft || ''}
+                onChange={e => onClickActionLeftChange?.(e.target.value)}
+              >
+                <option value="">None</option>
+                <optgroup label="Colors">
+                  <option value="color:0">Gray</option>
+                  <option value="color:1">Red</option>
+                  <option value="color:2">Pink</option>
+                  <option value="color:3">Orange</option>
+                  <option value="color:4">Yellow</option>
+                  <option value="color:5">Green</option>
+                  <option value="color:6">Cyan</option>
+                  <option value="color:7">Blue</option>
+                  <option value="color:8">Purple</option>
+                  <option value="color:9">Black</option>
+                </optgroup>
+                <optgroup label="Marks">
+                  <option value="mark:circle">Circle</option>
+                  <option value="mark:square">Square</option>
+                  <option value="mark:triangle">Triangle</option>
+                  <option value="mark:diamond">Diamond</option>
+                  <option value="mark:pentagon">Pentagon</option>
+                  <option value="mark:hexagon">Hexagon</option>
+                  <option value="mark:star">Star</option>
+                  <option value="mark:dot">Dot</option>
+                </optgroup>
+                <optgroup label="Other">
+                  <option value="cross">Cross</option>
+                </optgroup>
+              </select>
+            </label>
+            <label className="tb-click-action-label">
+              Right Click
+              <select
+                className="tb-click-action-select"
+                value={clickActionRight || ''}
+                onChange={e => onClickActionRightChange?.(e.target.value)}
+              >
+                <option value="">None</option>
+                <optgroup label="Colors">
+                  <option value="color:0">Gray</option>
+                  <option value="color:1">Red</option>
+                  <option value="color:2">Pink</option>
+                  <option value="color:3">Orange</option>
+                  <option value="color:4">Yellow</option>
+                  <option value="color:5">Green</option>
+                  <option value="color:6">Cyan</option>
+                  <option value="color:7">Blue</option>
+                  <option value="color:8">Purple</option>
+                  <option value="color:9">Black</option>
+                </optgroup>
+                <optgroup label="Marks">
+                  <option value="mark:circle">Circle</option>
+                  <option value="mark:square">Square</option>
+                  <option value="mark:triangle">Triangle</option>
+                  <option value="mark:diamond">Diamond</option>
+                  <option value="mark:pentagon">Pentagon</option>
+                  <option value="mark:hexagon">Hexagon</option>
+                  <option value="mark:star">Star</option>
+                  <option value="mark:dot">Dot</option>
+                </optgroup>
+                <optgroup label="Other">
+                  <option value="cross">Cross</option>
+                </optgroup>
+              </select>
+            </label>
+          </div>
+        </div>
       )}
 
-      <div className="tb-section">
-        <div className="tb-section-title">Actions</div>
-        <button className="tb-btn" onClick={onErase} title="Delete/Backspace">Erase (Del)</button>
-        <button className="tb-btn" onClick={onUndo} title="Ctrl+Z">Undo (Ctrl+Z)</button>
-        <button className="tb-btn" onClick={onRedo} title="Ctrl+Y">Redo (Ctrl+Y)</button>
-      </div>
-
-      {showPalette && !forcedInputLayout && (
+      {showPalette && (
         <div className="tb-section">
           <div className="tb-section-title">Colors</div>
           <div className="tb-palette">
@@ -170,7 +259,7 @@ export function Toolbar({
         </div>
       )}
 
-      {inputMode === 'mark' && !forcedInputLayout && (
+      {inputMode === 'mark' && (
         <div className="tb-section">
           <div className="tb-section-title">Shape</div>
           <div className="tb-mark-palette">
@@ -194,6 +283,40 @@ export function Toolbar({
                   } else {
                     onActiveMarkChange?.(shape)
                     onMarkSelect?.(shape)
+                  }
+                }}
+                title={shape}
+              >
+                {MARK_LABELS[shape]}
+              </button>
+            ))}
+          </div>
+          {activeMark !== null && (
+            <button className="tb-btn" onClick={() => onActiveMarkChange?.(null)}>Deselect Shape</button>
+          )}
+        </div>
+      )}
+
+      <div className="tb-section">
+        <div className="tb-section-title">Actions</div>
+        <button className="tb-btn" onClick={onErase} title="Delete/Backspace">Erase (Del)</button>
+        <button className="tb-btn" onClick={onUndo} title="Ctrl+Z">Undo (Ctrl+Z)</button>
+        <button className="tb-btn" onClick={onRedo} title="Ctrl+Y">Redo (Ctrl+Y)</button>
+      </div>
+
+      {inputMode === 'fixedMark' && (
+        <div className="tb-section">
+          <div className="tb-section-title">Shape</div>
+          <div className="tb-mark-palette">
+            {MARK_SHAPES.map(shape => (
+              <button
+                key={shape}
+                className={`mark-swatch ${activeMark === shape ? 'active-mark' : ''}`}
+                onClick={() => {
+                  if (activeMark === shape) {
+                    onActiveMarkChange?.(null)
+                  } else {
+                    onActiveMarkChange?.(shape)
                   }
                 }}
                 title={shape}

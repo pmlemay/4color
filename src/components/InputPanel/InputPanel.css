@@ -159,9 +159,38 @@
   box-shadow: 0 0 0 2px var(--text), 0 0 6px rgba(0,0,0,0.4);
 }
 
+/* Click action dropdowns */
+.ip-click-actions {
+  display: flex;
+  gap: 6px;
+  padding: 2px 0;
+}
+
+.ip-click-action-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  flex: 1;
+  min-width: 0;
+}
+
+.ip-click-action-select {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 12px;
+  padding: 0 4px;
+}
+
 /* Hint text for border/cross modes */
 .ip-hint {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   padding: 4px 0;
 }

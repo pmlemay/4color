@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const MIN_ZOOM = 0.3
 const MAX_ZOOM = 3.0
-const ZOOM_SENSITIVITY = 0.002
+const ZOOM_SENSITIVITY = 0.001
 const CELL_SIZE = 50
 // Extra pixels for grid border (1px border-collapse means ~1px per edge)
 const GRID_PADDING = 2

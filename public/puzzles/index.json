@@ -1,5 +1,21 @@
 [
   {
+    "id": "spiralgalaxy-9-768-323-from-puzzle-galaxies",
+    "file": "spiralgalaxy-9-768-323-from-puzzle-galaxies.json",
+    "title": "SpiralGalaxy (9,768,323 from puzzle-galaxies)",
+    "authors": [
+      "Unknown"
+    ],
+    "gridSize": {
+      "rows": 5,
+      "cols": 5
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "spiral-galaxy"
+    ]
+  },
+  {
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
@@ -92,9 +108,28 @@
     ]
   },
   {
+    "id": "heyawake-169940-from-puzsq",
+    "file": "heyawake-169940-from-puzsq.json",
+    "title": "Heyawake (169940 from puzsq)",
+    "authors": [
+      "Series_205"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Heyawake"
+    ],
+    "puzzleType": "heyawake",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5"
+  },
+  {
     "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
     "file": "nurikabe-112481-from-puzsq-logicpuzzle-app.json",
-    "title": "Nurikabe 112481 (from puzsq.logicpuzzle.app)",
+    "title": "Nurikabe (112481 from puzsq)",
     "authors": [
       "土刃"
     ],
@@ -106,7 +141,9 @@
     "tags": [
       "nurikabe"
     ],
-    "forcedInputLayout": "nurikabe"
+    "puzzleType": "nurikabe",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "mark:dot"
   },
   {
     "id": "nurikabe-murdoku",
