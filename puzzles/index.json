@@ -1,46 +1,185 @@
 [
   {
-    "id": "sample-4-color-puzzle",
-    "file": "sample-4color.json",
-    "title": "4-Color #1",
-    "author": "AI",
+    "id": "spiralgalaxy-9-768-323-from-puzzle-galaxies",
+    "file": "spiralgalaxy-9-768-323-from-puzzle-galaxies.json",
+    "title": "SpiralGalaxy (9,768,323 from puzzle-galaxies)",
+    "authors": [
+      "Unknown"
+    ],
+    "gridSize": {
+      "rows": 5,
+      "cols": 5
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "spiral-galaxy"
+    ]
+  },
+  {
+    "id": "dinner-party-murdoku",
+    "file": "dinner-party-murdoku.json",
+    "title": "Dinner Party Murdoku",
+    "authors": [
+      "Ai",
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 6,
       "cols": 6
     },
-    "difficulty": "Easy"
+    "difficulty": "Easy",
+    "tags": [
+      "murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ]
+  },
+  {
+    "id": "sample-4-color-puzzle",
+    "file": "sample-4-color-puzzle.json",
+    "title": "4-Color #1",
+    "authors": [
+      "Ai"
+    ],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "4color"
+    ]
+  },
+  {
+    "id": "hard-4color",
+    "file": "hard-4color.json",
+    "title": "4-Color #2",
+    "authors": [
+      "Ai"
+    ],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "4color"
+    ]
+  },
+  {
+    "id": "starbattle-murdoku",
+    "file": "starbattle-murdoku.json",
+    "title": "StarBattle Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "star-battle",
+      "murdoku"
+    ],
+    "autoCrossRules": [
+      "king",
+      "rook"
+    ]
   },
   {
     "id": "knights-murdoku",
     "file": "knights-murdoku.json",
     "title": "Knights Murdoku",
-    "author": "Caprazo",
+    "authors": [
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 9,
       "cols": 9
     },
-    "difficulty": "Very hard"
+    "difficulty": "Very hard",
+    "tags": [
+      "murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ]
+  },
+  {
+    "id": "heyawake-169940-from-puzsq",
+    "file": "heyawake-169940-from-puzsq.json",
+    "title": "Heyawake (169940 from puzsq)",
+    "authors": [
+      "Series_205"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Heyawake"
+    ],
+    "puzzleType": "heyawake",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5"
+  },
+  {
+    "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
+    "file": "nurikabe-112481-from-puzsq-logicpuzzle-app.json",
+    "title": "Nurikabe (112481 from puzsq)",
+    "authors": [
+      "土刃"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "nurikabe"
+    ],
+    "puzzleType": "nurikabe",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "mark:dot"
   },
   {
     "id": "nurikabe-murdoku",
     "file": "nurikabe-murdoku.json",
     "title": "Nurikabe Murdoku",
-    "author": "Caprazo",
+    "authors": [
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 10,
       "cols": 10
     },
-    "difficulty": "Very hard"
+    "difficulty": "Very hard",
+    "tags": [
+      "murdoku",
+      "nurikabe"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ]
   },
   {
     "id": "spiral-galaxy-murdoku",
     "file": "spiral-galaxy-murdoku.json",
     "title": "Spiral Galaxy Murdoku",
-    "author": "Caprazo",
+    "authors": [
+      "PmLemay"
+    ],
     "gridSize": {
       "rows": 12,
       "cols": 12
     },
-    "difficulty": "Very hard"
+    "difficulty": "Very hard",
+    "tags": [
+      "murdoku",
+      "spiral-galaxy"
+    ]
   }
 ]
