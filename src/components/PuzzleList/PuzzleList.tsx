@@ -14,6 +14,7 @@ import { ThemeToggle } from '../ThemeToggle'
 import './PuzzleList.css'
 
 export function PuzzleList() {
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   const debug = new URLSearchParams(window.location.hash.split('?')[1] || '').get('debug') === 'true'
   const { theme, toggle: toggleTheme } = useTheme()
   const { user, signIn, signOut } = useAuth()
@@ -21,6 +22,7 @@ export function PuzzleList() {
   const leaderboard = useLeaderboard(10)
   const { modalProps, showConfirm } = useModal()
   const [showAccount, setShowAccount] = useState(false)
+  const [showAbout, setShowAbout] = useState(false)
   const [editingName, setEditingName] = useState('')
   const [puzzles, setPuzzles] = useState<PuzzleIndexEntry[]>([])
   const [loading, setLoading] = useState(true)
@@ -34,7 +36,7 @@ export function PuzzleList() {
 
   useEffect(() => {
     fetchPuzzleIndex().then(data => {
-      setPuzzles(data)
+      setPuzzles(isDev ? data : data.filter(p => !p.inProgress))
       setLoading(false)
     })
   }, [])
@@ -78,7 +80,7 @@ export function PuzzleList() {
   }, [puzzles])
 
   const allDifficulties = useMemo(() => {
-    const order = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard']
+    const order = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard', 'Expert']
     const diffs = new Set<string>()
     for (const p of puzzles) {
       if (p.difficulty) diffs.add(p.difficulty)
@@ -111,8 +113,28 @@ export function PuzzleList() {
     return result
   }, [puzzles, selectedTags, tagMode, selectedDifficulties, selectedAuthors, hideCompleted, completedPuzzleIds])
 
+  const completionStats = useMemo(() => {
+    // Count against filteredPuzzles but before hideCompleted is applied
+    let pool = puzzles
+    if (selectedTags.size > 0) {
+      pool = pool.filter(p => {
+        const pt = p.tags || []
+        if (tagMode === 'or') return pt.some(t => selectedTags.has(t))
+        return [...selectedTags].every(t => pt.includes(t))
+      })
+    }
+    if (selectedDifficulties.size > 0) {
+      pool = pool.filter(p => p.difficulty != null && selectedDifficulties.has(p.difficulty))
+    }
+    if (selectedAuthors.size > 0) {
+      pool = pool.filter(p => (p.authors || []).some(a => selectedAuthors.has(a)))
+    }
+    const completed = pool.filter(p => completedPuzzleIds.has(p.id)).length
+    return { completed, total: pool.length }
+  }, [puzzles, selectedTags, tagMode, selectedDifficulties, selectedAuthors, completedPuzzleIds])
+
   const groupedPuzzles = useMemo(() => {
-    const order = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard']
+    const order = ['Very easy', 'Easy', 'Medium', 'Hard', 'Very hard', 'Expert']
     const groups: { difficulty: string; puzzles: typeof filteredPuzzles }[] = []
     const byDiff = new Map<string, typeof filteredPuzzles>()
     for (const p of filteredPuzzles) {
@@ -201,6 +223,7 @@ export function PuzzleList() {
           >
             Contact me on Discord : pmlemay
           </span>
+          <span className="discord-link" onClick={() => setShowAbout(true)}>About / Credits</span>
           <LanguagePicker />
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>
@@ -213,26 +236,33 @@ export function PuzzleList() {
 
         {(allTags.length > 0 || allDifficulties.length > 0 || allAuthors.length > 0) && (
           <div className="filter-bars">
-            <div className="tag-filter-bar">
-              {completedPuzzleIds.size > 0 && (<>
+            {completedPuzzleIds.size > 0 && (
+              <div className="tag-filter-bar">
                 <button
                   className={`tag-chip${hideCompleted ? ' selected' : ''}`}
                   onClick={() => setHideCompleted(h => !h)}
                 >
                   Hide completed
                 </button>
-                {allDifficulties.length > 0 && <span className="filter-separator">|</span>}
-              </>)}
-              {allDifficulties.map(d => (
-                <button
-                  key={d}
-                  className={`tag-chip difficulty${selectedDifficulties.has(d) ? ' selected' : ''}`}
-                  onClick={() => toggleDifficulty(d)}
-                >
-                  {d}
-                </button>
-              ))}
-            </div>
+                <span className="completion-count">
+                  Completed {completionStats.completed} out of {completionStats.total}
+                </span>
+              </div>
+            )}
+            {allDifficulties.length > 0 && (
+              <div className="tag-filter-bar">
+                <span className="filter-label">Difficulty:</span>
+                {allDifficulties.map(d => (
+                  <button
+                    key={d}
+                    className={`tag-chip difficulty${selectedDifficulties.has(d) ? ' selected' : ''}`}
+                    onClick={() => toggleDifficulty(d)}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            )}
             {allTags.length > 0 && (
               <div className="tag-filter-bar">
                 <span className="filter-label">Tags:</span>
@@ -286,9 +316,9 @@ export function PuzzleList() {
                 <h2 className="puzzle-section-title">{group.difficulty}</h2>
                 <div className="puzzle-cards">
                   {group.puzzles.map(p => (
-                    <div key={p.id} className="puzzle-card-row">
+                    <div key={p.id} className={`puzzle-card-row${p.inProgress ? ' puzzle-in-progress' : ''}`}>
                       <Link to={`/play/${p.id}`} className={`puzzle-card${completedPuzzleIds.has(p.id) ? ' puzzle-completed' : ''}`}>
-                        <h3>{p.title}{completedPuzzleIds.has(p.id) && <span className="completed-badge" title="Completed">&#10003;</span>}{completionTimes.has(p.id) && <span className="completion-time">{formatTime(completionTimes.get(p.id)!)}</span>}</h3>
+                        <h3>{p.title}</h3>
                         <p className="puzzle-meta">
                           by {(p.authors || []).join(', ')} &middot; {p.gridSize.rows}&times;{p.gridSize.cols}
                         </p>
@@ -296,6 +326,12 @@ export function PuzzleList() {
                           <div className="puzzle-tags">
                             {p.tags.map(t => <span key={t} className="puzzle-tag">{t}</span>)}
                           </div>
+                        )}
+                        {completedPuzzleIds.has(p.id) && (
+                          <span className="completed-info">
+                            <span className="completed-badge" title="Completed">&#10003;</span>
+                            {completionTimes.has(p.id) && <span className="completion-time">{formatTime(completionTimes.get(p.id)!)}</span>}
+                          </span>
                         )}
                       </Link>
                       {debug && <Link to={`/edit/${p.id}`} className="puzzle-edit-btn" title="Edit puzzle">&#9998;</Link>}
@@ -307,6 +343,30 @@ export function PuzzleList() {
           </div>
         )}
       </div>
+
+      {showAbout && (
+        <div className="modal-backdrop" onClick={() => setShowAbout(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">About / Credits</h2>
+            <div style={{ fontSize: '0.95rem', lineHeight: 1.6 }}>
+              <p><strong>4Color Puzzles</strong> — a browser-based puzzle game.</p>
+              <p style={{ marginTop: 8 }}>
+                Icon library from{' '}
+                <a href="https://game-icons.net" target="_blank" rel="noopener noreferrer">game-icons.net</a>{' '}
+                — licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.
+              </p>
+              <p style={{ marginTop: 4 }}>
+                Additional icons designed by{' '}
+                <a href="https://www.freepik.com" target="_blank" rel="noopener noreferrer">Freepik</a>{' '}
+                from <a href="https://www.flaticon.com" target="_blank" rel="noopener noreferrer">Flaticon</a>.
+              </p>
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn" onClick={() => setShowAbout(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAccount && user && (
         <div className="modal-backdrop" onClick={() => setShowAccount(false)}>

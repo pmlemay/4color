@@ -23,6 +23,7 @@ function rebuildPuzzleIndex() {
     else if (data.forcedInputLayout) entry.puzzleType = data.forcedInputLayout
     if (data.clickActionLeft) entry.clickActionLeft = data.clickActionLeft
     if (data.clickActionRight) entry.clickActionRight = data.clickActionRight
+    if (data.inProgress) entry.inProgress = true
     return entry
   })
   index.sort((a: any, b: any) => {

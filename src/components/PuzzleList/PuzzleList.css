@@ -214,6 +214,29 @@
   box-shadow: 0 2px 8px var(--card-shadow);
 }
 
+.puzzle-card-row.puzzle-in-progress {
+  border: 2px dashed transparent;
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      #e67e22 0px, #e67e22 8px,
+      #1a1a1a 8px, #1a1a1a 16px
+    );
+  background-origin: border-box;
+  background-clip: border-box;
+  padding: 3px;
+  opacity: 0.8;
+}
+
+.puzzle-card-row.puzzle-in-progress > .puzzle-card {
+  background: var(--card-bg);
+  border-radius: 5px;
+}
+
+.puzzle-card-row.puzzle-in-progress > .puzzle-edit-btn {
+  background: var(--card-bg);
+}
+
 .puzzle-card {
   display: block;
   flex: 1;
@@ -223,6 +246,7 @@
   text-decoration: none;
   color: inherit;
   background: transparent;
+  position: relative;
 }
 
 .puzzle-card:hover {
@@ -321,6 +345,11 @@
   border-color: #e67e22;
 }
 
+.completion-count {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
 .tag-mode-toggle {
   padding: 4px 10px;
   border: 1px solid var(--border);
@@ -355,14 +384,21 @@
   font-size: 11px;
 }
 
+.completed-info {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .completed-badge {
-  margin-left: 6px;
   color: lightseagreen;
   font-size: 16px;
 }
 
 .completion-time {
-  margin-left: 6px;
   font-size: 12px;
   color: var(--text-muted);
   font-weight: normal;

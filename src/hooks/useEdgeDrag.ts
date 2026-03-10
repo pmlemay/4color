@@ -11,6 +11,7 @@ interface UseEdgeDragOptions {
   onTapEdge?: (edge: EdgeDescriptor) => void
   isPinching?: boolean
   enabled?: boolean
+  foggedCells?: Set<string>
 }
 
 /** Normalize an edge so shared borders use the canonical cell (smaller row/col, top/left side). */
@@ -100,18 +101,22 @@ export function detectEdge(
   return { row, col, side: minIdx as 0 | 1 | 2 | 3 }
 }
 
-export function useEdgeDrag({ tableRef, rows, cols, onDraftChange, onCommit, onTapEdge, isPinching, enabled = true }: UseEdgeDragOptions) {
+export function useEdgeDrag({ tableRef, rows, cols, onDraftChange, onCommit, onTapEdge, isPinching, enabled = true, foggedCells }: UseEdgeDragOptions) {
   const dragging = useRef(false)
   const draftPath = useRef<EdgeDescriptor[]>([])
   const draftKeys = useRef<Set<string>>(new Set())
-  const optionsRef = useRef({ onDraftChange, onCommit, onTapEdge, rows, cols })
-  optionsRef.current = { onDraftChange, onCommit, onTapEdge, rows, cols }
+  const optionsRef = useRef({ onDraftChange, onCommit, onTapEdge, rows, cols, foggedCells })
+  optionsRef.current = { onDraftChange, onCommit, onTapEdge, rows, cols, foggedCells }
 
   const addEdge = useCallback((clientX: number, clientY: number) => {
     const table = tableRef.current
     if (!table) return
     const raw = detectEdge(clientX, clientY, table)
     if (!raw) return
+
+    // Block edges on fogged cells
+    const fog = optionsRef.current.foggedCells
+    if (fog?.has(`${raw.row},${raw.col}`)) return
 
     const { rows: r, cols: c } = optionsRef.current
     const norm = normalizeEdge(raw, r, c)

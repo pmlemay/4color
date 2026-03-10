@@ -12,15 +12,35 @@
     },
     "difficulty": "Medium",
     "tags": [
-      "spiral-galaxy"
+      "Spiral-galaxy"
     ]
+  },
+  {
+    "id": "haunted-lighthouse-murdoku",
+    "file": "haunted-lighthouse-murdoku.json",
+    "title": "Haunted Lighthouse Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 5,
+      "cols": 5
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "inProgress": true
   },
   {
     "id": "dinner-party-murdoku",
     "file": "dinner-party-murdoku.json",
     "title": "Dinner Party Murdoku",
     "authors": [
-      "Ai",
       "PmLemay"
     ],
     "gridSize": {
@@ -29,11 +49,12 @@
     },
     "difficulty": "Easy",
     "tags": [
-      "murdoku"
+      "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
-    ]
+    ],
+    "clickActionRight": "cross"
   },
   {
     "id": "sample-4-color-puzzle",
@@ -50,6 +71,27 @@
     "tags": [
       "4color"
     ]
+  },
+  {
+    "id": "neighbourhood-watch-murdoku",
+    "file": "neighbourhood-watch-murdoku.json",
+    "title": "Neighbourhood Watch Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "inProgress": true
   },
   {
     "id": "hard-4color",
@@ -80,13 +122,34 @@
     },
     "difficulty": "Very hard",
     "tags": [
-      "star-battle",
-      "murdoku"
+      "Star-battle",
+      "Murdoku"
     ],
     "autoCrossRules": [
       "king",
       "rook"
     ]
+  },
+  {
+    "id": "pirate-ship-murdoku",
+    "file": "pirate-ship-murdoku.json",
+    "title": "Pirate Ship Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "inProgress": true
   },
   {
     "id": "knights-murdoku",
@@ -101,11 +164,32 @@
     },
     "difficulty": "Very hard",
     "tags": [
-      "murdoku"
+      "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
     ]
+  },
+  {
+    "id": "nurikabe-murdoku",
+    "file": "nurikabe-murdoku.json",
+    "title": "Nurikabe Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Expert",
+    "tags": [
+      "Murdoku",
+      "Nurikabe"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross"
   },
   {
     "id": "heyawake-169940-from-puzsq",
@@ -139,31 +223,32 @@
     },
     "difficulty": "Medium",
     "tags": [
-      "nurikabe"
+      "Nurikabe"
     ],
     "puzzleType": "nurikabe",
     "clickActionLeft": "color:9",
     "clickActionRight": "mark:dot"
   },
   {
-    "id": "nurikabe-murdoku",
-    "file": "nurikabe-murdoku.json",
-    "title": "Nurikabe Murdoku",
+    "id": "castle-siege-murdoku",
+    "file": "castle-siege-murdoku.json",
+    "title": "Castle Siege Murdoku",
     "authors": [
       "PmLemay"
     ],
     "gridSize": {
-      "rows": 10,
-      "cols": 10
+      "rows": 12,
+      "cols": 12
     },
     "difficulty": "Very hard",
     "tags": [
-      "murdoku",
-      "nurikabe"
+      "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
-    ]
+    ],
+    "clickActionRight": "cross",
+    "inProgress": true
   },
   {
     "id": "spiral-galaxy-murdoku",
@@ -178,8 +263,49 @@
     },
     "difficulty": "Very hard",
     "tags": [
-      "murdoku",
-      "spiral-galaxy"
+      "Murdoku",
+      "Spiral-galaxy"
     ]
+  },
+  {
+    "id": "space-station-murdoku",
+    "file": "space-station-murdoku.json",
+    "title": "Space Station Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 16,
+      "cols": 16
+    },
+    "difficulty": "Expert",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "inProgress": true
+  },
+  {
+    "id": "adventure-1",
+    "file": "adventure-1.json",
+    "title": "Adventure #1",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 47,
+      "cols": 47
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Progressive",
+      "nurikabe",
+      "lits",
+      "lohkous"
+    ],
+    "clickActionRight": "cross"
   }
 ]

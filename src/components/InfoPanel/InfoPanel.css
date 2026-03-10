@@ -1,9 +1,26 @@
 .info-panel {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.info-panel-fixed-top {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 10px 0;
+}
+
+.info-panel-scrollable {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   padding: 10px;
-  overflow-y: auto;
 }
 
 .info-header-row {
@@ -386,4 +403,78 @@
 .tag-suggestion:hover,
 .tag-suggestion.active {
   background: var(--btn-hover);
+}
+
+/* Info panel wrapper — splits scrollable content from pinned leaderboard */
+.info-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.info-panel-wrapper > .info-panel {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Per-puzzle leaderboard */
+.puzzle-leaderboard {
+  flex-shrink: 0;
+  min-height: 20vh;
+  max-height: 35vh;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+  padding: 10px;
+}
+
+.puzzle-leaderboard-title {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.puzzle-leaderboard-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.puzzle-leaderboard-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.puzzle-leaderboard-entry.puzzle-leaderboard-self {
+  background: var(--btn-hover);
+  font-weight: 600;
+}
+
+.puzzle-leaderboard-rank {
+  color: var(--text-muted);
+  min-width: 22px;
+}
+
+.puzzle-leaderboard-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.puzzle-leaderboard-time {
+  font-variant-numeric: tabular-nums;
+  color: lightseagreen;
+  font-weight: 600;
+  white-space: nowrap;
 }

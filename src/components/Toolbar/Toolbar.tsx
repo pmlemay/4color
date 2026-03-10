@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { InputMode, LabelAlign, MarkShape } from '../../types'
+import { InputMode, LabelAlign, MarkShape, CellPosition, FogGroup, FogTrigger } from '../../types'
 import { IconBrowser } from './IconBrowser'
 import './Toolbar.css'
 
@@ -37,8 +37,8 @@ interface ToolbarProps {
   onColorErase?: () => void
   activeColor?: string | null
   onActiveColorChange?: (color: string | null) => void
-  onLabelApply?: (text: string, align: LabelAlign) => void
-  onLabelRemove?: () => void
+  onLabelApply?: (align: LabelAlign, text: string, showThroughFog?: boolean, revealWithFog?: string) => void
+  onLabelRemove?: (align: LabelAlign) => void
   onUndo: () => void
   onRedo: () => void
   onErase: () => void
@@ -61,6 +61,31 @@ interface ToolbarProps {
   onClickActionLeftChange?: (action: string) => void
   onClickActionRightChange?: (action: string) => void
   puzzleHasClickActions?: boolean
+  fogGroups?: FogGroup[]
+  fogEditStep?: 'idle' | 'pickFogCells' | 'pickTriggerCells' | 'pickTrigger'
+  fogPendingTriggers?: FogTrigger[]
+  fogPendingCellCount?: number
+  fogPendingTriggerCells?: CellPosition[]
+  fogEditingGroupId?: string | null
+  selectionCount?: number
+  onFogGroupAdd?: () => void
+  onFogGroupDelete?: (id: string) => void
+  onFogGroupSelect?: (id: string) => void
+  onFogGroupEdit?: (id: string) => void
+  onFogConfirmCells?: () => void
+  onFogSelectTriggerCells?: () => void
+  onFogConfirmTriggerCells?: () => void
+  onFogAddTrigger?: (trigger: FogTrigger) => void
+  onFogRemoveTrigger?: (index: number) => void
+  onFogHighlightTrigger?: (trigger: FogTrigger) => void
+  onFogEditTrigger?: (index: number) => void
+  onFogTriggerMatchModeChange?: (index: number, mode: 'all' | 'any') => void
+  onFogTriggerNegateChange?: (index: number, negate: boolean) => void
+  onFogTriggerGroupModeChange?: (mode: 'all' | 'any') => void
+  fogPendingTriggerMode?: 'all' | 'any'
+  onFogFinishGroup?: () => void
+  onFogReSelectFogCells?: () => void
+  onFogCancel?: () => void
 }
 
 export function Toolbar({
@@ -94,12 +119,38 @@ export function Toolbar({
   onClickActionLeftChange,
   onClickActionRightChange,
   puzzleHasClickActions = false,
+  fogGroups,
+  fogEditStep,
+  fogPendingTriggers,
+  fogPendingCellCount,
+  fogPendingTriggerCells,
+  fogEditingGroupId,
+  selectionCount,
+  onFogGroupAdd,
+  onFogGroupDelete,
+  onFogGroupSelect,
+  onFogGroupEdit,
+  onFogConfirmCells,
+  onFogSelectTriggerCells,
+  onFogConfirmTriggerCells,
+  onFogAddTrigger,
+  onFogRemoveTrigger,
+  onFogHighlightTrigger,
+  onFogEditTrigger,
+  onFogTriggerMatchModeChange,
+  onFogTriggerNegateChange,
+  onFogTriggerGroupModeChange,
+  fogPendingTriggerMode,
+  onFogFinishGroup,
+  onFogReSelectFogCells,
+  onFogCancel,
 }: ToolbarProps) {
   const showPalette = inputMode === 'color' || inputMode === 'fixedColor'
   const showLabel = inputMode === 'label'
 
   const [labelText, setLabelText] = useState('')
   const [labelAlign, setLabelAlign] = useState<LabelAlign>('top')
+  const [labelFogMode, setLabelFogMode] = useState<'hidden' | 'always' | string>('hidden') // 'hidden' | 'always' | fog group id
 
   const renderModeBtn = (m: { mode: InputMode; label: string }) => (
     <button
@@ -353,21 +404,47 @@ export function Toolbar({
                       Top
                     </button>
                     <button
+                      className={`tb-btn-sm ${labelAlign === 'middle' ? 'selected' : ''}`}
+                      onClick={() => setLabelAlign('middle')}
+                    >
+                      Middle
+                    </button>
+                    <button
                       className={`tb-btn-sm ${labelAlign === 'bottom' ? 'selected' : ''}`}
                       onClick={() => setLabelAlign('bottom')}
                     >
                       Bottom
                     </button>
                   </div>
+                  {fogGroups && fogGroups.length > 0 && (
+                    <label className="tb-row" style={{ fontSize: '0.85em', gap: 4, flexDirection: 'column', alignItems: 'flex-start' }}>
+                      Fog visibility
+                      <select
+                        style={{ width: '100%', fontSize: 12 }}
+                        value={labelFogMode}
+                        onChange={e => setLabelFogMode(e.target.value)}
+                      >
+                        <option value="hidden">Hidden under fog</option>
+                        <option value="always">Always show through fog</option>
+                        {fogGroups.map((g, i) => (
+                          <option key={g.id} value={g.id}>Reveal with Group {i + 1}</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
                   <button
                     className="tb-btn"
                     onClick={() => {
-                      if (labelText.trim()) onLabelApply?.(labelText.trim(), labelAlign)
+                      if (labelText.trim()) {
+                        const showThrough = labelFogMode === 'always' ? true : undefined
+                        const revealWith = labelFogMode !== 'hidden' && labelFogMode !== 'always' ? labelFogMode : undefined
+                        onLabelApply?.(labelAlign, labelText.trim(), showThrough, revealWith)
+                      }
                     }}
                   >
                     Apply
                   </button>
-                  <button className="tb-btn" onClick={() => onLabelRemove?.()}>
+                  <button className="tb-btn" onClick={() => onLabelRemove?.(labelAlign)}>
                     Remove
                   </button>
                 </div>
@@ -375,6 +452,36 @@ export function Toolbar({
             </div>
           ))}
         </div>
+      )}
+
+      {isEditor && fogGroups !== undefined && (
+        <FogSection
+          fogGroups={fogGroups}
+          fogEditStep={fogEditStep || 'idle'}
+          fogPendingTriggers={fogPendingTriggers || []}
+          fogPendingCellCount={fogPendingCellCount || 0}
+          fogPendingTriggerCells={fogPendingTriggerCells || []}
+          fogEditingGroupId={fogEditingGroupId ?? null}
+          selectionCount={selectionCount || 0}
+          onFogGroupAdd={onFogGroupAdd}
+          onFogGroupDelete={onFogGroupDelete}
+          onFogGroupSelect={onFogGroupSelect}
+          onFogGroupEdit={onFogGroupEdit}
+          onFogConfirmCells={onFogConfirmCells}
+          onFogSelectTriggerCells={onFogSelectTriggerCells}
+          onFogConfirmTriggerCells={onFogConfirmTriggerCells}
+          onFogAddTrigger={onFogAddTrigger}
+          onFogRemoveTrigger={onFogRemoveTrigger}
+          onFogHighlightTrigger={onFogHighlightTrigger}
+          onFogEditTrigger={onFogEditTrigger}
+          onFogTriggerMatchModeChange={onFogTriggerMatchModeChange}
+          onFogTriggerNegateChange={onFogTriggerNegateChange}
+          onFogTriggerGroupModeChange={onFogTriggerGroupModeChange}
+          fogPendingTriggerMode={fogPendingTriggerMode}
+          onFogFinishGroup={onFogFinishGroup}
+          onFogReSelectFogCells={onFogReSelectFogCells}
+          onFogCancel={onFogCancel}
+        />
       )}
 
       {isEditor && (
@@ -414,6 +521,269 @@ export function Toolbar({
         <div className="tb-submit">
           <button className="tb-submit-btn" onClick={onSubmit}>Submit</button>
         </div>
+      )}
+    </div>
+  )
+}
+
+const CONDITION_OPTIONS: { value: string; label: string }[] = [
+  { value: 'value', label: 'Value' },
+  { value: 'color:0', label: 'Color: Gray' },
+  { value: 'color:1', label: 'Color: Red' },
+  { value: 'color:2', label: 'Color: Pink' },
+  { value: 'color:3', label: 'Color: Orange' },
+  { value: 'color:4', label: 'Color: Yellow' },
+  { value: 'color:5', label: 'Color: Green' },
+  { value: 'color:6', label: 'Color: Cyan' },
+  { value: 'color:7', label: 'Color: Blue' },
+  { value: 'color:8', label: 'Color: Purple' },
+  { value: 'color:9', label: 'Color: Black' },
+  { value: 'mark:circle', label: 'Mark: Circle' },
+  { value: 'mark:square', label: 'Mark: Square' },
+  { value: 'mark:triangle', label: 'Mark: Triangle' },
+  { value: 'mark:diamond', label: 'Mark: Diamond' },
+  { value: 'mark:pentagon', label: 'Mark: Pentagon' },
+  { value: 'mark:hexagon', label: 'Mark: Hexagon' },
+  { value: 'mark:star', label: 'Mark: Star' },
+  { value: 'mark:dot', label: 'Mark: Dot' },
+  { value: 'cross', label: 'Cross' },
+]
+
+function FogSection({
+  fogGroups, fogEditStep, fogPendingTriggers, fogPendingCellCount, fogPendingTriggerCells, fogEditingGroupId, selectionCount,
+  fogPendingTriggerMode,
+  onFogGroupAdd, onFogGroupDelete, onFogGroupSelect, onFogGroupEdit, onFogConfirmCells,
+  onFogSelectTriggerCells, onFogConfirmTriggerCells,
+  onFogAddTrigger, onFogRemoveTrigger, onFogHighlightTrigger, onFogEditTrigger, onFogTriggerMatchModeChange, onFogTriggerNegateChange, onFogTriggerGroupModeChange, onFogFinishGroup, onFogReSelectFogCells, onFogCancel,
+}: {
+  fogGroups: FogGroup[]
+  fogEditStep: 'idle' | 'pickFogCells' | 'pickTriggerCells' | 'pickTrigger'
+  fogPendingTriggers: FogTrigger[]
+  fogPendingCellCount: number
+  fogPendingTriggerCells: CellPosition[]
+  fogEditingGroupId: string | null
+  selectionCount: number
+  fogPendingTriggerMode?: 'all' | 'any'
+  onFogGroupAdd?: () => void
+  onFogGroupDelete?: (id: string) => void
+  onFogGroupSelect?: (id: string) => void
+  onFogGroupEdit?: (id: string) => void
+  onFogConfirmCells?: () => void
+  onFogSelectTriggerCells?: () => void
+  onFogConfirmTriggerCells?: () => void
+  onFogAddTrigger?: (trigger: FogTrigger) => void
+  onFogRemoveTrigger?: (index: number) => void
+  onFogHighlightTrigger?: (trigger: FogTrigger) => void
+  onFogEditTrigger?: (index: number) => void
+  onFogTriggerMatchModeChange?: (index: number, mode: 'all' | 'any') => void
+  onFogTriggerNegateChange?: (index: number, negate: boolean) => void
+  onFogTriggerGroupModeChange?: (mode: 'all' | 'any') => void
+  onFogFinishGroup?: () => void
+  onFogReSelectFogCells?: () => void
+  onFogCancel?: () => void
+}) {
+  const [triggerCondition, setTriggerCondition] = useState('value')
+  const [triggerValueText, setTriggerValueText] = useState('')
+
+  return (
+    <div className="tb-section">
+      <div className="tb-section-title">Fog of War</div>
+
+      {fogEditStep === 'idle' && (
+        <>
+          {fogGroups.map((g, i) => (
+            <div key={g.id} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, marginBottom: 2 }}>
+              <span
+                style={{ flex: 1, cursor: 'pointer', textDecoration: 'underline' }}
+                onClick={() => onFogGroupSelect?.(g.id)}
+                title="Click to highlight cells"
+              >
+                Group {i + 1}: {g.cells.length} cells, {g.triggers.length} trigger{g.triggers.length !== 1 ? 's' : ''}
+              </span>
+              <button
+                className="tb-btn-sm"
+                onClick={() => onFogGroupEdit?.(g.id)}
+                title="Edit group"
+                style={{ padding: '0 4px', fontSize: 11, lineHeight: 1 }}
+              >
+                Edit
+              </button>
+              <button
+                className="tb-btn-sm"
+                onClick={() => onFogGroupDelete?.(g.id)}
+                title="Delete group"
+                style={{ padding: '0 4px', fontSize: 14, lineHeight: 1 }}
+              >
+                &times;
+              </button>
+            </div>
+          ))}
+          <button className="tb-btn" onClick={onFogGroupAdd}>Add Fog Group</button>
+        </>
+      )}
+
+      {fogEditStep === 'pickFogCells' && (
+        <>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
+            Select cells to fog, then confirm.
+          </div>
+          <button
+            className="tb-btn"
+            onClick={onFogConfirmCells}
+            disabled={selectionCount === 0}
+          >
+            Confirm Cells ({selectionCount} selected)
+          </button>
+          <button className="tb-btn" onClick={onFogCancel}>Cancel</button>
+        </>
+      )}
+
+      {fogEditStep === 'pickTriggerCells' && (
+        <>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
+            Select trigger cells (any match satisfies the trigger).
+          </div>
+          <button
+            className="tb-btn"
+            onClick={onFogConfirmTriggerCells}
+            disabled={selectionCount === 0}
+          >
+            Confirm Trigger Cells ({selectionCount} selected)
+          </button>
+          <button className="tb-btn" onClick={onFogCancel}>Back</button>
+        </>
+      )}
+
+      {fogEditStep === 'pickTrigger' && (
+        <>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
+            {fogPendingCellCount} fog cells{fogEditingGroupId ? ' (editing)' : ''}. Add trigger conditions.
+          </div>
+
+          <button className="tb-btn" onClick={onFogReSelectFogCells} style={{ marginBottom: 4 }}>
+            Re-select Fog Cells
+          </button>
+
+          <button
+            className="tb-btn"
+            onClick={onFogSelectTriggerCells}
+            style={{ marginBottom: 4 }}
+          >
+            {fogPendingTriggerCells.length > 0
+              ? `Trigger Cells Selected (${fogPendingTriggerCells.length})`
+              : 'Select Trigger Cells'}
+          </button>
+
+          {fogPendingTriggerCells.length > 0 && (
+            <>
+              <select
+                style={{ width: '100%', fontSize: 12, marginBottom: 4 }}
+                value={triggerCondition}
+                onChange={e => setTriggerCondition(e.target.value)}
+              >
+                {CONDITION_OPTIONS.map(o => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+
+              {triggerCondition === 'value' && (
+                <input
+                  type="text"
+                  style={{ width: '100%', fontSize: 12, marginBottom: 4, boxSizing: 'border-box' }}
+                  value={triggerValueText}
+                  onChange={e => setTriggerValueText(e.target.value)}
+                  placeholder="Enter value..."
+                />
+              )}
+
+              <button
+                className="tb-btn"
+                onClick={() => {
+                  if (fogPendingTriggerCells.length === 0) return
+                  const condition = triggerCondition === 'value'
+                    ? `value:${triggerValueText}`
+                    : triggerCondition
+                  if (triggerCondition === 'value' && !triggerValueText.trim()) return
+                  onFogAddTrigger?.({ cells: [...fogPendingTriggerCells], condition })
+                  setTriggerValueText('')
+                }}
+                disabled={triggerCondition === 'value' && !triggerValueText.trim()}
+              >
+                Add Trigger
+              </button>
+            </>
+          )}
+
+          {fogPendingTriggers.length > 0 && (
+            <div style={{ marginTop: 4 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: 4 }}>
+                Reveal when
+                <select
+                  style={{ fontSize: 11, padding: '0 2px', border: '1px solid var(--border)', borderRadius: 3, background: 'var(--input-bg)', color: 'var(--text)', cursor: 'pointer' }}
+                  value={fogPendingTriggerMode || 'all'}
+                  onChange={e => onFogTriggerGroupModeChange?.(e.target.value as 'all' | 'any')}
+                  title="Trigger group mode"
+                >
+                  <option value="all">all of</option>
+                  <option value="any">any of</option>
+                </select>
+                :
+              </div>
+              {fogPendingTriggers.map((t, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, marginBottom: 1 }}>
+                  <select
+                    style={{ fontSize: 11, padding: '0 2px', border: '1px solid var(--border)', borderRadius: 3, background: 'var(--input-bg)', color: 'var(--text)', cursor: 'pointer' }}
+                    value={`${t.negate ? 'not-' : ''}${t.matchMode || 'any'}`}
+                    onChange={e => {
+                      const v = e.target.value
+                      const neg = v.startsWith('not-')
+                      const mode = v.replace('not-', '') as 'all' | 'any'
+                      onFogTriggerMatchModeChange?.(i, mode)
+                      onFogTriggerNegateChange?.(i, neg)
+                    }}
+                    title="Match mode"
+                  >
+                    <option value="all">all of</option>
+                    <option value="any">any of</option>
+                    <option value="not-all">NOT all of</option>
+                    <option value="not-any">NOT any of</option>
+                  </select>
+                  <span
+                    style={{ flex: 1, cursor: 'pointer', textDecoration: 'underline' }}
+                    onClick={() => onFogHighlightTrigger?.(t)}
+                    title="Click to highlight trigger cells"
+                  >
+                    {t.cells.length} cell{t.cells.length !== 1 ? 's' : ''} &mdash; {t.condition}
+                  </span>
+                  <button
+                    style={{ padding: '0 3px', fontSize: 11, lineHeight: 1, cursor: 'pointer', background: 'none', border: 'none', color: 'var(--text)' }}
+                    onClick={() => onFogEditTrigger?.(i)}
+                    title="Edit trigger cells"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    style={{ padding: '0 3px', fontSize: 12, lineHeight: 1, cursor: 'pointer', background: 'none', border: 'none', color: 'var(--text)' }}
+                    onClick={() => onFogRemoveTrigger?.(i)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+            <button
+              className="tb-btn"
+              onClick={onFogFinishGroup}
+              style={{ flex: 1 }}
+            >
+              {fogEditingGroupId ? 'Update Group' : 'Finish Group'}
+            </button>
+            <button className="tb-btn" onClick={onFogCancel} style={{ flex: 1 }}>Cancel</button>
+          </div>
+        </>
       )}
     </div>
   )

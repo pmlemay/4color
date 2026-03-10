@@ -19,14 +19,17 @@ import { SlidePanel } from '../components/SlidePanel'
 import { LanguagePicker } from '../components/LanguagePicker'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { fetchPuzzle, fetchPuzzleSolution, puzzleToGrid } from '../utils/puzzleIO'
-import { savePlayerData, loadPlayerData, clearPlayerData, applyPlayerData } from '../utils/playerSave'
+import { savePlayerData, loadPlayerData, clearPlayerData, applyPlayerData, puzzleFingerprint } from '../utils/playerSave'
 import { validate4Color, validateSolution } from '../utils/validate'
 import { useCompletions } from '../hooks/useCompletions'
 import { useTimer } from '../hooks/useTimer'
 import { formatTime } from '../utils/formatTime'
 import { useAuth } from '../contexts/AuthContext'
+import { usePuzzleLeaderboard } from '../hooks/usePuzzleLeaderboard'
 import { CellData, CellPosition, InputMode, PuzzleData, PuzzleSolution, AutoCrossRule, MarkShape } from '../types'
 import { PUZZLE_TYPE_DEFAULTS } from '../utils/puzzleIO'
+import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
+import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 
 export function PlayerPage() {
   const { puzzleId } = useParams()
@@ -47,23 +50,27 @@ export function PlayerPage() {
   const [struckRuleWords, setStruckRuleWords] = useState<Set<string>>(new Set())
   const [struckClueWords, setStruckClueWords] = useState<Set<string>>(new Set())
   const [solution, setSolution] = useState<PuzzleSolution | null>(null)
+  const [revealedFogGroupIds, setRevealedFogGroupIds] = useState<Set<string>>(new Set())
 
   const { modalProps, showAlert, showConfirm } = useModal()
   const { completedPuzzleIds, completionTimes, markCompleted } = useCompletions()
   const gridState = useGrid(1, 1)
   const timer = useTimer(0)
+  const puzzleLeaderboard = usePuzzleLeaderboard(puzzleId)
   const timerRef = useRef(timer)
   timerRef.current = timer
-  const gridRef = useRef(gridState.grid)
-  gridRef.current = gridState.grid
+  const gridRef = gridState.gridRef
   const struckSpecialRuleWordsRef = useRef(struckSpecialRuleWords)
   struckSpecialRuleWordsRef.current = struckSpecialRuleWords
   const struckRuleWordsRef = useRef(struckRuleWords)
   struckRuleWordsRef.current = struckRuleWords
   const struckClueWordsRef = useRef(struckClueWords)
   struckClueWordsRef.current = struckClueWords
+  const revealedFogGroupIdsRef = useRef(revealedFogGroupIds)
+  revealedFogGroupIdsRef.current = revealedFogGroupIds
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const loaded = useRef(false)
+  const fingerprintRef = useRef<string | undefined>(undefined)
   const [puzzleCompleted, setPuzzleCompleted] = useState(false)
   const pendingCompletion = useRef<{ puzzleId: string; timeMs: number } | null>(null)
 
@@ -85,17 +92,23 @@ export function PlayerPage() {
 
   useEffect(() => {
     if (!puzzleId) return
+    let cancelled = false
+    loaded.current = false
     fetchPuzzle(puzzleId).then(data => {
+      if (cancelled) return
       if (data) {
         setPuzzle(data)
+        const fp = puzzleFingerprint(data)
+        fingerprintRef.current = fp
         let grid = puzzleToGrid(data)
-        const saved = loadPlayerData(puzzleId)
+        const saved = loadPlayerData(puzzleId, fp)
         let savedElapsedMs = 0
         if (saved) {
           grid = applyPlayerData(grid, saved)
           setStruckSpecialRuleWords(new Set(saved.struckSpecialRules || []))
           setStruckRuleWords(new Set(saved.struckRules))
           setStruckClueWords(new Set(saved.struckClues))
+          if (saved.revealedFogGroups) setRevealedFogGroupIds(new Set(saved.revealedFogGroups))
           savedElapsedMs = saved.elapsedMs || 0
         }
         gridState.setGrid(grid)
@@ -109,7 +122,7 @@ export function PlayerPage() {
           gridState.setInputMode('suggested')
         }
         // Fetch solution file if it exists (for murdoku etc.)
-        fetchPuzzleSolution(puzzleId).then(sol => { if (sol) setSolution(sol) })
+        fetchPuzzleSolution(puzzleId).then(sol => { if (!cancelled && sol) setSolution(sol) })
         // Only start timer if puzzle not already completed
         if (!completedPuzzleIds.has(puzzleId)) {
           timerRef.current.reset(savedElapsedMs)
@@ -118,12 +131,13 @@ export function PlayerPage() {
           setPuzzleCompleted(true)
         }
         // Mark as loaded after a tick so the initial setGrid doesn't trigger a save
-        setTimeout(() => { loaded.current = true }, 0)
+        setTimeout(() => { if (!cancelled) loaded.current = true }, 0)
       } else {
         setError(true)
       }
       setLoading(false)
     })
+    return () => { cancelled = true }
   }, [puzzleId])
 
   // React to completedPuzzleIds loading (may arrive after puzzle fetch)
@@ -143,24 +157,36 @@ export function PlayerPage() {
     }
   }, [user, markCompleted])
 
+  // Flush save immediately using refs (always latest state)
+  const flushSave = useCallback(() => {
+    if (!puzzleId || !loaded.current) return
+    if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null }
+    savePlayerData(puzzleId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, struckSpecialRuleWordsRef.current, timerRef.current.elapsedMs, revealedFogGroupIdsRef.current, fingerprintRef.current)
+  }, [puzzleId])
+
   // Auto-save on changes (debounced)
   useEffect(() => {
     if (!puzzleId || !loaded.current) return
     if (saveTimer.current) clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(() => {
-      savePlayerData(puzzleId, gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, timerRef.current.elapsedMs)
+      saveTimer.current = null
+      savePlayerData(puzzleId, gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, timerRef.current.elapsedMs, revealedFogGroupIds, fingerprintRef.current)
     }, 500)
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current) }
-  }, [gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, puzzleId])
+  }, [gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, puzzleId, revealedFogGroupIds])
 
-  // Save timer on unmount (covers leaving without any grid changes)
+  // Save on unmount, visibility change, and beforeunload
   useEffect(() => {
+    const handleVisChange = () => { if (document.hidden) flushSave() }
+    const handleBeforeUnload = () => { flushSave() }
+    document.addEventListener('visibilitychange', handleVisChange)
+    window.addEventListener('beforeunload', handleBeforeUnload)
     return () => {
-      if (puzzleId && loaded.current) {
-        savePlayerData(puzzleId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, struckSpecialRuleWordsRef.current, timerRef.current.elapsedMs)
-      }
+      document.removeEventListener('visibilitychange', handleVisChange)
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      flushSave()
     }
-  }, [puzzleId])
+  }, [flushSave])
 
   const puzzleType = puzzle?.puzzleType || ''
   const puzzleHasClickActions = !!(puzzle?.clickActionLeft)
@@ -198,12 +224,14 @@ export function PlayerPage() {
           crossed: false,
           mark: null,
           edgeCrosses: [false, false, false, false] as [boolean, boolean, boolean, boolean],
+          lines: [false, false, false, false] as [boolean, boolean, boolean, boolean],
           borders: [...cell.fixedBorders] as [number, number, number, number],
         }))
       )
     )
     setStruckRuleWords(new Set())
     setStruckClueWords(new Set())
+    setRevealedFogGroupIds(new Set())
     if (puzzleId) clearPlayerData(puzzleId)
   }
 
@@ -213,66 +241,20 @@ export function PlayerPage() {
   }
 
   // Click action: apply a click action string to a cell (toggle)
-  const applyClickActionToCell = useCallback((prev: CellData[][], pos: CellPosition, action: string): CellData[][] => {
-    const next = prev.map(row => row.map(cell => ({ ...cell })))
-    const cell = next[pos.row][pos.col]
-    if (action.startsWith('color:')) {
-      const colorVal = action.split(':')[1]
-      cell.color = cell.color === colorVal ? null : colorVal
-      if (cell.color) cell.mark = null
-    } else if (action.startsWith('mark:')) {
-      const markVal = action.split(':')[1] as MarkShape
-      cell.mark = cell.mark === markVal ? null : markVal
-      if (cell.mark) cell.color = null
-    } else if (action === 'cross') {
-      cell.crossed = !cell.crossed
-      if (cell.crossed) cell.mark = null
-    }
-    return next
-  }, [])
+  const rightDragAction = useRef<boolean | undefined>(undefined)
 
-  // Check if a cell matches a given action state
-  const cellMatchesAction = useCallback((cell: CellData, action: string): boolean => {
-    if (action.startsWith('color:')) return cell.color === action.split(':')[1]
-    if (action.startsWith('mark:')) return cell.mark === action.split(':')[1]
-    if (action === 'cross') return cell.crossed
-    return false
-  }, [])
-
-  // Force-apply an action (always ON, not toggle), clearing conflicting state
-  const forceApplyAction = useCallback((prev: CellData[][], pos: CellPosition, action: string): CellData[][] => {
-    const next = prev.map(row => row.map(cell => ({ ...cell })))
-    const cell = next[pos.row][pos.col]
-    // Clear all action state first
-    cell.color = null
-    cell.mark = null
-    cell.crossed = false
-    // Apply the action
-    if (action.startsWith('color:')) {
-      cell.color = action.split(':')[1]
-    } else if (action.startsWith('mark:')) {
-      cell.mark = action.split(':')[1] as MarkShape
-    } else if (action === 'cross') {
-      cell.crossed = true
-    }
-    return next
-  }, [])
-
-  // Clear all click-action-related state from a cell
-  const clearCellActions = useCallback((prev: CellData[][], pos: CellPosition): CellData[][] => {
-    const next = prev.map(row => row.map(cell => ({ ...cell })))
-    const cell = next[pos.row][pos.col]
-    cell.color = null
-    cell.mark = null
-    cell.crossed = false
-    return next
-  }, [])
-
-  // Right-click handler
-  const handleRightClickCell = useCallback((pos: CellPosition) => {
+  // Right-click handler with drag action locking
+  const suggestedAutoCross = puzzleHasClickActions ? autoCrossRules : undefined
+  const handleRightClickCell = useCallback((pos: CellPosition, isFirst: boolean) => {
     if (!clickActionRight) return
-    gridState.setGrid(prev => applyClickActionToCell(prev, pos, clickActionRight))
-  }, [clickActionRight, gridState, applyClickActionToCell])
+    if (isFirst) {
+      const matches = cellMatchesAction(gridState.grid[pos.row][pos.col], clickActionRight)
+      rightDragAction.current = !matches // true = apply, false = clear
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, undefined, suggestedAutoCross))
+    } else {
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, rightDragAction.current, suggestedAutoCross))
+    }
+  }, [clickActionRight, suggestedAutoCross, gridState])
 
   const isTouchDragRef = useRef(false)
 
@@ -344,6 +326,48 @@ export function PlayerPage() {
     }
   }, [gridState.grid, canSubmit, is4Color, solution, triggerCompletion])
 
+  // Fog of War: evaluate triggers and derive fogged cells
+  useEffect(() => {
+    if (!puzzle?.fogGroups?.length) return
+    const newlyRevealed = evaluateNewReveals(gridState.grid, puzzle.fogGroups, revealedFogGroupIds)
+    if (newlyRevealed.length > 0) {
+      setRevealedFogGroupIds(prev => {
+        const next = new Set(prev)
+        for (const id of newlyRevealed) next.add(id)
+        return next
+      })
+    }
+  }, [gridState.grid, puzzle?.fogGroups, revealedFogGroupIds])
+
+  const foggedCells = useMemo(() => {
+    if (!puzzle?.fogGroups?.length) return undefined
+    return computeFoggedCells(puzzle.fogGroups, revealedFogGroupIds)
+  }, [puzzle?.fogGroups, revealedFogGroupIds])
+
+  // On first load with fog, zoom/pan to frame the visible (non-fogged) cells
+  const hasFocusedFog = useRef(false)
+  useEffect(() => {
+    if (hasFocusedFog.current || !foggedCells || !puzzle) return
+    hasFocusedFog.current = true
+    const rows = puzzle.gridSize.rows
+    const cols = puzzle.gridSize.cols
+    let minR = rows, maxR = -1, minC = cols, maxC = -1
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (!foggedCells.has(`${r},${c}`)) {
+          if (r < minR) minR = r
+          if (r > maxR) maxR = r
+          if (c < minC) minC = c
+          if (c > maxC) maxC = c
+        }
+      }
+    }
+    // Only focus if the visible area is much smaller than the full grid
+    if (maxR >= 0 && (maxR - minR + 1) * (maxC - minC + 1) < rows * cols * 0.5) {
+      gridScale.focusOnRegion(minR, maxR, minC, maxC)
+    }
+  }, [foggedCells, puzzle, gridScale])
+
   const handleCompletionSignIn = async () => {
     try { await signIn() } catch { /* user closed popup */ }
     setCompletionStep('keepclear')
@@ -401,23 +425,23 @@ export function PlayerPage() {
           } else {
             action = touchCycleAction.current || clickActionLeft
           }
-          if (action === 'clear') return clearCellActions(prev, pos)
-          return forceApplyAction(prev, pos, action)
+          if (action === 'clear') return applyActionToGrid(prev, pos, clickActionLeft, false)
+          return applyActionToGrid(prev, pos, action, true, suggestedAutoCross)
         })
       } else {
         // Mouse: left click toggles left action
-        setter(prev => applyClickActionToCell(prev, pos, clickActionLeft))
+        setter(prev => applyActionToGrid(prev, pos, clickActionLeft, undefined, suggestedAutoCross))
       }
     }
-  }, [isSuggestedMode, clickActionLeft, clickActionRight, gridState, applyClickActionToCell, cellMatchesAction, forceApplyAction, clearCellActions])
+  }, [isSuggestedMode, clickActionLeft, clickActionRight, suggestedAutoCross, gridState])
 
-  const handleCommitSelection = useCallback((sel: CellPosition[]) => {
+  const handleCommitSelection = useCallback((sel: CellPosition[], ctrlHeld?: boolean) => {
     if (isSuggestedMode) {
       suggestedProcessed.current.clear()
       touchCycleAction.current = null
       return
     }
-    gridState.commitSelection(sel)
+    gridState.commitSelection(sel, ctrlHeld)
   }, [isSuggestedMode, gridState])
 
   const handleClearSelection = useCallback(() => {
@@ -464,28 +488,47 @@ export function PlayerPage() {
       : null
     : <div className="info-timer">{timer.formatted}</div>
 
+  const leaderboardSection = puzzleLeaderboard.length > 0 ? (
+    <div className="puzzle-leaderboard">
+      <h3 className="puzzle-leaderboard-title">Leaderboard</h3>
+      <ol className="puzzle-leaderboard-list">
+        {puzzleLeaderboard.map((entry, i) => (
+          <li key={entry.uid} className={`puzzle-leaderboard-entry${user && entry.uid === user.uid ? ' puzzle-leaderboard-self' : ''}`}>
+            <span className="puzzle-leaderboard-rank">{i + 1}.</span>
+            <span className="puzzle-leaderboard-name notranslate">{entry.displayName}</span>
+            <span className="puzzle-leaderboard-time">{formatTime(entry.time)}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  ) : null
+
   const infoPanelContent = (
-    <InfoPanel
-      title={puzzle.title}
-      authors={puzzle.authors}
-      gridSize={puzzle.gridSize}
-      difficulty={puzzle.difficulty}
-      specialRulesList={puzzle.specialRules}
-      rulesList={puzzle.rules}
-      cluesList={puzzle.clues}
-      backLink={!isMobile}
-      headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
-      struckSpecialRuleWords={struckSpecialRuleWords}
-      onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
-      struckRuleWords={struckRuleWords}
-      onStruckRuleWordsChange={setStruckRuleWords}
-      struckClueWords={struckClueWords}
-      onStruckClueWordsChange={setStruckClueWords}
-    >
-      {!isMobile && timerDisplay}
-      <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
-      {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
-    </InfoPanel>
+    <div className="info-panel-wrapper">
+      <InfoPanel
+        title={puzzle.title}
+        authors={puzzle.authors}
+        gridSize={puzzle.gridSize}
+        difficulty={puzzle.difficulty}
+        specialRulesList={puzzle.specialRules}
+        rulesList={puzzle.rules}
+        cluesList={puzzle.clues}
+        backLink={!isMobile}
+        headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
+        aboveRules={!isMobile ? <div className="info-section">
+          {timerDisplay}
+          <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
+          {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+        </div> : undefined}
+        struckSpecialRuleWords={struckSpecialRuleWords}
+        onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
+        struckRuleWords={struckRuleWords}
+        onStruckRuleWordsChange={setStruckRuleWords}
+        struckClueWords={struckClueWords}
+        onStruckClueWordsChange={setStruckClueWords}
+      />
+      {leaderboardSection}
+    </div>
   )
 
   const metaPanelContent = (
@@ -502,11 +545,12 @@ export function PlayerPage() {
       onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
       struckRuleWords={struckRuleWords}
       onStruckRuleWordsChange={setStruckRuleWords}
-    >
-      {timerDisplay}
-      <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
-      {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
-    </InfoPanel>
+      aboveRules={<div className="info-section">
+        {timerDisplay}
+        <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
+        {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+      </div>}
+    />
   )
 
   const gridElement = (
@@ -523,8 +567,11 @@ export function PlayerPage() {
       onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
       onCommitEdges={gridState.commitEdges}
       onToggleEdgeCross={gridState.toggleEdgeCross}
+      onToggleLine={gridState.toggleLine}
       isPinching={gridScale.isPinching}
       isTouchDragRef={isTouchDragRef}
+      foggedCells={foggedCells}
+      revealedFogIds={revealedFogGroupIds}
     />
   )
 
@@ -576,6 +623,7 @@ export function PlayerPage() {
           className="grid-scale-area"
           ref={gridScale.containerRef}
           onMouseDown={e => {
+            if (e.button !== 0) return
             if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
               gridState.clearSelection()
             }
@@ -609,6 +657,7 @@ export function PlayerPage() {
           className="grid-scale-area"
           ref={gridScale.containerRef}
           onMouseDown={e => {
+            if (e.button !== 0) return
             if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
               gridState.clearSelection()
             }

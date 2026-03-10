@@ -1,4 +1,4 @@
-import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule, MarkShape } from '../types'
+import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule, MarkShape, FogGroup } from '../types'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -12,13 +12,14 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
       borders: [0, 0, 0, 0] as [number, number, number, number],
       fixedBorders: [0, 0, 0, 0] as [number, number, number, number],
       color: null,
-      label: null,
+      labels: {},
       crossed: false,
       mark: null,
       fixedMark: null,
       fixedEdgeMarks: [null, null, null, null] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
       fixedVertexMarks: [null, null, null, null] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
       edgeCrosses: [false, false, false, false] as [boolean, boolean, boolean, boolean],
+      lines: [false, false, false, false] as [boolean, boolean, boolean, boolean],
       selected: false,
       image: null,
     }))
@@ -27,7 +28,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
 
 export function gridToPuzzle(
   grid: CellData[][],
-  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; specialRules?: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; puzzleType?: string; clickActionLeft?: string; clickActionRight?: string }
+  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; specialRules?: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; puzzleType?: string; clickActionLeft?: string; clickActionRight?: string; fogGroups?: FogGroup[]; inProgress?: boolean }
 ): PuzzleData {
   // Build deduplicated image map: base64 → id
   const imageToId = new Map<string, string>()
@@ -47,15 +48,13 @@ export function gridToPuzzle(
       const hasBorders = cell.borders.some(b => b > 0)
       const hasFixedEdgeMarks = cell.fixedEdgeMarks.some(m => m !== null)
       const hasFixedVertexMarks = cell.fixedVertexMarks.some(m => m !== null)
-      if (cell.fixedValue || cell.fixedColor || cell.color || hasBorders || cell.label || cell.crossed || cell.mark || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image) {
+      const hasLabels = Object.values(cell.labels).some(l => l?.text)
+      if (cell.fixedValue || cell.fixedColor || hasBorders || hasLabels || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image) {
         const entry: PuzzleCellData = { row: r, col: c }
         if (cell.fixedValue) entry.fixedValue = cell.fixedValue
         if (cell.fixedColor) entry.fixedColor = cell.fixedColor
-        if (cell.color) entry.color = cell.color
         if (hasBorders) entry.borders = cell.borders
-        if (cell.label) entry.label = cell.label
-        if (cell.crossed) entry.crossed = cell.crossed
-        if (cell.mark) entry.mark = cell.mark
+        if (hasLabels) entry.labels = cell.labels
         if (cell.fixedMark) entry.fixedMark = cell.fixedMark
         if (hasFixedEdgeMarks) entry.fixedEdgeMarks = cell.fixedEdgeMarks
         if (hasFixedVertexMarks) entry.fixedVertexMarks = cell.fixedVertexMarks
@@ -84,6 +83,8 @@ export function gridToPuzzle(
   if (meta.puzzleType) puzzle.puzzleType = meta.puzzleType
   if (meta.clickActionLeft) puzzle.clickActionLeft = meta.clickActionLeft
   if (meta.clickActionRight) puzzle.clickActionRight = meta.clickActionRight
+  if (meta.fogGroups?.length) puzzle.fogGroups = meta.fogGroups
+  if (meta.inProgress) puzzle.inProgress = true
   return puzzle
 }
 
@@ -93,14 +94,18 @@ export function puzzleToGrid(puzzle: PuzzleData): CellData[][] {
   for (const cell of puzzle.cells) {
     if (cell.fixedValue) grid[cell.row][cell.col].fixedValue = cell.fixedValue
     if (cell.fixedColor) grid[cell.row][cell.col].fixedColor = cell.fixedColor
-    if (cell.color) grid[cell.row][cell.col].color = cell.color
     if (cell.borders) {
       grid[cell.row][cell.col].borders = cell.borders
       grid[cell.row][cell.col].fixedBorders = [...cell.borders] as [number, number, number, number]
     }
-    if (cell.label) grid[cell.row][cell.col].label = cell.label
-    if (cell.crossed) grid[cell.row][cell.col].crossed = cell.crossed
-    if (cell.mark) grid[cell.row][cell.col].mark = cell.mark
+    if (cell.labels) {
+      grid[cell.row][cell.col].labels = cell.labels
+    } else if (cell.label) {
+      // Backward compat: old format had single label with align
+      const { text, showThroughFog, revealWithFog } = cell.label
+      const align = (cell.label as any).align || 'top'
+      grid[cell.row][cell.col].labels = { [align]: { text, showThroughFog, revealWithFog } }
+    }
     if (cell.fixedMark) grid[cell.row][cell.col].fixedMark = cell.fixedMark
     if (cell.fixedEdgeMarks) grid[cell.row][cell.col].fixedEdgeMarks = [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
     if (cell.fixedVertexMarks) grid[cell.row][cell.col].fixedVertexMarks = [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]

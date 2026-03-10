@@ -1,0 +1,568 @@
+{
+  "id": "neighbourhood-watch-murdoku",
+  "title": "Neighbourhood Watch Murdoku",
+  "authors": [
+    "PmLemay"
+  ],
+  "rules": [
+    "- Only 1 person per row and per column.",
+    "- \"Beside\" means in the same area and orthogonally adjacent.",
+    "- \"Across the road\" means in the same row or column, separated only by Road cells.",
+    "- Icons: mailbox (mailbox), garden gnome (dwarf-face), bicycle (bicycle)"
+  ],
+  "clues": [
+    "A (Woman - Amanda) is in Maple House.",
+    "B (Man   - Brad) is beside a mailbox.",
+    "C (Woman - Carol) is across the road from Brad.",
+    "D (Man   - Derek) ...",
+    "E (Woman - Elise) ...",
+    "F (Man   - Frank) ...",
+    "V (Man   - Vincent) is the victim and is alone with the killer."
+  ],
+  "difficulty": "Medium",
+  "tags": [
+    "Murdoku"
+  ],
+  "autoCrossRules": [
+    "rook"
+  ],
+  "clickActionRight": "cross",
+  "inProgress": true,
+  "gridSize": {
+    "rows": 7,
+    "cols": 7
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Maple"
+        }
+      }
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Oak"
+        }
+      }
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Park"
+        }
+      }
+    },
+    {
+      "row": 0,
+      "col": 6,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 6,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Cedar"
+        }
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 6,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Elm"
+        }
+      }
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 6,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Birch"
+        }
+      }
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "borders": [
+        2,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Garage"
+        }
+      }
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Garden"
+        }
+      }
+    },
+    {
+      "row": 5,
+      "col": 6,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 2,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 3,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 4,
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 6,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    }
+  ],
+  "createdAt": "2026-03-10"
+}

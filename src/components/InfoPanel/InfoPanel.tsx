@@ -16,6 +16,7 @@ interface InfoPanelProps {
   cluesList?: string[]
   backLink?: boolean
   headerRight?: React.ReactNode
+  aboveRules?: React.ReactNode
   children?: React.ReactNode
   struckSpecialRuleWords?: Set<string>
   onStruckSpecialRuleWordsChange?: Dispatch<SetStateAction<Set<string>>>
@@ -25,7 +26,7 @@ interface InfoPanelProps {
   onStruckClueWordsChange?: Dispatch<SetStateAction<Set<string>>>
 }
 
-export function InfoPanel({ title, authors, gridSize, difficulty, specialRulesList, rulesList, cluesList, backLink = true, headerRight, children, struckSpecialRuleWords: controlledStruckSpecialRules, onStruckSpecialRuleWordsChange, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
+export function InfoPanel({ title, authors, gridSize, difficulty, specialRulesList, rulesList, cluesList, backLink = true, headerRight, aboveRules, children, struckSpecialRuleWords: controlledStruckSpecialRules, onStruckSpecialRuleWordsChange, struckRuleWords: controlledStruckRules, onStruckRuleWordsChange, struckClueWords: controlledStruckClues, onStruckClueWordsChange }: InfoPanelProps) {
   // Internal state used when not controlled (e.g. editor mode)
   const [internalStruckSpecialRules, setInternalStruckSpecialRules] = useState<Set<string>>(new Set())
   const [internalStruckRules, setInternalStruckRules] = useState<Set<string>>(new Set())
@@ -89,83 +90,89 @@ export function InfoPanel({ title, authors, gridSize, difficulty, specialRulesLi
 
   return (
     <div className="info-panel">
-      {(backLink || headerRight) && (
-        <div className="info-header-row">
-          {backLink && <Link to="/" className="info-back-link">&larr; Puzzles</Link>}
-          {headerRight && <div className="info-header-right">{headerRight}</div>}
-        </div>
-      )}
-
-      {title && (
-        <div className="info-section">
-          <h2 className="info-title">{title}</h2>
-          {authors && authors.length > 0 && <p className="info-meta">by {authors.join(', ')}</p>}
-          {gridSize && (
-            <p className="info-meta">{gridSize.rows}&times;{gridSize.cols}</p>
-          )}
-          {difficulty && <p className="info-meta">Difficulty: {difficulty}</p>}
-        </div>
-      )}
-
-      {rulesList && rulesList.length > 0 && (
-        <div className="info-section">
-          <div className="info-section-title info-collapsible" onClick={() => setRulesOpen(o => !o)}>
-            <span className={`info-chevron ${rulesOpen ? 'open' : ''}`}>&#9656;</span>
-            Rules
+      <div className="info-panel-fixed-top">
+        {(backLink || headerRight) && (
+          <div className="info-header-row">
+            {backLink && <Link to="/" className="info-back-link">&larr; Puzzles</Link>}
+            {headerRight && <div className="info-header-right">{headerRight}</div>}
           </div>
-          {rulesOpen && (
-            <ul className="info-list">
-              {rulesList.map((rule, i) => (
-                <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(rule, i, struckRuleWords, setStruckRuleWords)}>
-                  {translated ? rule : renderStrikableText(rule, i, struckRuleWords, setStruckRuleWords)}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+        )}
 
-      {specialRulesList && specialRulesList.length > 0 && (
-        <div className="info-section">
-          <div className="info-section-title info-collapsible" onClick={() => setSpecialRulesOpen(o => !o)}>
-            <span className={`info-chevron ${specialRulesOpen ? 'open' : ''}`}>&#9656;</span>
-            Special Rules
+        {title && (
+          <div className="info-section">
+            <h2 className="info-title">{title}</h2>
+            {authors && authors.length > 0 && <p className="info-meta">by {authors.join(', ')}</p>}
+            {gridSize && (
+              <p className="info-meta">{gridSize.rows}&times;{gridSize.cols}</p>
+            )}
+            {difficulty && <p className="info-meta">Difficulty: {difficulty}</p>}
           </div>
-          {specialRulesOpen && (
-            <ul className="info-list">
-              {specialRulesList.map((rule, i) => (
-                <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(rule, i, struckSpecialRuleWords, setStruckSpecialRuleWords)}>
-                  {translated ? rule : renderStrikableText(rule, i, struckSpecialRuleWords, setStruckSpecialRuleWords)}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+        )}
 
-      {cluesList && cluesList.length > 0 && (
-        <div className="info-section">
-          <div className="info-section-title info-collapsible" onClick={() => setCluesOpen(o => !o)}>
-            <span className={`info-chevron ${cluesOpen ? 'open' : ''}`}>&#9656;</span>
-            Clues
+        {aboveRules}
+      </div>
+
+      <div className="info-panel-scrollable">
+        {rulesList && rulesList.length > 0 && (
+          <div className="info-section">
+            <div className="info-section-title info-collapsible" onClick={() => setRulesOpen(o => !o)}>
+              <span className={`info-chevron ${rulesOpen ? 'open' : ''}`}>&#9656;</span>
+              Rules
+            </div>
+            {rulesOpen && (
+              <ul className="info-list">
+                {rulesList.map((rule, i) => (
+                  <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(rule, i, struckRuleWords, setStruckRuleWords)}>
+                    {translated ? rule : renderStrikableText(rule, i, struckRuleWords, setStruckRuleWords)}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-          {cluesOpen && (
-            <ul className="info-list">
-              {cluesList.map((clue, i) => (
-                <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(clue, i, struckClueWords, setStruckClueWords)}>
-                  {translated ? clue : renderStrikableText(clue, i, struckClueWords, setStruckClueWords)}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+        )}
 
-      {children && (
-        <div className="info-section">
-          {children}
-        </div>
-      )}
+        {specialRulesList && specialRulesList.length > 0 && (
+          <div className="info-section">
+            <div className="info-section-title info-collapsible" onClick={() => setSpecialRulesOpen(o => !o)}>
+              <span className={`info-chevron ${specialRulesOpen ? 'open' : ''}`}>&#9656;</span>
+              Special Rules
+            </div>
+            {specialRulesOpen && (
+              <ul className="info-list">
+                {specialRulesList.map((rule, i) => (
+                  <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(rule, i, struckSpecialRuleWords, setStruckSpecialRuleWords)}>
+                    {translated ? rule : renderStrikableText(rule, i, struckSpecialRuleWords, setStruckSpecialRuleWords)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {cluesList && cluesList.length > 0 && (
+          <div className="info-section">
+            <div className="info-section-title info-collapsible" onClick={() => setCluesOpen(o => !o)}>
+              <span className={`info-chevron ${cluesOpen ? 'open' : ''}`}>&#9656;</span>
+              Clues
+            </div>
+            {cluesOpen && (
+              <ul className="info-list">
+                {cluesList.map((clue, i) => (
+                  <li key={i} className="info-list-text info-list-bullet" onClick={translated ? undefined : () => toggleAllWords(clue, i, struckClueWords, setStruckClueWords)}>
+                    {translated ? clue : renderStrikableText(clue, i, struckClueWords, setStruckClueWords)}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        {children && (
+          <div className="info-section">
+            {children}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

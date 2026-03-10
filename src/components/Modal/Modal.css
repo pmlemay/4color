@@ -63,3 +63,15 @@
   opacity: 0.9;
   background: lightseagreen;
 }
+
+.modal-card a {
+  color: #1a73e8;
+}
+
+.modal-card a:hover {
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .modal-card a {
+  color: #8ab4f8;
+}

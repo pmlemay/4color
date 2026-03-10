@@ -1,8 +1,223 @@
-.grid-container {
+/* Editor grid expand wrapper — positions + buttons and row/col headers around grid */
+.grid-expand-wrapper {
   position: relative;
   display: inline-block;
+  padding: 150px;
+}
+
+/* + buttons */
+.grid-expand-btn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 2px dashed var(--grid-border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background-color 0.15s, border-color 0.15s;
+  z-index: 1;
+}
+
+.grid-expand-wrapper:hover .grid-expand-btn {
+  opacity: 0.2;
+}
+
+.grid-expand-btn:hover {
+  opacity: 1 !important;
+  background: var(--selection);
+  border-color: var(--text-muted);
+}
+
+.grid-expand-top,
+.grid-expand-bottom {
+  left: 150px;
+  right: 150px;
+  height: 30px;
+}
+
+.grid-expand-top {
+  top: 60px;
+}
+
+.grid-expand-bottom {
+  bottom: 60px;
+}
+
+.grid-expand-left,
+.grid-expand-right {
+  top: 150px;
+  bottom: 150px;
+  width: 30px;
+}
+
+.grid-expand-left {
+  left: 60px;
+}
+
+.grid-expand-right {
+  right: 60px;
+}
+
+/* - buttons (shrink) */
+.grid-shrink-btn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 2px dashed var(--grid-border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background-color 0.15s, border-color 0.15s;
+  z-index: 1;
+}
+
+.grid-expand-wrapper:hover .grid-shrink-btn {
+  opacity: 0.2;
+}
+
+.grid-shrink-btn:hover {
+  opacity: 1 !important;
+  background: var(--selection);
+  border-color: var(--text-muted);
+}
+
+.grid-shrink-top,
+.grid-shrink-bottom {
+  left: 150px;
+  right: 150px;
+  height: 30px;
+}
+
+.grid-shrink-top {
+  top: 94px;
+}
+
+.grid-shrink-bottom {
+  bottom: 94px;
+}
+
+.grid-shrink-left,
+.grid-shrink-right {
+  top: 150px;
+  bottom: 150px;
+  width: 30px;
+}
+
+.grid-shrink-left {
+  left: 94px;
+}
+
+.grid-shrink-right {
+  right: 94px;
+}
+
+/* Row / column header strips
+   Grid table starts 15px inside the content box due to .grid-container padding,
+   so headers offset by 165px (150 wrapper padding + 15 container padding). */
+.grid-headers-col {
+  position: absolute;
+  top: 165px;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 1;
+}
+
+.grid-headers-col.left {
+  right: calc(100% - 160px);
+  align-items: flex-end;
+  padding-right: 7px;
+}
+
+.grid-headers-col.right {
+  left: calc(100% - 160px);
+  align-items: flex-start;
+  padding-left: 7px;
+}
+
+.grid-headers-row {
+  position: absolute;
+  left: 165px;
+  display: flex;
+  flex-direction: row;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 1;
+}
+
+.grid-headers-row.top {
+  bottom: calc(100% - 160px);
+  align-items: flex-end;
+  padding-bottom: 7px;
+}
+
+.grid-headers-row.bottom {
+  top: calc(100% - 160px);
+  align-items: flex-start;
+  padding-top: 7px;
+}
+
+.grid-header-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.1s, color 0.1s;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Row headers — fixed 50px height to match cells, width sized to content */
+.grid-headers-col .grid-header-cell {
+  height: 50px;
+  min-width: 28px;
+  padding: 0 4px;
+}
+
+/* Column headers — fixed 50px width to match cells, height sized to content */
+.grid-headers-row .grid-header-cell {
+  width: 50px;
+  min-height: 28px;
+  padding: 4px 0;
+}
+
+.grid-header-cell:hover {
+  background: var(--selection);
+  color: var(--text);
+}
+
+.grid-header-cell.selected {
+  background: var(--selection);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.grid-container {
+  position: relative;
+  /* Padding extends the clickable area beyond the grid table for edge interactions. */
   padding: 15px;
   margin: -15px;
+}
+
+/* Inside the editor expand wrapper, use inset box-shadow instead of negative margin
+   so the clickable padding area works on all 4 sides. */
+.grid-expand-wrapper > .grid-container {
+  margin: 0;
 }
 
 .puzzle-grid {
@@ -70,6 +285,19 @@
 .cell-fixed-value {
   font-weight: bold;
   font-size: 35px;
+  text-shadow:
+    -1px -1px 0 rgba(255,255,255,0.7),
+     1px -1px 0 rgba(255,255,255,0.7),
+    -1px  1px 0 rgba(255,255,255,0.7),
+     1px  1px 0 rgba(255,255,255,0.7);
+}
+
+[data-theme="dark"] .cell-fixed-value {
+  text-shadow:
+    -1px -1px 0 rgba(0,0,0,0.7),
+     1px -1px 0 rgba(0,0,0,0.7),
+    -1px  1px 0 rgba(0,0,0,0.7),
+     1px  1px 0 rgba(0,0,0,0.7);
 }
 
 .cell-selected {
@@ -95,6 +323,19 @@
 .cell-value {
   position: relative;
   z-index: 1;
+  text-shadow:
+    -1px -1px 0 rgba(255,255,255,0.7),
+     1px -1px 0 rgba(255,255,255,0.7),
+    -1px  1px 0 rgba(255,255,255,0.7),
+     1px  1px 0 rgba(255,255,255,0.7);
+}
+
+[data-theme="dark"] .cell-value {
+  text-shadow:
+    -1px -1px 0 rgba(0,0,0,0.7),
+     1px -1px 0 rgba(0,0,0,0.7),
+    -1px  1px 0 rgba(0,0,0,0.7),
+     1px  1px 0 rgba(0,0,0,0.7);
 }
 
 /* Big X cross */
@@ -181,8 +422,17 @@
   top: 2px;
 }
 
+.cell-label-middle {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 .cell-label-bottom {
   bottom: 2px;
+}
+
+.cell-label-over-fog {
+  z-index: 11;
 }
 
 .debug-overlay {
@@ -240,6 +490,48 @@
   left: -1px;
   bottom: 0;
   width: 3px;
+}
+
+/* Force GPU compositing on cells with lines so removal triggers a clean repaint */
+td.cell-has-lines {
+  transform: translateZ(0);
+}
+
+/* Connection lines (player right-click drag between cells) */
+.cell-line {
+  position: absolute;
+  background-color: var(--text);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.6;
+}
+.cell-line-top {
+  left: 50%;
+  top: 0;
+  height: 25%;
+  width: 1.5px;
+  transform: translateX(-50%);
+}
+.cell-line-right {
+  top: 50%;
+  right: 0;
+  width: 25%;
+  height: 1.5px;
+  transform: translateY(-50%);
+}
+.cell-line-bottom {
+  left: 50%;
+  bottom: 0;
+  height: 25%;
+  width: 1.5px;
+  transform: translateX(-50%);
+}
+.cell-line-left {
+  top: 50%;
+  left: 0;
+  width: 25%;
+  height: 1.5px;
+  transform: translateY(-50%);
 }
 
 /* Edge cross marks (small X on edges) */
@@ -384,4 +676,35 @@
   bottom: 0;
   left: 0;
   transform: translate(-50%, 50%);
+}
+
+/* Fog of War overlays */
+/* Fogged td — hide borders so fogged area is invisible.
+   border-collapse: none < solid, so adjacent non-fogged cells still show their borders. */
+td.cell-fogged {
+  border-style: none !important;
+}
+
+/* Fogged cells — hides content. Per-edge inset set via inline style:
+   -1px on edges facing other fogged cells (covers border seams),
+   0 on edges facing unfogged cells (preserves their visible border). */
+.cell-fog-overlay {
+  position: absolute;
+  inset: -1px;
+  background-color: var(--bg, #fff);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Editor fog preview — dashed outline only */
+.cell-fog-preview {
+  position: absolute;
+  inset: 1px;
+  border: 2px dashed rgba(128, 0, 255, 0.6);
+  pointer-events: none;
+  z-index: 10;
+}
+
+[data-theme="dark"] .cell-fog-preview {
+  border-color: rgba(180, 80, 255, 0.5);
 }

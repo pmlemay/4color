@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const MIN_ZOOM = 0.3
-const MAX_ZOOM = 3.0
+const BASE_MAX_ZOOM = 3.0
+// Ensure the user can always zoom in to at least this effective scale
+const MIN_EFFECTIVE_MAX = 2.0
 const ZOOM_SENSITIVITY = 0.001
 const CELL_SIZE = 50
 // Extra pixels for grid border (1px border-collapse means ~1px per edge)
@@ -10,9 +12,10 @@ const GRID_PADDING = 2
 interface UseGridScaleOptions {
   rows: number
   cols: number
+  autoResetZoom?: boolean
 }
 
-export function useGridScale({ rows, cols }: UseGridScaleOptions) {
+export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleOptions) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [fitScale, setFitScale] = useState(1)
   const [zoomLevel, setZoomLevel] = useState(1)
@@ -47,11 +50,13 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     return () => ro.disconnect()
   }, [rows, cols, gridW, gridH])
 
-  // Reset zoom and pan when puzzle changes
+  // Reset zoom and pan when puzzle changes (opt-in)
   useEffect(() => {
-    setZoomLevel(1)
-    setPan({ x: 0, y: 0 })
-  }, [rows, cols])
+    if (autoResetZoom) {
+      setZoomLevel(1)
+      setPan({ x: 0, y: 0 })
+    }
+  }, [rows, cols, autoResetZoom])
 
   // Scroll wheel = zoom toward cursor position
   useEffect(() => {
@@ -63,7 +68,7 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
 
       const oldZoom = zoomLevelRef.current
       const delta = -e.deltaY * ZOOM_SENSITIVITY
-      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, oldZoom + delta))
+      const newZoom = Math.min(maxZoomRef.current, Math.max(MIN_ZOOM, oldZoom + delta))
       if (newZoom === oldZoom) return
 
       // Zoom toward cursor: adjust pan so the point under the cursor stays fixed
@@ -159,7 +164,7 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
 
       const dist = getTouchDist(e.touches[0], e.touches[1])
       const ratio = dist / pinchStartDist.current
-      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, pinchStartZoom.current * ratio))
+      const newZoom = Math.min(maxZoomRef.current, Math.max(MIN_ZOOM, pinchStartZoom.current * ratio))
 
       // Current midpoint relative to container center
       const mid = getTouchMid(e.touches[0], e.touches[1])
@@ -196,6 +201,9 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
   }, [])
 
   // Refs for use in touch/mouse/wheel handlers (avoid stale closures)
+  const maxZoom = Math.max(BASE_MAX_ZOOM, MIN_EFFECTIVE_MAX / Math.max(fitScale, 0.01))
+  const maxZoomRef = useRef(maxZoom)
+  maxZoomRef.current = maxZoom
   const fitScaleRef = useRef(fitScale)
   fitScaleRef.current = fitScale
   const zoomLevelRef = useRef(zoomLevel)
@@ -210,6 +218,38 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     setPan({ x: 0, y: 0 })
   }, [])
 
+  /** Zoom and pan so that the given cell region fills the viewport */
+  const focusOnRegion = useCallback((minRow: number, maxRow: number, minCol: number, maxCol: number) => {
+    const el = containerRef.current
+    if (!el) return
+    const cw = el.clientWidth
+    const ch = el.clientHeight
+    if (cw === 0 || ch === 0) return
+
+    // Compute fitScale directly (same formula as the ResizeObserver)
+    const currentFitScale = Math.max(0.1, Math.min(cw / gridW, ch / gridH, 1.5) * 0.92)
+
+    const regionW = (maxCol - minCol + 1) * CELL_SIZE
+    const regionH = (maxRow - minRow + 1) * CELL_SIZE
+    // Desired effective scale to fit the region with comfortable padding
+    const desiredEffScale = Math.min(cw / regionW, ch / regionH) * 0.6
+    const newZoom = Math.min(
+      Math.max(BASE_MAX_ZOOM, MIN_EFFECTIVE_MAX / Math.max(currentFitScale, 0.01)),
+      Math.max(MIN_ZOOM, desiredEffScale / currentFitScale)
+    )
+    const eff = currentFitScale * newZoom
+
+    // Region center offset from grid center, in grid pixels
+    const regCX = (minCol + maxCol + 1) / 2 * CELL_SIZE
+    const regCY = (minRow + maxRow + 1) / 2 * CELL_SIZE
+    const offsetX = regCX - gridW / 2
+    const offsetY = regCY - gridH / 2
+
+    setFitScale(currentFitScale)
+    setPan({ x: -offsetX * eff, y: -offsetY * eff })
+    setZoomLevel(newZoom)
+  }, [gridW, gridH])
+
   const style: React.CSSProperties = {
     transform: `translate(${pan.x}px, ${pan.y}px) scale(${effectiveScale})`,
     transformOrigin: 'center center',
@@ -222,5 +262,6 @@ export function useGridScale({ rows, cols }: UseGridScaleOptions) {
     style,
     isPinching,
     resetZoom,
+    focusOnRegion,
   }
 }

@@ -178,7 +178,7 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     }
   }
 
-  if (filled !== total || !bordersReady || colorFilled !== colorTotal) {
+  if ((total > 0 && filled !== total) || !bordersReady || colorFilled !== colorTotal) {
     const parts: string[] = []
     if (total > 0) parts.push(`${filled}/${total} values`)
     if (borderProgress) parts.push(borderProgress)

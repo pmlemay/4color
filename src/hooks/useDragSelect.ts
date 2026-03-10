@@ -6,9 +6,10 @@ interface UseDragSelectOptions {
   onSelectionStart: () => void
   onSelectionChange: (selection: CellPosition[], isTouch: boolean) => void
   onSelectionEnd: (selection: CellPosition[]) => void
-  onRightClickCell?: (pos: CellPosition) => void
+  onRightClickCell?: (pos: CellPosition, isFirst: boolean) => void
   isPinching?: boolean
   touchEnabled?: boolean
+  foggedCells?: Set<string>
 }
 
 export function useDragSelect(options: UseDragSelectOptions) {
@@ -21,6 +22,9 @@ export function useDragSelect(options: UseDragSelectOptions) {
   // Keep options in a ref so native listeners always see latest callbacks
   const optionsRef = useRef(options)
   optionsRef.current = options
+
+  const isFogged = (pos: CellPosition): boolean =>
+    optionsRef.current.foggedCells?.has(`${pos.row},${pos.col}`) ?? false
 
   const getCellFromPoint = (x: number, y: number): CellPosition | null => {
     const table = tableRef.current
@@ -52,10 +56,10 @@ export function useDragSelect(options: UseDragSelectOptions) {
     if (e.button === 2 && optionsRef.current.onRightClickCell) {
       e.preventDefault()
       const pos = getCellFromEvent(e)
-      if (pos) {
+      if (pos && !isFogged(pos)) {
         rightDragging.current = true
         rightSelection.current = [pos]
-        optionsRef.current.onRightClickCell(pos)
+        optionsRef.current.onRightClickCell(pos, true)
       }
       return
     }
@@ -69,7 +73,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
     }
 
     const pos = getCellFromEvent(e)
-    if (pos) {
+    if (pos && !isFogged(pos)) {
       dragging.current = true
       currentSelection.current = [pos]
       optionsRef.current.onSelectionChange([pos], false)
@@ -80,16 +84,16 @@ export function useDragSelect(options: UseDragSelectOptions) {
     if (rightDragging.current) {
       e.preventDefault()
       const pos = getCellFromEvent(e)
-      if (!pos) return
+      if (!pos || isFogged(pos)) return
       if (rightSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
       rightSelection.current = [...rightSelection.current, pos]
-      optionsRef.current.onRightClickCell?.(pos)
+      optionsRef.current.onRightClickCell?.(pos, false)
       return
     }
     if (!dragging.current) return
     e.preventDefault()
     const pos = getCellFromEvent(e)
-    if (!pos) return
+    if (!pos || isFogged(pos)) return
     if (currentSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
     currentSelection.current = [...currentSelection.current, pos]
     optionsRef.current.onSelectionChange(currentSelection.current, false)
@@ -144,7 +148,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
       e.preventDefault()
       const touch = e.touches[0]
       const pos = getCellFromPoint(touch.clientX, touch.clientY)
-      if (pos) {
+      if (pos && !isFogged(pos)) {
         pendingTouchPos.current = pos
         touchStartTimer.current = setTimeout(commitTouchStart, 150)
       }
@@ -179,7 +183,7 @@ export function useDragSelect(options: UseDragSelectOptions) {
       e.preventDefault()
       const touch = e.touches[0]
       const pos = getCellFromPoint(touch.clientX, touch.clientY)
-      if (!pos) return
+      if (!pos || isFogged(pos)) return
       if (currentSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
       currentSelection.current = [...currentSelection.current, pos]
       optionsRef.current.onSelectionChange(currentSelection.current, true)

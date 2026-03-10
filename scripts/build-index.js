@@ -4,8 +4,10 @@ import { join } from 'path'
 const puzzlesDir = join(import.meta.dirname, '..', 'public', 'puzzles')
 const files = readdirSync(puzzlesDir).filter(f => f.endsWith('.json') && f !== 'index.json')
 
+let skipped = 0
 const index = files.map(f => {
   const data = JSON.parse(readFileSync(join(puzzlesDir, f), 'utf-8'))
+  if (data.inProgress) skipped++
   const entry = {
     id: data.id,
     file: f,
@@ -20,6 +22,7 @@ const index = files.map(f => {
   else if (data.forcedInputLayout) entry.puzzleType = data.forcedInputLayout
   if (data.clickActionLeft) entry.clickActionLeft = data.clickActionLeft
   if (data.clickActionRight) entry.clickActionRight = data.clickActionRight
+  if (data.inProgress) entry.inProgress = true
   return entry
 })
 
@@ -31,7 +34,7 @@ index.sort((a, b) => {
 })
 
 writeFileSync(join(puzzlesDir, 'index.json'), JSON.stringify(index, null, 2) + '\n')
-console.log(`Built puzzle index: ${index.length} puzzle(s)`)
+console.log(`Built puzzle index: ${index.length} puzzle(s)` + (skipped ? ` (${skipped} in-progress)` : ''))
 
 // Write version.json for auto-update detection
 const publicDir = join(import.meta.dirname, '..', 'public')

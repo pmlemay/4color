@@ -1,9 +1,12 @@
-export type LabelAlign = 'top' | 'bottom'
+export type LabelAlign = 'top' | 'middle' | 'bottom'
 
 export interface CellLabel {
   text: string
-  align: LabelAlign
+  showThroughFog?: boolean
+  revealWithFog?: string  // fog group ID — label hidden until that group is revealed
 }
+
+export type CellLabels = Partial<Record<LabelAlign, CellLabel | null>>
 
 export interface CellData {
   value: string | null
@@ -13,13 +16,14 @@ export interface CellData {
   borders: [number, number, number, number] // [top, right, bottom, left]
   fixedBorders: [number, number, number, number] // borders from the puzzle definition (immutable in player mode)
   color: string | null
-  label: CellLabel | null
+  labels: CellLabels
   crossed: boolean
   mark: MarkShape | null
   fixedMark: MarkShape | null
   fixedEdgeMarks: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null] // [top, right, bottom, left]
   fixedVertexMarks: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null] // [TL, TR, BR, BL]
   edgeCrosses: [boolean, boolean, boolean, boolean] // [top, right, bottom, left]
+  lines: [boolean, boolean, boolean, boolean] // [top, right, bottom, left] — player connection lines
   selected: boolean
   image: string | null
 }
@@ -36,7 +40,8 @@ export interface PuzzleCellData {
   fixedColor?: string
   color?: string
   borders?: [number, number, number, number]
-  label?: CellLabel
+  labels?: CellLabels
+  label?: CellLabel & { align?: LabelAlign }  // backward compat for old puzzles
   crossed?: boolean
   mark?: MarkShape
   fixedMark?: MarkShape
@@ -62,6 +67,8 @@ export interface PuzzleData {
   clickActionRight?: string
   forcedInputLayout?: string // backward compat only
   images?: Record<string, string>
+  fogGroups?: FogGroup[]
+  inProgress?: boolean
   createdAt: string
 }
 
@@ -78,13 +85,28 @@ export interface PuzzleIndexEntry {
   clickActionLeft?: string
   clickActionRight?: string
   forcedInputLayout?: string // backward compat only
+  inProgress?: boolean
 }
 
 export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'star' | 'dot'
 
 export type AutoCrossRule = 'king' | 'rook' | 'bishop' | 'knight'
 
-export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark'
+export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark' | 'fog'
+
+export interface FogTrigger {
+  cells: CellPosition[]
+  condition: string  // 'value:hello', 'color:9', 'mark:star', 'cross'
+  matchMode?: 'all' | 'any'  // undefined treated as 'any' for backward compat
+  negate?: boolean            // if true, condition must NOT match
+}
+
+export interface FogGroup {
+  id: string              // e.g. "fog-0"
+  cells: CellPosition[]   // cells hidden by this group
+  triggers: FogTrigger[]  // ALL (or ANY, per triggerMode) must be true to reveal
+  triggerMode?: 'all' | 'any'  // undefined treated as 'all' for backward compat
+}
 
 /** Identifies a single edge of a cell: side 0=top, 1=right, 2=bottom, 3=left */
 export interface EdgeDescriptor {

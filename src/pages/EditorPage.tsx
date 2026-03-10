@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom'
 import { useGrid } from '../hooks/useGrid'
 import { useKeyboard } from '../hooks/useKeyboard'
@@ -15,7 +15,20 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
-import { PuzzleData, PuzzleSolution, CellData, CellPosition, InputMode, AutoCrossRule, MarkShape } from '../types'
+import { PuzzleData, PuzzleSolution, CellData, CellPosition, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
+import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
+import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
+
+/** Convert 0-based column index to Excel-style letter label (A, B, ... Z, AA, AB, ...) */
+function colLabel(index: number): string {
+  let label = ''
+  let n = index
+  do {
+    label = String.fromCharCode(65 + (n % 26)) + label
+    n = Math.floor(n / 26) - 1
+  } while (n >= 0)
+  return label
+}
 
 export function EditorPage() {
   const { puzzleId } = useParams()
@@ -46,6 +59,23 @@ export function EditorPage() {
   const [puzzleType, setPuzzleType] = useState('')
   const [clickActionLeft, setClickActionLeft] = useState('')
   const [clickActionRight, setClickActionRight] = useState('cross')
+  const [inProgress, setInProgress] = useState(false)
+
+  const [fogGroups, setFogGroups] = useState<FogGroup[]>([])
+  const [fogEditStep, setFogEditStep] = useState<'idle' | 'pickFogCells' | 'pickTriggerCells' | 'pickTrigger'>('idle')
+  const [fogPendingCells, setFogPendingCells] = useState<CellPosition[]>([])
+  const [fogPendingTriggers, setFogPendingTriggers] = useState<FogTrigger[]>([])
+  const [fogPendingTriggerCells, setFogPendingTriggerCells] = useState<CellPosition[]>([])
+  const [fogPendingTriggerMode, setFogPendingTriggerMode] = useState<'all' | 'any'>('all')
+  const [fogEditingGroupId, setFogEditingGroupId] = useState<string | null>(null)
+  const [fogPreviewGroupId, setFogPreviewGroupId] = useState<string | null>(null)
+  const [revealedFogGroupIds, setRevealedFogGroupIds] = useState<Set<string>>(new Set())
+  const prevInputMode = useRef<InputMode>('normal')
+  const fogEditingTrigger = useRef<{ index: number; trigger: FogTrigger } | null>(null)
+
+  // Map from grid undo stack depth (before the push) to the fog shift applied.
+  // On undo (depth shrinks), reverse the shift at the new depth. On redo (depth grows), re-apply.
+  const fogShiftByDepth = useRef<Map<number, { row: number; col: number }>>(new Map())
 
   const [editorPuzzleId, setEditorPuzzleId] = useState(puzzleId || '')
   const [solutionMode, setSolutionMode] = useState(false)
@@ -53,7 +83,38 @@ export function EditorPage() {
 
   const { modalProps, showAlert, showConfirm } = useModal()
   const gridState = useGrid(rows, cols)
-  const gridScale = useGridScale({ rows, cols })
+  gridState.setIsEditor(true)
+
+  const shiftFogGroups = useCallback((rowDelta: number, colDelta: number) => {
+    const shiftCells = (cells: CellPosition[]) =>
+      cells.map(c => ({ row: c.row + rowDelta, col: c.col + colDelta }))
+    setFogGroups(prev => prev.map(g => ({
+      ...g,
+      cells: shiftCells(g.cells),
+      triggers: g.triggers.map(t => ({ ...t, cells: shiftCells(t.cells) })),
+    })))
+    setFogPendingCells(prev => shiftCells(prev))
+    setFogPendingTriggers(prev => prev.map(t => ({ ...t, cells: shiftCells(t.cells) })))
+    setFogPendingTriggerCells(prev => shiftCells(prev))
+  }, [])
+
+  const handleUndo = useCallback(() => {
+    // After undo, the stack depth is one less — that's the key where we stored the shift
+    gridState.undo()
+    const depth = gridState.undoStackLength()
+    const shift = fogShiftByDepth.current.get(depth)
+    if (shift) shiftFogGroups(-shift.row, -shift.col)
+  }, [gridState, shiftFogGroups])
+
+  const handleRedo = useCallback(() => {
+    // Before redo, the current depth is where the shift was stored
+    const depth = gridState.undoStackLength()
+    const shift = fogShiftByDepth.current.get(depth)
+    gridState.redo()
+    if (shift) shiftFogGroups(shift.row, shift.col)
+  }, [gridState, shiftFogGroups])
+
+  const gridScale = useGridScale({ rows: gridState.grid.length, cols: gridState.grid[0]?.length ?? 0, autoResetZoom: false })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
 
@@ -70,37 +131,102 @@ export function EditorPage() {
     })
   }, [])
 
+  const loadPuzzleIntoEditor = useCallback((puzzle: PuzzleData) => {
+    setTitle(puzzle.title || '')
+    setAuthors(puzzle.authors || [])
+    setRows(puzzle.gridSize.rows)
+    setCols(puzzle.gridSize.cols)
+    setDifficulty(puzzle.difficulty || '')
+    setTags(puzzle.tags || [])
+    setAutoCrossRulesState(puzzle.autoCrossRules || [])
+    setPuzzleType(puzzle.puzzleType || '')
+    setClickActionLeft(puzzle.clickActionLeft || '')
+    setClickActionRight(puzzle.clickActionRight || 'cross')
+    setSpecialRules(puzzle.specialRules || [])
+    setRules(puzzle.rules || [])
+    setClues(puzzle.clues || [])
+    setFogGroups(puzzle.fogGroups || [])
+    setInProgress(puzzle.inProgress || false)
+    gridState.setGrid(puzzleToGrid(puzzle))
+    const images = new Set<string>()
+    for (const cell of puzzle.cells) {
+      if (cell.image) {
+        const resolved = puzzle.images?.[cell.image] ?? cell.image
+        images.add(resolved)
+      }
+    }
+    setImageLibrary(Array.from(images))
+  }, [gridState])
+
   useEffect(() => {
     if (puzzleId) {
       fetchPuzzle(puzzleId).then(puzzle => {
         if (puzzle) {
-          setTitle(puzzle.title)
-          setAuthors(puzzle.authors || [])
-          setRows(puzzle.gridSize.rows)
-          setCols(puzzle.gridSize.cols)
-          setDifficulty(puzzle.difficulty || '')
-          setTags(puzzle.tags || [])
-          setAutoCrossRulesState(puzzle.autoCrossRules || [])
-          setPuzzleType(puzzle.puzzleType || '')
-          setClickActionLeft(puzzle.clickActionLeft || '')
-          setClickActionRight(puzzle.clickActionRight || 'cross')
-          setSpecialRules(puzzle.specialRules || [])
-          setRules(puzzle.rules || [])
-          setClues(puzzle.clues || [])
-          gridState.setGrid(puzzleToGrid(puzzle))
-          // Rebuild image library from puzzle cells (resolve IDs via images dict)
-          const images = new Set<string>()
-          for (const cell of puzzle.cells) {
-            if (cell.image) {
-              const resolved = puzzle.images?.[cell.image] ?? cell.image
-              images.add(resolved)
-            }
+          // Prefer draft over saved file if one exists
+          const raw = localStorage.getItem(`editor-draft-${puzzleId}`)
+          if (raw) {
+            try {
+              const draft = JSON.parse(raw) as PuzzleData
+              loadPuzzleIntoEditor(draft)
+              gridScale.resetZoom()
+              draftLoaded.current = true
+              return
+            } catch { /* fall through to saved file */ }
           }
-          setImageLibrary(Array.from(images))
+          loadPuzzleIntoEditor(puzzle)
+          gridScale.resetZoom()
+          draftLoaded.current = true
         }
       })
     }
   }, [puzzleId])
+
+  // --- Auto-save draft to localStorage ---
+  const draftKey = `editor-draft-${puzzleId || 'new'}`
+  const draftLoaded = useRef(false)
+
+  // Restore draft on mount for new puzzles
+  useEffect(() => {
+    if (draftLoaded.current || puzzleId) return
+    const raw = localStorage.getItem(draftKey)
+    if (!raw) { draftLoaded.current = true; return }
+    try {
+      loadPuzzleIntoEditor(JSON.parse(raw) as PuzzleData)
+    } catch { /* ignore corrupt drafts */ }
+    draftLoaded.current = true
+  }, [])
+
+  // Auto-save draft every 3 seconds when state changes
+  useEffect(() => {
+    if (!draftLoaded.current) return
+    const timer = setTimeout(() => {
+      try {
+        const draft = gridToPuzzle(gridState.grid, {
+          id: editorPuzzleId || 'draft',
+          title, authors, specialRules: specialRules.length ? specialRules : undefined,
+          rules, clues, difficulty, tags, autoCrossRules,
+          puzzleType: puzzleType || undefined,
+          clickActionLeft: clickActionLeft || undefined,
+          clickActionRight: clickActionRight || undefined,
+          fogGroups: fogGroups.length ? fogGroups : undefined,
+          inProgress: inProgress || undefined,
+        })
+        localStorage.setItem(draftKey, JSON.stringify(draft))
+      } catch { /* ignore serialization errors */ }
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [gridState.grid, title, authors, difficulty, tags, specialRules, rules, clues, autoCrossRules, puzzleType, clickActionLeft, clickActionRight, fogGroups, inProgress, editorPuzzleId, draftKey])
+
+  // Clear draft on successful save
+  const clearDraft = useCallback(() => {
+    localStorage.removeItem(draftKey)
+  }, [draftKey])
+
+  // Sync rows/cols from actual grid dimensions (keeps inputs accurate after undo/redo/add)
+  useEffect(() => {
+    setRows(gridState.grid.length)
+    setCols(gridState.grid[0]?.length ?? 0)
+  }, [gridState.grid.length, gridState.grid[0]?.length])
 
   useEffect(() => {
     gridState.setAutoCrossRules(autoCrossRules)
@@ -184,8 +310,8 @@ export function EditorPage() {
     addNote: gridState.addNote,
     clearValues: gridState.clearValues,
     eraseColor: gridState.eraseColor,
-    undo: gridState.undo,
-    redo: gridState.redo,
+    undo: handleUndo,
+    redo: handleRedo,
     onActiveColorChange: gridState.setActiveColor,
     onActiveMarkChange: gridState.setActiveMark,
     toggleMark: gridState.toggleMark,
@@ -203,7 +329,7 @@ export function EditorPage() {
   const handleSave = async () => {
     if (!difficulty) { await showAlert('Please select a difficulty before saving.'); return }
     const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined })
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
 
     if (puzzleId) {
       puzzle.id = puzzleId
@@ -212,11 +338,13 @@ export function EditorPage() {
     if (import.meta.env.DEV) {
       const result = await savePuzzleToServer(puzzle)
       if (result.ok) {
+        clearDraft()
         await showAlert(`Saved to puzzles/${result.file}`, 'Saved')
         if (!puzzleId) navigate(`/edit/${puzzle.id}`, { replace: true })
         return
       }
     }
+    clearDraft()
     downloadPuzzleJSON(puzzle)
   }
 
@@ -242,6 +370,7 @@ export function EditorPage() {
         }))
       )
     )
+    setRevealedFogGroupIds(new Set())
   }, [gridState])
 
   const handleClearPlayerInput = async () => {
@@ -255,7 +384,7 @@ export function EditorPage() {
 
   function extractPuzzleDefinition(grid: CellData[][]): object {
     return grid.map(row => row.map(cell => ({
-      fv: cell.fixedValue, fc: cell.fixedColor, fb: cell.fixedBorders, l: cell.label, i: cell.image,
+      fv: cell.fixedValue, fc: cell.fixedColor, fb: cell.fixedBorders, l: cell.labels, i: cell.image,
     })))
   }
 
@@ -421,6 +550,231 @@ export function EditorPage() {
     setEditingText('')
   }, [editingItem, editingText])
 
+  // --- Fog of War editor handlers ---
+  const handleFogGroupAdd = useCallback(() => {
+    prevInputMode.current = gridState.inputMode
+    gridState.setInputMode('fog' as InputMode)
+    gridState.clearSelection()
+    setFogEditStep('pickFogCells')
+    setFogPendingCells([])
+    setFogPendingTriggers([])
+    setFogPendingTriggerCells([])
+    setFogEditingGroupId(null)
+    setFogPreviewGroupId(null)
+  }, [gridState])
+
+  const handleFogConfirmCells = useCallback(() => {
+    const sel = gridState.selection
+    if (sel.length === 0) return
+    setFogPendingCells([...sel])
+    gridState.clearSelection()
+    gridState.setInputMode(prevInputMode.current)
+    setFogEditStep('pickTrigger')
+  }, [gridState])
+
+  const handleFogSelectTriggerCells = useCallback(() => {
+    prevInputMode.current = gridState.inputMode
+    gridState.setInputMode('fog' as InputMode)
+    gridState.clearSelection()
+    setFogEditStep('pickTriggerCells')
+  }, [gridState])
+
+  const handleFogConfirmTriggerCells = useCallback(() => {
+    const sel = gridState.selection
+    if (sel.length === 0) return
+    setFogPendingTriggerCells([...sel])
+    gridState.clearSelection()
+    gridState.setInputMode(prevInputMode.current)
+    fogEditingTrigger.current = null
+    setFogEditStep('pickTrigger')
+  }, [gridState])
+
+
+  const handleFogTriggerMatchModeChange = useCallback((index: number, mode: 'all' | 'any') => {
+    setFogPendingTriggers(prev => prev.map((t, i) => i === index ? { ...t, matchMode: mode } : t))
+  }, [])
+
+  const handleFogTriggerNegateChange = useCallback((index: number, negate: boolean) => {
+    setFogPendingTriggers(prev => prev.map((t, i) => i === index ? { ...t, negate: negate || undefined } : t))
+  }, [])
+
+  const handleFogAddTrigger = useCallback((trigger: FogTrigger) => {
+    setFogPendingTriggers(prev => [...prev, { ...trigger, matchMode: trigger.matchMode || 'all' }])
+    setFogPendingTriggerCells([])
+  }, [])
+
+  const handleFogRemoveTrigger = useCallback((index: number) => {
+    setFogPendingTriggers(prev => prev.filter((_, i) => i !== index))
+  }, [])
+
+  const handleFogHighlightTrigger = useCallback((trigger: FogTrigger) => {
+    gridState.clearSelection()
+    gridState.commitSelection(trigger.cells, false)
+  }, [gridState])
+
+  const handleFogEditTrigger = useCallback((index: number) => {
+    const trigger = fogPendingTriggers[index]
+    if (!trigger) return
+    // Stash the trigger so it can be restored on cancel
+    fogEditingTrigger.current = { index, trigger }
+    // Remove this trigger from the list — it will be re-added after editing
+    setFogPendingTriggers(prev => prev.filter((_, i) => i !== index))
+    // Pre-select the trigger's cells and enter pickTriggerCells
+    prevInputMode.current = gridState.inputMode
+    gridState.setInputMode('fog' as InputMode)
+    // Set the cells as selected on the grid so user can ctrl-click to add more
+    gridState.commitSelection(trigger.cells, false)
+    setFogEditStep('pickTriggerCells')
+  }, [fogPendingTriggers, gridState])
+
+  const handleFogFinishGroup = useCallback(() => {
+    if (fogEditingGroupId) {
+      // Update existing group in-place
+      setFogGroups(prev => prev.map(g =>
+        g.id === fogEditingGroupId
+          ? { ...g, cells: fogPendingCells, triggers: fogPendingTriggers, triggerMode: fogPendingTriggerMode }
+          : g
+      ))
+    } else {
+      const id = `fog-${Date.now()}`
+      const newGroup: FogGroup = {
+        id,
+        cells: fogPendingCells,
+        triggers: fogPendingTriggers,
+        triggerMode: fogPendingTriggerMode,
+      }
+      setFogGroups(prev => [...prev, newGroup])
+    }
+    setFogEditStep('idle')
+    setFogPendingCells([])
+    setFogPendingTriggers([])
+    setFogPendingTriggerCells([])
+    setFogPendingTriggerMode('all')
+    setFogEditingGroupId(null)
+  }, [fogPendingCells, fogPendingTriggers, fogPendingTriggerMode, fogEditingGroupId])
+
+  const handleFogCancel = useCallback(() => {
+    gridState.clearSelection()
+    if (fogEditStep === 'pickFogCells' || fogEditStep === 'pickTriggerCells') {
+      gridState.setInputMode(prevInputMode.current)
+    }
+    if (fogEditStep === 'pickTriggerCells') {
+      // Restore stashed trigger if we were editing one
+      if (fogEditingTrigger.current) {
+        const { index, trigger } = fogEditingTrigger.current
+        setFogPendingTriggers(prev => {
+          const next = [...prev]
+          next.splice(index, 0, trigger)
+          return next
+        })
+        fogEditingTrigger.current = null
+      }
+      // Go back to pickTrigger instead of idle
+      setFogEditStep('pickTrigger')
+      return
+    }
+    setFogEditStep('idle')
+    setFogPendingCells([])
+    setFogPendingTriggers([])
+    setFogPendingTriggerCells([])
+    setFogEditingGroupId(null)
+  }, [gridState, fogEditStep])
+
+  const handleFogGroupDelete = useCallback((id: string) => {
+    setFogGroups(prev => prev.filter(g => g.id !== id))
+    if (fogPreviewGroupId === id) setFogPreviewGroupId(null)
+  }, [fogPreviewGroupId])
+
+  const handleFogGroupSelect = useCallback((id: string) => {
+    const toggling = fogPreviewGroupId === id
+    setFogPreviewGroupId(toggling ? null : id)
+    if (toggling) {
+      gridState.clearSelection()
+    } else {
+      // Highlight trigger cells with normal yellow selection
+      const group = fogGroups.find(g => g.id === id)
+      if (group) {
+        const triggerCells: CellPosition[] = []
+        for (const t of group.triggers) {
+          for (const c of t.cells) {
+            if (!triggerCells.some(tc => tc.row === c.row && tc.col === c.col)) {
+              triggerCells.push(c)
+            }
+          }
+        }
+        gridState.clearSelection()
+        if (triggerCells.length > 0) {
+          gridState.commitSelection(triggerCells)
+        }
+      }
+    }
+  }, [fogPreviewGroupId, fogGroups, gridState])
+
+  const handleFogGroupEdit = useCallback((id: string) => {
+    const group = fogGroups.find(g => g.id === id)
+    if (!group) return
+    setFogEditingGroupId(id)
+    setFogPendingCells([...group.cells])
+    setFogPendingTriggers([...group.triggers])
+    setFogPendingTriggerMode(group.triggerMode || 'all')
+    setFogPendingTriggerCells([])
+    setFogPreviewGroupId(null)
+    setFogEditStep('pickTrigger')
+  }, [fogGroups])
+
+  const handleFogReSelectFogCells = useCallback(() => {
+    prevInputMode.current = gridState.inputMode
+    gridState.setInputMode('fog' as InputMode)
+    gridState.clearSelection()
+    // Pre-select existing fog cells so the user can add/remove incrementally
+    if (fogPendingCells.length > 0) {
+      gridState.commitSelection(fogPendingCells, false)
+    }
+    setFogEditStep('pickFogCells')
+  }, [gridState, fogPendingCells])
+
+  // Compute fog preview cells for editor display
+  const fogPreviewCells = useMemo(() => {
+    // Show pending cells during editing
+    if ((fogEditStep === 'pickTrigger' || fogEditStep === 'pickTriggerCells') && fogPendingCells.length > 0) {
+      const set = new Set<string>()
+      for (const c of fogPendingCells) set.add(`${c.row},${c.col}`)
+      return set
+    }
+    // Show selected group when clicking its name (fogged cells only — trigger cells use yellow selection)
+    if (fogPreviewGroupId) {
+      const group = fogGroups.find(g => g.id === fogPreviewGroupId)
+      if (group) {
+        const set = new Set<string>()
+        for (const c of group.cells) set.add(`${c.row},${c.col}`)
+        return set
+      }
+    }
+    // In idle or pickFogCells mode, show existing fog cells as preview
+    if (fogGroups.length > 0 && (fogEditStep === 'idle' || fogEditStep === 'pickFogCells')) {
+      return computeFoggedCells(fogGroups, revealedFogGroupIds)
+    }
+    return undefined
+  }, [fogEditStep, fogPendingCells, fogPreviewGroupId, fogGroups, revealedFogGroupIds])
+
+  // Evaluate fog triggers in editor so user can test them
+  useEffect(() => {
+    if (!fogGroups.length) return
+    const newlyRevealed = evaluateNewReveals(gridState.grid, fogGroups, revealedFogGroupIds)
+    if (newlyRevealed.length > 0) {
+      setRevealedFogGroupIds(prev => {
+        const next = new Set(prev)
+        for (const id of newlyRevealed) next.add(id)
+        return next
+      })
+    }
+  }, [gridState.grid, fogGroups, revealedFogGroupIds])
+
+  // Reset revealed fog groups when fog groups change (e.g. edited/deleted)
+  useEffect(() => {
+    setRevealedFogGroupIds(new Set())
+  }, [fogGroups])
+
   const handleImageSelect = useCallback((index: number | null) => {
     setSelectedImageIndex(index)
     if (index !== null) {
@@ -428,40 +782,18 @@ export function EditorPage() {
     }
   }, [gridState])
 
-  const applyClickAction = useCallback((pos: CellPosition, action: string, gs: typeof gridState) => {
-    if (!action) return
-    if (action.startsWith('color:')) {
-      const colorVal = action.split(':')[1]
-      gs.setGrid(prev => {
-        const next = prev.map(row => row.map(cell => ({ ...cell })))
-        const cell = next[pos.row][pos.col]
-        cell.color = cell.color === colorVal ? null : colorVal
-        if (cell.color) cell.mark = null
-        return next
-      })
-    } else if (action.startsWith('mark:')) {
-      const markVal = action.split(':')[1] as import('../types').MarkShape
-      gs.setGrid(prev => {
-        const next = prev.map(row => row.map(cell => ({ ...cell })))
-        const cell = next[pos.row][pos.col]
-        cell.mark = cell.mark === markVal ? null : markVal
-        if (cell.mark) cell.color = null
-        return next
-      })
-    } else if (action === 'cross') {
-      gs.setGrid(prev => {
-        const next = prev.map(row => row.map(cell => ({ ...cell })))
-        const cell = next[pos.row][pos.col]
-        cell.crossed = !cell.crossed
-        if (cell.crossed) cell.mark = null
-        return next
-      })
-    }
-  }, [])
+  const rightDragAction = useRef<boolean | undefined>(undefined)
 
-  const handleRightClickCell = useCallback((pos: CellPosition) => {
-    applyClickAction(pos, clickActionRight, gridState)
-  }, [clickActionRight, gridState, applyClickAction])
+  const handleRightClickCell = useCallback((pos: CellPosition, isFirst: boolean) => {
+    if (!clickActionRight) return
+    if (isFirst) {
+      const matches = cellMatchesAction(gridState.grid[pos.row][pos.col], clickActionRight)
+      rightDragAction.current = !matches // true = apply, false = clear
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, undefined, autoCrossRules))
+    } else {
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, rightDragAction.current, autoCrossRules))
+    }
+  }, [clickActionRight, autoCrossRules, gridState])
 
   // Map click action string to the effective inputMode / activeColor / activeMark
   const suggestedEffectiveMode: InputMode = (() => {
@@ -479,24 +811,6 @@ export function EditorPage() {
   // Wrap drag handlers so suggested mode applies click actions directly
   const suggestedProcessed = useRef<Set<string>>(new Set())
 
-  const applyClickActionToCell = useCallback((prev: CellData[][], pos: CellPosition, action: string): CellData[][] => {
-    const next = prev.map(row => row.map(cell => ({ ...cell })))
-    const cell = next[pos.row][pos.col]
-    if (action.startsWith('color:')) {
-      const colorVal = action.split(':')[1]
-      cell.color = cell.color === colorVal ? null : colorVal
-      if (cell.color) cell.mark = null
-    } else if (action.startsWith('mark:')) {
-      const markVal = action.split(':')[1] as MarkShape
-      cell.mark = cell.mark === markVal ? null : markVal
-      if (cell.mark) cell.color = null
-    } else if (action === 'cross') {
-      cell.crossed = !cell.crossed
-      if (cell.crossed) cell.mark = null
-    }
-    return next
-  }, [])
-
   const handleDragChange = useCallback((sel: CellPosition[]) => {
     if (!isSuggestedMode || !clickActionLeft) {
       gridState.onDragChange(sel)
@@ -507,22 +821,105 @@ export function EditorPage() {
       if (suggestedProcessed.current.has(key)) continue
       suggestedProcessed.current.add(key)
       const setter = suggestedProcessed.current.size === 1 ? gridState.setGridWithUndo : gridState.setGrid
-      setter(prev => applyClickActionToCell(prev, pos, clickActionLeft))
+      setter(prev => applyActionToGrid(prev, pos, clickActionLeft, undefined, autoCrossRules))
     }
-  }, [isSuggestedMode, clickActionLeft, gridState, applyClickActionToCell])
+  }, [isSuggestedMode, clickActionLeft, autoCrossRules, gridState])
 
-  const handleCommitSelection = useCallback((sel: CellPosition[]) => {
+  const handleCommitSelection = useCallback((sel: CellPosition[], ctrlHeld?: boolean) => {
     if (isSuggestedMode) {
       suggestedProcessed.current.clear()
       return
     }
-    gridState.commitSelection(sel)
+    gridState.commitSelection(sel, ctrlHeld)
   }, [isSuggestedMode, gridState])
 
   const handleClearSelection = useCallback(() => {
     suggestedProcessed.current.clear()
     gridState.clearSelection()
-  }, [gridState])
+    if (fogPreviewGroupId) setFogPreviewGroupId(null)
+  }, [gridState, fogPreviewGroupId])
+
+  // --- Row/column header selection ---
+  const headerDragging = useRef(false)
+  const headerDragAxis = useRef<'row' | 'col'>('row')
+  const headerDragStart = useRef(0)
+
+  const selectRowOrCol = useCallback((axis: 'row' | 'col', index: number, ctrlHeld: boolean) => {
+    const g = gridState.grid
+    const cells: CellPosition[] = axis === 'row'
+      ? g[index].map((_, c) => ({ row: index, col: c }))
+      : g.map((_, r) => ({ row: r, col: index }))
+    if (!ctrlHeld) handleClearSelection()
+    handleCommitSelection(cells, ctrlHeld)
+  }, [gridState.grid, handleClearSelection, handleCommitSelection])
+
+  const selectHeaderRange = useCallback((axis: 'row' | 'col', from: number, to: number, ctrlHeld: boolean) => {
+    const g = gridState.grid
+    const lo = Math.min(from, to)
+    const hi = Math.max(from, to)
+    const cells: CellPosition[] = []
+    for (let i = lo; i <= hi; i++) {
+      if (axis === 'row') {
+        for (let c = 0; c < (g[0]?.length ?? 0); c++) cells.push({ row: i, col: c })
+      } else {
+        for (let r = 0; r < g.length; r++) cells.push({ row: r, col: i })
+      }
+    }
+    if (!ctrlHeld) handleClearSelection()
+    handleCommitSelection(cells, ctrlHeld)
+  }, [gridState.grid, handleClearSelection, handleCommitSelection])
+
+  const handleHeaderMouseDown = useCallback((axis: 'row' | 'col', index: number, e: React.MouseEvent) => {
+    if (e.button !== 0) return
+    e.preventDefault()
+    headerDragging.current = true
+    headerDragAxis.current = axis
+    headerDragStart.current = index
+    selectRowOrCol(axis, index, e.ctrlKey)
+  }, [selectRowOrCol])
+
+  const handleHeaderMouseEnter = useCallback((axis: 'row' | 'col', index: number, e: React.MouseEvent) => {
+    if (!headerDragging.current || axis !== headerDragAxis.current) return
+    e.preventDefault()
+    selectHeaderRange(axis, headerDragStart.current, index, e.ctrlKey)
+  }, [selectHeaderRange])
+
+  useEffect(() => {
+    const handleUp = () => { headerDragging.current = false }
+    window.addEventListener('mouseup', handleUp)
+    return () => window.removeEventListener('mouseup', handleUp)
+  }, [])
+
+  // Determine which rows/cols are fully selected for header highlighting
+  const selectedRows = useMemo(() => {
+    const set = new Set<number>()
+    if (gridState.selection.length === 0) return set
+    const colCount = gridState.grid[0]?.length ?? 0
+    if (colCount === 0) return set
+    const byRow = new Map<number, number>()
+    for (const p of gridState.selection) {
+      byRow.set(p.row, (byRow.get(p.row) ?? 0) + 1)
+    }
+    for (const [r, count] of byRow) {
+      if (count >= colCount) set.add(r)
+    }
+    return set
+  }, [gridState.selection, gridState.grid])
+
+  const selectedCols = useMemo(() => {
+    const set = new Set<number>()
+    if (gridState.selection.length === 0) return set
+    const rowCount = gridState.grid.length
+    if (rowCount === 0) return set
+    const byCol = new Map<number, number>()
+    for (const p of gridState.selection) {
+      byCol.set(p.col, (byCol.get(p.col) ?? 0) + 1)
+    }
+    for (const [c, count] of byCol) {
+      if (count >= rowCount) set.add(c)
+    }
+    return set
+  }, [gridState.selection, gridState.grid])
 
   const handleIconAdd = useCallback((base64: string) => {
     setImageLibrary(prev => {
@@ -545,27 +942,7 @@ export function EditorPage() {
         const puzzle: PuzzleData = JSON.parse(reader.result as string)
         migratePuzzleType(puzzle)
         setEditorPuzzleId(puzzle.id)
-        setTitle(puzzle.title)
-        setAuthors(puzzle.authors || [])
-        setRows(puzzle.gridSize.rows)
-        setCols(puzzle.gridSize.cols)
-        setDifficulty(puzzle.difficulty || '')
-        setTags(puzzle.tags || [])
-        setAutoCrossRulesState(puzzle.autoCrossRules || [])
-        setPuzzleType(puzzle.puzzleType || '')
-        setClickActionLeft(puzzle.clickActionLeft || '')
-        setClickActionRight(puzzle.clickActionRight || 'cross')
-        setRules(puzzle.rules || [])
-        setClues(puzzle.clues || [])
-        gridState.setGrid(puzzleToGrid(puzzle))
-        const images = new Set<string>()
-        for (const cell of puzzle.cells) {
-          if (cell.image) {
-            const resolved = puzzle.images?.[cell.image] ?? cell.image
-            images.add(resolved)
-          }
-        }
-        setImageLibrary(Array.from(images))
+        loadPuzzleIntoEditor(puzzle)
       } catch {
         showAlert('Invalid puzzle JSON file')
       }
@@ -576,7 +953,7 @@ export function EditorPage() {
   return (
     <div className="page-layout">
       <ResizableLeft>
-        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}>
+        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink headerRight={<><label style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}><input type="checkbox" checked={inProgress} onChange={e => setInProgress(e.target.checked)} />In Progress</label><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}>
           {solutionMode ? (<>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>
               Place the correct values for each cell. Only normal inputs (values) and borders will be saved as the solution.
@@ -612,6 +989,7 @@ export function EditorPage() {
                 <option value="Medium">Medium</option>
                 <option value="Hard">Hard</option>
                 <option value="Very hard">Very hard</option>
+                <option value="Expert">Expert</option>
               </select>
             </div>
             <div className="info-editor-field">
@@ -719,7 +1097,12 @@ export function EditorPage() {
                 <input type="number" value={cols} onChange={e => setCols(Math.min(99, Math.max(1, Number(e.target.value))))} min={1} max={99} />
               </div>
             </div>
-            <button className="info-btn" onClick={() => gridState.resetGrid(rows, cols)}>Resize Grid</button>
+            <button className="info-btn" onClick={async () => {
+              if (!await showConfirm('This will clear all cell data. To add rows/columns without clearing, use the + buttons around the grid instead.', 'Resize Grid')) return
+              gridState.resetGrid(rows, cols)
+              setFogGroups([])
+              gridScale.resetZoom()
+            }}>Resize Grid</button>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
             <button className="info-btn" onClick={handleSave}>Save (Download JSON)</button>
@@ -897,29 +1280,60 @@ export function EditorPage() {
           className="grid-scale-area"
           ref={gridScale.containerRef}
           onMouseDown={e => {
-            if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
+            if (e.button !== 0) return
+            if (!(e.target as HTMLElement).closest('.puzzle-grid') && !(e.target as HTMLElement).closest('.grid-header-cell')) {
               gridState.clearSelection()
             }
           }}
         >
           <div className="grid-scale-wrapper" style={gridScale.style}>
-            <Grid
-              grid={gridState.grid}
-              selection={gridState.selection}
-              debug={debug}
-              inputMode={isSuggestedMode ? suggestedEffectiveMode : gridState.inputMode}
-              activeColor={isSuggestedMode ? suggestedActiveColor : gridState.activeColor}
-              activeMark={isSuggestedMode ? suggestedActiveMark : gridState.activeMark}
-              clearSelection={handleClearSelection}
-              commitSelection={handleCommitSelection}
-              onDragChange={handleDragChange}
-              onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
-              onCommitEdges={gridState.commitEdges}
-              onCommitFixedEdges={gridState.commitFixedEdges}
-              onToggleEdgeCross={gridState.toggleEdgeCross}
-              onToggleFixedMark={gridState.toggleFixedMark}
-              isPinching={gridScale.isPinching}
-            />
+            <div className="grid-expand-wrapper">
+              <button className="grid-expand-btn grid-expand-top" title="Add row to top" onClick={() => { fogShiftByDepth.current.set(gridState.undoStackLength(), { row: 1, col: 0 }); gridState.addRow('top'); shiftFogGroups(1, 0) }}>+</button>
+              <button className="grid-shrink-btn grid-shrink-top" title="Remove top row" onClick={() => { fogShiftByDepth.current.set(gridState.undoStackLength(), { row: -1, col: 0 }); gridState.removeRow('top'); shiftFogGroups(-1, 0) }}>-</button>
+              <button className="grid-expand-btn grid-expand-bottom" title="Add row to bottom" onClick={() => gridState.addRow('bottom')}>+</button>
+              <button className="grid-shrink-btn grid-shrink-bottom" title="Remove bottom row" onClick={() => gridState.removeRow('bottom')}>-</button>
+              <button className="grid-expand-btn grid-expand-left" title="Add column to left" onClick={() => { fogShiftByDepth.current.set(gridState.undoStackLength(), { row: 0, col: 1 }); gridState.addCol('left'); shiftFogGroups(0, 1) }}>+</button>
+              <button className="grid-shrink-btn grid-shrink-left" title="Remove left column" onClick={() => { fogShiftByDepth.current.set(gridState.undoStackLength(), { row: 0, col: -1 }); gridState.removeCol('left'); shiftFogGroups(0, -1) }}>-</button>
+              <button className="grid-expand-btn grid-expand-right" title="Add column to right" onClick={() => gridState.addCol('right')}>+</button>
+              <button className="grid-shrink-btn grid-shrink-right" title="Remove right column" onClick={() => gridState.removeCol('right')}>-</button>
+              {/* Column headers (top) */}
+              <div className="grid-headers-row top">
+                {gridState.grid[0]?.map((_, ci) => (
+                  <div key={ci} className={`grid-header-cell${selectedCols.has(ci) ? ' selected' : ''}`}
+                    onMouseDown={e => handleHeaderMouseDown('col', ci, e)}
+                    onMouseEnter={e => handleHeaderMouseEnter('col', ci, e)}
+                  >{colLabel(ci)}</div>
+                ))}
+              </div>
+              {/* Row headers (left) */}
+              <div className="grid-headers-col left">
+                {gridState.grid.map((_, ri) => (
+                  <div key={ri} className={`grid-header-cell${selectedRows.has(ri) ? ' selected' : ''}`}
+                    onMouseDown={e => handleHeaderMouseDown('row', ri, e)}
+                    onMouseEnter={e => handleHeaderMouseEnter('row', ri, e)}
+                  >{ri + 1}</div>
+                ))}
+              </div>
+              <Grid
+                grid={gridState.grid}
+                selection={gridState.selection}
+                debug={debug}
+                inputMode={isSuggestedMode ? suggestedEffectiveMode : gridState.inputMode}
+                activeColor={isSuggestedMode ? suggestedActiveColor : gridState.activeColor}
+                activeMark={isSuggestedMode ? suggestedActiveMark : gridState.activeMark}
+                clearSelection={handleClearSelection}
+                commitSelection={handleCommitSelection}
+                onDragChange={handleDragChange}
+                onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
+                onCommitEdges={gridState.commitEdges}
+                onCommitFixedEdges={gridState.commitFixedEdges}
+                onToggleEdgeCross={gridState.toggleEdgeCross}
+                onToggleLine={gridState.toggleLine}
+                onToggleFixedMark={gridState.toggleFixedMark}
+                isPinching={gridScale.isPinching}
+                fogPreviewCells={fogPreviewCells}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -942,10 +1356,10 @@ export function EditorPage() {
           onActiveMarkChange={gridState.setActiveMark}
           onMarkSelect={shape => gridState.toggleMark(shape)}
           onMarkErase={gridState.eraseMark}
-          onLabelApply={(text, align) => gridState.applyLabel(text, align)}
-          onLabelRemove={() => gridState.removeLabel()}
-          onUndo={gridState.undo}
-          onRedo={gridState.redo}
+          onLabelApply={(align, text, showThroughFog, revealWithFog) => gridState.applyLabel(align, text, showThroughFog, revealWithFog)}
+          onLabelRemove={(align) => gridState.removeLabel(align)}
+          onUndo={handleUndo}
+          onRedo={handleRedo}
           onErase={gridState.clearValues}
           isEditor={!solutionMode}
           imageLibrary={imageLibrary}
@@ -961,6 +1375,31 @@ export function EditorPage() {
           onClickActionLeftChange={setClickActionLeft}
           onClickActionRightChange={setClickActionRight}
           puzzleHasClickActions={!!puzzleType}
+          fogGroups={solutionMode ? undefined : fogGroups}
+          fogEditStep={fogEditStep}
+          fogPendingTriggers={fogPendingTriggers}
+          fogPendingCellCount={fogPendingCells.length}
+          fogPendingTriggerCells={fogPendingTriggerCells}
+          fogEditingGroupId={fogEditingGroupId}
+          selectionCount={gridState.selection.length}
+          onFogGroupAdd={handleFogGroupAdd}
+          onFogGroupDelete={handleFogGroupDelete}
+          onFogGroupSelect={handleFogGroupSelect}
+          onFogGroupEdit={handleFogGroupEdit}
+          onFogConfirmCells={handleFogConfirmCells}
+          onFogSelectTriggerCells={handleFogSelectTriggerCells}
+          onFogConfirmTriggerCells={handleFogConfirmTriggerCells}
+          onFogAddTrigger={handleFogAddTrigger}
+          onFogTriggerMatchModeChange={handleFogTriggerMatchModeChange}
+          onFogTriggerNegateChange={handleFogTriggerNegateChange}
+          onFogTriggerGroupModeChange={setFogPendingTriggerMode}
+          fogPendingTriggerMode={fogPendingTriggerMode}
+          onFogRemoveTrigger={handleFogRemoveTrigger}
+          onFogHighlightTrigger={handleFogHighlightTrigger}
+          onFogEditTrigger={handleFogEditTrigger}
+          onFogFinishGroup={handleFogFinishGroup}
+          onFogReSelectFogCells={handleFogReSelectFogCells}
+          onFogCancel={handleFogCancel}
         />
       </ResizableRight>
 

@@ -15,6 +15,7 @@ function cloneGrid(grid: CellData[][]): CellData[][] {
     borders: [...cell.borders] as [number, number, number, number],
     fixedBorders: [...cell.fixedBorders] as [number, number, number, number],
     edgeCrosses: [...cell.edgeCrosses] as [boolean, boolean, boolean, boolean],
+    lines: [...cell.lines] as [boolean, boolean, boolean, boolean],
     fixedEdgeMarks: [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
     fixedVertexMarks: [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
   })))
@@ -30,21 +31,31 @@ function cloneForUndo(grid: CellData[][]): CellData[][] {
     borders: [...cell.borders] as [number, number, number, number],
     fixedBorders: [...cell.fixedBorders] as [number, number, number, number],
     edgeCrosses: [...cell.edgeCrosses] as [boolean, boolean, boolean, boolean],
+    lines: [...cell.lines] as [boolean, boolean, boolean, boolean],
     fixedEdgeMarks: [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
     fixedVertexMarks: [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
   })))
 }
 
 export function useGrid(initialRows: number, initialCols: number) {
-  const [grid, setGrid] = useState<CellData[][]>(() =>
+  const [grid, setGridRaw] = useState<CellData[][]>(() =>
     createEmptyGrid(initialRows, initialCols)
   )
-  // Ref mirror of grid state — always up-to-date after each render.
-  // Used by undo/redo to read current state without side effects inside updaters.
   const gridRef = useRef(grid)
   gridRef.current = grid
+  // Wrap setGrid to also update the ref synchronously, so unmount cleanup
+  // always sees the latest grid even if React hasn't re-rendered yet.
+  const setGrid = useCallback((updater: CellData[][] | ((prev: CellData[][]) => CellData[][])) => {
+    setGridRaw(prev => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      gridRef.current = next
+      return next
+    })
+  }, [])
 
-  const [selection, setSelection] = useState<CellPosition[]>([])
+  const [selection, setSelectionRaw] = useState<CellPosition[]>([])
+  const selectionRef = useRef<CellPosition[]>([])
+  const setSelection = useCallback((s: CellPosition[]) => { selectionRef.current = s; setSelectionRaw(s) }, [])
   const [inputMode, setInputModeRaw] = useState<InputMode>('normal')
   const undoStack = useRef<CellData[][][]>([])
   const redoStack = useRef<CellData[][][]>([])
@@ -106,7 +117,9 @@ export function useGrid(initialRows: number, initialCols: number) {
     setSelection([])
   }, [])
 
+  const prevSelection = useRef<CellPosition[]>([])
   const clearSelection = useCallback(() => {
+    prevSelection.current = selectionRef.current
     setGrid(prev => prev.map(row => row.map(cell => ({ ...cell, selected: false }))))
     setSelection([])
   }, [])
@@ -155,7 +168,7 @@ export function useGrid(initialRows: number, initialCols: number) {
           redoStack.current = []
           crossAction.current = !prev[sel[0].row][sel[0].col].crossed
         }
-        const eligible = sel.filter(pos => !prev[pos.row][pos.col].value && !prev[pos.row][pos.col].fixedValue && !prev[pos.row][pos.col].mark)
+        const eligible = sel.filter(pos => { const c = prev[pos.row][pos.col]; return !c.value && !c.fixedValue && !c.mark && !c.fixedMark })
         const needsUpdate = eligible.some(pos => prev[pos.row][pos.col].crossed !== crossAction.current)
         if (!needsUpdate) return prev
         const newGrid = cloneGrid(prev)
@@ -192,7 +205,7 @@ export function useGrid(initialRows: number, initialCols: number) {
           const targets = getAutoCrossTargets(eligible, rules, rows, cols)
           for (const t of targets) {
             const cell = newGrid[t.row][t.col]
-            if (!cell.value && !cell.fixedValue && !cell.mark) {
+            if (!cell.value && !cell.fixedValue && !cell.mark && !cell.fixedMark) {
               cell.crossed = true
             }
           }
@@ -304,7 +317,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     }
   }, [inputMode, activeColor, activeMark])
 
-  const commitSelection = useCallback((sel: CellPosition[]) => {
+  const commitSelection = useCallback((sel: CellPosition[], ctrlHeld?: boolean) => {
     // Color mode with active color: already applied live, reset flag
     if ((inputMode === 'color' || inputMode === 'fixedColor') && activeColor !== null) {
       colorDragActive.current = false
@@ -326,16 +339,58 @@ export function useGrid(initialRows: number, initialCols: number) {
       return
     }
     // Normal modes: commit selection highlight
-    setGrid(prev => {
-      const newGrid = prev.map(row => row.map(cell => ({ ...cell })))
-      for (const pos of sel) {
-        if (newGrid[pos.row]?.[pos.col]) {
-          newGrid[pos.row][pos.col].selected = true
+    if (ctrlHeld) {
+      // Ctrl: accumulate selection.
+      // If the first cell of the drag was already selected → remove mode (deselect dragged cells).
+      // Otherwise → add mode (add dragged cells to selection).
+      const currentGrid = gridRef.current
+      const newSelKeys = new Set(sel.map(p => `${p.row},${p.col}`))
+      const prevSelected: CellPosition[] = []
+      for (let ri = 0; ri < currentGrid.length; ri++) {
+        for (let ci = 0; ci < currentGrid[ri].length; ci++) {
+          if (currentGrid[ri][ci].selected) prevSelected.push({ row: ri, col: ci })
         }
       }
-      return newGrid
-    })
-    setSelection(sel)
+      const prevKeys = new Set(prevSelected.map(p => `${p.row},${p.col}`))
+      const firstWasSelected = sel.length > 0 && prevKeys.has(`${sel[0].row},${sel[0].col}`)
+      const removing = firstWasSelected
+      const merged: CellPosition[] = []
+      for (const p of prevSelected) {
+        if (removing && newSelKeys.has(`${p.row},${p.col}`)) continue
+        merged.push(p)
+      }
+      if (!removing) {
+        for (const p of sel) {
+          if (!prevKeys.has(`${p.row},${p.col}`)) merged.push(p)
+        }
+      }
+      setGrid(prev => {
+        const newGrid = prev.map(row => row.map(cell => ({ ...cell, selected: false })))
+        for (const pos of merged) {
+          if (newGrid[pos.row]?.[pos.col]) newGrid[pos.row][pos.col].selected = true
+        }
+        return newGrid
+      })
+      setSelection(merged)
+    } else {
+      // Single click on the only previously selected cell → deselect
+      if (sel.length === 1 && prevSelection.current.length === 1 &&
+          sel[0].row === prevSelection.current[0].row &&
+          sel[0].col === prevSelection.current[0].col) {
+        setSelection([])
+        return
+      }
+      setGrid(prev => {
+        const newGrid = prev.map(row => row.map(cell => ({ ...cell })))
+        for (const pos of sel) {
+          if (newGrid[pos.row]?.[pos.col]) {
+            newGrid[pos.row][pos.col].selected = true
+          }
+        }
+        return newGrid
+      })
+      setSelection(sel)
+    }
   }, [inputMode, activeColor, activeMark, setGridWithUndo])
 
   const applyValue = useCallback(
@@ -358,7 +413,7 @@ export function useGrid(initialRows: number, initialCols: number) {
           const targets = getAutoCrossTargets(selection, rules, rows, cols)
           for (const t of targets) {
             const cell = newGrid[t.row][t.col]
-            if (!cell.value && !cell.fixedValue && !cell.mark) {
+            if (!cell.value && !cell.fixedValue && !cell.mark && !cell.fixedMark) {
               cell.crossed = true
             }
           }
@@ -453,16 +508,18 @@ export function useGrid(initialRows: number, initialCols: number) {
   )
 
   const applyLabel = useCallback(
-    (text: string, align: LabelAlign) => {
+    (align: LabelAlign, text: string, showThroughFog?: boolean, revealWithFog?: string) => {
       if (selection.length === 0) return
-      const pos = selection[0]
       setGridWithUndo(prev => {
         const newGrid = cloneGrid(prev)
-        const cell = newGrid[pos.row][pos.col]
-        if (cell.label?.text === text && cell.label?.align === align) {
-          cell.label = null
-        } else {
-          cell.label = { text, align }
+        for (const pos of selection) {
+          const cell = newGrid[pos.row][pos.col]
+          const existing = cell.labels[align]
+          if (existing?.text === text && existing?.showThroughFog === showThroughFog && existing?.revealWithFog === revealWithFog) {
+            cell.labels = { ...cell.labels, [align]: null }
+          } else {
+            cell.labels = { ...cell.labels, [align]: { text, showThroughFog, revealWithFog } }
+          }
         }
         return newGrid
       })
@@ -470,12 +527,12 @@ export function useGrid(initialRows: number, initialCols: number) {
     [selection, setGridWithUndo]
   )
 
-  const removeLabel = useCallback(() => {
+  const removeLabel = useCallback((align: LabelAlign) => {
     if (selection.length === 0) return
     setGridWithUndo(prev => {
       const newGrid = cloneGrid(prev)
       for (const pos of selection) {
-        newGrid[pos.row][pos.col].label = null
+        newGrid[pos.row][pos.col].labels = { ...newGrid[pos.row][pos.col].labels, [align]: null }
       }
       return newGrid
     })
@@ -485,7 +542,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     if (selection.length === 0) return
     setGridWithUndo(prev => {
       const newGrid = cloneGrid(prev)
-      const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].value && !newGrid[pos.row][pos.col].fixedValue && !newGrid[pos.row][pos.col].mark)
+      const eligible = selection.filter(pos => { const c = newGrid[pos.row][pos.col]; return !c.value && !c.fixedValue && !c.mark && !c.fixedMark })
       if (eligible.length === 0) return prev
       const allCrossed = eligible.every(pos => newGrid[pos.row][pos.col].crossed)
       for (const pos of eligible) {
@@ -610,6 +667,9 @@ export function useGrid(initialRows: number, initialCols: number) {
     })
   }, [selection, setGridWithUndo])
 
+  const isEditorRef = useRef(false)
+  const setIsEditor = useCallback((v: boolean) => { isEditorRef.current = v }, [])
+
   const clearValues = useCallback(() => {
     if (selection.length === 0) return
     setGridWithUndo(prev => {
@@ -619,14 +679,17 @@ export function useGrid(initialRows: number, initialCols: number) {
         cell.value = null
         cell.notes = []
         cell.color = null
-        cell.fixedColor = null
         cell.crossed = false
         cell.mark = null
-        cell.fixedMark = null
-        cell.fixedEdgeMarks = [null, null, null, null]
-        cell.fixedVertexMarks = [null, null, null, null]
         cell.edgeCrosses = [false, false, false, false]
+        cell.lines = [false, false, false, false]
         cell.borders = [...cell.fixedBorders] as [number, number, number, number]
+        if (isEditorRef.current) {
+          cell.fixedColor = null
+          cell.fixedMark = null
+          cell.fixedEdgeMarks = [null, null, null, null]
+          cell.fixedVertexMarks = [null, null, null, null]
+        }
       }
       return newGrid
     })
@@ -773,11 +836,70 @@ export function useGrid(initialRows: number, initialCols: number) {
     })
   }, [setGridWithUndo])
 
+  const toggleLine = useCallback((pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => {
+    const setter = withUndo ? setGridWithUndo : setGrid
+    setter(prev => {
+      const rows = prev.length
+      const cols = prev[0]?.length ?? 0
+      const newGrid = cloneGrid(prev)
+      newGrid[pos.row][pos.col].lines[side] = value
+      // Set neighbor's matching side
+      const OPPOSITE: Record<number, { dr: number; dc: number; nSide: 0 | 1 | 2 | 3 }> = {
+        0: { dr: -1, dc: 0, nSide: 2 },
+        1: { dr: 0, dc: 1, nSide: 3 },
+        2: { dr: 1, dc: 0, nSide: 0 },
+        3: { dr: 0, dc: -1, nSide: 1 },
+      }
+      const opp = OPPOSITE[side]
+      const nr = pos.row + opp.dr, nc = pos.col + opp.dc
+      if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+        newGrid[nr][nc].lines[opp.nSide] = value
+      }
+      return newGrid
+    })
+  }, [setGrid, setGridWithUndo])
+
   const resetGrid = useCallback((rows: number, cols: number) => {
     undoStack.current = []
     setGrid(createEmptyGrid(rows, cols))
     setSelection([])
   }, [])
+
+  const makeEmptyCell = useCallback((): CellData => ({
+    value: null, notes: [], fixedValue: null, fixedColor: null,
+    borders: [0,0,0,0], fixedBorders: [0,0,0,0], color: null, labels: {},
+    crossed: false, mark: null, fixedMark: null,
+    fixedEdgeMarks: [null,null,null,null], fixedVertexMarks: [null,null,null,null],
+    edgeCrosses: [false,false,false,false], lines: [false,false,false,false], selected: false, image: null,
+  }), [])
+
+  const addRow = useCallback((side: 'top' | 'bottom') => {
+    setGridWithUndo(prev => {
+      const cols = prev[0]?.length ?? 0
+      const newRow = Array.from({ length: cols }, makeEmptyCell)
+      return side === 'top' ? [newRow, ...prev] : [...prev, newRow]
+    })
+  }, [setGridWithUndo, makeEmptyCell])
+
+  const addCol = useCallback((side: 'left' | 'right') => {
+    setGridWithUndo(prev => prev.map(row =>
+      side === 'left' ? [makeEmptyCell(), ...row] : [...row, makeEmptyCell()]
+    ))
+  }, [setGridWithUndo, makeEmptyCell])
+
+  const removeRow = useCallback((side: 'top' | 'bottom') => {
+    setGridWithUndo(prev => {
+      if (prev.length <= 1) return prev
+      return side === 'top' ? prev.slice(1) : prev.slice(0, -1)
+    })
+  }, [setGridWithUndo])
+
+  const removeCol = useCallback((side: 'left' | 'right') => {
+    setGridWithUndo(prev => {
+      if ((prev[0]?.length ?? 0) <= 1) return prev
+      return prev.map(row => side === 'left' ? row.slice(1) : row.slice(0, -1))
+    })
+  }, [setGridWithUndo])
 
   return {
     grid,
@@ -813,10 +935,18 @@ export function useGrid(initialRows: number, initialCols: number) {
     commitEdges,
     commitFixedEdges,
     toggleEdgeCross,
+    toggleLine,
     resetGrid,
+    addRow,
+    addCol,
+    removeRow,
+    removeCol,
     setAutoCrossRules,
     setPuzzleType,
+    setIsEditor,
     undo,
     redo,
+    undoStackLength: () => undoStack.current.length,
+    gridRef,
   }
 }
