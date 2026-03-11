@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { InputMode, LabelAlign, MarkShape, CellPosition, FogGroup, FogTrigger } from '../../types'
+import { useState, useEffect } from 'react'
+import { InputMode, LabelAlign, MarkShape, CellPosition, CellLabels, FogGroup, FogTrigger } from '../../types'
 import { IconBrowser } from './IconBrowser'
 import './Toolbar.css'
 
@@ -39,6 +39,7 @@ interface ToolbarProps {
   onActiveColorChange?: (color: string | null) => void
   onLabelApply?: (align: LabelAlign, text: string, showThroughFog?: boolean, revealWithFog?: string) => void
   onLabelRemove?: (align: LabelAlign) => void
+  selectedCellLabels?: CellLabels | null
   onUndo: () => void
   onRedo: () => void
   onErase: () => void
@@ -97,6 +98,7 @@ export function Toolbar({
   onActiveColorChange,
   onLabelApply,
   onLabelRemove,
+  selectedCellLabels,
   onUndo,
   onRedo,
   onErase,
@@ -151,6 +153,26 @@ export function Toolbar({
   const [labelText, setLabelText] = useState('')
   const [labelAlign, setLabelAlign] = useState<LabelAlign>('top')
   const [labelFogMode, setLabelFogMode] = useState<'hidden' | 'always' | string>('hidden') // 'hidden' | 'always' | fog group id
+
+  // Populate label fields from selected cell's existing label
+  useEffect(() => {
+    if (!showLabel || !selectedCellLabels) return
+    // Find the first non-empty label to populate from
+    for (const align of ['top', 'middle', 'bottom'] as LabelAlign[]) {
+      const lbl = selectedCellLabels[align]
+      if (lbl?.text) {
+        setLabelAlign(align)
+        setLabelText(lbl.text)
+        if (lbl.revealWithFog) setLabelFogMode(lbl.revealWithFog)
+        else if (lbl.showThroughFog) setLabelFogMode('always')
+        else setLabelFogMode('hidden')
+        return
+      }
+    }
+    // No label found — clear fields
+    setLabelText('')
+    setLabelFogMode('hidden')
+  }, [showLabel, selectedCellLabels])
 
   const renderModeBtn = (m: { mode: InputMode; label: string }) => (
     <button
@@ -397,24 +419,27 @@ export function Toolbar({
                     placeholder="Label text..."
                   />
                   <div className="tb-row">
-                    <button
-                      className={`tb-btn-sm ${labelAlign === 'top' ? 'selected' : ''}`}
-                      onClick={() => setLabelAlign('top')}
-                    >
-                      Top
-                    </button>
-                    <button
-                      className={`tb-btn-sm ${labelAlign === 'middle' ? 'selected' : ''}`}
-                      onClick={() => setLabelAlign('middle')}
-                    >
-                      Middle
-                    </button>
-                    <button
-                      className={`tb-btn-sm ${labelAlign === 'bottom' ? 'selected' : ''}`}
-                      onClick={() => setLabelAlign('bottom')}
-                    >
-                      Bottom
-                    </button>
+                    {(['top', 'middle', 'bottom'] as LabelAlign[]).map(align => (
+                      <button
+                        key={align}
+                        className={`tb-btn-sm ${labelAlign === align ? 'selected' : ''}`}
+                        onClick={() => {
+                          setLabelAlign(align)
+                          const lbl = selectedCellLabels?.[align]
+                          if (lbl?.text) {
+                            setLabelText(lbl.text)
+                            if (lbl.revealWithFog) setLabelFogMode(lbl.revealWithFog)
+                            else if (lbl.showThroughFog) setLabelFogMode('always')
+                            else setLabelFogMode('hidden')
+                          } else {
+                            setLabelText('')
+                            setLabelFogMode('hidden')
+                          }
+                        }}
+                      >
+                        {align.charAt(0).toUpperCase() + align.slice(1)}
+                      </button>
+                    ))}
                   </div>
                   {fogGroups && fogGroups.length > 0 && (
                     <label className="tb-row" style={{ fontSize: '0.85em', gap: 4, flexDirection: 'column', alignItems: 'flex-start' }}>

@@ -1352,6 +1352,7 @@ export function EditorPage() {
           onMarkErase={gridState.eraseMark}
           onLabelApply={(align, text, showThroughFog, revealWithFog) => gridState.applyLabel(align, text, showThroughFog, revealWithFog)}
           onLabelRemove={(align) => gridState.removeLabel(align)}
+          selectedCellLabels={gridState.selection.length === 1 ? gridState.grid[gridState.selection[0].row][gridState.selection[0].col].labels : null}
           onUndo={handleUndo}
           onRedo={handleRedo}
           onErase={gridState.clearValues}
