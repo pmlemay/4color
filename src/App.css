@@ -271,6 +271,7 @@ body {
   justify-content: center;
   position: relative;
   min-height: 0;
+  touch-action: none; /* Prevent browser gestures — we handle zoom/pan ourselves */
 }
 
 .grid-scale-wrapper {

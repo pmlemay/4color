@@ -144,6 +144,55 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
     }
   }, [])
 
+  // Safari gesturestart/gesturechange for trackpad pinch (iPad + trackpad, Mac Safari)
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const handleGestureStart = (e: Event) => {
+      if (!el.contains(e.target as Node)) return
+      e.preventDefault()
+      ;(el as any).__gestureStartZoom = zoomLevelRef.current
+    }
+
+    const handleGestureChange = (e: Event) => {
+      if (!el.contains(e.target as Node)) return
+      e.preventDefault()
+      const ge = e as any // Safari GestureEvent has .scale
+      const startZoom = (el as any).__gestureStartZoom ?? zoomLevelRef.current
+      const newZoom = Math.min(maxZoomRef.current, Math.max(MIN_ZOOM, startZoom * ge.scale))
+
+      // Zoom toward gesture center
+      const rect = el.getBoundingClientRect()
+      const cx = ge.clientX - rect.left - rect.width / 2
+      const cy = ge.clientY - rect.top - rect.height / 2
+      const oldScale = fitScaleRef.current * startZoom
+      const newScale = fitScaleRef.current * newZoom
+      const ratio = newScale / oldScale
+      const oldPan = panRef.current
+
+      setPan({
+        x: cx - ratio * (cx - oldPan.x),
+        y: cy - ratio * (cy - oldPan.y),
+      })
+      setZoomLevel(newZoom)
+    }
+
+    const handleGestureEnd = (e: Event) => {
+      if (!el.contains(e.target as Node)) return
+      e.preventDefault()
+    }
+
+    el.addEventListener('gesturestart', handleGestureStart, { passive: false } as any)
+    el.addEventListener('gesturechange', handleGestureChange, { passive: false } as any)
+    el.addEventListener('gestureend', handleGestureEnd, { passive: false } as any)
+    return () => {
+      el.removeEventListener('gesturestart', handleGestureStart)
+      el.removeEventListener('gesturechange', handleGestureChange)
+      el.removeEventListener('gestureend', handleGestureEnd)
+    }
+  }, [])
+
   // Pinch-to-zoom centered on midpoint (mobile) — no single-finger pan
   useEffect(() => {
     const getTouchDist = (t1: Touch, t2: Touch) =>
