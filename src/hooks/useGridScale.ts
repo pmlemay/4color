@@ -4,7 +4,7 @@ const MIN_ZOOM = 0.3
 const BASE_MAX_ZOOM = 3.0
 // Ensure the user can always zoom in to at least this effective scale
 const MIN_EFFECTIVE_MAX = 2.0
-const ZOOM_SENSITIVITY = 0.001
+const ZOOM_SENSITIVITY = 0.0015
 const CELL_SIZE = 50
 // Extra pixels for grid border (1px border-collapse means ~1px per edge)
 const GRID_PADDING = 2
@@ -59,9 +59,8 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
   }, [rows, cols, autoResetZoom])
 
   // Wheel/trackpad handling:
-  // - ctrlKey (trackpad pinch or Ctrl+scroll) → zoom
-  // - deltaX present without ctrlKey (trackpad two-finger scroll) → pan
-  // - pure deltaY without ctrlKey or deltaX (mouse wheel) → zoom
+  // - ctrlKey (trackpad pinch or Ctrl+scroll) → zoom toward cursor
+  // - plain scroll (trackpad two-finger or mouse wheel) → pan
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       const el = containerRef.current
@@ -69,19 +68,8 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
       e.preventDefault()
       e.stopPropagation()
 
-      // Trackpad two-finger scroll: has deltaX or ctrlKey is false with fine-grained deltaY
-      // Mouse wheel: no deltaX, larger discrete deltaY steps
-      const isTrackpadPan = !e.ctrlKey && e.deltaX !== 0
-
-      if (isTrackpadPan) {
-        // Two-finger scroll on trackpad — pan
-        const oldPan = panRef.current
-        setPan({
-          x: oldPan.x - e.deltaX,
-          y: oldPan.y - e.deltaY,
-        })
-      } else {
-        // Pinch-to-zoom, Ctrl+scroll, or mouse wheel — zoom toward cursor
+      if (e.ctrlKey) {
+        // Pinch-to-zoom on trackpad, or Ctrl+scroll — zoom toward cursor
         const oldZoom = zoomLevelRef.current
         const delta = -e.deltaY * ZOOM_SENSITIVITY
         const newZoom = Math.min(maxZoomRef.current, Math.max(MIN_ZOOM, oldZoom + delta))
@@ -100,6 +88,13 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
           y: cy - ratio * (cy - oldPan.y),
         })
         setZoomLevel(newZoom)
+      } else {
+        // Two-finger scroll on trackpad or mouse wheel — pan
+        const oldPan = panRef.current
+        setPan({
+          x: oldPan.x - e.deltaX,
+          y: oldPan.y - e.deltaY,
+        })
       }
     }
 
@@ -208,7 +203,8 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
     const handleTouchStart = (e: TouchEvent) => {
       const el = containerRef.current
       if (!el || !el.contains(e.target as Node)) return
-      if (e.touches.length === 2) {
+      if (e.touches.length >= 2) {
+        e.preventDefault() // Prevent browser zoom on iOS Chrome
         setIsPinching(true)
         pinchStartDist.current = getTouchDist(e.touches[0], e.touches[1])
         pinchStartZoom.current = zoomLevelRef.current
@@ -255,7 +251,7 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
       }
     }
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true })
+    document.addEventListener('touchstart', handleTouchStart, { passive: false })
     document.addEventListener('touchmove', handleTouchMove, { passive: false })
     document.addEventListener('touchend', handleTouchEnd, { passive: true })
     return () => {
