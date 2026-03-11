@@ -58,7 +58,10 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
     }
   }, [rows, cols, autoResetZoom])
 
-  // Scroll wheel = zoom toward cursor position
+  // Wheel/trackpad handling:
+  // - ctrlKey (trackpad pinch or Ctrl+scroll) → zoom
+  // - deltaX present without ctrlKey (trackpad two-finger scroll) → pan
+  // - pure deltaY without ctrlKey or deltaX (mouse wheel) → zoom
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       const el = containerRef.current
@@ -66,25 +69,38 @@ export function useGridScale({ rows, cols, autoResetZoom = true }: UseGridScaleO
       e.preventDefault()
       e.stopPropagation()
 
-      const oldZoom = zoomLevelRef.current
-      const delta = -e.deltaY * ZOOM_SENSITIVITY
-      const newZoom = Math.min(maxZoomRef.current, Math.max(MIN_ZOOM, oldZoom + delta))
-      if (newZoom === oldZoom) return
+      // Trackpad two-finger scroll: has deltaX or ctrlKey is false with fine-grained deltaY
+      // Mouse wheel: no deltaX, larger discrete deltaY steps
+      const isTrackpadPan = !e.ctrlKey && e.deltaX !== 0
 
-      // Zoom toward cursor: adjust pan so the point under the cursor stays fixed
-      const rect = el.getBoundingClientRect()
-      const cx = e.clientX - rect.left - rect.width / 2
-      const cy = e.clientY - rect.top - rect.height / 2
-      const oldScale = fitScaleRef.current * oldZoom
-      const newScale = fitScaleRef.current * newZoom
-      const ratio = newScale / oldScale
-      const oldPan = panRef.current
+      if (isTrackpadPan) {
+        // Two-finger scroll on trackpad — pan
+        const oldPan = panRef.current
+        setPan({
+          x: oldPan.x - e.deltaX,
+          y: oldPan.y - e.deltaY,
+        })
+      } else {
+        // Pinch-to-zoom, Ctrl+scroll, or mouse wheel — zoom toward cursor
+        const oldZoom = zoomLevelRef.current
+        const delta = -e.deltaY * ZOOM_SENSITIVITY
+        const newZoom = Math.min(maxZoomRef.current, Math.max(MIN_ZOOM, oldZoom + delta))
+        if (newZoom === oldZoom) return
 
-      setPan({
-        x: cx - ratio * (cx - oldPan.x),
-        y: cy - ratio * (cy - oldPan.y),
-      })
-      setZoomLevel(newZoom)
+        const rect = el.getBoundingClientRect()
+        const cx = e.clientX - rect.left - rect.width / 2
+        const cy = e.clientY - rect.top - rect.height / 2
+        const oldScale = fitScaleRef.current * oldZoom
+        const newScale = fitScaleRef.current * newZoom
+        const ratio = newScale / oldScale
+        const oldPan = panRef.current
+
+        setPan({
+          x: cx - ratio * (cx - oldPan.x),
+          y: cy - ratio * (cy - oldPan.y),
+        })
+        setZoomLevel(newZoom)
+      }
     }
 
     window.addEventListener('wheel', handleWheel, { passive: false, capture: true })
