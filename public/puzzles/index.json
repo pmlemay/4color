@@ -142,7 +142,7 @@
     },
     "difficulty": "Hard",
     "tags": [
-      "murdoku"
+      "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
@@ -300,9 +300,9 @@
     "difficulty": "Medium",
     "tags": [
       "Progressive",
-      "nurikabe",
-      "lits",
-      "lohkous"
+      "Lohkous",
+      "LITS",
+      "Nurikabe"
     ],
     "clickActionRight": "cross"
   }
