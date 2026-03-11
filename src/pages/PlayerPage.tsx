@@ -175,18 +175,28 @@ export function PlayerPage() {
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current) }
   }, [gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, puzzleId, revealedFogGroupIds])
 
-  // Save on unmount, visibility change, and beforeunload
+  // Save on unmount, visibility change, beforeunload, and pagehide
+  // pagehide is more reliable than beforeunload on iOS Safari/Chrome
   useEffect(() => {
     const handleVisChange = () => { if (document.hidden) flushSave() }
-    const handleBeforeUnload = () => { flushSave() }
+    const handleUnload = () => { flushSave() }
     document.addEventListener('visibilitychange', handleVisChange)
-    window.addEventListener('beforeunload', handleBeforeUnload)
+    window.addEventListener('beforeunload', handleUnload)
+    window.addEventListener('pagehide', handleUnload)
     return () => {
       document.removeEventListener('visibilitychange', handleVisChange)
-      window.removeEventListener('beforeunload', handleBeforeUnload)
+      window.removeEventListener('beforeunload', handleUnload)
+      window.removeEventListener('pagehide', handleUnload)
       flushSave()
     }
   }, [flushSave])
+
+  // Periodically save timer progress (every 10s) so iOS refreshes don't lose time
+  useEffect(() => {
+    if (!puzzleId || puzzleCompleted) return
+    const interval = setInterval(() => { if (loaded.current) flushSave() }, 10000)
+    return () => clearInterval(interval)
+  }, [puzzleId, puzzleCompleted, flushSave])
 
   const puzzleType = puzzle?.puzzleType || ''
   const puzzleHasClickActions = !!(puzzle?.clickActionLeft)
