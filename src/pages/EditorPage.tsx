@@ -1132,12 +1132,10 @@ export function EditorPage() {
               <div
                 key={i}
                 className="info-list-item info-list-draggable"
-                draggable
-                onDragStart={() => handleDragStart('rule', i)}
                 onDragOver={e => handleDragOver(e, i)}
                 onDrop={() => handleDrop('rule')}
               >
-                <span className="info-drag-handle" title="Drag to reorder">&#x2630;</span>
+                <span className="info-drag-handle" title="Drag to reorder" draggable onDragStart={() => handleDragStart('rule', i)}>&#x2630;</span>
                 {editingItem?.type === 'rule' && editingItem.index === i ? (
                   <input
                     className="info-edit-input"
@@ -1181,12 +1179,10 @@ export function EditorPage() {
               <div
                 key={i}
                 className="info-list-item info-list-draggable"
-                draggable
-                onDragStart={() => handleDragStart('specialRule', i)}
                 onDragOver={e => handleDragOver(e, i)}
                 onDrop={() => handleDrop('specialRule')}
               >
-                <span className="info-drag-handle" title="Drag to reorder">&#x2630;</span>
+                <span className="info-drag-handle" title="Drag to reorder" draggable onDragStart={() => handleDragStart('specialRule', i)}>&#x2630;</span>
                 {editingItem?.type === 'specialRule' && editingItem.index === i ? (
                   <input
                     className="info-edit-input"
@@ -1230,12 +1226,10 @@ export function EditorPage() {
               <div
                 key={i}
                 className="info-list-item info-list-draggable"
-                draggable
-                onDragStart={() => handleDragStart('clue', i)}
                 onDragOver={e => handleDragOver(e, i)}
                 onDrop={() => handleDrop('clue')}
               >
-                <span className="info-drag-handle" title="Drag to reorder">&#x2630;</span>
+                <span className="info-drag-handle" title="Drag to reorder" draggable onDragStart={() => handleDragStart('clue', i)}>&#x2630;</span>
                 {editingItem?.type === 'clue' && editingItem.index === i ? (
                   <input
                     className="info-edit-input"

@@ -169,7 +169,9 @@ export async function savePuzzleToServer(puzzle: PuzzleData): Promise<{ ok: bool
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(puzzle),
     })
-    return res.json()
+    const text = await res.text()
+    if (!text) return { ok: false, error: `Server returned empty response (status ${res.status})` }
+    try { return JSON.parse(text) } catch { return { ok: false, error: `Invalid JSON from server: ${text.slice(0, 200)}` } }
   } catch {
     return { ok: false, error: 'Server not available (only works in dev mode)' }
   }

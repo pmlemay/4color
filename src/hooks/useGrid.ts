@@ -190,7 +190,7 @@ export function useGrid(initialRows: number, initialCols: number) {
           markDragAction.current = prev[sel[0].row][sel[0].col].mark === activeMark ? null : activeMark
         }
         const targetValue = markDragAction.current
-        const eligible = sel.filter(pos => !prev[pos.row][pos.col].crossed && !prev[pos.row][pos.col].value && !prev[pos.row][pos.col].fixedValue && prev[pos.row][pos.col].notes.length === 0)
+        const eligible = sel.filter(pos => !prev[pos.row][pos.col].crossed && !prev[pos.row][pos.col].value && !prev[pos.row][pos.col].fixedValue)
         const needsUpdate = eligible.some(pos => prev[pos.row][pos.col].mark !== targetValue)
         if (!needsUpdate) return prev
         const newGrid = cloneGrid(prev)
@@ -556,7 +556,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     if (selection.length === 0) return
     setGridWithUndo(prev => {
       const newGrid = cloneGrid(prev)
-      const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].crossed && !newGrid[pos.row][pos.col].value && !newGrid[pos.row][pos.col].fixedValue && newGrid[pos.row][pos.col].notes.length === 0)
+      const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].crossed && !newGrid[pos.row][pos.col].value && !newGrid[pos.row][pos.col].fixedValue)
       if (eligible.length === 0) return prev
       const allHaveMark = eligible.every(pos => newGrid[pos.row][pos.col].mark === shape)
       const placing = !allHaveMark

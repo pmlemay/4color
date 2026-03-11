@@ -20,7 +20,7 @@ export function canApplyAction(cell: CellData, action: string): boolean {
   }
   if (action.startsWith('mark:')) {
     // Same as toggleMark / mark drag eligibility in useGrid
-    return !cell.crossed && !cell.value && !cell.fixedValue && cell.notes.length === 0
+    return !cell.crossed && !cell.value && !cell.fixedValue
   }
   // color actions have no eligibility restrictions in native mode
   return true

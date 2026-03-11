@@ -10,7 +10,7 @@
     "dev": "node scripts/build-index.js && vite",
     "build": "node scripts/build-index.js && tsc && vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && node scripts/deploy.cjs"
   },
   "dependencies": {
     "firebase": "^12.9.0",

@@ -4,7 +4,7 @@ import { writeFileSync, readdirSync, readFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import type { Plugin } from 'vite'
 
-function rebuildPuzzleIndex() {
+function rebuildPuzzleIndex(writeVersion = true) {
   const puzzlesDir = join(__dirname, 'public', 'puzzles')
   const files = readdirSync(puzzlesDir).filter(f => f.endsWith('.json') && f !== 'index.json')
   const index = files.map(f => {
@@ -34,8 +34,10 @@ function rebuildPuzzleIndex() {
   })
   writeFileSync(join(puzzlesDir, 'index.json'), JSON.stringify(index, null, 2) + '\n')
 
-  const publicDir = join(__dirname, 'public')
-  writeFileSync(join(publicDir, 'version.json'), JSON.stringify({ buildTime: Date.now() }) + '\n')
+  if (writeVersion) {
+    const publicDir = join(__dirname, 'public')
+    writeFileSync(join(publicDir, 'version.json'), JSON.stringify({ buildTime: Date.now() }) + '\n')
+  }
 }
 
 function puzzleSavePlugin(): Plugin {
@@ -75,8 +77,8 @@ function puzzleSavePlugin(): Plugin {
 
             writeFileSync(join(puzzlesDir, targetFile), JSON.stringify(puzzle, null, 2) + '\n')
 
-            // Rebuild index
-            rebuildPuzzleIndex()
+            // Rebuild index (skip version.json to avoid triggering reload)
+            rebuildPuzzleIndex(false)
 
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify({ ok: true, file: targetFile }))
@@ -119,4 +121,10 @@ function puzzleSavePlugin(): Plugin {
 export default defineConfig({
   plugins: [react(), puzzleSavePlugin()],
   base: '/4color/',
+  server: {
+    watch: {
+      // Ignore public/puzzles so saving puzzles via API doesn't trigger page reloads
+      ignored: ['**/public/puzzles/**', '**/public/version.json'],
+    },
+  },
 })

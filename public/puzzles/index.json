@@ -33,8 +33,7 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross",
-    "inProgress": true
+    "clickActionRight": "cross"
   },
   {
     "id": "dinner-party-murdoku",
@@ -143,13 +142,12 @@
     },
     "difficulty": "Hard",
     "tags": [
-      "Murdoku"
+      "murdoku"
     ],
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross",
-    "inProgress": true
+    "clickActionRight": "cross"
   },
   {
     "id": "knights-murdoku",
