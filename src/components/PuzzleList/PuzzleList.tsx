@@ -247,8 +247,10 @@ export function PuzzleList() {
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>
         <div className="puzzle-list-header">
+          <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="4Color logo" className="puzzle-list-logo" />
           <h1>4Color Puzzles</h1>
         </div>
+
         <div className="puzzle-list-actions">
           <Link to="/edit" className="new-puzzle-btn">Create New Puzzle</Link>
         </div>
