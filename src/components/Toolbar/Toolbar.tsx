@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { InputMode, LabelAlign, MarkShape, CellPosition, CellLabels, FogGroup, FogTrigger } from '../../types'
+import { InputMode, LabelAlign, MarkShape, CellPosition, CellLabels, FogGroup, FogTrigger, CellTexture, TextureType } from '../../types'
+import { TEXTURE_TYPES, TEXTURE_LABELS, getTextureColors, getTextureVariants } from '../../utils/textures'
 import { IconBrowser } from './IconBrowser'
 import './Toolbar.css'
 
@@ -28,6 +29,7 @@ const EDITOR_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'fixedEdge', label: 'Fixed Edge (Ctrl+E)' },
   { mode: 'fixedMark', label: 'Fixed Mark (Ctrl+M)' },
   { mode: 'label', label: 'Label (Ctrl+L)' },
+  { mode: 'fixedTexture', label: 'Texture (Ctrl+T)' },
 ]
 
 interface ToolbarProps {
@@ -87,6 +89,10 @@ interface ToolbarProps {
   onFogFinishGroup?: () => void
   onFogReSelectFogCells?: () => void
   onFogCancel?: () => void
+  activeTexture?: CellTexture | null
+  onActiveTextureChange?: (tex: CellTexture | null) => void
+  onTextureApply?: (tex: CellTexture) => void
+  onTextureRemove?: () => void
 }
 
 export function Toolbar({
@@ -146,6 +152,10 @@ export function Toolbar({
   onFogFinishGroup,
   onFogReSelectFogCells,
   onFogCancel,
+  activeTexture = null,
+  onActiveTextureChange,
+  onTextureApply,
+  onTextureRemove,
 }: ToolbarProps) {
   const showPalette = inputMode === 'color' || inputMode === 'fixedColor'
   const showLabel = inputMode === 'label'
@@ -202,6 +212,7 @@ export function Toolbar({
         {inputMode === 'cross' && 'Click/drag to toggle X marks.'}
         {inputMode === 'border' && 'Drag to create/remove borders.'}
         {inputMode === 'edge' && 'Click/drag edges to toggle individual borders.'}
+        {inputMode === 'fixedTexture' && (activeTexture !== null ? 'Drag to paint texture. Click swatch again to deselect.' : 'Select a texture type and variant.')}
         {inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
       </div>
 
@@ -476,6 +487,52 @@ export function Toolbar({
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {isEditor && inputMode === 'fixedTexture' && (
+        <div className="tb-section">
+          <div className="tb-section-title">Textures</div>
+          <button
+            className={`tb-btn-sm ${activeTexture === null ? 'selected' : ''}`}
+            onClick={() => {
+              onActiveTextureChange?.(null)
+              onTextureRemove?.()
+            }}
+            title="Remove texture"
+          >
+            &#x2715; Remove
+          </button>
+          {TEXTURE_TYPES.map(type => {
+            const variants = getTextureVariants(type)
+            return (
+              <div key={type} style={{ marginTop: 4 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 2 }}>{TEXTURE_LABELS[type]}</div>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  {variants.map((colors, vi) => {
+                    const isActive = activeTexture?.type === type && activeTexture?.variant === vi
+                    return (
+                      <button
+                        key={vi}
+                        className={`texture-swatch ${isActive ? 'active-texture' : ''}`}
+                        style={{ background: colors.bg, borderColor: isActive ? 'white' : 'var(--border)' }}
+                        onClick={() => {
+                          const tex: CellTexture = { type, variant: vi }
+                          if (isActive) {
+                            onActiveTextureChange?.(null)
+                          } else {
+                            onActiveTextureChange?.(tex)
+                            onTextureApply?.(tex)
+                          }
+                        }}
+                        title={`${TEXTURE_LABELS[type]} variant ${vi + 1}`}
+                      />
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
 

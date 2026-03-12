@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { writeFileSync, readdirSync, readFileSync, mkdirSync } from 'fs'
+import { writeFileSync, readdirSync, readFileSync, mkdirSync, existsSync } from 'fs'
 import { join } from 'path'
 import type { Plugin } from 'vite'
 
@@ -47,6 +47,40 @@ function puzzleSavePlugin(): Plugin {
       rebuildPuzzleIndex()
     },
     configureServer(server) {
+      // Serve puzzle JSON files directly from disk so newly added files work without restart
+      server.middlewares.use((req, res, next) => {
+        const base = '/4color/puzzles/'
+        if (req.url && req.url.startsWith(base) && req.url.endsWith('.json')) {
+          const relPath = req.url.slice(base.length)
+          // Prevent path traversal
+          if (relPath.includes('..') || relPath.includes('/')) { next(); return }
+          const filePath = join(__dirname, 'public', 'puzzles', relPath)
+          if (existsSync(filePath)) {
+            res.setHeader('Content-Type', 'application/json')
+            res.end(readFileSync(filePath, 'utf-8'))
+            return
+          }
+          // Check solutions subdirectory
+          const solPath = join(__dirname, 'public', 'puzzles', 'solutions', relPath)
+          if (existsSync(solPath)) {
+            res.setHeader('Content-Type', 'application/json')
+            res.end(readFileSync(solPath, 'utf-8'))
+            return
+          }
+        }
+        if (req.url && req.url.startsWith('/4color/puzzles/solutions/') && req.url.endsWith('.json')) {
+          const relPath = req.url.slice('/4color/puzzles/solutions/'.length)
+          if (relPath.includes('..') || relPath.includes('/')) { next(); return }
+          const filePath = join(__dirname, 'public', 'puzzles', 'solutions', relPath)
+          if (existsSync(filePath)) {
+            res.setHeader('Content-Type', 'application/json')
+            res.end(readFileSync(filePath, 'utf-8'))
+            return
+          }
+        }
+        next()
+      })
+
       server.middlewares.use('/api/save-puzzle', (req, res) => {
         if (req.method !== 'POST') {
           res.statusCode = 405

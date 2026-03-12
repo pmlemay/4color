@@ -159,6 +159,26 @@
   transform: scale(1.1);
 }
 
+.texture-swatch {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.texture-swatch:hover {
+  border-color: var(--text);
+  transform: scale(1.1);
+}
+
+.texture-swatch.active-texture {
+  border-color: white;
+  box-shadow: 0 0 0 2px var(--text), 0 0 6px rgba(0,0,0,0.4);
+  transform: scale(1.1);
+}
+
 .tb-hint {
   font-size: 13px;
   color: var(--text-muted);

@@ -436,7 +436,9 @@ export function PlayerPage() {
             action = touchCycleAction.current || clickActionLeft
           }
           if (action === 'clear') return applyActionToGrid(prev, pos, clickActionLeft, false)
-          return applyActionToGrid(prev, pos, action, true, suggestedAutoCross)
+          // Clear cell first then apply — handles cross-type cycling (e.g. color→mark in nurikabe)
+          const mid = applyActionToGrid(prev, pos, clickActionLeft, false)
+          return applyActionToGrid(mid, pos, action, true, suggestedAutoCross)
         })
       } else {
         // Mouse: left click toggles left action
@@ -498,20 +500,24 @@ export function PlayerPage() {
       : null
     : <div className="info-timer">{timer.formatted}</div>
 
-  const leaderboardSection = puzzleLeaderboard.length > 0 ? (
+  const leaderboardSection = (
     <div className="puzzle-leaderboard">
       <h3 className="puzzle-leaderboard-title">Leaderboard</h3>
-      <ol className="puzzle-leaderboard-list">
-        {puzzleLeaderboard.map((entry, i) => (
-          <li key={entry.uid} className={`puzzle-leaderboard-entry${user && entry.uid === user.uid ? ' puzzle-leaderboard-self' : ''}`}>
-            <span className="puzzle-leaderboard-rank">{i + 1}.</span>
-            <span className="puzzle-leaderboard-name notranslate">{entry.displayName}</span>
-            <span className="puzzle-leaderboard-time">{formatTime(entry.time)}</span>
-          </li>
-        ))}
-      </ol>
+      {puzzleLeaderboard.length > 0 ? (
+        <ol className="puzzle-leaderboard-list">
+          {puzzleLeaderboard.map((entry, i) => (
+            <li key={entry.uid} className={`puzzle-leaderboard-entry${user && entry.uid === user.uid ? ' puzzle-leaderboard-self' : ''}`}>
+              <span className="puzzle-leaderboard-rank">{i + 1}.</span>
+              <span className="puzzle-leaderboard-name notranslate">{entry.displayName}</span>
+              <span className="puzzle-leaderboard-time">{formatTime(entry.time)}</span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="puzzle-leaderboard-empty">Be the first to complete this puzzle!</p>
+      )}
     </div>
-  ) : null
+  )
 
   const infoPanelContent = (
     <div className="info-panel-wrapper">
@@ -542,25 +548,28 @@ export function PlayerPage() {
   )
 
   const metaPanelContent = (
-    <InfoPanel
-      title={puzzle.title}
-      authors={puzzle.authors}
-      gridSize={puzzle.gridSize}
-      difficulty={puzzle.difficulty}
-      specialRulesList={puzzle.specialRules}
-      rulesList={puzzle.rules}
-      backLink={false}
-      headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
-      struckSpecialRuleWords={struckSpecialRuleWords}
-      onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
-      struckRuleWords={struckRuleWords}
-      onStruckRuleWordsChange={setStruckRuleWords}
-      aboveRules={<div className="info-section">
-        {timerDisplay}
-        <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
-        {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
-      </div>}
-    />
+    <>
+      <InfoPanel
+        title={puzzle.title}
+        authors={puzzle.authors}
+        gridSize={puzzle.gridSize}
+        difficulty={puzzle.difficulty}
+        specialRulesList={puzzle.specialRules}
+        rulesList={puzzle.rules}
+        backLink={false}
+        headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
+        struckSpecialRuleWords={struckSpecialRuleWords}
+        onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
+        struckRuleWords={struckRuleWords}
+        onStruckRuleWordsChange={setStruckRuleWords}
+        aboveRules={<div className="info-section">
+          {timerDisplay}
+          <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
+          {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+        </div>}
+      />
+      {leaderboardSection}
+    </>
   )
 
   const gridElement = (

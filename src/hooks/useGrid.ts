@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { CellData, CellPosition, InputMode, LabelAlign, MarkShape, AutoCrossRule, EdgeDescriptor } from '../types'
+import { CellData, CellPosition, InputMode, LabelAlign, MarkShape, AutoCrossRule, EdgeDescriptor, CellTexture } from '../types'
 import { MarkTarget } from '../utils/gridHitTest'
 import { createEmptyGrid } from '../utils/puzzleIO'
 import { applyBordersToSelection } from '../utils/borders'
@@ -69,6 +69,9 @@ export function useGrid(initialRows: number, initialCols: number) {
   const markDragAction = useRef<MarkShape | null>(null)
   const [activeColor, setActiveColor] = useState<string | null>(null)
   const [activeMark, setActiveMark] = useState<MarkShape | null>(null)
+  const [activeTexture, setActiveTexture] = useState<CellTexture | null>(null)
+  const textureDragActive = useRef(false)
+  const textureDragAction = useRef<CellTexture | null>(null)
   const autoCrossRulesRef = useRef<AutoCrossRule[]>([])
   const puzzleTypeRef = useRef('')
 
@@ -87,6 +90,9 @@ export function useGrid(initialRows: number, initialCols: number) {
     }
     if (mode !== 'mark' && mode !== 'fixedMark') {
       setActiveMark(null)
+    }
+    if (mode !== 'fixedTexture') {
+      setActiveTexture(null)
     }
   }, [])
 
@@ -215,6 +221,33 @@ export function useGrid(initialRows: number, initialCols: number) {
       return
     }
 
+    if (inputMode === 'fixedTexture' && activeTexture !== null) {
+      setGrid(prev => {
+        if (!textureDragActive.current) {
+          textureDragActive.current = true
+          undoStack.current.push(cloneForUndo(prev))
+          if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          redoStack.current = []
+          const firstCell = prev[sel[0].row][sel[0].col]
+          const matches = firstCell.fixedTexture?.type === activeTexture.type && firstCell.fixedTexture?.variant === activeTexture.variant
+          textureDragAction.current = matches ? null : activeTexture
+        }
+        const targetValue = textureDragAction.current
+        const needsUpdate = sel.some(pos => {
+          const ft = prev[pos.row][pos.col].fixedTexture
+          if (targetValue === null) return ft !== null
+          return ft?.type !== targetValue.type || ft?.variant !== targetValue.variant
+        })
+        if (!needsUpdate) return prev
+        const newGrid = cloneGrid(prev)
+        for (const pos of sel) {
+          newGrid[pos.row][pos.col].fixedTexture = targetValue ? { ...targetValue } : null
+        }
+        return newGrid
+      })
+      return
+    }
+
     if (inputMode === 'border') {
       setGrid(prev => {
         if (!borderDragBase.current) {
@@ -315,12 +348,17 @@ export function useGrid(initialRows: number, initialCols: number) {
       })
       return
     }
-  }, [inputMode, activeColor, activeMark])
+  }, [inputMode, activeColor, activeMark, activeTexture])
 
   const commitSelection = useCallback((sel: CellPosition[], ctrlHeld?: boolean) => {
     // Color mode with active color: already applied live, reset flag
     if ((inputMode === 'color' || inputMode === 'fixedColor') && activeColor !== null) {
       colorDragActive.current = false
+      return
+    }
+    // Texture mode: already applied live during drag, just reset flag
+    if (inputMode === 'fixedTexture' && activeTexture !== null) {
+      textureDragActive.current = false
       return
     }
     // Cross mode: already applied live during drag, just reset flag
@@ -391,7 +429,7 @@ export function useGrid(initialRows: number, initialCols: number) {
       })
       setSelection(sel)
     }
-  }, [inputMode, activeColor, activeMark, setGridWithUndo])
+  }, [inputMode, activeColor, activeMark, activeTexture, setGridWithUndo])
 
   const applyValue = useCallback(
     (value: string) => {
@@ -641,6 +679,35 @@ export function useGrid(initialRows: number, initialCols: number) {
     })
   }, [setGridWithUndo])
 
+  const applyFixedTexture = useCallback(
+    (texture: CellTexture) => {
+      if (selection.length === 0) return
+      setGridWithUndo(prev => {
+        const newGrid = cloneGrid(prev)
+        const allMatch = selection.every(pos => {
+          const ft = newGrid[pos.row][pos.col].fixedTexture
+          return ft?.type === texture.type && ft?.variant === texture.variant
+        })
+        for (const pos of selection) {
+          newGrid[pos.row][pos.col].fixedTexture = allMatch ? null : { ...texture }
+        }
+        return newGrid
+      })
+    },
+    [selection, setGridWithUndo]
+  )
+
+  const removeFixedTexture = useCallback(() => {
+    if (selection.length === 0) return
+    setGridWithUndo(prev => {
+      const newGrid = cloneGrid(prev)
+      for (const pos of selection) {
+        newGrid[pos.row][pos.col].fixedTexture = null
+      }
+      return newGrid
+    })
+  }, [selection, setGridWithUndo])
+
   const applyImage = useCallback(
     (imageBase64: string) => {
       if (selection.length === 0) return
@@ -689,6 +756,7 @@ export function useGrid(initialRows: number, initialCols: number) {
           cell.fixedMark = null
           cell.fixedEdgeMarks = [null, null, null, null]
           cell.fixedVertexMarks = [null, null, null, null]
+          cell.fixedTexture = null
         }
       }
       return newGrid
@@ -871,6 +939,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     crossed: false, mark: null, fixedMark: null,
     fixedEdgeMarks: [null,null,null,null], fixedVertexMarks: [null,null,null,null],
     edgeCrosses: [false,false,false,false], lines: [false,false,false,false], selected: false, image: null,
+    fixedTexture: null,
   }), [])
 
   const addRow = useCallback((side: 'top' | 'bottom') => {
@@ -928,6 +997,10 @@ export function useGrid(initialRows: number, initialCols: number) {
     toggleMark,
     eraseMark,
     toggleFixedMark,
+    applyFixedTexture,
+    removeFixedTexture,
+    activeTexture,
+    setActiveTexture,
     applyImage,
     removeImage,
     clearValues,

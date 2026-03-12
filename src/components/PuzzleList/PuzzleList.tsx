@@ -26,13 +26,30 @@ export function PuzzleList() {
   const [editingName, setEditingName] = useState('')
   const [puzzles, setPuzzles] = useState<PuzzleIndexEntry[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
-  const [tagMode, setTagMode] = useState<'or' | 'and'>('or')
-  const [selectedDifficulties, setSelectedDifficulties] = useState<Set<string>>(new Set())
-  const [selectedAuthors, setSelectedAuthors] = useState<Set<string>>(new Set())
-  const [hideCompleted, setHideCompleted] = useState(false)
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(() => {
+    try { const v = sessionStorage.getItem('filterTags'); return v ? new Set(JSON.parse(v)) : new Set() } catch { return new Set() }
+  })
+  const [tagMode, setTagMode] = useState<'or' | 'and'>(() => {
+    return (sessionStorage.getItem('filterTagMode') as 'or' | 'and') || 'or'
+  })
+  const [selectedDifficulties, setSelectedDifficulties] = useState<Set<string>>(() => {
+    try { const v = sessionStorage.getItem('filterDifficulties'); return v ? new Set(JSON.parse(v)) : new Set() } catch { return new Set() }
+  })
+  const [selectedAuthors, setSelectedAuthors] = useState<Set<string>>(() => {
+    try { const v = sessionStorage.getItem('filterAuthors'); return v ? new Set(JSON.parse(v)) : new Set() } catch { return new Set() }
+  })
+  const [hideCompleted, setHideCompleted] = useState(() => {
+    return sessionStorage.getItem('filterHideCompleted') === 'true'
+  })
 
   const mainRef = useRef<HTMLDivElement>(null)
+
+  // Persist filter state to sessionStorage
+  useEffect(() => { sessionStorage.setItem('filterTags', JSON.stringify([...selectedTags])) }, [selectedTags])
+  useEffect(() => { sessionStorage.setItem('filterTagMode', tagMode) }, [tagMode])
+  useEffect(() => { sessionStorage.setItem('filterDifficulties', JSON.stringify([...selectedDifficulties])) }, [selectedDifficulties])
+  useEffect(() => { sessionStorage.setItem('filterAuthors', JSON.stringify([...selectedAuthors])) }, [selectedAuthors])
+  useEffect(() => { sessionStorage.setItem('filterHideCompleted', String(hideCompleted)) }, [hideCompleted])
 
   useEffect(() => {
     fetchPuzzleIndex().then(data => {
@@ -334,7 +351,7 @@ export function PuzzleList() {
                           </span>
                         )}
                       </Link>
-                      {debug && <Link to={`/edit/${p.id}`} className="puzzle-edit-btn" title="Edit puzzle">&#9998;</Link>}
+                      {isDev && <Link to={`/edit/${p.id}`} className="puzzle-edit-overlay" title="Edit puzzle">&#9998;</Link>}
                     </div>
                   ))}
                 </div>

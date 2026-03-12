@@ -1,3 +1,10 @@
+export type TextureType = 'water' | 'bricks' | 'grass' | 'gravel' | 'sand' | 'pavement' | 'wood' | 'dirt' | 'dirtTrailV' | 'dirtTrailH'
+
+export interface CellTexture {
+  type: TextureType
+  variant: number  // 0-based index for shade/color variation
+}
+
 export type LabelAlign = 'top' | 'middle' | 'bottom'
 
 export interface CellLabel {
@@ -26,6 +33,7 @@ export interface CellData {
   lines: [boolean, boolean, boolean, boolean] // [top, right, bottom, left] — player connection lines
   selected: boolean
   image: string | null
+  fixedTexture: CellTexture | null
 }
 
 export interface CellPosition {
@@ -48,6 +56,7 @@ export interface PuzzleCellData {
   fixedEdgeMarks?: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
   fixedVertexMarks?: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
   image?: string
+  fixedTexture?: CellTexture
 }
 
 export interface PuzzleData {
@@ -92,7 +101,7 @@ export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon
 
 export type AutoCrossRule = 'king' | 'rook' | 'bishop' | 'knight'
 
-export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark' | 'fog'
+export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark' | 'fog' | 'fixedTexture'
 
 export interface FogTrigger {
   cells: CellPosition[]

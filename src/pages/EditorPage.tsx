@@ -953,7 +953,7 @@ export function EditorPage() {
   return (
     <div className="page-layout">
       <ResizableLeft>
-        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink headerRight={<><label style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}><input type="checkbox" checked={inProgress} onChange={e => setInProgress(e.target.checked)} />In Progress</label><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}>
+        <InfoPanel title={solutionMode ? 'Solution Mode' : 'Puzzle Editor'} backLink headerRight={<>{(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && <label style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}><input type="checkbox" checked={inProgress} onChange={e => setInProgress(e.target.checked)} />In Progress</label>}<LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}>
           {solutionMode ? (<>
             <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 8px' }}>
               Place the correct values for each cell. Only normal inputs (values) and borders will be saved as the solution.
@@ -1395,6 +1395,10 @@ export function EditorPage() {
           onFogFinishGroup={handleFogFinishGroup}
           onFogReSelectFogCells={handleFogReSelectFogCells}
           onFogCancel={handleFogCancel}
+          activeTexture={gridState.activeTexture}
+          onActiveTextureChange={gridState.setActiveTexture}
+          onTextureApply={tex => gridState.applyFixedTexture(tex)}
+          onTextureRemove={gridState.removeFixedTexture}
         />
       </ResizableRight>
 

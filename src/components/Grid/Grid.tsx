@@ -35,7 +35,8 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
   const [, setRenderTick] = useState(0)
   const isColorDrag = (inputMode === 'color' || inputMode === 'fixedColor') && activeColor !== null
   const isMarkDrag = inputMode === 'mark' && activeMark != null
-  const isImmediateMode = inputMode === 'cross' || inputMode === 'border' || inputMode === 'fixedBorder' || isColorDrag || isMarkDrag
+  const isTextureDrag = inputMode === 'fixedTexture'
+  const isImmediateMode = inputMode === 'cross' || inputMode === 'border' || inputMode === 'fixedBorder' || isColorDrag || isMarkDrag || isTextureDrag
   const isEdgeMode = inputMode === 'edge' || inputMode === 'fixedEdge'
   const isFixedMarkMode = inputMode === 'fixedMark' && activeMark != null
 

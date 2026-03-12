@@ -90,6 +90,7 @@ export function useKeyboard(options: UseKeyboardOptions) {
           E: 'fixedEdge',
           M: 'fixedMark',
           L: 'label',
+          T: 'fixedTexture',
         }
         // Ctrl+Shift+C for fixedColor (Ctrl+C is copy)
         if (e.shiftKey && upper === 'C') {

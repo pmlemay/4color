@@ -127,7 +127,8 @@
     "autoCrossRules": [
       "king",
       "rook"
-    ]
+    ],
+    "clickActionRight": "cross"
   },
   {
     "id": "pirate-ship-murdoku",
@@ -166,7 +167,8 @@
     ],
     "autoCrossRules": [
       "rook"
-    ]
+    ],
+    "clickActionRight": "cross"
   },
   {
     "id": "nurikabe-murdoku",
@@ -207,6 +209,23 @@
     "puzzleType": "heyawake",
     "clickActionLeft": "color:9",
     "clickActionRight": "color:5"
+  },
+  {
+    "id": "4color-3",
+    "file": "4color-3.json",
+    "title": "4-Color #3",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "4color"
+    ],
+    "clickActionRight": "cross"
   },
   {
     "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",

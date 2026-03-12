@@ -112,13 +112,18 @@ export function CluesBar({ specialRulesList, struckSpecialRuleWords, onStruckSpe
         </>
       )}
       {hasClues && (
-        <ul className="clues-bar-list">
-          {cluesList.map((clue, i) => (
-            <li key={i} className="clues-bar-item" onClick={() => clueStrikable.toggleAllWords(clue, i)}>
-              {clueStrikable.renderStrikableText(clue, i)}
-            </li>
-          ))}
-        </ul>
+        <>
+          {hasSpecialRules && (
+            <div className="clues-bar-separator">CLUES:</div>
+          )}
+          <ul className="clues-bar-list">
+            {cluesList.map((clue, i) => (
+              <li key={i} className="clues-bar-item" onClick={() => clueStrikable.toggleAllWords(clue, i)}>
+                {clueStrikable.renderStrikableText(clue, i)}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   )

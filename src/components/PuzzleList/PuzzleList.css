@@ -11,7 +11,7 @@
   min-width: 220px;
   border-right: 1px solid var(--border);
   padding: 16px;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -28,6 +28,12 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.sidebar-section:last-of-type {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .sidebar-title {
@@ -78,6 +84,9 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .leaderboard-entry {
@@ -201,6 +210,7 @@
 }
 
 .puzzle-card-row {
+  position: relative;
   display: flex;
   gap: 0;
   border: 1px solid var(--card-border);
@@ -212,6 +222,10 @@
 
 .puzzle-card-row:hover {
   box-shadow: 0 2px 8px var(--card-shadow);
+}
+
+.puzzle-card-row:has(.puzzle-completed) {
+  border-color: lightseagreen;
 }
 
 .puzzle-card-row.puzzle-in-progress {
@@ -253,21 +267,30 @@
   background: var(--btn-hover);
 }
 
-.puzzle-edit-btn {
+.puzzle-edit-overlay {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  border: none;
-  border-left: 1px solid var(--card-border);
-  background: transparent;
+  border-radius: 4px;
+  background: var(--card-bg);
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 18px;
-  cursor: pointer;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1;
 }
 
-.puzzle-edit-btn:hover {
+.puzzle-card-row:hover .puzzle-edit-overlay {
+  opacity: 1;
+}
+
+.puzzle-edit-overlay:hover {
   background: var(--btn-hover);
   color: var(--text);
 }
@@ -461,11 +484,16 @@
     gap: 12px;
     padding: 12px;
   }
+  .sidebar-section:last-of-type {
+    flex: none;
+    overflow: visible;
+  }
   .leaderboard-list {
     flex-direction: row;
     flex-wrap: nowrap;
     gap: 8px;
     overflow-x: auto;
+    overflow-y: visible;
   }
   .leaderboard-entry {
     white-space: nowrap;

@@ -87,7 +87,7 @@ function generatePuzzle({ id, title, authors, difficulty, rules, clues, regionMa
 
       const labelKey = `${r},${c}`
       if (labelPositions[labelKey]) {
-        entry.label = { text: labelPositions[labelKey], align: 'top' }
+        entry.label = { text: labelPositions[labelKey], align: 'bottom' }
       }
 
       if (hasBorders || labelPositions[labelKey]) {

@@ -1,4 +1,4 @@
-import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule, MarkShape, FogGroup } from '../types'
+import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule, MarkShape, FogGroup, CellTexture } from '../types'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -22,6 +22,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
       lines: [false, false, false, false] as [boolean, boolean, boolean, boolean],
       selected: false,
       image: null,
+      fixedTexture: null,
     }))
   )
 }
@@ -49,7 +50,7 @@ export function gridToPuzzle(
       const hasFixedEdgeMarks = cell.fixedEdgeMarks.some(m => m !== null)
       const hasFixedVertexMarks = cell.fixedVertexMarks.some(m => m !== null)
       const hasLabels = Object.values(cell.labels).some(l => l?.text)
-      if (cell.fixedValue || cell.fixedColor || hasBorders || hasLabels || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image) {
+      if (cell.fixedValue || cell.fixedColor || hasBorders || hasLabels || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image || cell.fixedTexture) {
         const entry: PuzzleCellData = { row: r, col: c }
         if (cell.fixedValue) entry.fixedValue = cell.fixedValue
         if (cell.fixedColor) entry.fixedColor = cell.fixedColor
@@ -59,6 +60,7 @@ export function gridToPuzzle(
         if (hasFixedEdgeMarks) entry.fixedEdgeMarks = cell.fixedEdgeMarks
         if (hasFixedVertexMarks) entry.fixedVertexMarks = cell.fixedVertexMarks
         if (cell.image) entry.image = imageToId.get(cell.image)!
+        if (cell.fixedTexture) entry.fixedTexture = cell.fixedTexture
         cells.push(entry)
       }
     }
@@ -113,6 +115,7 @@ export function puzzleToGrid(puzzle: PuzzleData): CellData[][] {
       // Resolve image ID to base64, or use directly if it's already base64 (backward compat)
       grid[cell.row][cell.col].image = images[cell.image] ?? cell.image
     }
+    if (cell.fixedTexture) grid[cell.row][cell.col].fixedTexture = { ...cell.fixedTexture }
   }
   return grid
 }

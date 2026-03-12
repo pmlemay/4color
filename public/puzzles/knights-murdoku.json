@@ -31,6 +31,7 @@
   "autoCrossRules": [
     "rook"
   ],
+  "clickActionRight": "cross",
   "gridSize": {
     "rows": 9,
     "cols": 9
@@ -46,11 +47,16 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room1",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room1"
+        }
       },
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 0,
@@ -61,7 +67,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 0,
@@ -72,7 +82,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 0,
@@ -83,7 +97,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 0,
@@ -94,7 +112,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 0,
@@ -105,7 +127,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 0,
@@ -117,9 +143,14 @@
         2,
         2
       ],
-      "label": {
-        "text": "Room2",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room2"
+        }
+      },
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
       }
     },
     {
@@ -132,7 +163,11 @@
         0,
         0
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 0,
@@ -143,7 +178,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -154,7 +193,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -165,18 +208,30 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 1,
       "col": 2,
       "fixedColor": "1",
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 1,
       "col": 3,
-      "fixedColor": "1"
+      "fixedColor": "1",
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -188,7 +243,11 @@
         2,
         0
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -199,7 +258,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -211,7 +274,11 @@
         2,
         0
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -222,7 +289,11 @@
         0,
         0,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -233,7 +304,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 2,
@@ -245,9 +320,14 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room3",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room3"
+        }
+      },
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
       }
     },
     {
@@ -259,7 +339,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 2,
@@ -270,7 +354,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 2,
@@ -281,7 +369,11 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
     },
     {
       "row": 2,
@@ -292,7 +384,11 @@
         0,
         0,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 2,
@@ -303,7 +399,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 2,
@@ -314,12 +414,20 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 2,
       "col": 7,
-      "fixedColor": "4"
+      "fixedColor": "4",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 2,
@@ -330,7 +438,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 3,
@@ -342,7 +454,11 @@
         2,
         2
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 3,
@@ -353,7 +469,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 3,
@@ -365,7 +485,11 @@
         2,
         0
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 3,
@@ -377,9 +501,14 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room4",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room4"
+        }
+      },
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
       }
     },
     {
@@ -391,7 +520,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 3,
@@ -402,7 +535,11 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 3,
@@ -414,9 +551,14 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room5",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room5"
+        }
+      },
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
       }
     },
     {
@@ -428,7 +570,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 3,
@@ -439,7 +585,11 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 0
+      }
     },
     {
       "row": 4,
@@ -451,9 +601,14 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room6",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room6"
+        }
+      },
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 2
       }
     },
     {
@@ -465,7 +620,11 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 2
+      }
     },
     {
       "row": 4,
@@ -476,7 +635,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 4,
@@ -488,7 +651,11 @@
         2,
         0
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 4,
@@ -499,7 +666,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 4,
@@ -510,7 +681,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 4,
@@ -521,7 +696,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 4,
@@ -532,7 +711,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 4,
@@ -543,7 +726,11 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 5,
@@ -554,7 +741,11 @@
         2,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 2
+      }
     },
     {
       "row": 5,
@@ -566,9 +757,14 @@
         2,
         2
       ],
-      "label": {
-        "text": "Room7",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room7"
+        }
+      },
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
       }
     },
     {
@@ -581,7 +777,11 @@
         2,
         0
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 5,
@@ -592,7 +792,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 5,
@@ -604,9 +808,14 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room8",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room8"
+        }
+      },
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
       }
     },
     {
@@ -618,7 +827,11 @@
         2,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 5,
@@ -630,9 +843,14 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room9",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room9"
+        }
+      },
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
       }
     },
     {
@@ -644,7 +862,11 @@
         2,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
     },
     {
       "row": 5,
@@ -656,7 +878,11 @@
         0,
         2
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 6,
@@ -668,9 +894,14 @@
         0,
         2
       ],
-      "label": {
-        "text": "Room10",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room10"
+        }
+      },
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
       }
     },
     {
@@ -682,7 +913,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 6,
@@ -694,7 +929,11 @@
         0,
         2
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 6,
@@ -705,7 +944,11 @@
         2,
         0,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 6,
@@ -716,7 +959,11 @@
         0,
         0,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 6,
@@ -727,7 +974,11 @@
         0,
         0,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 6,
@@ -738,7 +989,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 6,
@@ -749,7 +1004,11 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 6,
@@ -760,7 +1019,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 7,
@@ -771,7 +1034,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 7,
@@ -783,7 +1050,11 @@
         2,
         0
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 0
+      }
     },
     {
       "row": 7,
@@ -794,7 +1065,11 @@
         2,
         0,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 7,
@@ -805,7 +1080,11 @@
         2,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 7,
@@ -817,7 +1096,11 @@
         0,
         2
       ],
-      "image": "img0"
+      "image": "img0",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 7,
@@ -828,17 +1111,29 @@
         2,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 1
+      }
     },
     {
       "row": 7,
       "col": 6,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 7,
       "col": 7,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 7,
@@ -849,7 +1144,11 @@
         2,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -861,9 +1160,14 @@
         2,
         2
       ],
-      "label": {
-        "text": "Room11",
-        "align": "top"
+      "labels": {
+        "top": {
+          "text": "Room11"
+        }
+      },
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 2
       }
     },
     {
@@ -875,7 +1179,11 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -886,7 +1194,11 @@
         0,
         2,
         2
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -897,7 +1209,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -908,7 +1224,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -919,7 +1239,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -930,7 +1254,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -941,7 +1269,11 @@
         0,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     },
     {
       "row": 8,
@@ -952,10 +1284,14 @@
         2,
         2,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
     }
   ],
-  "createdAt": "2026-03-02",
+  "createdAt": "2026-03-12",
   "images": {
     "img0": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAACoUlEQVR4AeyZu4oUQRSGvaOCmBhp7CVUBANB1MwH8CEEE43MTQQNNPRdDDQ2UjDxHRQFAxEF/T5mhp2FralTVadnRXs5/1R1138uf1U31d176MA/8jcL+dsWcl6ReUUmmoEpL63T1HwT3FrCvuc4zLephDyn1NcFOMZQrk0h5AEliiu0B8HK3tP5DO4Dx2nyLFvIM0orzfhlxsQv2qdALk2OZQo5RknXwSY7w+AX8ArI1YfuuGUKcbZFraqzEFwNuYLDccsUcpJyBE3V7sKQK+iOW6aQlmq84Vv4VW6mkK9kEzQhkytC5BopU8g7kgmakMkVIXKNlCnEXHf8CaKFWw2ZLeRHNeMOoYW741XoZQsppNl12g1R7Do5epAtpLSrr9fpfSEi3HW/jf1MIUfJdA3UzE3wEiS5+tAdt0whFihqVR2BIOQKDsctU8hPynkLvoNN5mX1G4JcfeiOW6YQC7wdKOnhkiNXn+XhWJMpZFXJiVWn0Lp/1DgF1/LpKYSUsy1GHi2a3N9sIccD5X2CIyJcqDHLFvIikPYDHBHhQo1ZtpCLgbS+FYoINxBuQckWsoi6+de9Q2xmNY7uhxDfCtPzZgY8zyReABHzc5BcfSL8KidTyDmy+WGBpmofYcjVh+64ZQppqSb1ydfEGUK8THx28hOpMSNY3ez66GuMiF+RMyrEmX1C9HvAZ6cefMP3MTAWTZ+NCDlFyhvAHfolrbPbA+MIY9kSqt1GhHh5iPase3sYS+w9WjnbK8QXo6vEPgyyzFjGNHZzzF4hPicNXdOFSo1p7MJw+XSPEP8Dlf7Jc61EY5tj7VS92yOkHnUfGP+1EN+ze/aLFh9zNK1rz4r4Bf0NWaaEOUgRtx4h8ehbZM5CtjjZoVTzioSmaYukPwAAAP//KV540gAAAAZJREFUAwCAUGxlwxdCmQAAAABJRU5ErkJggg=="
   }
