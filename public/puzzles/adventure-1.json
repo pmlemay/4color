@@ -12187,7 +12187,11 @@
     {
       "row": 1,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 1,
@@ -12198,19 +12202,31 @@
     {
       "row": 1,
       "col": 20,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 1,
       "col": 21,
       "fixedColor": "5",
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 2,
       "col": 18,
       "fixedColor": "5",
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 2,
@@ -12225,18 +12241,30 @@
     {
       "row": 2,
       "col": 21,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 3,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 3,
       "col": 19,
       "fixedColor": "5",
-      "image": "img3"
+      "image": "img3",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 3,
@@ -12246,17 +12274,29 @@
     {
       "row": 3,
       "col": 21,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 4,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 4,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 4,
@@ -12266,37 +12306,65 @@
     {
       "row": 4,
       "col": 21,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
       "col": 11,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
       "col": 12,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
@@ -12307,7 +12375,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
@@ -12318,7 +12390,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
@@ -12329,7 +12405,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
@@ -12350,12 +12430,20 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 5,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 6,
@@ -12370,12 +12458,20 @@
           "text": "Nurikabe rules:",
           "revealWithFog": "fog-1772640119505"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 6,
       "col": 12,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 6,
@@ -12385,12 +12481,20 @@
     {
       "row": 6,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 6,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 6,
@@ -12401,7 +12505,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 6,
@@ -12433,7 +12541,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 6,
@@ -12455,7 +12567,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 6,
@@ -12466,7 +12582,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 7,
@@ -12485,12 +12605,20 @@
           "text": "When completed, all shaded cells form a continuous path.",
           "revealWithFog": "fog-1772640119505"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 7,
       "col": 12,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 7,
@@ -12500,12 +12628,20 @@
     {
       "row": 7,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 7,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 7,
@@ -12516,7 +12652,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 7,
@@ -12547,7 +12687,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 8,
@@ -12566,27 +12710,47 @@
           "text": "When completed, all shaded cells form a continuous path.",
           "revealWithFog": "fog-1772640119505"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 8,
       "col": 12,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 8,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 8,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 8,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 8,
@@ -12597,7 +12761,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 8,
@@ -12613,7 +12781,11 @@
       "row": 8,
       "col": 18,
       "fixedValue": "1",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 8,
@@ -12634,22 +12806,38 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 9,
       "col": 11,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 9,
       "col": 12,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 9,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 9,
@@ -12659,7 +12847,11 @@
     {
       "row": 9,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 9,
@@ -12670,7 +12862,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 9,
@@ -12682,7 +12878,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 9,
@@ -12703,33 +12903,57 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 10,
       "col": 11,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 10,
       "col": 12,
       "fixedColor": "5",
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 10,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 10,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 10,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 10,
@@ -12740,7 +12964,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 10,
@@ -12801,33 +13029,57 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 7,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 8,
       "fixedColor": "5",
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 9,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 10,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 11,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
@@ -12837,22 +13089,38 @@
     {
       "row": 11,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
@@ -12863,7 +13131,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
@@ -12874,7 +13146,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
@@ -12885,7 +13161,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
@@ -12896,7 +13176,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
@@ -12911,23 +13195,39 @@
     {
       "row": 11,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 23,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 11,
       "col": 24,
       "fixedColor": "5",
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
@@ -12938,7 +13238,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
@@ -12949,7 +13253,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
@@ -12960,7 +13268,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
@@ -12971,7 +13283,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
@@ -13036,33 +13352,57 @@
     {
       "row": 12,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
       "col": 16,
       "fixedColor": "5",
-      "image": "img4"
+      "image": "img4",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 12,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
@@ -13104,7 +13444,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
@@ -13172,7 +13516,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
@@ -13187,17 +13535,29 @@
     {
       "row": 13,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
@@ -13208,7 +13568,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
@@ -13229,7 +13593,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
@@ -13250,7 +13618,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
@@ -13271,17 +13643,29 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 13,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 14,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 14,
@@ -13322,7 +13706,11 @@
     {
       "row": 14,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 14,
@@ -13333,7 +13721,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 14,
@@ -13365,7 +13757,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 14,
@@ -13387,7 +13783,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 14,
@@ -13418,12 +13818,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 15,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 15,
@@ -13439,7 +13847,11 @@
       "row": 15,
       "col": 12,
       "fixedValue": "2",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 15,
@@ -13460,12 +13872,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 15,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 15,
@@ -13476,7 +13896,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 15,
@@ -13507,12 +13931,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
@@ -13534,7 +13966,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
@@ -13545,12 +13981,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
@@ -13561,7 +14005,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
@@ -13573,7 +14021,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
@@ -13585,7 +14037,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
@@ -13596,17 +14052,29 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 16,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13627,13 +14095,21 @@
       "row": 17,
       "col": 7,
       "fixedValue": "2",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
       "col": 10,
       "fixedValue": "3",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13655,7 +14131,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13701,7 +14181,11 @@
       "row": 17,
       "col": 26,
       "fixedColor": "5",
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13712,7 +14196,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13723,7 +14211,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13734,7 +14226,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13745,7 +14241,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13756,7 +14256,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13767,7 +14271,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13778,7 +14286,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13800,7 +14312,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13811,7 +14327,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13823,7 +14343,11 @@
         1,
         0
       ],
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
@@ -13834,17 +14358,29 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 17,
       "col": 39,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
@@ -13897,17 +14433,29 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
@@ -13918,7 +14466,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
@@ -13930,7 +14482,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
@@ -13942,7 +14498,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
@@ -13963,7 +14523,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
@@ -14085,7 +14649,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 18,
@@ -14096,7 +14664,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 19,
@@ -14117,7 +14689,11 @@
       "row": 19,
       "col": 10,
       "fixedValue": "4",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 19,
@@ -14138,17 +14714,29 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 19,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 19,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 19,
@@ -14159,7 +14747,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 19,
@@ -14230,12 +14822,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14251,13 +14851,21 @@
       "row": 20,
       "col": 5,
       "fixedValue": "12",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
       "col": 11,
       "fixedValue": "2",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14278,7 +14886,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14289,7 +14901,11 @@
     {
       "row": 20,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14300,7 +14916,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14332,7 +14952,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14354,7 +14978,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14385,7 +15013,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14396,7 +15028,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 20,
@@ -14433,12 +15069,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14454,7 +15098,11 @@
       "row": 21,
       "col": 10,
       "fixedValue": "1",
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14475,17 +15123,29 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14495,6 +15155,10 @@
         "bottom": {
           "text": "A fishing cabin."
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
@@ -14506,7 +15170,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14527,7 +15195,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14553,6 +15225,10 @@
         "bottom": {
           "text": "No one is here."
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
@@ -14564,7 +15240,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14575,12 +15255,20 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14592,7 +15280,11 @@
         0,
         0
       ],
-      "image": "img4"
+      "image": "img4",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 21,
@@ -14629,12 +15321,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
@@ -14716,7 +15416,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
@@ -14747,28 +15451,48 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 17,
       "fixedColor": "5",
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
@@ -14778,23 +15502,39 @@
     {
       "row": 22,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 23,
       "fixedColor": "5",
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
@@ -14805,7 +15545,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 22,
@@ -14836,22 +15580,38 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 23,
@@ -14862,7 +15622,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 23,
@@ -14973,68 +15737,120 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 15,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 16,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 17,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 18,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 19,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 20,
       "fixedColor": "7",
-      "image": "img7"
+      "image": "img7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 21,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 22,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 23,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 24,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
       "col": 25,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
@@ -15045,7 +15861,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 23,
@@ -15106,22 +15926,38 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 24,
@@ -15142,32 +15978,56 @@
     {
       "row": 24,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 15,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 16,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 17,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 18,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
@@ -15178,6 +16038,10 @@
           "text": "You found a fish! Maybe someone would want it",
           "revealWithFog": "fog-1772681700902"
         }
+      },
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
       }
     },
     {
@@ -15189,7 +16053,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
@@ -15200,7 +16068,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
@@ -15211,22 +16083,38 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 23,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 24,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
       "col": 25,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
@@ -15237,7 +16125,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 24,
@@ -15298,22 +16190,38 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 25,
@@ -15324,28 +16232,48 @@
     {
       "row": 25,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 15,
       "fixedColor": "7",
-      "image": "img8"
+      "image": "img8",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 16,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 17,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
@@ -15356,7 +16284,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
@@ -15367,7 +16299,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
@@ -15408,17 +16344,29 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 24,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
       "col": 25,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
@@ -15429,7 +16377,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 25,
@@ -15460,22 +16412,38 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 26,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 26,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 26,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 26,
@@ -15486,22 +16454,38 @@
     {
       "row": 26,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 26,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
       "col": 15,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
       "col": 16,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
@@ -15512,7 +16496,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
@@ -15533,7 +16521,11 @@
         1,
         1,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
@@ -15564,7 +16556,11 @@
         0,
         1,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
@@ -15575,12 +16571,20 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
       "col": 25,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
@@ -15591,7 +16595,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 26,
@@ -15628,22 +16636,38 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 27,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 27,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 27,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 27,
@@ -15654,12 +16678,20 @@
     {
       "row": 27,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 27,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 27,
@@ -15670,12 +16702,20 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 27,
       "col": 16,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 27,
@@ -15686,7 +16726,11 @@
         1,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 27,
@@ -15737,7 +16781,11 @@
         0,
         1,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 27,
@@ -15748,7 +16796,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 27,
@@ -15887,17 +16939,29 @@
     {
       "row": 28,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -15908,7 +16972,11 @@
     {
       "row": 28,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -15919,7 +16987,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -15940,7 +17012,11 @@
         1,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -15971,7 +17047,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -15994,7 +17074,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16005,7 +17089,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16028,7 +17116,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16040,7 +17132,11 @@
         0,
         0
       ],
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16051,7 +17147,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16062,7 +17162,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16073,7 +17177,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16085,7 +17193,11 @@
         0,
         0
       ],
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16096,7 +17208,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 28,
@@ -16117,17 +17233,29 @@
     {
       "row": 29,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
@@ -16144,7 +17272,11 @@
     {
       "row": 29,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
@@ -16155,7 +17287,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 29,
@@ -16176,7 +17312,11 @@
         1,
         1,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 29,
@@ -16207,12 +17347,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 27,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
@@ -16229,36 +17377,60 @@
     {
       "row": 29,
       "col": 30,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 31,
       "fixedColor": "5",
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 32,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 33,
       "fixedColor": "5",
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 34,
       "fixedColor": "5",
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 35,
       "fixedColor": "5",
-      "image": "img2"
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
@@ -16269,18 +17441,30 @@
           "text": "You found a flashlight!",
           "revealWithFog": "fog-1773092805486"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 29,
       "col": 37,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
       "col": 38,
       "fixedColor": "5",
-      "image": "img9"
+      "image": "img9",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 29,
@@ -16291,7 +17475,11 @@
     {
       "row": 30,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 30,
@@ -16331,7 +17519,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 30,
@@ -16376,22 +17568,38 @@
     {
       "row": 30,
       "col": 32,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 30,
       "col": 33,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 30,
       "col": 34,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 30,
       "col": 35,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 30,
@@ -16420,12 +17628,20 @@
     {
       "row": 31,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 31,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 31,
@@ -16436,12 +17652,20 @@
     {
       "row": 31,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 31,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 31,
@@ -16452,7 +17676,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 31,
@@ -16493,32 +17721,56 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 31,
       "col": 27,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 31,
       "col": 28,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 31,
       "col": 29,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 31,
       "col": 30,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
@@ -16529,12 +17781,20 @@
     {
       "row": 32,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 32,
@@ -16545,7 +17805,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 32,
@@ -16617,27 +17881,47 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 27,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 28,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 29,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 30,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
@@ -16648,32 +17932,56 @@
           "text": "To be continued in Adventure #2...",
           "revealWithFog": "fog-1773157661131"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 32,
       "col": 32,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 33,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 34,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 35,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
       "col": 36,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 32,
@@ -16696,12 +18004,20 @@
     {
       "row": 33,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16712,17 +18028,29 @@
     {
       "row": 33,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 15,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16733,7 +18061,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16807,7 +18139,11 @@
         1,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16828,7 +18164,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16846,17 +18186,29 @@
       "row": 33,
       "col": 29,
       "fixedColor": "5",
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 30,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 31,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16867,17 +18219,29 @@
     {
       "row": 33,
       "col": 33,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 34,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 35,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16888,12 +18252,20 @@
     {
       "row": 33,
       "col": 37,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
       "col": 38,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 33,
@@ -16904,33 +18276,57 @@
     {
       "row": 34,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
       "col": 2,
       "fixedColor": "5",
-      "image": "img6"
+      "image": "img6",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 34,
       "col": 15,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -16941,7 +18337,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17006,7 +18406,11 @@
         1,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17027,7 +18431,11 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17038,12 +18446,20 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 34,
       "col": 26,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17060,7 +18476,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17156,7 +18576,11 @@
         1,
         0
       ],
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17167,7 +18591,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17178,7 +18606,11 @@
         0,
         1,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 34,
@@ -17231,17 +18663,29 @@
     {
       "row": 35,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
@@ -17252,22 +18696,38 @@
     {
       "row": 35,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 14,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 15,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 16,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
@@ -17284,6 +18744,10 @@
           "text": "Credit: vanillaice",
           "revealWithFog": "fog-1773109567012"
         }
+      },
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
       }
     },
     {
@@ -17295,7 +18759,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
@@ -17339,7 +18807,11 @@
         1,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
@@ -17360,17 +18832,29 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 25,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 26,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
     },
     {
       "row": 35,
@@ -17381,7 +18865,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
@@ -17502,57 +18990,101 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 40,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 41,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 42,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 35,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 35,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 35,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 35,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 36,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17569,22 +19101,38 @@
     {
       "row": 36,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17594,7 +19142,11 @@
     {
       "row": 36,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17605,7 +19157,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17635,12 +19191,20 @@
           "text": "You will need scuba gear to dive into the lake",
           "revealWithFog": "fog-1773108655063"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 36,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17651,7 +19215,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17661,12 +19229,20 @@
     {
       "row": 36,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17677,7 +19253,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
@@ -17798,58 +19378,102 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 40,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 41,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 42,
       "fixedColor": "5",
-      "image": "img12"
+      "image": "img12",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 36,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 36,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 36,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 36,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 37,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
@@ -17930,24 +19554,40 @@
     {
       "row": 37,
       "col": 12,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 13,
       "fixedColor": "5",
-      "image": "img6"
+      "image": "img6",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 15,
       "fixedColor": "5",
-      "image": "img6"
+      "image": "img6",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
@@ -17958,50 +19598,86 @@
       "row": 37,
       "col": 17,
       "fixedColor": "5",
-      "image": "img6"
+      "image": "img6",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 21,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 22,
       "fixedColor": "5",
-      "image": "img6"
+      "image": "img6",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 23,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 24,
       "fixedColor": "5",
-      "image": "img6"
+      "image": "img6",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
       "col": 26,
       "fixedColor": "5",
-      "image": "img6"
+      "image": "img6",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
@@ -18012,7 +19688,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 37,
@@ -18138,42 +19818,74 @@
       "row": 37,
       "col": 43,
       "fixedColor": "7",
-      "image": "img13"
+      "image": "img13",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 37,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 37,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 37,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 38,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18184,7 +19896,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18267,22 +19983,38 @@
         1,
         1
       ],
-      "image": "img4"
+      "image": "img4",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 13,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18292,17 +20024,29 @@
     {
       "row": 38,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18321,12 +20065,20 @@
           "text": "Rules:",
           "revealWithFog": "fog-1773109567012"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 38,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18336,17 +20088,29 @@
     {
       "row": 38,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18357,7 +20121,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18478,12 +20246,20 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
       "col": 40,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18493,12 +20269,20 @@
         "bottom": {
           "text": "\"Here's my scuba gear then, I won't be needed it for now\""
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 38,
       "col": 42,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 38,
@@ -18514,22 +20298,38 @@
           "revealWithFog": "fog-1773109567012"
         },
         "bottom": null
+      },
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
       }
     },
     {
       "row": 38,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 38,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 38,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 39,
@@ -18541,22 +20341,38 @@
           "revealWithFog": "fog-1773105249282"
         },
         "bottom": null
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 39,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
@@ -18567,7 +20383,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
@@ -18664,17 +20484,29 @@
     {
       "row": 39,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
@@ -18684,12 +20516,20 @@
     {
       "row": 39,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
@@ -18708,12 +20548,20 @@
           "text": "of 1 or 3 within its region, vertically and horizontally",
           "revealWithFog": "fog-1773109567012"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 39,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
@@ -18723,17 +20571,29 @@
     {
       "row": 39,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
@@ -18744,7 +20604,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
@@ -18855,43 +20719,75 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 40,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 41,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 42,
       "fixedColor": "5",
-      "image": "img14"
+      "image": "img14",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 39,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 39,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 39,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 39,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 40,
@@ -18906,22 +20802,38 @@
           "text": "Rules:",
           "revealWithFog": "fog-1773105249282"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 40,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
@@ -18932,7 +20844,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
@@ -19029,33 +20945,57 @@
     {
       "row": 40,
       "col": 14,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 16,
       "fixedColor": "5",
-      "image": "img1"
+      "image": "img1",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
@@ -19070,12 +21010,20 @@
           "text": "represented at least once.",
           "revealWithFog": "fog-1773109567012"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 40,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
@@ -19085,17 +21033,29 @@
     {
       "row": 40,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
@@ -19217,42 +21177,74 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 40,
       "col": 40,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 40,
       "col": 41,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 40,
       "col": 42,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 40,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 40,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 40,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 40,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 41,
@@ -19271,22 +21263,38 @@
           "text": "1. All shaded cells are connected with each other",
           "revealWithFog": "fog-1773105249282"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 41,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
@@ -19297,7 +21305,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
@@ -19398,42 +21410,74 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 21,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
@@ -19443,17 +21487,29 @@
     {
       "row": 41,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
@@ -19464,7 +21520,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
@@ -19585,42 +21645,74 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 41,
       "col": 40,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 41,
       "col": 41,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 41,
       "col": 42,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 41,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 41,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 41,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 41,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 42,
@@ -19635,22 +21727,38 @@
           "text": "3. No LITS touching can have the same shape",
           "revealWithFog": "fog-1773105249282"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
       "row": 42,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
@@ -19661,7 +21769,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
@@ -19762,62 +21874,110 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 21,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 23,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
@@ -19949,62 +22109,110 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 42,
       "col": 40,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 42,
       "col": 41,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 42,
       "col": 42,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 42,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 42,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 42,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 42,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 43,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
@@ -20015,7 +22223,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
@@ -20120,12 +22332,20 @@
     {
       "row": 43,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
@@ -20136,7 +22356,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
@@ -20257,57 +22481,101 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 43,
       "col": 40,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 43,
       "col": 41,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 43,
       "col": 42,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 43,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 43,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 43,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 43,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 44,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
@@ -20323,7 +22591,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
@@ -20424,62 +22696,110 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 20,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 21,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 23,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
@@ -20490,7 +22810,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
@@ -20611,62 +22935,110 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 44,
       "col": 40,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 44,
       "col": 41,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 44,
       "col": 42,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 44,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 44,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 44,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 44,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 45,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
@@ -20677,7 +23049,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
@@ -20778,37 +23154,65 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 20,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
@@ -20818,12 +23222,20 @@
     {
       "row": 45,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 23,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
@@ -20954,62 +23366,110 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 45,
       "col": 40,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 45,
       "col": 41,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 45,
       "col": 42,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 45,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 45,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 45,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 45,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 46,
       "col": 0,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 1,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 2,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 3,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21020,7 +23480,11 @@
         1,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21121,37 +23585,65 @@
         0,
         0,
         1
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 15,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 16,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 17,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 18,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 19,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 20,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21161,32 +23653,56 @@
     {
       "row": 46,
       "col": 22,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 23,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 24,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 25,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 26,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 27,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21203,6 +23719,10 @@
           "text": "Another LITS puzzle!",
           "revealWithFog": "fog-1773109357101"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
@@ -21214,7 +23734,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21225,7 +23749,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21236,7 +23764,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21258,7 +23790,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21269,7 +23805,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21280,7 +23820,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21297,6 +23841,10 @@
           "text": "Credit: Thomas Snyder",
           "revealWithFog": "fog-1773109357101"
         }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
       }
     },
     {
@@ -21308,7 +23856,11 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
@@ -21319,47 +23871,83 @@
         0,
         0,
         0
-      ]
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 39,
-      "fixedColor": "5"
+      "fixedColor": "5",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
     },
     {
       "row": 46,
       "col": 40,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 46,
       "col": 41,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 46,
       "col": 42,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 46,
       "col": 43,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 46,
       "col": 44,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 46,
       "col": 45,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     },
     {
       "row": 46,
       "col": 46,
-      "fixedColor": "7"
+      "fixedColor": "7",
+      "fixedTexture": {
+        "type": "water",
+        "variant": 2
+      }
     }
   ],
   "createdAt": "2026-03-12",

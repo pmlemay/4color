@@ -30,6 +30,7 @@ import { CellData, CellPosition, InputMode, PuzzleData, PuzzleSolution, AutoCros
 import { PUZZLE_TYPE_DEFAULTS } from '../utils/puzzleIO'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
+import { incrementPuzzleCompletions } from '../utils/puzzleStats'
 
 export function PlayerPage() {
   const { puzzleId } = useParams()
@@ -287,6 +288,7 @@ export function PlayerPage() {
     const timeMs = timer.elapsedMs
     setPuzzleCompleted(true)
     if (puzzleId) {
+      incrementPuzzleCompletions(puzzleId)
       if (user) {
         markCompleted(puzzleId, timeMs)
         setCompletionStep('keepclear')

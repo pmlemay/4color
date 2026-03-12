@@ -11,6 +11,7 @@ import { useModal } from '../../hooks/useModal'
 import { Modal } from '../Modal/Modal'
 import { LanguagePicker } from '../LanguagePicker'
 import { ThemeToggle } from '../ThemeToggle'
+import { usePuzzleStats } from '../../hooks/usePuzzleStats'
 import './PuzzleList.css'
 
 export function PuzzleList() {
@@ -20,6 +21,7 @@ export function PuzzleList() {
   const { user, signIn, signOut } = useAuth()
   const { completedPuzzleIds, completionTimes, displayName, setDisplayName } = useCompletions()
   const leaderboard = useLeaderboard(10)
+  const puzzleStats = usePuzzleStats()
   const { modalProps, showConfirm } = useModal()
   const [showAccount, setShowAccount] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
@@ -351,6 +353,9 @@ export function PuzzleList() {
                           </span>
                         )}
                       </Link>
+                      {isDev && puzzleStats.has(p.id) && (
+                        <span className="puzzle-stat-count" title="Total completions (all users)">{puzzleStats.get(p.id)}</span>
+                      )}
                       {isDev && <Link to={`/edit/${p.id}`} className="puzzle-edit-overlay" title="Edit puzzle">&#9998;</Link>}
                     </div>
                   ))}

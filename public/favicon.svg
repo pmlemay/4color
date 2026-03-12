@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="3" fill="#1a1a1a"/>
+  <clipPath id="r"><rect width="32" height="32" rx="3"/></clipPath>
+  <g clip-path="url(#r)">
+    <!-- Top-left: red — slanted like the diagonal stroke of a "4" -->
+    <path d="M0 0 h15 L2 18 H0 Z" fill="#e74c3c"/>
+    <!-- Top-right: blue — small black notch cut from bottom-left corner -->
+    <path d="M17 0 h15 v18 h-9 v-2 h-6 Z" fill="#3498db"/>
+    <!-- Bottom-left: yellow -->
+    <path d="M0 18 h15 v14 H0 Z" fill="#f1c40f"/>
+    <!-- Bottom-right: green -->
+    <path d="M17 18 h15 v14 H17 Z" fill="#2ecc71"/>
+    <!-- Thin border lines between regions -->
+    <line x1="16" y1="0" x2="16" y2="32" stroke="#1a1a1a" stroke-width="1.5"/>
+  </g>
+</svg>

@@ -42,7 +42,8 @@ export function EditorPage() {
   const [rows, setRows] = useState(paramRows)
   const [cols, setCols] = useState(paramCols)
   const [title, setTitle] = useState('')
-  const [authors, setAuthors] = useState<string[]>([])
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  const [authors, setAuthors] = useState<string[]>(isDev ? ['PmLemay'] : [])
   const [difficulty, setDifficulty] = useState('')
   const [tags, setTags] = useState<string[]>([])
   const [specialRules, setSpecialRules] = useState<string[]>([])
@@ -248,10 +249,27 @@ export function EditorPage() {
     'Place stars in the grid so that each row, column, and bold-outlined region contains the indicated number of stars.',
     'Stars may not touch each other, not even diagonally.',
   ]
+  const SPIRALGALAXY_RULES = [
+    'Divide the grid into regions that have rotational symmetry around their center white circle.',
+    'Each region has exactly 1 white circle in it.',
+  ]
   const PUZZLE_TYPE_RULES: Record<string, string[]> = {
     heyawake: HEYAWAKE_RULES,
     nurikabe: NURIKABE_RULES,
     starbattle: STARBATTLE_RULES,
+    spiralgalaxy: SPIRALGALAXY_RULES,
+  }
+  const PUZZLE_TYPE_TITLES: Record<string, string> = {
+    heyawake: 'Heyawake',
+    nurikabe: 'Nurikabe',
+    starbattle: 'Star Battle',
+    spiralgalaxy: 'Spiral Galaxy',
+  }
+  const PUZZLE_TYPE_TAGS: Record<string, string> = {
+    heyawake: 'Heyawake',
+    nurikabe: 'Nurikabe',
+    starbattle: 'Star-battle',
+    spiralgalaxy: 'Spiral-galaxy',
   }
   const prevPuzzleType = useRef(puzzleType)
 
@@ -266,6 +284,22 @@ export function EditorPage() {
       setClickActionLeft('')
       setClickActionRight('cross')
     }
+    // Auto-fill title (overwrite with type's default name)
+    const oldTitle = PUZZLE_TYPE_TITLES[prevPuzzleType.current]
+    const newTitle = PUZZLE_TYPE_TITLES[newType]
+    if (newTitle) {
+      setTitle(newTitle)
+    } else if (oldTitle) {
+      setTitle(prev => prev === oldTitle ? '' : prev)
+    }
+    // Remove old type's tag, add new type's tag
+    const oldTag = PUZZLE_TYPE_TAGS[prevPuzzleType.current]
+    const newTag = PUZZLE_TYPE_TAGS[newType]
+    setTags(prev => {
+      let next = oldTag ? prev.filter(t => t !== oldTag) : prev
+      if (newTag && !next.includes(newTag)) next = [...next, newTag]
+      return next
+    })
   }, [])
 
   useEffect(() => {
@@ -1023,6 +1057,7 @@ export function EditorPage() {
                 <option value="nurikabe">Nurikabe</option>
                 <option value="heyawake">Heyawake</option>
                 <option value="starbattle">Star Battle</option>
+                <option value="spiralgalaxy">Spiral Galaxy</option>
               </select>
             </div>
             <div className="info-editor-field">
@@ -1369,7 +1404,7 @@ export function EditorPage() {
           clickActionRight={clickActionRight || undefined}
           onClickActionLeftChange={setClickActionLeft}
           onClickActionRightChange={setClickActionRight}
-          puzzleHasClickActions={!!puzzleType}
+          puzzleHasClickActions={!!clickActionLeft}
           fogGroups={solutionMode ? undefined : fogGroups}
           fogEditStep={fogEditStep}
           fogPendingTriggers={fogPendingTriggers}

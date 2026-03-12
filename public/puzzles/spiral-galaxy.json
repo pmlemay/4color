@@ -1,19 +1,23 @@
 {
-  "id": "spiralgalaxy-9-768-323-from-puzzle-galaxies",
-  "title": "SpiralGalaxy (9,768,323 from puzzle-galaxies)",
+  "id": "spiral-galaxy",
+  "title": "Spiral Galaxy",
   "authors": [
-    "Unknown"
+    "PmLemay"
   ],
   "rules": [
-    "Divide the grid into regions that have rotational symmetry around their center white circle",
+    "Divide the grid into regions that have rotational symmetry around their center white circle.",
     "Each region has exactly 1 white circle in it."
   ],
   "clues": [],
-  "difficulty": "Medium",
+  "difficulty": "Easy",
   "tags": [
     "Spiral-galaxy"
   ],
-  "autoCrossRules": [],
+  "autoCrossRules": [
+    "king"
+  ],
+  "puzzleType": "spiralgalaxy",
+  "clickActionRight": "cross",
   "gridSize": {
     "rows": 5,
     "cols": 5
@@ -21,27 +25,12 @@
   "cells": [
     {
       "row": 0,
-      "col": 0,
-      "fixedVertexMarks": [
-        null,
-        null,
-        "circle",
-        null
-      ]
-    },
-    {
-      "row": 0,
       "col": 1,
-      "fixedVertexMarks": [
-        null,
-        null,
-        null,
-        "circle"
-      ]
+      "fixedMark": "circle"
     },
     {
       "row": 0,
-      "col": 2,
+      "col": 3,
       "fixedEdgeMarks": [
         null,
         "circle",
@@ -51,61 +40,6 @@
     },
     {
       "row": 0,
-      "col": 3,
-      "fixedEdgeMarks": [
-        null,
-        null,
-        null,
-        "circle"
-      ]
-    },
-    {
-      "row": 1,
-      "col": 0,
-      "fixedVertexMarks": [
-        null,
-        "circle",
-        null,
-        null
-      ]
-    },
-    {
-      "row": 1,
-      "col": 1,
-      "fixedVertexMarks": [
-        "circle",
-        null,
-        null,
-        null
-      ]
-    },
-    {
-      "row": 1,
-      "col": 3,
-      "fixedMark": "circle"
-    },
-    {
-      "row": 2,
-      "col": 2,
-      "fixedMark": "circle"
-    },
-    {
-      "row": 3,
-      "col": 1,
-      "fixedMark": "circle"
-    },
-    {
-      "row": 3,
-      "col": 3,
-      "fixedEdgeMarks": [
-        null,
-        "circle",
-        null,
-        null
-      ]
-    },
-    {
-      "row": 3,
       "col": 4,
       "fixedEdgeMarks": [
         null,
@@ -115,8 +49,13 @@
       ]
     },
     {
-      "row": 4,
+      "row": 1,
       "col": 2,
+      "fixedMark": "circle"
+    },
+    {
+      "row": 2,
+      "col": 1,
       "fixedEdgeMarks": [
         null,
         "circle",
@@ -125,15 +64,60 @@
       ]
     },
     {
-      "row": 4,
-      "col": 3,
+      "row": 2,
+      "col": 2,
       "fixedEdgeMarks": [
         null,
         null,
         null,
         "circle"
       ]
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "fixedEdgeMarks": [
+        null,
+        null,
+        "circle",
+        null
+      ]
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "fixedEdgeMarks": [
+        null,
+        null,
+        "circle",
+        null
+      ]
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "fixedEdgeMarks": [
+        "circle",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "fixedEdgeMarks": [
+        "circle",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "fixedMark": "circle"
     }
   ],
-  "createdAt": "2026-03-03"
+  "createdAt": "2026-03-12"
 }

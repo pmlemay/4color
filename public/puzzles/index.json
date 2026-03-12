@@ -1,5 +1,26 @@
 [
   {
+    "id": "spiral-galaxy",
+    "file": "spiral-galaxy.json",
+    "title": "Spiral Galaxy",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 5,
+      "cols": 5
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "Spiral-galaxy"
+    ],
+    "autoCrossRules": [
+      "king"
+    ],
+    "puzzleType": "spiralgalaxy",
+    "clickActionRight": "cross"
+  },
+  {
     "id": "spiralgalaxy-9-768-323-from-puzzle-galaxies",
     "file": "spiralgalaxy-9-768-323-from-puzzle-galaxies.json",
     "title": "SpiralGalaxy (9,768,323 from puzzle-galaxies)",
