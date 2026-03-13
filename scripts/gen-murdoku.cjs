@@ -165,7 +165,7 @@ function generatePuzzle({ id, title, authors, difficulty, rules, clues, regionMa
     clues,
     specialRules,
     difficulty: difficulty || 'Medium',
-    tags: ['murdoku'],
+    tags: ['Murdoku'],
     autoCrossRules: ['rook'],
     gridSize: { rows, cols },
     cells,

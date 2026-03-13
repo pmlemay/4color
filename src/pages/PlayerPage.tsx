@@ -122,8 +122,11 @@ export function PlayerPage() {
         if (data.clickActionLeft) {
           gridState.setInputMode('suggested')
         }
-        // Fetch solution file if it exists (for murdoku etc.)
-        fetchPuzzleSolution(puzzleId).then(sol => { if (!cancelled && sol) setSolution(sol) })
+        // Fetch solution file if it exists (for murdoku etc.) — skip for 4color (self-validating)
+        const is4c = data.tags?.includes('4color')
+        if (!is4c) {
+          fetchPuzzleSolution(puzzleId).then(sol => { if (!cancelled && sol) setSolution(sol) })
+        }
         // Only start timer if puzzle not already completed
         if (!completedPuzzleIds.has(puzzleId)) {
           timerRef.current.reset(savedElapsedMs)
