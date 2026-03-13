@@ -1,7 +1,9 @@
 {
   "id": "sample-4-color-puzzle",
-  "title": "4-Color #1",
-  "authors": ["Ai"],
+  "title": "4-Color",
+  "authors": [
+    "Ai"
+  ],
   "rules": [
     "Color each region so that no two adjacent regions share the same color.",
     "Use exactly 4 colors."
@@ -12,6 +14,7 @@
     "4color"
   ],
   "autoCrossRules": [],
+  "clickActionRight": "cross",
   "gridSize": {
     "rows": 6,
     "cols": 6
@@ -378,5 +381,5 @@
       ]
     }
   ],
-  "createdAt": "2026-03-02"
+  "createdAt": "2026-03-12"
 }

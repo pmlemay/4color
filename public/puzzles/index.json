@@ -1,42 +1,5 @@
 [
   {
-    "id": "spiral-galaxy",
-    "file": "spiral-galaxy.json",
-    "title": "Spiral Galaxy",
-    "authors": [
-      "PmLemay"
-    ],
-    "gridSize": {
-      "rows": 5,
-      "cols": 5
-    },
-    "difficulty": "Easy",
-    "tags": [
-      "Spiral-galaxy"
-    ],
-    "autoCrossRules": [
-      "king"
-    ],
-    "puzzleType": "spiralgalaxy",
-    "clickActionRight": "cross"
-  },
-  {
-    "id": "spiralgalaxy-9-768-323-from-puzzle-galaxies",
-    "file": "spiralgalaxy-9-768-323-from-puzzle-galaxies.json",
-    "title": "SpiralGalaxy (9,768,323 from puzzle-galaxies)",
-    "authors": [
-      "Unknown"
-    ],
-    "gridSize": {
-      "rows": 5,
-      "cols": 5
-    },
-    "difficulty": "Medium",
-    "tags": [
-      "Spiral-galaxy"
-    ]
-  },
-  {
     "id": "haunted-lighthouse-murdoku",
     "file": "haunted-lighthouse-murdoku.json",
     "title": "Haunted Lighthouse Murdoku",
@@ -79,7 +42,7 @@
   {
     "id": "sample-4-color-puzzle",
     "file": "sample-4-color-puzzle.json",
-    "title": "4-Color #1",
+    "title": "4-Color",
     "authors": [
       "Ai"
     ],
@@ -90,7 +53,8 @@
     "difficulty": "Very easy",
     "tags": [
       "4color"
-    ]
+    ],
+    "clickActionRight": "cross"
   },
   {
     "id": "neighbourhood-watch-murdoku",
@@ -105,7 +69,7 @@
     },
     "difficulty": "Medium",
     "tags": [
-      "Murdoku"
+      "murdoku"
     ],
     "autoCrossRules": [
       "rook"
@@ -114,9 +78,27 @@
     "inProgress": true
   },
   {
+    "id": "spiral-galaxy-2",
+    "file": "spiral-galaxy-2.json",
+    "title": "Spiral Galaxy",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Spiral-galaxy"
+    ],
+    "puzzleType": "spiralgalaxy",
+    "clickActionRight": "cross"
+  },
+  {
     "id": "hard-4color",
     "file": "hard-4color.json",
-    "title": "4-Color #2",
+    "title": "4-Color",
     "authors": [
       "Ai"
     ],
@@ -127,7 +109,8 @@
     "difficulty": "Easy",
     "tags": [
       "4color"
-    ]
+    ],
+    "clickActionRight": "cross"
   },
   {
     "id": "starbattle-murdoku",
@@ -213,28 +196,9 @@
     "clickActionRight": "cross"
   },
   {
-    "id": "heyawake-169940-from-puzsq",
-    "file": "heyawake-169940-from-puzsq.json",
-    "title": "Heyawake (169940 from puzsq)",
-    "authors": [
-      "Series_205"
-    ],
-    "gridSize": {
-      "rows": 10,
-      "cols": 10
-    },
-    "difficulty": "Hard",
-    "tags": [
-      "Heyawake"
-    ],
-    "puzzleType": "heyawake",
-    "clickActionLeft": "color:9",
-    "clickActionRight": "color:5"
-  },
-  {
     "id": "4color-3",
     "file": "4color-3.json",
-    "title": "4-Color #3",
+    "title": "4-Color",
     "authors": [
       "PmLemay"
     ],
@@ -249,25 +213,6 @@
     "clickActionRight": "cross"
   },
   {
-    "id": "nurikabe-112481-from-puzsq-logicpuzzle-app",
-    "file": "nurikabe-112481-from-puzsq-logicpuzzle-app.json",
-    "title": "Nurikabe (112481 from puzsq)",
-    "authors": [
-      "土刃"
-    ],
-    "gridSize": {
-      "rows": 10,
-      "cols": 10
-    },
-    "difficulty": "Medium",
-    "tags": [
-      "Nurikabe"
-    ],
-    "puzzleType": "nurikabe",
-    "clickActionLeft": "color:9",
-    "clickActionRight": "mark:dot"
-  },
-  {
     "id": "castle-siege-murdoku",
     "file": "castle-siege-murdoku.json",
     "title": "Castle Siege Murdoku",
@@ -278,14 +223,13 @@
       "rows": 12,
       "cols": 12
     },
-    "difficulty": "Very hard",
+    "difficulty": "Expert",
     "tags": [
-      "Murdoku"
+      "murdoku"
     ],
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross",
     "inProgress": true
   },
   {
@@ -318,12 +262,11 @@
     },
     "difficulty": "Expert",
     "tags": [
-      "Murdoku"
+      "murdoku"
     ],
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross",
     "inProgress": true
   },
   {
@@ -344,6 +287,7 @@
       "LITS",
       "Nurikabe"
     ],
-    "clickActionRight": "cross"
+    "clickActionLeft": "color:4",
+    "clickActionRight": "color:5"
   }
 ]

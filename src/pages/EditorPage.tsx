@@ -362,7 +362,17 @@ export function EditorPage() {
 
   const handleSave = async () => {
     if (!difficulty) { await showAlert('Please select a difficulty before saving.'); return }
-    const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
+    let id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
+    // For new puzzles, ensure unique ID by appending a suffix if needed
+    if (!puzzleId) {
+      const index = await fetchPuzzleIndex()
+      const existingIds = new Set(index.map(e => e.id))
+      if (existingIds.has(id)) {
+        let n = 2
+        while (existingIds.has(`${id}-${n}`)) n++
+        id = `${id}-${n}`
+      }
+    }
     const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
 
     if (puzzleId) {
@@ -384,6 +394,18 @@ export function EditorPage() {
 
   const handleClearAll = async () => {
     if (await showConfirm('Are you sure you want to clear all? This cannot be undone.', 'Clear All')) {
+      gridState.resetGrid(rows, cols)
+    }
+  }
+
+  const handleDiscardDraft = async () => {
+    if (!await showConfirm('Discard draft and reload puzzle from file?', 'Discard Draft')) return
+    clearDraft()
+    if (puzzleId) {
+      // Reload from file
+      const puzzle = await fetchPuzzle(puzzleId)
+      if (puzzle) loadPuzzleIntoEditor(puzzle)
+    } else {
       gridState.resetGrid(rows, cols)
     }
   }
@@ -506,16 +528,13 @@ export function EditorPage() {
     downloadSolutionJSON(solution)
   }
 
-  const handleImageImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const processImageFile = (file: File) => {
     if (file.size > 200 * 1024) {
-      showAlert('Image must be under 200KB.')
+      showAlert(`Image "${file.name}" must be under 200KB.`)
       return
     }
     const img = new Image()
     img.onload = () => {
-      // Scale down preserving aspect ratio, max dimension = 50px
       const maxDim = 50
       const scale = maxDim / Math.max(img.width, img.height)
       const w = Math.round(img.width * scale)
@@ -533,6 +552,14 @@ export function EditorPage() {
       URL.revokeObjectURL(img.src)
     }
     img.src = URL.createObjectURL(file)
+  }
+
+  const handleImageImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+    for (const file of Array.from(files)) {
+      processImageFile(file)
+    }
     e.target.value = ''
   }
 
@@ -1151,11 +1178,13 @@ export function EditorPage() {
             />
             <button className="info-btn" onClick={handleClearAll}>Clear All</button>
             <button className="info-btn" onClick={handleClearPlayerInput}>Clear Player Input</button>
+            <button className="info-btn" onClick={handleDiscardDraft}>Discard Draft</button>
             <button className="info-btn" onClick={handleEnterSolutionMode}>Enter Solution Mode</button>
             <input
               ref={imageInputRef}
               type="file"
               accept="image/*"
+              multiple
               style={{ display: 'none' }}
               onChange={handleImageImport}
             />

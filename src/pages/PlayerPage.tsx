@@ -404,6 +404,7 @@ export function PlayerPage() {
   // (useGrid's onDragChange/commitSelection don't know about 'suggested' inputMode)
   const suggestedProcessed = useRef<Set<string>>(new Set())
   const touchCycleAction = useRef<string | null>(null) // determined action for touch drag: action string or 'clear'
+  const leftDragForce = useRef<boolean | undefined>(undefined) // locked apply/remove for mouse left drag
 
   const handleDragChange = useCallback((sel: CellPosition[]) => {
     if (!isSuggestedMode || !clickActionLeft) {
@@ -443,8 +444,14 @@ export function PlayerPage() {
           return applyActionToGrid(mid, pos, action, true, suggestedAutoCross)
         })
       } else {
-        // Mouse: left click toggles left action
-        setter(prev => applyActionToGrid(prev, pos, clickActionLeft, undefined, suggestedAutoCross))
+        // Mouse: lock action on first cell, apply same to rest of drag
+        setter(prev => {
+          if (isFirst) {
+            const matches = cellMatchesAction(prev[pos.row][pos.col], clickActionLeft)
+            leftDragForce.current = !matches
+          }
+          return applyActionToGrid(prev, pos, clickActionLeft, leftDragForce.current, suggestedAutoCross)
+        })
       }
     }
   }, [isSuggestedMode, clickActionLeft, clickActionRight, suggestedAutoCross, gridState])
@@ -550,28 +557,30 @@ export function PlayerPage() {
   )
 
   const metaPanelContent = (
-    <>
-      <InfoPanel
-        title={puzzle.title}
-        authors={puzzle.authors}
-        gridSize={puzzle.gridSize}
-        difficulty={puzzle.difficulty}
-        specialRulesList={puzzle.specialRules}
-        rulesList={puzzle.rules}
-        backLink={false}
-        headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
-        struckSpecialRuleWords={struckSpecialRuleWords}
-        onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
-        struckRuleWords={struckRuleWords}
-        onStruckRuleWordsChange={setStruckRuleWords}
-        aboveRules={<div className="info-section">
-          {timerDisplay}
-          <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
-          {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
-        </div>}
-      />
+    <div className="slide-panel-content">
+      <div className="slide-panel-scroll">
+        <InfoPanel
+          title={puzzle.title}
+          authors={puzzle.authors}
+          gridSize={puzzle.gridSize}
+          difficulty={puzzle.difficulty}
+          specialRulesList={puzzle.specialRules}
+          rulesList={puzzle.rules}
+          backLink={false}
+          headerRight={<><LanguagePicker /><ThemeToggle theme={theme} onToggle={toggleTheme} /></>}
+          struckSpecialRuleWords={struckSpecialRuleWords}
+          onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
+          struckRuleWords={struckRuleWords}
+          onStruckRuleWordsChange={setStruckRuleWords}
+          aboveRules={<div className="info-section">
+            {timerDisplay}
+            <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
+            {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+          </div>}
+        />
+      </div>
       {leaderboardSection}
-    </>
+    </div>
   )
 
   const gridElement = (

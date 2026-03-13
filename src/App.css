@@ -372,13 +372,30 @@ body {
   background: var(--panel-bg);
   transform: translateX(-100%);
   transition: transform 0.25s ease;
-  overflow-y: auto;
+  overflow: hidden;
   z-index: 101;
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
 }
 
 .slide-panel.open {
   transform: translateX(0);
+}
+
+.slide-panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.slide-panel-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.slide-panel-content > .puzzle-leaderboard {
+  flex-shrink: 0;
 }
 
 /* Puzzle info link */

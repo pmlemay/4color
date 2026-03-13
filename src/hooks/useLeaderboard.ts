@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { db } from '../firebase'
 
 export interface LeaderboardEntry {
@@ -8,14 +8,13 @@ export interface LeaderboardEntry {
   count: number
 }
 
-export function useLeaderboard(maxEntries = 10) {
+export function useLeaderboard() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([])
 
   useEffect(() => {
     const q = query(
       collection(db, 'completions_index'),
-      orderBy('count', 'desc'),
-      limit(maxEntries)
+      orderBy('count', 'desc')
     )
     return onSnapshot(q, snap => {
       const results: LeaderboardEntry[] = []
@@ -31,12 +30,12 @@ export function useLeaderboard(maxEntries = 10) {
         }
       })
       results.sort((a, b) => b.count - a.count)
-      setEntries(results.slice(0, maxEntries))
+      setEntries(results)
     }, () => {
       // Firestore error — ignore silently
       setEntries([])
     })
-  }, [maxEntries])
+  }, [])
 
   return entries
 }

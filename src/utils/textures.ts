@@ -59,6 +59,11 @@ const TEXTURE_VARIANTS: Record<TextureType, TextureColors[]> = {
     { bg: '#5c3a1e', fg: '#6e4c2e', fg2: '#4c2a0e' },    // walnut
     { bg: '#c4a56a', fg: '#d4b57a', fg2: '#b4955a' },    // birch/maple
   ],
+  carpet: [
+    { bg: '#8b2252', fg: '#a03368', fg2: '#6b1242' },    // burgundy/wine
+    { bg: '#1a4a6e', fg: '#2a5a7e', fg2: '#0a3a5e' },    // navy blue
+    { bg: '#2e5e3e', fg: '#3e6e4e', fg2: '#1e4e2e' },    // forest green
+  ],
 }
 
 export function getTextureVariants(type: TextureType): TextureColors[] {
@@ -70,7 +75,7 @@ export function getTextureColors(type: TextureType, variant: number): TextureCol
   return variants[variant % variants.length]
 }
 
-export const TEXTURE_TYPES: TextureType[] = ['water', 'bricks', 'grass', 'gravel', 'sand', 'pavement', 'wood', 'dirt', 'dirtTrailV', 'dirtTrailH']
+export const TEXTURE_TYPES: TextureType[] = ['wood', 'carpet', 'gravel', 'bricks', 'pavement', 'grass', 'sand', 'dirt', 'dirtTrailV', 'dirtTrailH', 'water']
 
 export const TEXTURE_LABELS: Record<TextureType, string> = {
   water: 'Water',
@@ -83,6 +88,7 @@ export const TEXTURE_LABELS: Record<TextureType, string> = {
   dirt: 'Dirt',
   dirtTrailV: 'Dirt (V Trail)',
   dirtTrailH: 'Dirt (H Trail)',
+  carpet: 'Carpet',
 }
 
 /** Get the pattern ID for a given texture type and variant */

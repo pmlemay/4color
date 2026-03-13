@@ -68,6 +68,11 @@ function textureBackground(tex: CellTexture): string {
       return `url("data:image/svg+xml,${encodeURIComponent(
         `<svg xmlns='http://www.w3.org/2000/svg' width='40' height='24'><rect width='40' height='24' fill='${c.bg}'/><path d='M0 3 C13 2,27 4,40 3' stroke='${c.fg}' fill='none' stroke-width='1' opacity='0.5'/><path d='M0 7 C13 8,27 6,40 7' stroke='${c.fg2}' fill='none' stroke-width='0.8' opacity='0.4'/><path d='M0 11 C13 10,27 12,40 11' stroke='${c.fg}' fill='none' stroke-width='1.2' opacity='0.5'/><path d='M0 15 C13 16,27 14,40 15' stroke='${c.fg2}' fill='none' stroke-width='0.7' opacity='0.35'/><path d='M0 19 C13 18,27 20,40 19' stroke='${c.fg}' fill='none' stroke-width='1' opacity='0.45'/><path d='M0 22 C13 23,27 21,40 22' stroke='${c.fg2}' fill='none' stroke-width='0.6' opacity='0.3'/></svg>`
       )}")`
+    case 'carpet':
+      // Woven carpet pattern with diamond/cross motif
+      return `url("data:image/svg+xml,${encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'><rect width='16' height='16' fill='${c.bg}'/><rect x='0' y='0' width='4' height='4' fill='${c.fg}' opacity='0.4'/><rect x='8' y='0' width='4' height='4' fill='${c.fg}' opacity='0.4'/><rect x='4' y='4' width='4' height='4' fill='${c.fg2}' opacity='0.5'/><rect x='12' y='4' width='4' height='4' fill='${c.fg2}' opacity='0.5'/><rect x='0' y='8' width='4' height='4' fill='${c.fg2}' opacity='0.5'/><rect x='8' y='8' width='4' height='4' fill='${c.fg2}' opacity='0.5'/><rect x='4' y='12' width='4' height='4' fill='${c.fg}' opacity='0.4'/><rect x='12' y='12' width='4' height='4' fill='${c.fg}' opacity='0.4'/></svg>`
+      )}")`
     default:
       return ''
   }

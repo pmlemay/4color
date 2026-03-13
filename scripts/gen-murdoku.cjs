@@ -50,8 +50,53 @@ function validateConnectivity(regionMap) {
   return errors
 }
 
+/** Find the best label cell for each region.
+ *  Preference: bottom-left cell with a bottom edge that has a neighbor to its right in the same region (2 cells wide).
+ *  Fallback: any bottom-row cell with a bottom edge, leftmost first.
+ *  Last resort: bottom-left cell of the region. */
+function computeLabelPositions(regionMap, regionNames, labelOverrides) {
+  if (labelOverrides) return labelOverrides
+  const rows = regionMap.length
+  const cols = regionMap[0].length
+
+  // Collect cells per region
+  const regionCells = {}
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const ch = regionMap[r][c]
+      if (!regionCells[ch]) regionCells[ch] = []
+      regionCells[ch].push([r, c])
+    }
+  }
+
+  const positions = {}
+  for (const [ch, cells] of Object.entries(regionCells)) {
+    if (!regionNames[ch]) continue
+    const name = regionNames[ch]
+
+    // Find cells with a bottom edge (bottom border of region)
+    const withBottomEdge = cells.filter(([r, c]) =>
+      r === rows - 1 || regionMap[r + 1][c] !== ch
+    )
+
+    // Among those, find ones that have a neighbor to the right in the same region (2-wide)
+    const twoWide = withBottomEdge.filter(([r, c]) =>
+      c < cols - 1 && regionMap[r][c + 1] === ch
+    )
+
+    // Pick: prefer 2-wide, then any bottom-edge, then last resort bottom-left of region
+    let candidates = twoWide.length > 0 ? twoWide : withBottomEdge.length > 0 ? withBottomEdge : cells
+
+    // Sort: bottom-most first, then left-most
+    candidates.sort((a, b) => b[0] - a[0] || a[1] - b[1])
+    const [r, c] = candidates[0]
+    positions[`${r},${c}`] = name
+  }
+  return positions
+}
+
 /** Generate a puzzle JSON object from a config with region map */
-function generatePuzzle({ id, title, authors, difficulty, rules, clues, regionMap, regionNames, labelPositions, specialRules }) {
+function generatePuzzle({ id, title, authors, difficulty, rules, clues, regionMap, regionNames, labelPositions: labelOverrides, specialRules }) {
   const rows = regionMap.length
   const cols = regionMap[0].length
 
@@ -71,6 +116,9 @@ function generatePuzzle({ id, title, authors, difficulty, rules, clues, regionMa
     process.exit(1)
   }
 
+  // Compute label positions from region names
+  const labelPositions = computeLabelPositions(regionMap, regionNames || {}, labelOverrides)
+
   // Compute borders for each cell
   const cells = []
   for (let r = 0; r < rows; r++) {
@@ -87,7 +135,7 @@ function generatePuzzle({ id, title, authors, difficulty, rules, clues, regionMa
 
       const labelKey = `${r},${c}`
       if (labelPositions[labelKey]) {
-        entry.label = { text: labelPositions[labelKey], align: 'bottom' }
+        entry.labels = { bottom: { text: labelPositions[labelKey] } }
       }
 
       if (hasBorders || labelPositions[labelKey]) {
@@ -198,11 +246,6 @@ const PUZZLES = [
       C: 'Cedar House', E: 'Elm House', B: 'Birch House',
       G: 'Garage', N: 'Garden',
     },
-    labelPositions: {
-      '0,0': 'Maple', '0,3': 'Oak', '0,5': 'Park',
-      '2,0': 'Cedar', '3,3': 'Elm', '4,3': 'Birch',
-      '5,0': 'Garage', '5,5': 'Garden',
-    },
   },
 
   // 9x9 Pirate Ship
@@ -297,13 +340,6 @@ const PUZZLES = [
       K: 'Kitchen', B: 'Barracks', H: 'Throne Room', F: 'Forge',
       S: 'Stables', L: 'Dungeon', '.': 'Cellar',
     },
-    labelPositions: {
-      '0,0': 'Tower', '0,3': 'Ramparts', '0,9': 'Gatehouse',
-      '2,2': 'War Room', '2,7': 'Chapel', '4,4': 'Great Hall',
-      '4,0': 'Courtyard', '5,8': 'Kitchen', '3,10': 'Armory',
-      '7,0': 'Barracks', '7,3': 'Throne Room', '10,2': 'Forge',
-      '9,8': 'Stables', '10,5': 'Dungeon', '1,11': 'Cellar',
-    },
   },
 
   // 16x16 Space Station
@@ -359,14 +395,6 @@ const PUZZLES = [
       A: 'Armory', M: 'Medbay', R: 'Reactor', D: 'Docking Bay',
       S: 'Storage', G: 'Hydroponics', P: 'Cargo Bay',
       F: 'Mess Hall', T: 'Comms Tower', I: 'Airlock', N: 'Navigation',
-    },
-    labelPositions: {
-      '0,0': 'Bridge', '0,5': 'Comms', '0,10': 'Lab',
-      '1,13': 'Observatory', '3,2': 'Engineering', '3,7': 'Habitat',
-      '4,10': 'Crew Qtrs', '6,14': 'Armory', '6,2': 'Medbay',
-      '8,0': 'Reactor', '8,7': 'Docking', '9,10': 'Storage',
-      '9,4': 'Hydro', '12,0': 'Cargo Bay', '13,5': 'Mess Hall',
-      '14,10': 'Airlock', '10,14': 'Tower', '5,10': 'Navigation',
     },
   },
 ]

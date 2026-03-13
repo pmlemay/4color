@@ -1,5 +1,5 @@
 {
-  "id": "spiral-galaxy",
+  "id": "spiral-galaxy-2",
   "title": "Spiral Galaxy",
   "authors": [
     "PmLemay"
@@ -9,49 +9,62 @@
     "Each region has exactly 1 white circle in it."
   ],
   "clues": [],
-  "difficulty": "Easy",
+  "difficulty": "Medium",
   "tags": [
     "Spiral-galaxy"
   ],
-  "autoCrossRules": [
-    "king"
-  ],
+  "autoCrossRules": [],
   "puzzleType": "spiralgalaxy",
   "clickActionRight": "cross",
   "gridSize": {
-    "rows": 5,
-    "cols": 5
+    "rows": 7,
+    "cols": 7
   },
   "cells": [
     {
       "row": 0,
-      "col": 1,
-      "fixedMark": "circle"
-    },
-    {
-      "row": 0,
-      "col": 3,
+      "col": 2,
       "fixedEdgeMarks": [
         null,
-        "circle",
         null,
+        "circle",
         null
       ]
     },
     {
       "row": 0,
       "col": 4,
-      "fixedEdgeMarks": [
-        null,
-        null,
-        null,
-        "circle"
-      ]
+      "fixedMark": "circle"
     },
     {
       "row": 1,
       "col": 2,
-      "fixedMark": "circle"
+      "fixedEdgeMarks": [
+        "circle",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 1,
+      "col": 5,
+      "fixedEdgeMarks": [
+        null,
+        "circle",
+        null,
+        null
+      ]
+    },
+    {
+      "row": 1,
+      "col": 6,
+      "fixedEdgeMarks": [
+        null,
+        null,
+        null,
+        "circle"
+      ]
     },
     {
       "row": 2,
@@ -74,16 +87,6 @@
       ]
     },
     {
-      "row": 2,
-      "col": 4,
-      "fixedEdgeMarks": [
-        null,
-        null,
-        "circle",
-        null
-      ]
-    },
-    {
       "row": 3,
       "col": 1,
       "fixedEdgeMarks": [
@@ -95,13 +98,8 @@
     },
     {
       "row": 3,
-      "col": 4,
-      "fixedEdgeMarks": [
-        "circle",
-        null,
-        null,
-        null
-      ]
+      "col": 5,
+      "fixedMark": "circle"
     },
     {
       "row": 4,
@@ -115,7 +113,37 @@
     },
     {
       "row": 4,
+      "col": 4,
+      "fixedMark": "circle"
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "fixedEdgeMarks": [
+        null,
+        null,
+        "circle",
+        null
+      ]
+    },
+    {
+      "row": 5,
       "col": 3,
+      "fixedMark": "circle"
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "fixedEdgeMarks": [
+        "circle",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 6,
+      "col": 4,
       "fixedMark": "circle"
     }
   ],

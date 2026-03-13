@@ -505,10 +505,16 @@
     align-items: center;
     gap: 12px;
     padding: 12px;
+    overflow: visible;
   }
-  .sidebar-section:last-of-type {
+  .sidebar-section {
     flex: none;
     overflow: visible;
+    width: 100%;
+    min-width: 0;
+  }
+  .sidebar-spacer {
+    display: none;
   }
   .leaderboard-list {
     flex-direction: row;
@@ -516,9 +522,16 @@
     gap: 8px;
     overflow-x: auto;
     overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
   }
   .leaderboard-entry {
     white-space: nowrap;
     flex-shrink: 0;
+  }
+  .puzzle-list-topbar {
+    flex-wrap: wrap;
+  }
+  .lang-picker-btn {
+    white-space: nowrap;
   }
 }

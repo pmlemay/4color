@@ -8,7 +8,7 @@ export interface PuzzleLeaderboardEntry {
   time: number // ms
 }
 
-export function usePuzzleLeaderboard(puzzleId: string | undefined, maxEntries = 10) {
+export function usePuzzleLeaderboard(puzzleId: string | undefined) {
   const [entries, setEntries] = useState<PuzzleLeaderboardEntry[]>([])
 
   useEffect(() => {
@@ -32,11 +32,11 @@ export function usePuzzleLeaderboard(puzzleId: string | undefined, maxEntries = 
         }
       })
       results.sort((a, b) => a.time - b.time)
-      setEntries(results.slice(0, maxEntries))
+      setEntries(results)
     }, () => {
       setEntries([])
     })
-  }, [puzzleId, maxEntries])
+  }, [puzzleId])
 
   return entries
 }

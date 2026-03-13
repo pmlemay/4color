@@ -1,4 +1,4 @@
-export type TextureType = 'water' | 'bricks' | 'grass' | 'gravel' | 'sand' | 'pavement' | 'wood' | 'dirt' | 'dirtTrailV' | 'dirtTrailH'
+export type TextureType = 'water' | 'bricks' | 'grass' | 'gravel' | 'sand' | 'pavement' | 'wood' | 'dirt' | 'dirtTrailV' | 'dirtTrailH' | 'carpet'
 
 export interface CellTexture {
   type: TextureType

@@ -48,6 +48,7 @@ function puzzleSavePlugin(): Plugin {
     },
     configureServer(server) {
       // Serve puzzle JSON files directly from disk so newly added files work without restart
+      // Serve puzzle and solution JSON from disk with no-cache so newly saved files are available immediately
       server.middlewares.use((req, res, next) => {
         const base = '/4color/puzzles/'
         if (req.url && req.url.startsWith(base) && req.url.endsWith('.json')) {
@@ -57,6 +58,7 @@ function puzzleSavePlugin(): Plugin {
           const filePath = join(__dirname, 'public', 'puzzles', relPath)
           if (existsSync(filePath)) {
             res.setHeader('Content-Type', 'application/json')
+            res.setHeader('Cache-Control', 'no-cache, no-store')
             res.end(readFileSync(filePath, 'utf-8'))
             return
           }
@@ -64,6 +66,7 @@ function puzzleSavePlugin(): Plugin {
           const solPath = join(__dirname, 'public', 'puzzles', 'solutions', relPath)
           if (existsSync(solPath)) {
             res.setHeader('Content-Type', 'application/json')
+            res.setHeader('Cache-Control', 'no-cache, no-store')
             res.end(readFileSync(solPath, 'utf-8'))
             return
           }
@@ -74,6 +77,7 @@ function puzzleSavePlugin(): Plugin {
           const filePath = join(__dirname, 'public', 'puzzles', 'solutions', relPath)
           if (existsSync(filePath)) {
             res.setHeader('Content-Type', 'application/json')
+            res.setHeader('Cache-Control', 'no-cache, no-store')
             res.end(readFileSync(filePath, 'utf-8'))
             return
           }

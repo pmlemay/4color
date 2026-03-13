@@ -20,7 +20,7 @@ export function PuzzleList() {
   const { theme, toggle: toggleTheme } = useTheme()
   const { user, signIn, signOut } = useAuth()
   const { completedPuzzleIds, completionTimes, displayName, setDisplayName } = useCompletions()
-  const leaderboard = useLeaderboard(10)
+  const leaderboard = useLeaderboard()
   const puzzleStats = usePuzzleStats()
   const { modalProps, showConfirm } = useModal()
   const [showAccount, setShowAccount] = useState(false)
