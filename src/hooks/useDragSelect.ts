@@ -6,6 +6,7 @@ interface UseDragSelectOptions {
   onSelectionStart: () => void
   onSelectionChange: (selection: CellPosition[], isTouch: boolean) => void
   onSelectionEnd: (selection: CellPosition[]) => void
+  onLeftClickCell?: (pos: CellPosition, isFirst: boolean) => void
   onRightClickCell?: (pos: CellPosition, isFirst: boolean) => void
   isPinching?: boolean
   touchEnabled?: boolean
@@ -15,8 +16,10 @@ interface UseDragSelectOptions {
 export function useDragSelect(options: UseDragSelectOptions) {
   const dragging = useRef(false)
   const rightDragging = useRef(false)
+  const leftCellDragging = useRef(false)
   const currentSelection = useRef<CellPosition[]>([])
   const rightSelection = useRef<CellPosition[]>([])
+  const leftCellSelection = useRef<CellPosition[]>([])
   const ctrlHeld = useRef(false)
   const tableRef = useRef<HTMLTableElement>(null)
   // Keep options in a ref so native listeners always see latest callbacks
@@ -53,13 +56,18 @@ export function useDragSelect(options: UseDragSelectOptions) {
   const handleCellMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.toolbar')) return
 
-    if (e.button === 2 && optionsRef.current.onRightClickCell) {
+    if (e.button === 2) {
       e.preventDefault()
-      const pos = getCellFromEvent(e)
-      if (pos && !isFogged(pos)) {
-        rightDragging.current = true
-        rightSelection.current = [pos]
-        optionsRef.current.onRightClickCell(pos, true)
+      // Suppress the next contextmenu event globally (covers releasing outside the grid)
+      const suppress = (ev: Event) => { ev.preventDefault(); document.removeEventListener('contextmenu', suppress, true) }
+      document.addEventListener('contextmenu', suppress, true)
+      if (optionsRef.current.onRightClickCell) {
+        const pos = getCellFromEvent(e)
+        if (pos && !isFogged(pos)) {
+          rightDragging.current = true
+          rightSelection.current = [pos]
+          optionsRef.current.onRightClickCell(pos, true)
+        }
       }
       return
     }
@@ -68,6 +76,18 @@ export function useDragSelect(options: UseDragSelectOptions) {
 
     e.preventDefault()
     ctrlHeld.current = e.ctrlKey
+
+    // Per-cell left-click handler (same pattern as right-click)
+    if (optionsRef.current.onLeftClickCell && !e.ctrlKey) {
+      const pos = getCellFromEvent(e)
+      if (pos && !isFogged(pos)) {
+        leftCellDragging.current = true
+        leftCellSelection.current = [pos]
+        optionsRef.current.onLeftClickCell(pos, true)
+      }
+      return
+    }
+
     if (!e.ctrlKey) {
       optionsRef.current.onSelectionStart()
     }
@@ -90,6 +110,15 @@ export function useDragSelect(options: UseDragSelectOptions) {
       optionsRef.current.onRightClickCell?.(pos, false)
       return
     }
+    if (leftCellDragging.current) {
+      e.preventDefault()
+      const pos = getCellFromEvent(e)
+      if (!pos || isFogged(pos)) return
+      if (leftCellSelection.current.some(s => s.row === pos.row && s.col === pos.col)) return
+      leftCellSelection.current = [...leftCellSelection.current, pos]
+      optionsRef.current.onLeftClickCell?.(pos, false)
+      return
+    }
     if (!dragging.current) return
     e.preventDefault()
     const pos = getCellFromEvent(e)
@@ -103,6 +132,11 @@ export function useDragSelect(options: UseDragSelectOptions) {
     if (rightDragging.current) {
       rightDragging.current = false
       rightSelection.current = []
+      return
+    }
+    if (leftCellDragging.current) {
+      leftCellDragging.current = false
+      leftCellSelection.current = []
       return
     }
     if (dragging.current) {

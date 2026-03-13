@@ -12,6 +12,13 @@
           registrations.forEach(function(r) { r.unregister() })
         })
       }
+      // GitHub Pages SPA redirect: restore path from 404.html redirect
+      (function() {
+        var p = new URLSearchParams(window.location.search).get('p');
+        if (p) {
+          history.replaceState(null, '', p);
+        }
+      })();
     </script>
   </head>
   <body>

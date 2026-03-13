@@ -400,65 +400,70 @@ export function PlayerPage() {
 
   const isSuggestedMode = gridState.inputMode === 'suggested'
 
-  // Wrap drag handlers so suggested mode applies click actions directly
-  // (useGrid's onDragChange/commitSelection don't know about 'suggested' inputMode)
-  const suggestedProcessed = useRef<Set<string>>(new Set())
-  const touchCycleAction = useRef<string | null>(null) // determined action for touch drag: action string or 'clear'
-  const leftDragForce = useRef<boolean | undefined>(undefined) // locked apply/remove for mouse left drag
+  // Suggested mode: per-cell left-click handler (same pattern as right-click — no batching issues)
+  const leftDragAction = useRef<boolean | undefined>(undefined)
+
+  const handleLeftClickCell = useCallback((pos: CellPosition, isFirst: boolean) => {
+    if (!clickActionLeft) return
+    if (isFirst) {
+      const matches = cellMatchesAction(gridState.grid[pos.row][pos.col], clickActionLeft)
+      leftDragAction.current = !matches // true = apply, false = clear
+      gridState.setGridWithUndo(prev => applyActionToGrid(prev, pos, clickActionLeft, undefined, suggestedAutoCross))
+    } else {
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionLeft, leftDragAction.current, suggestedAutoCross))
+    }
+  }, [clickActionLeft, suggestedAutoCross, gridState])
+
+  // Touch drag: still uses onDragChange since touch goes through onSelectionChange
+  const touchCycleAction = useRef<string | null>(null)
+  const touchProcessed = useRef<Set<string>>(new Set())
 
   const handleDragChange = useCallback((sel: CellPosition[]) => {
     if (!isSuggestedMode || !clickActionLeft) {
       gridState.onDragChange(sel)
       return
     }
-    const isTouch = isTouchDragRef.current
+    if (sel.length === 0) return
 
+    // Touch: cycle through left action → right action → clear
+    const newCells: CellPosition[] = []
+    const wasEmpty = touchProcessed.current.size === 0
     for (const pos of sel) {
       const key = `${pos.row},${pos.col}`
-      if (suggestedProcessed.current.has(key)) continue
-      suggestedProcessed.current.add(key)
-      const isFirst = suggestedProcessed.current.size === 1
-      const setter = isFirst ? gridState.setGridWithUndo : gridState.setGrid
-
-      if (isTouch) {
-        // Touch: cycle through left action → right action → clear
-        setter(prev => {
-          const cell = prev[pos.row][pos.col]
-          let action: string
-          if (isFirst) {
-            // First cell determines the cycle action for the entire drag
-            if (cellMatchesAction(cell, clickActionLeft)) {
-              action = clickActionRight || 'clear'
-            } else if (clickActionRight && cellMatchesAction(cell, clickActionRight)) {
-              action = 'clear'
-            } else {
-              action = clickActionLeft
-            }
-            touchCycleAction.current = action
+      if (touchProcessed.current.has(key)) continue
+      touchProcessed.current.add(key)
+      newCells.push(pos)
+    }
+    if (newCells.length === 0) return
+    for (let i = 0; i < newCells.length; i++) {
+      const pos = newCells[i]
+      const cellIsFirst = wasEmpty && i === 0
+      const cellSetter = cellIsFirst ? gridState.setGridWithUndo : gridState.setGrid
+      cellSetter(prev => {
+        const cell = prev[pos.row][pos.col]
+        let action: string
+        if (cellIsFirst) {
+          if (cellMatchesAction(cell, clickActionLeft)) {
+            action = clickActionRight || 'clear'
+          } else if (clickActionRight && cellMatchesAction(cell, clickActionRight)) {
+            action = 'clear'
           } else {
-            action = touchCycleAction.current || clickActionLeft
+            action = clickActionLeft
           }
-          if (action === 'clear') return applyActionToGrid(prev, pos, clickActionLeft, false)
-          // Clear cell first then apply — handles cross-type cycling (e.g. color→mark in nurikabe)
-          const mid = applyActionToGrid(prev, pos, clickActionLeft, false)
-          return applyActionToGrid(mid, pos, action, true, suggestedAutoCross)
-        })
-      } else {
-        // Mouse: lock action on first cell, apply same to rest of drag
-        setter(prev => {
-          if (isFirst) {
-            const matches = cellMatchesAction(prev[pos.row][pos.col], clickActionLeft)
-            leftDragForce.current = !matches
-          }
-          return applyActionToGrid(prev, pos, clickActionLeft, leftDragForce.current, suggestedAutoCross)
-        })
-      }
+          touchCycleAction.current = action
+        } else {
+          action = touchCycleAction.current || clickActionLeft
+        }
+        if (action === 'clear') return applyActionToGrid(prev, pos, clickActionLeft, false)
+        const mid = applyActionToGrid(prev, pos, clickActionLeft, false)
+        return applyActionToGrid(mid, pos, action, true, suggestedAutoCross)
+      })
     }
   }, [isSuggestedMode, clickActionLeft, clickActionRight, suggestedAutoCross, gridState])
 
   const handleCommitSelection = useCallback((sel: CellPosition[], ctrlHeld?: boolean) => {
     if (isSuggestedMode) {
-      suggestedProcessed.current.clear()
+      touchProcessed.current.clear()
       touchCycleAction.current = null
       return
     }
@@ -466,7 +471,7 @@ export function PlayerPage() {
   }, [isSuggestedMode, gridState])
 
   const handleClearSelection = useCallback(() => {
-    suggestedProcessed.current.clear()
+    touchProcessed.current.clear()
     gridState.clearSelection()
   }, [gridState])
 
@@ -594,6 +599,7 @@ export function PlayerPage() {
       clearSelection={handleClearSelection}
       commitSelection={handleCommitSelection}
       onDragChange={handleDragChange}
+      onLeftClickCell={isSuggestedMode && clickActionLeft ? handleLeftClickCell : undefined}
       onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
       onCommitEdges={gridState.commitEdges}
       onToggleEdgeCross={gridState.toggleEdgeCross}

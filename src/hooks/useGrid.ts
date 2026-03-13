@@ -436,11 +436,13 @@ export function useGrid(initialRows: number, initialCols: number) {
       if (selection.length === 0) return
       setGridWithUndo(prev => {
         const newGrid = cloneGrid(prev)
-        const allHaveValue = selection.every(
+        const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].crossed)
+        if (eligible.length === 0) return prev
+        const allHaveValue = eligible.every(
           pos => newGrid[pos.row][pos.col].value === value
         )
         const newValue = allHaveValue ? null : value
-        for (const pos of selection) {
+        for (const pos of eligible) {
           newGrid[pos.row][pos.col].value = newValue
         }
         // Auto-cross: when setting a value (not erasing), cross eligible cells
@@ -532,6 +534,7 @@ export function useGrid(initialRows: number, initialCols: number) {
         const newGrid = cloneGrid(prev)
         for (const pos of selection) {
           const cell = newGrid[pos.row][pos.col]
+          if (cell.crossed) continue
           const idx = cell.notes.indexOf(value)
           if (idx !== -1) {
             cell.notes.splice(idx, 1)
@@ -756,7 +759,7 @@ export function useGrid(initialRows: number, initialCols: number) {
           cell.fixedMark = null
           cell.fixedEdgeMarks = [null, null, null, null]
           cell.fixedVertexMarks = [null, null, null, null]
-          cell.fixedTexture = null
+          // Keep fixedTexture — remove via texture mode, not Delete
         }
       }
       return newGrid

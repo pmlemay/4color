@@ -50,11 +50,10 @@ function puzzleSavePlugin(): Plugin {
       // Serve puzzle JSON files directly from disk so newly added files work without restart
       // Serve puzzle and solution JSON from disk with no-cache so newly saved files are available immediately
       server.middlewares.use((req, res, next) => {
-        const base = '/4color/puzzles/'
-        if (req.url && req.url.startsWith(base) && req.url.endsWith('.json')) {
-          const relPath = req.url.slice(base.length)
-          // Prevent path traversal
-          if (relPath.includes('..') || relPath.includes('/')) { next(); return }
+        // Match /puzzles/*.json or /4color/puzzles/*.json
+        const puzzleMatch = req.url?.match(/^(?:\/4color)?\/puzzles\/([^/.]+\.json)$/)
+        if (puzzleMatch) {
+          const relPath = puzzleMatch[1]
           const filePath = join(__dirname, 'public', 'puzzles', relPath)
           if (existsSync(filePath)) {
             res.setHeader('Content-Type', 'application/json')
@@ -71,9 +70,9 @@ function puzzleSavePlugin(): Plugin {
             return
           }
         }
-        if (req.url && req.url.startsWith('/4color/puzzles/solutions/') && req.url.endsWith('.json')) {
-          const relPath = req.url.slice('/4color/puzzles/solutions/'.length)
-          if (relPath.includes('..') || relPath.includes('/')) { next(); return }
+        const solMatch = req.url?.match(/^(?:\/4color)?\/puzzles\/solutions\/([^/.]+\.json)$/)
+        if (solMatch) {
+          const relPath = solMatch[1]
           const filePath = join(__dirname, 'public', 'puzzles', 'solutions', relPath)
           if (existsSync(filePath)) {
             res.setHeader('Content-Type', 'application/json')
@@ -156,13 +155,13 @@ function puzzleSavePlugin(): Plugin {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), puzzleSavePlugin()],
-  base: '/4color/',
+  base: command === 'serve' ? '/' : '/4color/',
   server: {
     watch: {
       // Ignore public/puzzles so saving puzzles via API doesn't trigger page reloads
       ignored: ['**/public/puzzles/**', '**/public/version.json'],
     },
   },
-})
+}))

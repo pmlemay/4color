@@ -33,6 +33,13 @@
   border-color: var(--text-muted);
 }
 
+/* Hide +/- when hovering the grid itself */
+.grid-expand-wrapper:has(.puzzle-grid:hover) .grid-expand-btn,
+.grid-expand-wrapper:has(.puzzle-grid:hover) .grid-shrink-btn {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
 .grid-expand-top,
 .grid-expand-bottom {
   left: 150px;

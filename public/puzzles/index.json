@@ -74,8 +74,7 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross",
-    "inProgress": true
+    "clickActionRight": "cross"
   },
   {
     "id": "spiral-galaxy-2",
@@ -223,13 +222,14 @@
       "rows": 12,
       "cols": 12
     },
-    "difficulty": "Expert",
+    "difficulty": "Very hard",
     "tags": [
       "murdoku"
     ],
     "autoCrossRules": [
       "rook"
     ],
+    "clickActionRight": "cross",
     "inProgress": true
   },
   {

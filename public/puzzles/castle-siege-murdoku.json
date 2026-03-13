@@ -24,13 +24,15 @@
     "K (Man   - Klaus) ...",
     "V (Woman - Valentina) is the victim and is alone with the killer."
   ],
-  "difficulty": "Expert",
+  "difficulty": "Very hard",
   "tags": [
     "murdoku"
   ],
   "autoCrossRules": [
     "rook"
   ],
+  "clickActionRight": "cross",
+  "inProgress": true,
   "gridSize": {
     "rows": 12,
     "cols": 12
@@ -44,770 +46,430 @@
         0,
         0,
         2
-      ]
-    },
-    {
-      "row": 0,
-      "col": 1,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 2,
-      "borders": [
-        2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 3,
-      "borders": [
-        2,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 0,
-      "col": 4,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 5,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 6,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 7,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 8,
-      "borders": [
-        2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 9,
-      "borders": [
-        2,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 0,
-      "col": 10,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 0,
-      "col": 11,
-      "borders": [
-        2,
-        2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 1,
-      "col": 0,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 1,
-      "col": 2,
-      "borders": [
-        0,
-        2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 1,
-      "col": 3,
-      "borders": [
-        0,
-        0,
-        2,
-        2
-      ]
-    },
-    {
-      "row": 1,
-      "col": 4,
-      "borders": [
-        0,
-        0,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 1,
-      "col": 7,
-      "borders": [
-        0,
-        0,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 1,
-      "col": 8,
-      "borders": [
-        0,
-        2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 1,
-      "col": 9,
-      "borders": [
-        0,
-        0,
-        2,
-        2
       ],
       "labels": {
-        "bottom": {
-          "text": "Gatehouse"
-        }
-      }
-    },
-    {
-      "row": 1,
-      "col": 10,
-      "borders": [
-        0,
-        2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 1,
-      "col": 11,
-      "borders": [
-        2,
-        2,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 2,
-      "col": 0,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 2,
-      "col": 1,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 2,
-      "col": 2,
-      "borders": [
-        2,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 2,
-      "col": 3,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 2,
-      "col": 4,
-      "borders": [
-        2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 2,
-      "col": 5,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 2,
-      "col": 6,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 2,
-      "col": 7,
-      "borders": [
-        2,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 2,
-      "col": 8,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 2,
-      "col": 9,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 2,
-      "col": 10,
-      "borders": [
-        2,
-        2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 2,
-      "col": 11,
-      "borders": [
-        0,
-        2,
-        2,
-        2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Cellar"
-        }
-      }
-    },
-    {
-      "row": 3,
-      "col": 0,
-      "borders": [
-        0,
-        0,
-        2,
-        2
-      ],
-      "labels": {
-        "bottom": {
+        "top": {
           "text": "Tower"
         }
       }
     },
     {
-      "row": 3,
+      "row": 0,
       "col": 1,
       "borders": [
+        2,
         0,
-        2,
-        2,
+        0,
         0
       ]
     },
     {
-      "row": 3,
+      "row": 0,
       "col": 2,
       "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 3,
-      "col": 4,
-      "borders": [
-        0,
         2,
         2,
+        0,
         0
       ]
     },
     {
-      "row": 3,
-      "col": 5,
+      "row": 0,
+      "col": 3,
       "borders": [
-        0,
-        0,
         2,
+        0,
+        0,
         2
       ],
       "labels": {
-        "bottom": {
+        "top": {
           "text": "Ramparts"
         }
       }
     },
     {
-      "row": 3,
+      "row": 0,
+      "col": 4,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
       "col": 6,
       "borders": [
+        2,
         0,
-        2,
-        2,
+        0,
         0
       ]
     },
     {
-      "row": 3,
+      "row": 0,
       "col": 7,
       "borders": [
-        0,
-        0,
         2,
-        2
+        0,
+        0,
+        0
       ]
     },
     {
-      "row": 3,
-      "col": 9,
+      "row": 0,
+      "col": 8,
       "borders": [
-        0,
+        2,
         2,
         0,
         0
       ]
     },
     {
-      "row": 3,
+      "row": 0,
+      "col": 9,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Gatehouse"
+        }
+      }
+    },
+    {
+      "row": 0,
       "col": 10,
       "borders": [
         2,
         0,
         0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 11,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
         2
       ]
     },
     {
-      "row": 3,
+      "row": 1,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 7,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 8,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 9,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 1,
+      "col": 10,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 1,
       "col": 11,
       "borders": [
         2,
         2,
         0,
-        0
-      ]
-    },
-    {
-      "row": 4,
-      "col": 0,
-      "borders": [
-        2,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 4,
-      "col": 1,
-      "borders": [
-        2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 4,
-      "col": 2,
-      "borders": [
-        0,
-        0,
-        2,
         2
       ],
       "labels": {
-        "bottom": {
+        "top": {
+          "text": "Cellar"
+        }
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
           "text": "War Room"
         }
       }
     },
     {
-      "row": 4,
+      "row": 2,
       "col": 3,
       "borders": [
+        2,
         0,
-        2,
-        2,
+        0,
         0
       ]
     },
     {
-      "row": 4,
+      "row": 2,
       "col": 4,
       "borders": [
         2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "borders": [
+        0,
         0,
         0,
         2
       ]
     },
     {
-      "row": 4,
-      "col": 5,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 4,
+      "row": 2,
       "col": 6,
       "borders": [
-        2,
         0,
+        2,
         0,
         0
       ]
     },
     {
-      "row": 4,
+      "row": 2,
       "col": 7,
       "borders": [
         2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 4,
-      "col": 8,
-      "borders": [
         0,
         0,
-        2,
         2
       ],
       "labels": {
-        "bottom": {
+        "top": {
           "text": "Chapel"
         }
       }
     },
     {
-      "row": 4,
-      "col": 9,
-      "borders": [
-        0,
-        2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 4,
-      "col": 10,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 4,
-      "col": 11,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 5,
-      "col": 0,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 5,
-      "col": 2,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 5,
-      "col": 3,
-      "borders": [
-        2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 5,
-      "col": 4,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 5,
-      "col": 7,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 5,
+      "row": 2,
       "col": 8,
       "borders": [
         2,
         0,
         0,
-        2
+        0
       ]
     },
     {
-      "row": 5,
+      "row": 2,
       "col": 9,
       "borders": [
         2,
-        2,
+        0,
         0,
         0
       ]
     },
     {
-      "row": 5,
+      "row": 2,
       "col": 10,
       "borders": [
-        0,
-        0,
-        0,
-        2
+        2,
+        2,
+        2,
+        0
       ]
     },
     {
-      "row": 5,
+      "row": 2,
       "col": 11,
       "borders": [
         0,
         2,
-        0,
-        0
+        2,
+        2
       ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 0,
       "borders": [
         0,
         0,
         2,
         2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Courtyard"
-        }
-      }
+      ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 1,
       "borders": [
         0,
-        0,
+        2,
         2,
         0
       ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 2,
       "borders": [
         0,
         0,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 6,
-      "col": 3,
-      "borders": [
         0,
-        2,
-        2,
-        0
+        2
       ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 4,
       "borders": [
         0,
-        0,
         2,
-        2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Great Hall"
-        }
-      }
+        2,
+        0
+      ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 5,
       "borders": [
         0,
         0,
         2,
-        0
+        2
       ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 6,
       "borders": [
         0,
-        0,
+        2,
         2,
         0
       ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 7,
       "borders": [
         0,
+        0,
         2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 6,
-      "col": 8,
-      "borders": [
-        0,
-        0,
-        0,
         2
       ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 9,
       "borders": [
         0,
@@ -817,226 +479,576 @@
       ]
     },
     {
-      "row": 6,
+      "row": 3,
       "col": 10,
       "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 6,
-      "col": 11,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 0,
-      "borders": [
         2,
         0,
         0,
-        2
-      ]
-    },
-    {
-      "row": 7,
-      "col": 1,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 2,
-      "borders": [
-        2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 3,
-      "borders": [
-        2,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 7,
-      "col": 4,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 5,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 6,
-      "borders": [
-        2,
-        0,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 7,
-      "borders": [
-        2,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 8,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 7,
-      "col": 9,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 7,
-      "col": 10,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 7,
-      "col": 11,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 8,
-      "col": 0,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 8,
-      "col": 2,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 8,
-      "col": 3,
-      "borders": [
-        0,
-        0,
-        0,
-        2
-      ]
-    },
-    {
-      "row": 8,
-      "col": 7,
-      "borders": [
-        0,
-        2,
-        0,
-        0
-      ]
-    },
-    {
-      "row": 8,
-      "col": 8,
-      "borders": [
-        0,
-        0,
-        2,
         2
       ],
       "labels": {
-        "bottom": {
-          "text": "Kitchen"
-        }
-      }
-    },
-    {
-      "row": 8,
-      "col": 9,
-      "borders": [
-        0,
-        2,
-        2,
-        0
-      ]
-    },
-    {
-      "row": 8,
-      "col": 10,
-      "borders": [
-        0,
-        0,
-        2,
-        2
-      ],
-      "labels": {
-        "bottom": {
+        "top": {
           "text": "Armory"
         }
       }
     },
     {
+      "row": 3,
+      "col": 11,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Courtyard"
+        }
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Great Hall"
+        }
+      }
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 7,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 8,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 9,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 4,
+      "col": 11,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 7,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 8,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Kitchen"
+        }
+      }
+    },
+    {
+      "row": 5,
+      "col": 9,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 5,
+      "col": 11,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 3,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 7,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 8,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 9,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 6,
+      "col": 11,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Barracks"
+        }
+      }
+    },
+    {
+      "row": 7,
+      "col": 1,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 2,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 3,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Throne Room"
+        }
+      }
+    },
+    {
+      "row": 7,
+      "col": 4,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 5,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 7,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 8,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 7,
+      "col": 9,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 7,
+      "col": 11,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 8,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "row": 8,
+      "col": 7,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 8,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "row": 8,
+      "col": 9,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ]
+    },
+    {
       "row": 8,
       "col": 11,
       "borders": [
@@ -1114,7 +1126,12 @@
         0,
         0,
         2
-      ]
+      ],
+      "labels": {
+        "top": {
+          "text": "Stables"
+        }
+      }
     },
     {
       "row": 9,
@@ -1174,7 +1191,12 @@
         0,
         0,
         2
-      ]
+      ],
+      "labels": {
+        "top": {
+          "text": "Forge"
+        }
+      }
     },
     {
       "row": 10,
@@ -1204,7 +1226,12 @@
         2,
         0,
         2
-      ]
+      ],
+      "labels": {
+        "top": {
+          "text": "Dungeon"
+        }
+      }
     },
     {
       "row": 10,
@@ -1214,12 +1241,7 @@
         0,
         2,
         2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Throne Room"
-        }
-      }
+      ]
     },
     {
       "row": 10,
@@ -1259,12 +1281,7 @@
         0,
         2,
         2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Barracks"
-        }
-      }
+      ]
     },
     {
       "row": 11,
@@ -1284,12 +1301,7 @@
         0,
         2,
         2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Forge"
-        }
-      }
+      ]
     },
     {
       "row": 11,
@@ -1319,12 +1331,7 @@
         0,
         2,
         2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Dungeon"
-        }
-      }
+      ]
     },
     {
       "row": 11,
@@ -1354,12 +1361,7 @@
         0,
         2,
         2
-      ],
-      "labels": {
-        "bottom": {
-          "text": "Stables"
-        }
-      }
+      ]
     },
     {
       "row": 11,
@@ -1392,6 +1394,5 @@
       ]
     }
   ],
-  "inProgress": true,
-  "createdAt": "2026-03-12"
+  "createdAt": "2026-03-13"
 }

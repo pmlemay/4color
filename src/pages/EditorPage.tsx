@@ -869,33 +869,76 @@ export function EditorPage() {
 
   const isSuggestedMode = gridState.inputMode === 'suggested'
 
-  // Wrap drag handlers so suggested mode applies click actions directly
-  const suggestedProcessed = useRef<Set<string>>(new Set())
+  // Suggested mode: per-cell left-click handler (same pattern as right-click)
+  const leftDragAction = useRef<boolean | undefined>(undefined)
+
+  const handleLeftClickCell = useCallback((pos: CellPosition, isFirst: boolean) => {
+    if (!clickActionLeft) return
+    if (isFirst) {
+      const matches = cellMatchesAction(gridState.grid[pos.row][pos.col], clickActionLeft)
+      leftDragAction.current = !matches
+      gridState.setGridWithUndo(prev => applyActionToGrid(prev, pos, clickActionLeft, undefined, autoCrossRules))
+    } else {
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionLeft, leftDragAction.current, autoCrossRules))
+    }
+  }, [clickActionLeft, autoCrossRules, gridState])
+
+  // Touch drag: still uses onDragChange since touch goes through onSelectionChange
+  const touchProcessed = useRef<Set<string>>(new Set())
+  const touchCycleAction = useRef<string | null>(null)
 
   const handleDragChange = useCallback((sel: CellPosition[]) => {
     if (!isSuggestedMode || !clickActionLeft) {
       gridState.onDragChange(sel)
       return
     }
+    if (sel.length === 0) return
+    const newCells: CellPosition[] = []
+    const wasEmpty = touchProcessed.current.size === 0
     for (const pos of sel) {
       const key = `${pos.row},${pos.col}`
-      if (suggestedProcessed.current.has(key)) continue
-      suggestedProcessed.current.add(key)
-      const setter = suggestedProcessed.current.size === 1 ? gridState.setGridWithUndo : gridState.setGrid
-      setter(prev => applyActionToGrid(prev, pos, clickActionLeft, undefined, autoCrossRules))
+      if (touchProcessed.current.has(key)) continue
+      touchProcessed.current.add(key)
+      newCells.push(pos)
     }
-  }, [isSuggestedMode, clickActionLeft, autoCrossRules, gridState])
+    if (newCells.length === 0) return
+    for (let i = 0; i < newCells.length; i++) {
+      const pos = newCells[i]
+      const cellIsFirst = wasEmpty && i === 0
+      const cellSetter = cellIsFirst ? gridState.setGridWithUndo : gridState.setGrid
+      cellSetter(prev => {
+        const cell = prev[pos.row][pos.col]
+        let action: string
+        if (cellIsFirst) {
+          if (cellMatchesAction(cell, clickActionLeft)) {
+            action = clickActionRight || 'clear'
+          } else if (clickActionRight && cellMatchesAction(cell, clickActionRight)) {
+            action = 'clear'
+          } else {
+            action = clickActionLeft
+          }
+          touchCycleAction.current = action
+        } else {
+          action = touchCycleAction.current || clickActionLeft
+        }
+        if (action === 'clear') return applyActionToGrid(prev, pos, clickActionLeft, false)
+        const mid = applyActionToGrid(prev, pos, clickActionLeft, false)
+        return applyActionToGrid(mid, pos, action, true, autoCrossRules)
+      })
+    }
+  }, [isSuggestedMode, clickActionLeft, clickActionRight, autoCrossRules, gridState])
 
   const handleCommitSelection = useCallback((sel: CellPosition[], ctrlHeld?: boolean) => {
     if (isSuggestedMode) {
-      suggestedProcessed.current.clear()
+      touchProcessed.current.clear()
+      touchCycleAction.current = null
       return
     }
     gridState.commitSelection(sel, ctrlHeld)
   }, [isSuggestedMode, gridState])
 
   const handleClearSelection = useCallback(() => {
-    suggestedProcessed.current.clear()
+    touchProcessed.current.clear()
     gridState.clearSelection()
     if (fogPreviewGroupId) setFogPreviewGroupId(null)
   }, [gridState, fogPreviewGroupId])
@@ -1382,6 +1425,7 @@ export function EditorPage() {
                 clearSelection={handleClearSelection}
                 commitSelection={handleCommitSelection}
                 onDragChange={handleDragChange}
+                onLeftClickCell={isSuggestedMode && clickActionLeft ? handleLeftClickCell : undefined}
                 onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
                 onCommitEdges={gridState.commitEdges}
                 onCommitFixedEdges={gridState.commitFixedEdges}

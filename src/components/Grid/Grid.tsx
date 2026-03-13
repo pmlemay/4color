@@ -16,6 +16,7 @@ interface GridProps {
   clearSelection: () => void
   commitSelection: (sel: CellPosition[], ctrlHeld?: boolean) => void
   onDragChange?: (sel: CellPosition[]) => void
+  onLeftClickCell?: (pos: CellPosition, isFirst: boolean) => void
   onRightClickCell?: (pos: CellPosition, isFirst: boolean) => void
   onCommitEdges?: (edges: EdgeDescriptor[]) => void
   onCommitFixedEdges?: (edges: EdgeDescriptor[]) => void
@@ -29,7 +30,7 @@ interface GridProps {
   revealedFogIds?: Set<string>
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onToggleFixedMark, onToggleLine, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onToggleFixedMark, onToggleLine, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const beingDeselected = useRef<Set<string>>(new Set())
   const [, setRenderTick] = useState(0)
@@ -111,6 +112,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       beingDeselected.current.clear()
       commitSelection(sel, dragSelect.ctrlHeld.current)
     },
+    onLeftClickCell,
     onRightClickCell,
     isPinching,
     touchEnabled: !isEdgeMode,
@@ -295,11 +297,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
         if (isEdgeMode) edgeDrag.handleMouseMove(e)
         else dragSelect.handleCellMouseMove(e)
       }}
-      onContextMenu={(e) => {
-        if (isEdgeCrossMode || onRightClickCell) {
-          e.preventDefault()
-        }
-      }}
+      onContextMenu={(e) => e.preventDefault()}
     >
       <table
         className="puzzle-grid"
