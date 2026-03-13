@@ -69,7 +69,7 @@
     },
     "difficulty": "Medium",
     "tags": [
-      "murdoku"
+      "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
@@ -109,6 +109,42 @@
     "tags": [
       "4color"
     ],
+    "clickActionRight": "cross"
+  },
+  {
+    "id": "icebarn-tutorial",
+    "file": "icebarn-tutorial.json",
+    "title": "Icebarn Tutorial",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Icebarn"
+    ],
+    "puzzleType": "icebarn",
+    "clickActionLeft": "line",
+    "clickActionRight": "cross"
+  },
+  {
+    "id": "slalom-tutorial",
+    "file": "slalom-tutorial.json",
+    "title": "Slalom Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Slalom"
+    ],
+    "puzzleType": "slalom",
+    "clickActionLeft": "line",
     "clickActionRight": "cross"
   },
   {
@@ -224,7 +260,7 @@
     },
     "difficulty": "Very hard",
     "tags": [
-      "murdoku"
+      "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
@@ -262,11 +298,12 @@
     },
     "difficulty": "Expert",
     "tags": [
-      "murdoku"
+      "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
     ],
+    "clickActionRight": "cross",
     "inProgress": true
   },
   {

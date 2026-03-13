@@ -178,11 +178,26 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     }
   }
 
-  if ((total > 0 && filled !== total) || !bordersReady || colorFilled !== colorTotal) {
+  // Count expected solution lines
+  const lineTotal = Object.keys(solution.lines || {}).length
+  let lineFilled = 0
+  if (lineTotal > 0) {
+    for (const [key, expected] of Object.entries(solution.lines!)) {
+      const [r, c] = key.split(',').map(Number)
+      const cell = grid[r]?.[c]
+      if (!cell) continue
+      // Count as filled if at least one expected line side is drawn
+      const hasAny = expected.some((v, i) => v && cell.lines[i])
+      if (hasAny) lineFilled++
+    }
+  }
+
+  if ((total > 0 && filled !== total) || !bordersReady || colorFilled !== colorTotal || lineFilled !== lineTotal) {
     const parts: string[] = []
     if (total > 0) parts.push(`${filled}/${total} values`)
     if (borderProgress) parts.push(borderProgress)
     if (colorTotal > 0) parts.push(`${colorFilled}/${colorTotal} colors`)
+    if (lineTotal > 0) parts.push(`${lineFilled}/${lineTotal} lines`)
     return { valid: false, error: `Not ready: ${parts.join(', ')}.` }
   }
 
@@ -204,6 +219,17 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
       const cell = grid[r]?.[c]
       const actual = cell?.color || cell?.fixedColor || null
       if (actual !== expected) wrong++
+    }
+  }
+
+  if (solution.lines) {
+    for (const [key, expected] of Object.entries(solution.lines)) {
+      const [r, c] = key.split(',').map(Number)
+      const cell = grid[r]?.[c]
+      if (!cell) { wrong++; continue }
+      for (let i = 0; i < 4; i++) {
+        if (expected[i] !== cell.lines[i]) { wrong++; break }
+      }
     }
   }
 

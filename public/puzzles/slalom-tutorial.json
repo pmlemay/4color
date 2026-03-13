@@ -1,0 +1,162 @@
+{
+  "id": "slalom-tutorial",
+  "title": "Slalom Tutorial",
+  "authors": [],
+  "rules": [
+    "Draw a non-intersecting loop through the centers of some cells, starting and ending at the circle.",
+    "The loop may not enter blackened cells, and must pass straight through each gate exactly once.",
+    "If a number N is pointing at a gate, it must be the Nth gate visited from the circle."
+  ],
+  "clues": [
+    "↑←↑→↑→↓←↓→↑←↓←↓→"
+  ],
+  "difficulty": "Very easy",
+  "tags": [
+    "Slalom"
+  ],
+  "autoCrossRules": [],
+  "puzzleType": "slalom",
+  "clickActionLeft": "line",
+  "clickActionRight": "cross",
+  "gridSize": {
+    "rows": 8,
+    "cols": 8
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 1,
+      "fixedValue": "5",
+      "fixedColor": "9",
+      "fixedEdgeMarks": [
+        null,
+        "arrowDown",
+        null,
+        null
+      ]
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "fixedValue": "5",
+      "fixedColor": "9",
+      "fixedEdgeMarks": [
+        null,
+        "arrowUp",
+        null,
+        null
+      ]
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "fixedValue": "2",
+      "fixedColor": "9",
+      "fixedEdgeMarks": [
+        "arrowRight",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "fixedMark": "dashH"
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "fixedValue": "2",
+      "fixedColor": "9",
+      "fixedEdgeMarks": [
+        "arrowLeft",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "fixedColor": "9"
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "fixedColor": "9"
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "fixedColor": "9"
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "fixedColor": "9"
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "fixedMark": "dashH"
+    },
+    {
+      "row": 5,
+      "col": 6,
+      "fixedColor": "9"
+    },
+    {
+      "row": 6,
+      "col": 3,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 7,
+      "col": 2,
+      "fixedValue": "5",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 7,
+      "col": 3,
+      "fixedMark": "dashV"
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "fixedColor": "9"
+    }
+  ],
+  "createdAt": "2026-03-13"
+}

@@ -19,7 +19,9 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
       fixedEdgeMarks: [null, null, null, null] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
       fixedVertexMarks: [null, null, null, null] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
       edgeCrosses: [false, false, false, false] as [boolean, boolean, boolean, boolean],
+      edgeDirections: [0, 0, 0, 0] as [number, number, number, number],
       lines: [false, false, false, false] as [boolean, boolean, boolean, boolean],
+      fixedLines: [false, false, false, false] as [boolean, boolean, boolean, boolean],
       selected: false,
       image: null,
       fixedTexture: null,
@@ -50,7 +52,8 @@ export function gridToPuzzle(
       const hasFixedEdgeMarks = cell.fixedEdgeMarks.some(m => m !== null)
       const hasFixedVertexMarks = cell.fixedVertexMarks.some(m => m !== null)
       const hasLabels = Object.values(cell.labels).some(l => l?.text)
-      if (cell.fixedValue || cell.fixedColor || hasBorders || hasLabels || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image || cell.fixedTexture) {
+      const hasFixedLines = cell.fixedLines.some(l => l)
+      if (cell.fixedValue || cell.fixedColor || hasBorders || hasLabels || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image || cell.fixedTexture || hasFixedLines) {
         const entry: PuzzleCellData = { row: r, col: c }
         if (cell.fixedValue) entry.fixedValue = cell.fixedValue
         if (cell.fixedColor) entry.fixedColor = cell.fixedColor
@@ -61,6 +64,7 @@ export function gridToPuzzle(
         if (hasFixedVertexMarks) entry.fixedVertexMarks = cell.fixedVertexMarks
         if (cell.image) entry.image = imageToId.get(cell.image)!
         if (cell.fixedTexture) entry.fixedTexture = cell.fixedTexture
+        if (hasFixedLines) entry.fixedLines = cell.fixedLines
         cells.push(entry)
       }
     }
@@ -116,6 +120,11 @@ export function puzzleToGrid(puzzle: PuzzleData): CellData[][] {
       grid[cell.row][cell.col].image = images[cell.image] ?? cell.image
     }
     if (cell.fixedTexture) grid[cell.row][cell.col].fixedTexture = { ...cell.fixedTexture }
+    if (cell.fixedLines) {
+      grid[cell.row][cell.col].fixedLines = [...cell.fixedLines] as [boolean, boolean, boolean, boolean]
+      // Also set lines so they render
+      grid[cell.row][cell.col].lines = [...cell.fixedLines] as [boolean, boolean, boolean, boolean]
+    }
   }
   return grid
 }
@@ -196,6 +205,8 @@ export const PUZZLE_TYPE_DEFAULTS: Record<string, { left: string; right: string 
   nurikabe: { left: 'color:9', right: 'mark:dot' },
   heyawake: { left: 'color:9', right: 'color:5' },
   starbattle: { left: 'mark:star', right: 'cross' },
+  slalom: { left: 'line', right: 'cross' },
+  icebarn: { left: 'line', right: 'cross' },
 }
 
 /** Migrate legacy forcedInputLayout to puzzleType + click actions */

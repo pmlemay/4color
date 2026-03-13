@@ -1,0 +1,712 @@
+{
+  "id": "icebarn-tutorial",
+  "title": "Icebarn Tutorial",
+  "authors": [
+    "PmLemay"
+  ],
+  "rules": [
+    "Draw a path through the centers of some cells, entering the grid at the \"IN\" marking and exiting at the \"OUT\" marking.",
+    "The path must travel through all of the arrows in the indicated direction.",
+    "Two perpendicular line segments may intersect each other only on icy cells, but they may not turn at their intersection or otherwise overlap.",
+    "The path may not turn on icy cells, and each orthogonally connected group of icy cells must be passed through at least once."
+  ],
+  "clues": [
+    "↓→↓←↑←↑→↓→↑←↓→↓→↓"
+  ],
+  "difficulty": "Very easy",
+  "tags": [
+    "Icebarn"
+  ],
+  "autoCrossRules": [],
+  "puzzleType": "icebarn",
+  "clickActionLeft": "line",
+  "clickActionRight": "cross",
+  "fogGroups": [
+    {
+      "id": "fog-border",
+      "cells": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 0,
+          "col": 4
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 7
+        },
+        {
+          "row": 1,
+          "col": 0
+        },
+        {
+          "row": 1,
+          "col": 7
+        },
+        {
+          "row": 2,
+          "col": 0
+        },
+        {
+          "row": 2,
+          "col": 7
+        },
+        {
+          "row": 3,
+          "col": 0
+        },
+        {
+          "row": 3,
+          "col": 7
+        },
+        {
+          "row": 4,
+          "col": 0
+        },
+        {
+          "row": 4,
+          "col": 7
+        },
+        {
+          "row": 5,
+          "col": 0
+        },
+        {
+          "row": 5,
+          "col": 7
+        },
+        {
+          "row": 6,
+          "col": 0
+        },
+        {
+          "row": 6,
+          "col": 7
+        },
+        {
+          "row": 7,
+          "col": 0
+        },
+        {
+          "row": 7,
+          "col": 1
+        },
+        {
+          "row": 7,
+          "col": 2
+        },
+        {
+          "row": 7,
+          "col": 3
+        },
+        {
+          "row": 7,
+          "col": 4
+        },
+        {
+          "row": 7,
+          "col": 5
+        },
+        {
+          "row": 7,
+          "col": 6
+        },
+        {
+          "row": 7,
+          "col": 7
+        }
+      ],
+      "triggers": []
+    }
+  ],
+  "gridSize": {
+    "rows": 8,
+    "cols": 8
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "labels": {
+        "middle": {
+          "text": "IN",
+          "showThroughFog": true
+        }
+      },
+      "fixedLines": [
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        1,
+        0,
+        1
+      ],
+      "fixedEdgeMarks": [
+        "arrowDown",
+        null,
+        null,
+        null
+      ],
+      "fixedLines": [
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        "arrowUp",
+        null
+      ]
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        null,
+        "arrowRight"
+      ]
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "fixedEdgeMarks": [
+        "arrowDown",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        null,
+        "arrowRight"
+      ]
+    },
+    {
+      "row": 2,
+      "col": 6,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 2,
+      "col": 7,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        "arrowDown",
+        null
+      ]
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        "arrowDown",
+        null
+      ]
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 6,
+      "borders": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        null,
+        "arrowRight"
+      ]
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "borders": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        null,
+        "arrowLeft"
+      ]
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 4,
+      "col": 7,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        null,
+        "arrowRight"
+      ]
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 5,
+      "col": 6,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 7,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "fixedColor": "6",
+      "borders": [
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 6,
+      "col": 2,
+      "fixedColor": "6",
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 3,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 6,
+      "col": 5,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 6,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedEdgeMarks": [
+        null,
+        null,
+        "arrowDown",
+        null
+      ],
+      "fixedLines": [
+        false,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "row": 7,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 2,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "labels": {
+        "middle": {
+          "text": "OUT",
+          "showThroughFog": true
+        }
+      },
+      "fixedLines": [
+        true,
+        false,
+        false,
+        false
+      ]
+    }
+  ],
+  "createdAt": "2026-03-13"
+}

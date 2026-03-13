@@ -1,11 +1,13 @@
 import { InputMode, MarkShape } from '../../types'
 import './InputPanel.css'
 
-const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot']
-const MARK_LABELS: Record<MarkShape, string> = {
+const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot', 'bigcircle', 'bigcirclefilled', 'dashV', 'dashH']
+const MARK_LABELS: Record<string, string> = {
   circle: '\u25CB', square: '\u25A1', triangle: '\u25B3',
   diamond: '\u25C7', pentagon: '\u2B20', hexagon: '\u2B21',
   star: '\u2605', dot: '\u25CF',
+  bigcircle: '\u25EF', bigcirclefilled: '\u2B24',
+  dashV: '\u2506', dashH: '\u2504',
 }
 
 interface InputPanelProps {
@@ -38,6 +40,7 @@ const PLAYER_MODES: { mode: InputMode; label: string; icon: string }[] = [
   { mode: 'border', label: 'Border', icon: '▢' },
   { mode: 'edge', label: 'Edge', icon: '⊟' },
   { mode: 'mark', label: 'Mark', icon: '◯' },
+  { mode: 'line', label: 'Line', icon: '━' },
 ]
 
 export function InputPanel({
@@ -185,11 +188,17 @@ export function InputPanel({
         {inputMode === 'suggested' && puzzleType === 'starbattle' && (
           <div className="ip-hint">Tap: star &rarr; X &rarr; clear</div>
         )}
+        {inputMode === 'suggested' && puzzleType === 'slalom' && (
+          <div className="ip-hint">Drag between cells to draw lines</div>
+        )}
+        {inputMode === 'suggested' && puzzleType === 'icebarn' && (
+          <div className="ip-hint">Drag between cells to draw lines</div>
+        )}
 
         {/* Border, edge and cross modes: no extra context buttons, just the mode is enough */}
-        {(inputMode === 'cross' || inputMode === 'border' || inputMode === 'edge') && (
+        {(inputMode === 'cross' || inputMode === 'border' || inputMode === 'edge' || inputMode === 'line') && (
           <div className="ip-hint">
-            {inputMode === 'cross' ? 'Tap/drag cells to toggle X marks' : inputMode === 'edge' ? 'Drag edges to toggle individual borders' : 'Drag between cells to create borders'}
+            {inputMode === 'cross' ? 'Tap/drag cells to toggle X marks' : inputMode === 'edge' ? 'Drag edges to toggle individual borders' : inputMode === 'line' ? 'Drag between cells to draw lines. Tap edges for X.' : 'Drag between cells to create borders'}
           </div>
         )}
       </div>

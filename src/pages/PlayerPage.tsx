@@ -275,6 +275,7 @@ export function PlayerPage() {
   // Map click action string to the effective inputMode / activeColor / activeMark
   const suggestedEffectiveMode: InputMode = (() => {
     if (!clickActionLeft) return 'normal'
+    if (clickActionLeft === 'line') return 'line'
     if (clickActionLeft.startsWith('color:')) return 'color'
     if (clickActionLeft.startsWith('mark:')) return 'mark'
     if (clickActionLeft === 'cross') return 'cross'
@@ -422,7 +423,7 @@ export function PlayerPage() {
   const touchProcessed = useRef<Set<string>>(new Set())
 
   const handleDragChange = useCallback((sel: CellPosition[]) => {
-    if (!isSuggestedMode || !clickActionLeft) {
+    if (!isSuggestedMode || !clickActionLeft || clickActionLeft === 'line') {
       gridState.onDragChange(sel)
       return
     }
@@ -602,10 +603,11 @@ export function PlayerPage() {
       clearSelection={handleClearSelection}
       commitSelection={handleCommitSelection}
       onDragChange={handleDragChange}
-      onLeftClickCell={isSuggestedMode && clickActionLeft ? handleLeftClickCell : undefined}
-      onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
+      onLeftClickCell={isSuggestedMode && clickActionLeft && clickActionLeft !== 'line' ? handleLeftClickCell : undefined}
+      onRightClickCell={clickActionRight && clickActionRight !== 'line' ? handleRightClickCell : undefined}
       onCommitEdges={gridState.commitEdges}
       onToggleEdgeCross={gridState.toggleEdgeCross}
+      onCycleEdgeMark={gridState.cycleEdgeMark}
       onToggleLine={gridState.toggleLine}
       isPinching={gridScale.isPinching}
       isTouchDragRef={isTouchDragRef}

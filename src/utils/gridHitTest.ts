@@ -82,6 +82,67 @@ export function getCellPositionFromPoint(
   return result ? { row: result.row, col: result.col } : null
 }
 
+/**
+ * Like getNearestCell but also returns virtual cells one step outside the grid.
+ * Returns row/col that may be -1 or rows/cols (one beyond boundary).
+ */
+export function getVirtualCell(
+  x: number,
+  y: number,
+  tableEl: HTMLTableElement,
+): { row: number; col: number } | null {
+  // Check if we're within one cell-width outside the grid
+  const rect = tableEl.getBoundingClientRect()
+  const rows = tableEl.rows
+  if (!rows.length || !rows[0].cells.length) return null
+  const cellW = rows[0].cells[0].getBoundingClientRect().width
+  const cellH = rows[0].cells[0].getBoundingClientRect().height
+  const totalRows = rows.length
+  const totalCols = rows[0].cells.length
+
+  // Expanded bounds: one cell outside each side
+  if (
+    x < rect.left - cellW || x > rect.right + cellW ||
+    y < rect.top - cellH || y > rect.bottom + cellH
+  ) return null
+
+  // Determine virtual row
+  let vRow: number
+  if (y < rect.top) vRow = -1
+  else if (y > rect.bottom) vRow = totalRows
+  else {
+    // Find real row
+    vRow = 0
+    let bestDist = Infinity
+    for (let r = 0; r < totalRows; r++) {
+      const rr = rows[r].getBoundingClientRect()
+      const cy = (rr.top + rr.bottom) / 2
+      const d = Math.abs(y - cy)
+      if (d < bestDist) { bestDist = d; vRow = r }
+    }
+  }
+
+  // Determine virtual col
+  let vCol: number
+  if (x < rect.left) vCol = -1
+  else if (x > rect.right) vCol = totalCols
+  else {
+    vCol = 0
+    let bestDist = Infinity
+    const cells = rows[Math.max(0, Math.min(vRow, totalRows - 1))].cells
+    for (let c = 0; c < cells.length; c++) {
+      const cr = cells[c].getBoundingClientRect()
+      const cx = (cr.left + cr.right) / 2
+      const d = Math.abs(x - cx)
+      if (d < bestDist) { bestDist = d; vCol = c }
+    }
+  }
+
+  // Must have at least one virtual dimension
+  if (vRow >= 0 && vRow < totalRows && vCol >= 0 && vCol < totalCols) return null
+  return { row: vRow, col: vCol }
+}
+
 export type MarkTarget =
   | { type: 'center'; row: number; col: number }
   | { type: 'edge'; row: number; col: number; side: 0 | 1 | 2 | 3 }

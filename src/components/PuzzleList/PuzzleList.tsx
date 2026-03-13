@@ -341,7 +341,7 @@ export function PuzzleList() {
                       <Link to={`/play/${p.id}`} className={`puzzle-card${completedPuzzleIds.has(p.id) ? ' puzzle-completed' : ''}`}>
                         <h3>{p.title}</h3>
                         <p className="puzzle-meta">
-                          by {(p.authors || []).join(', ')} &middot; {p.gridSize.rows}&times;{p.gridSize.cols}
+                          {p.authors && p.authors.length > 0 ? <>by {p.authors.join(', ')} &middot; </> : ''}{p.gridSize.rows}&times;{p.gridSize.cols}
                         </p>
                         {p.tags && p.tags.length > 0 && (
                           <div className="puzzle-tags">
@@ -383,6 +383,10 @@ export function PuzzleList() {
                 Additional icons designed by{' '}
                 <a href="https://www.freepik.com" target="_blank" rel="noopener noreferrer">Freepik</a>{' '}
                 from <a href="https://www.flaticon.com" target="_blank" rel="noopener noreferrer">Flaticon</a>.
+              </p>
+              <p style={{ marginTop: 4 }}>
+                Rule text source:{' '}
+                <a href="https://docs.google.com/document/d/11U3UAH6V7k9JTpF_WIKLiREc5KYbJGQP89EUBMLtjW0/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Eric Fox's Dictionary of Rulesets</a>.
               </p>
             </div>
             <div className="modal-actions">

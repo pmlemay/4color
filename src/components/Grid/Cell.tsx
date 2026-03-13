@@ -11,9 +11,92 @@ const SHAPE_PATHS: Record<MarkShape, string> = {
   hexagon:  'M25,6 L41,15.5 L41,34.5 L25,44 L9,34.5 L9,15.5 Z',
   star:     'M25,4 L30.5,18.5 L46,18.5 L33.5,28 L38,43 L25,33.5 L12,43 L16.5,28 L4,18.5 L19.5,18.5 Z',
   dot:      'M25,25 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 Z',
+  bigcircle:       'M25,4 a21,21 0 1,0 0.001,0 Z',
+  bigcirclefilled: 'M25,4 a21,21 0 1,0 0.001,0 Z',
+  dashV:    '', // rendered as custom SVG
+  dashH:    '', // rendered as custom SVG
+  arrowLeft:  '', // rendered as custom SVG
+  arrowDown:  '', // rendered as custom SVG
+  arrowRight: '', // rendered as custom SVG
+  arrowUp:    '', // rendered as custom SVG
 }
 
-const FILLED_MARKS: Set<MarkShape> = new Set(['dot', 'star'])
+const FILLED_MARKS: Set<MarkShape> = new Set(['dot', 'star', 'bigcirclefilled'])
+
+// Marks that render at edge positions instead of center
+const EDGE_MARKS: Record<string, { position: React.CSSProperties; viewBox: string; width: string; height: string }> = {
+  arrowLeft:  { position: { top: '6px', left: '50%', transform: 'translateX(-50%)' }, viewBox: '0 0 20 10', width: '28%', height: '18%' },
+  arrowDown:  { position: { left: '6px', top: '50%', transform: 'translateY(-50%)' }, viewBox: '0 0 10 20', width: '18%', height: '28%' },
+  arrowRight: { position: { bottom: '6px', left: '50%', transform: 'translateX(-50%)' }, viewBox: '0 0 20 10', width: '28%', height: '18%' },
+  arrowUp:    { position: { right: '6px', top: '50%', transform: 'translateY(-50%)' }, viewBox: '0 0 10 20', width: '18%', height: '28%' },
+}
+
+function renderMarkSvg(shape: MarkShape, useEdgeSize = false) {
+  if (shape === 'dashV') {
+    return (
+      <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+        <line x1="25" y1="0" x2="25" y2="50" stroke="currentColor" strokeWidth="2.5" strokeDasharray="6,4" />
+      </svg>
+    )
+  }
+  if (shape === 'dashH') {
+    return (
+      <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+        <line x1="0" y1="25" x2="50" y2="25" stroke="currentColor" strokeWidth="2.5" strokeDasharray="6,4" />
+      </svg>
+    )
+  }
+  if (EDGE_MARKS[shape]) {
+    const edgeInfo = EDGE_MARKS[shape]
+    // Line + chevron arrows matching ←↓→↑ unicode style
+    const sw = 1.5
+    const sizeStyle = useEdgeSize ? { width: edgeInfo.width, height: edgeInfo.height } : undefined
+    const arrowSvgs: Record<string, React.ReactNode> = {
+      arrowLeft: (
+        <svg viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg" style={sizeStyle}>
+          <line x1="18" y1="5" x2="3" y2="5" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+          <polyline points="6,1.5 2,5 6,8.5" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+      arrowRight: (
+        <svg viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg" style={sizeStyle}>
+          <line x1="2" y1="5" x2="17" y2="5" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+          <polyline points="14,1.5 18,5 14,8.5" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+      arrowUp: (
+        <svg viewBox="0 0 10 20" xmlns="http://www.w3.org/2000/svg" style={sizeStyle}>
+          <line x1="5" y1="18" x2="5" y2="3" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+          <polyline points="1.5,6 5,2 8.5,6" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+      arrowDown: (
+        <svg viewBox="0 0 10 20" xmlns="http://www.w3.org/2000/svg" style={sizeStyle}>
+          <line x1="5" y1="2" x2="5" y2="17" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" />
+          <polyline points="1.5,14 5,18 8.5,14" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+    }
+    return arrowSvgs[shape] || null
+  }
+  const fullSize = shape === 'bigcircle' || shape === 'bigcirclefilled'
+  return (
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" style={fullSize ? { width: '100%', height: '100%' } : undefined}>
+      <path d={SHAPE_PATHS[shape]} fill={FILLED_MARKS.has(shape) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
+    </svg>
+  )
+}
+
+/** dir 1 = ‹ (left-pointing), dir 2 = › (right-pointing). CSS rotates for top/bottom edges. */
+function renderChevron(dir: number) {
+  const points = dir === 1 ? '8,2 2,7 8,12' : '2,2 8,7 2,12'
+  return (
+    <svg viewBox="0 0 10 14" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <polyline points={points} fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points={points} fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 function textureBackground(tex: CellTexture): string {
   const c = getTextureColors(tex.type, tex.variant)
@@ -85,6 +168,8 @@ interface CellProps {
   debug: boolean
   row: number
   col: number
+  totalRows: number
+  totalCols: number
   draftEdgeSides?: Set<number> | null
   fogged?: boolean
   fogEdges?: [boolean, boolean, boolean, boolean] // top, right, bottom, left neighbors are fogged
@@ -92,8 +177,8 @@ interface CellProps {
   revealedFogIds?: Set<string>
 }
 
-export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselected, debug, row, col, draftEdgeSides, fogged, fogEdges, fogPreview, revealedFogIds }: CellProps) {
-  const { selected, value, notes, fixedValue, fixedColor, color, borders, fixedBorders, labels, crossed, mark, fixedMark, fixedEdgeMarks, fixedVertexMarks, edgeCrosses, lines, image, fixedTexture } = data
+export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselected, debug, row, col, totalRows, totalCols, draftEdgeSides, fogged, fogEdges, fogPreview, revealedFogIds }: CellProps) {
+  const { selected, value, notes, fixedValue, fixedColor, color, borders, fixedBorders, labels, crossed, mark, fixedMark, fixedEdgeMarks, fixedVertexMarks, edgeCrosses, edgeDirections, lines, fixedLines, image, fixedTexture } = data
 
   const hasLines = lines[0] || lines[1] || lines[2] || lines[3]
   let tdClass = 'grid-cell cell-enabled'
@@ -131,11 +216,15 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
         {image && <img src={image} className="cell-image" alt="" draggable={false} />}
         {crossed && <span className="cell-cross">&times;</span>}
         {mark && (
-          <span className="cell-mark" aria-hidden="true">
-            <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-              <path d={SHAPE_PATHS[mark]} fill={FILLED_MARKS.has(mark) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-            </svg>
-          </span>
+          EDGE_MARKS[mark] ? (
+            <span className="cell-mark cell-mark-edge" style={EDGE_MARKS[mark].position} aria-hidden="true">
+              {renderMarkSvg(mark, true)}
+            </span>
+          ) : (
+            <span className="cell-mark" aria-hidden="true">
+              {renderMarkSvg(mark)}
+            </span>
+          )
         )}
         {hasNotes && !displayValue && !crossed ? (
           <div className="notes-grid notranslate">
@@ -165,75 +254,67 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
       {!fogged && draftEdgeSides && draftEdgeSides.has(1) && <div className="edge-draft edge-draft-right" />}
       {!fogged && draftEdgeSides && draftEdgeSides.has(2) && <div className="edge-draft edge-draft-bottom" />}
       {!fogged && draftEdgeSides && draftEdgeSides.has(3) && <div className="edge-draft edge-draft-left" />}
-      {!fogged && lines[0] && <div className="cell-line cell-line-top" />}
-      {!fogged && lines[1] && <div className="cell-line cell-line-right" />}
-      {!fogged && lines[2] && <div className="cell-line cell-line-bottom" />}
-      {!fogged && lines[3] && <div className="cell-line cell-line-left" />}
+      {!fogged && lines[0] && <div className={`cell-line cell-line-top${row === 0 ? ' cell-line-exit' : ''}${fixedLines[0] ? ' cell-line-fixed' : ''}`} />}
+      {!fogged && lines[1] && <div className={`cell-line cell-line-right${col === totalCols - 1 ? ' cell-line-exit' : ''}${fixedLines[1] ? ' cell-line-fixed' : ''}`} />}
+      {!fogged && lines[2] && <div className={`cell-line cell-line-bottom${row === totalRows - 1 ? ' cell-line-exit' : ''}${fixedLines[2] ? ' cell-line-fixed' : ''}`} />}
+      {!fogged && lines[3] && <div className={`cell-line cell-line-left${col === 0 ? ' cell-line-exit' : ''}${fixedLines[3] ? ' cell-line-fixed' : ''}`} />}
       {!fogged && edgeCrosses[0] && row === 0 && <span className="edge-x edge-x-top">&times;</span>}
       {!fogged && edgeCrosses[1] && <span className="edge-x edge-x-right">&times;</span>}
       {!fogged && edgeCrosses[2] && <span className="edge-x edge-x-bottom">&times;</span>}
       {!fogged && edgeCrosses[3] && col === 0 && <span className="edge-x edge-x-left">&times;</span>}
-      {!fogged && fixedMark && (
-        <span className="fixed-mark fixed-mark-center" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedMark]} fill={FILLED_MARKS.has(fixedMark) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
-        </span>
+      {!fogged && edgeDirections[0] > 0 && row === 0 && <span className="edge-dir edge-dir-top">{renderChevron(edgeDirections[0])}</span>}
+      {!fogged && edgeDirections[1] > 0 && <span className="edge-dir edge-dir-right">{renderChevron(edgeDirections[1])}</span>}
+      {!fogged && edgeDirections[2] > 0 && <span className="edge-dir edge-dir-bottom">{renderChevron(edgeDirections[2])}</span>}
+      {!fogged && edgeDirections[3] > 0 && col === 0 && <span className="edge-dir edge-dir-left">{renderChevron(edgeDirections[3])}</span>}
+      {fixedMark && (
+        EDGE_MARKS[fixedMark] ? (
+          <span className="fixed-mark cell-mark-edge" style={EDGE_MARKS[fixedMark].position} aria-hidden="true">
+            {renderMarkSvg(fixedMark, true)}
+          </span>
+        ) : (
+          <span className="fixed-mark fixed-mark-center" aria-hidden="true">
+            {renderMarkSvg(fixedMark)}
+          </span>
+        )
       )}
       {!fogged && fixedEdgeMarks[0] && (
-        <span className="fixed-mark fixed-mark-edge-top" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedEdgeMarks[0]]} fill={FILLED_MARKS.has(fixedEdgeMarks[0]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+        <span className={`fixed-mark fixed-mark-edge-top${EDGE_MARKS[fixedEdgeMarks[0]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
+          {renderMarkSvg(fixedEdgeMarks[0])}
         </span>
       )}
       {!fogged && fixedEdgeMarks[1] && (
-        <span className="fixed-mark fixed-mark-edge-right" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedEdgeMarks[1]]} fill={FILLED_MARKS.has(fixedEdgeMarks[1]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+        <span className={`fixed-mark fixed-mark-edge-right${EDGE_MARKS[fixedEdgeMarks[1]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
+          {renderMarkSvg(fixedEdgeMarks[1])}
         </span>
       )}
       {!fogged && fixedEdgeMarks[2] && (
-        <span className="fixed-mark fixed-mark-edge-bottom" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedEdgeMarks[2]]} fill={FILLED_MARKS.has(fixedEdgeMarks[2]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+        <span className={`fixed-mark fixed-mark-edge-bottom${EDGE_MARKS[fixedEdgeMarks[2]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
+          {renderMarkSvg(fixedEdgeMarks[2])}
         </span>
       )}
       {!fogged && fixedEdgeMarks[3] && (
-        <span className="fixed-mark fixed-mark-edge-left" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedEdgeMarks[3]]} fill={FILLED_MARKS.has(fixedEdgeMarks[3]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+        <span className={`fixed-mark fixed-mark-edge-left${EDGE_MARKS[fixedEdgeMarks[3]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
+          {renderMarkSvg(fixedEdgeMarks[3])}
         </span>
       )}
       {!fogged && fixedVertexMarks[0] && (
         <span className="fixed-mark fixed-mark-vertex-tl" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedVertexMarks[0]]} fill={FILLED_MARKS.has(fixedVertexMarks[0]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+          {renderMarkSvg(fixedVertexMarks[0])}
         </span>
       )}
       {!fogged && fixedVertexMarks[1] && (
         <span className="fixed-mark fixed-mark-vertex-tr" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedVertexMarks[1]]} fill={FILLED_MARKS.has(fixedVertexMarks[1]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+          {renderMarkSvg(fixedVertexMarks[1])}
         </span>
       )}
       {!fogged && fixedVertexMarks[2] && (
         <span className="fixed-mark fixed-mark-vertex-br" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedVertexMarks[2]]} fill={FILLED_MARKS.has(fixedVertexMarks[2]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+          {renderMarkSvg(fixedVertexMarks[2])}
         </span>
       )}
       {!fogged && fixedVertexMarks[3] && (
         <span className="fixed-mark fixed-mark-vertex-bl" aria-hidden="true">
-          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <path d={SHAPE_PATHS[fixedVertexMarks[3]]} fill={FILLED_MARKS.has(fixedVertexMarks[3]!) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.5" />
-          </svg>
+          {renderMarkSvg(fixedVertexMarks[3])}
         </span>
       )}
       {fogged && <div className="cell-fog-overlay" style={fogEdges ? {

@@ -30,11 +30,13 @@
   ],
   "difficulty": "Expert",
   "tags": [
-    "murdoku"
+    "Murdoku"
   ],
   "autoCrossRules": [
     "rook"
   ],
+  "clickActionRight": "cross",
+  "inProgress": true,
   "gridSize": {
     "rows": 16,
     "cols": 16
@@ -2231,6 +2233,5 @@
       ]
     }
   ],
-  "inProgress": true,
-  "createdAt": "2026-03-12"
+  "createdAt": "2026-03-13"
 }

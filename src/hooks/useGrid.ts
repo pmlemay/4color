@@ -15,7 +15,9 @@ function cloneGrid(grid: CellData[][]): CellData[][] {
     borders: [...cell.borders] as [number, number, number, number],
     fixedBorders: [...cell.fixedBorders] as [number, number, number, number],
     edgeCrosses: [...cell.edgeCrosses] as [boolean, boolean, boolean, boolean],
+    edgeDirections: [...(cell.edgeDirections || [0,0,0,0])] as [number, number, number, number],
     lines: [...cell.lines] as [boolean, boolean, boolean, boolean],
+    fixedLines: [...cell.fixedLines] as [boolean, boolean, boolean, boolean],
     fixedEdgeMarks: [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
     fixedVertexMarks: [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
   })))
@@ -31,7 +33,9 @@ function cloneForUndo(grid: CellData[][]): CellData[][] {
     borders: [...cell.borders] as [number, number, number, number],
     fixedBorders: [...cell.fixedBorders] as [number, number, number, number],
     edgeCrosses: [...cell.edgeCrosses] as [boolean, boolean, boolean, boolean],
+    edgeDirections: [...(cell.edgeDirections || [0,0,0,0])] as [number, number, number, number],
     lines: [...cell.lines] as [boolean, boolean, boolean, boolean],
+    fixedLines: [...cell.fixedLines] as [boolean, boolean, boolean, boolean],
     fixedEdgeMarks: [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
     fixedVertexMarks: [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
   })))
@@ -67,6 +71,8 @@ export function useGrid(initialRows: number, initialCols: number) {
   const colorDragAction = useRef<string | null>(null) // target color value for this drag (null = erase)
   const markDragActive = useRef(false)
   const markDragAction = useRef<MarkShape | null>(null)
+  const fixedMarkDragActive = useRef(false)
+  const fixedMarkDragAction = useRef<MarkShape | null>(null)
   const [activeColor, setActiveColor] = useState<string | null>(null)
   const [activeMark, setActiveMark] = useState<MarkShape | null>(null)
   const [activeTexture, setActiveTexture] = useState<CellTexture | null>(null)
@@ -187,21 +193,42 @@ export function useGrid(initialRows: number, initialCols: number) {
     }
 
     if (inputMode === 'mark' && activeMark !== null) {
+      const ARROW_EDGE_M: Record<string, 0 | 1 | 2 | 3> = {
+        arrowLeft: 0, arrowUp: 1, arrowRight: 2, arrowDown: 3,
+      }
+      const FIXED_CENTER_M = new Set(['dashV', 'dashH'])
+      const arrowSideM = ARROW_EDGE_M[activeMark]
+      const isFixedCenter = FIXED_CENTER_M.has(activeMark)
       setGrid(prev => {
         if (!markDragActive.current) {
           markDragActive.current = true
           undoStack.current.push(cloneForUndo(prev))
           if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
           redoStack.current = []
-          markDragAction.current = prev[sel[0].row][sel[0].col].mark === activeMark ? null : activeMark
+          const firstCell = prev[sel[0].row][sel[0].col]
+          markDragAction.current = arrowSideM !== undefined
+            ? (firstCell.fixedEdgeMarks[arrowSideM] === activeMark ? null : activeMark)
+            : isFixedCenter
+              ? (firstCell.fixedMark === activeMark ? null : activeMark)
+              : (firstCell.mark === activeMark ? null : activeMark)
         }
         const targetValue = markDragAction.current
         const eligible = sel.filter(pos => !prev[pos.row][pos.col].crossed && !prev[pos.row][pos.col].value && !prev[pos.row][pos.col].fixedValue)
-        const needsUpdate = eligible.some(pos => prev[pos.row][pos.col].mark !== targetValue)
+        const needsUpdate = eligible.some(pos => arrowSideM !== undefined
+          ? prev[pos.row][pos.col].fixedEdgeMarks[arrowSideM] !== targetValue
+          : isFixedCenter
+            ? prev[pos.row][pos.col].fixedMark !== targetValue
+            : prev[pos.row][pos.col].mark !== targetValue)
         if (!needsUpdate) return prev
         const newGrid = cloneGrid(prev)
         for (const pos of eligible) {
-          newGrid[pos.row][pos.col].mark = targetValue
+          if (arrowSideM !== undefined) {
+            newGrid[pos.row][pos.col].fixedEdgeMarks[arrowSideM] = targetValue
+          } else if (isFixedCenter) {
+            newGrid[pos.row][pos.col].fixedMark = targetValue
+          } else {
+            newGrid[pos.row][pos.col].mark = targetValue
+          }
         }
         // Auto-cross around newly placed marks
         const rules = autoCrossRulesRef.current
@@ -214,6 +241,45 @@ export function useGrid(initialRows: number, initialCols: number) {
             if (!cell.value && !cell.fixedValue && !cell.mark && !cell.fixedMark) {
               cell.crossed = true
             }
+          }
+        }
+        return newGrid
+      })
+      return
+    }
+
+    if (inputMode === 'fixedMark' && activeMark !== null) {
+      const ARROW_EDGE: Record<string, 0 | 1 | 2 | 3> = {
+        arrowLeft: 0, arrowUp: 1, arrowRight: 2, arrowDown: 3,
+      }
+      const arrowSide = ARROW_EDGE[activeMark]
+      setGrid(prev => {
+        if (!fixedMarkDragActive.current) {
+          fixedMarkDragActive.current = true
+          undoStack.current.push(cloneForUndo(prev))
+          if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+          redoStack.current = []
+          const firstCell = prev[sel[0].row][sel[0].col]
+          if (arrowSide !== undefined) {
+            fixedMarkDragAction.current = firstCell.fixedEdgeMarks[arrowSide] === activeMark ? null : activeMark
+          } else {
+            fixedMarkDragAction.current = firstCell.fixedMark === activeMark ? null : activeMark
+          }
+        }
+        const targetValue = fixedMarkDragAction.current
+        const needsUpdate = sel.some(pos => {
+          const c = prev[pos.row][pos.col]
+          return arrowSide !== undefined
+            ? c.fixedEdgeMarks[arrowSide] !== targetValue
+            : c.fixedMark !== targetValue
+        })
+        if (!needsUpdate) return prev
+        const newGrid = cloneGrid(prev)
+        for (const pos of sel) {
+          if (arrowSide !== undefined) {
+            newGrid[pos.row][pos.col].fixedEdgeMarks[arrowSide] = targetValue
+          } else {
+            newGrid[pos.row][pos.col].fixedMark = targetValue
           }
         }
         return newGrid
@@ -369,6 +435,11 @@ export function useGrid(initialRows: number, initialCols: number) {
     // Mark mode: already applied live during drag, just reset flag
     if (inputMode === 'mark' && activeMark !== null) {
       markDragActive.current = false
+      return
+    }
+    // Fixed mark mode: already applied live during drag, just reset flag
+    if (inputMode === 'fixedMark' && activeMark !== null) {
+      fixedMarkDragActive.current = false
       return
     }
     // Border mode: already applied live during drag, just reset
@@ -595,10 +666,31 @@ export function useGrid(initialRows: number, initialCols: number) {
 
   const toggleMark = useCallback((shape: MarkShape) => {
     if (selection.length === 0) return
+    const ARROW_EDGE_TM: Record<string, 0 | 1 | 2 | 3> = {
+      arrowLeft: 0, arrowUp: 1, arrowRight: 2, arrowDown: 3,
+    }
+    const FIXED_CENTER_MARKS = new Set(['dashV', 'dashH'])
+    const arrowSideTM = ARROW_EDGE_TM[shape]
     setGridWithUndo(prev => {
       const newGrid = cloneGrid(prev)
       const eligible = selection.filter(pos => !newGrid[pos.row][pos.col].crossed && !newGrid[pos.row][pos.col].value && !newGrid[pos.row][pos.col].fixedValue)
       if (eligible.length === 0) return prev
+      if (arrowSideTM !== undefined) {
+        const allHave = eligible.every(pos => newGrid[pos.row][pos.col].fixedEdgeMarks[arrowSideTM] === shape)
+        const placing = !allHave
+        for (const pos of eligible) {
+          newGrid[pos.row][pos.col].fixedEdgeMarks[arrowSideTM] = placing ? shape : null
+        }
+        return newGrid
+      }
+      if (FIXED_CENTER_MARKS.has(shape)) {
+        const allHave = eligible.every(pos => newGrid[pos.row][pos.col].fixedMark === shape)
+        const placing = !allHave
+        for (const pos of eligible) {
+          newGrid[pos.row][pos.col].fixedMark = placing ? shape : null
+        }
+        return newGrid
+      }
       const allHaveMark = eligible.every(pos => newGrid[pos.row][pos.col].mark === shape)
       const placing = !allHaveMark
       for (const pos of eligible) {
@@ -633,6 +725,37 @@ export function useGrid(initialRows: number, initialCols: number) {
   }, [selection, setGridWithUndo])
 
   const toggleFixedMark = useCallback((target: MarkTarget, shape: MarkShape) => {
+    // Arrow marks on center clicks: route to their default edge
+    const ARROW_EDGE: Record<string, 0 | 1 | 2 | 3> = {
+      arrowLeft: 0,   // top
+      arrowUp: 1,     // right
+      arrowRight: 2,  // bottom
+      arrowDown: 3,   // left
+    }
+    const arrowSide = ARROW_EDGE[shape]
+    if (arrowSide !== undefined && target.type === 'center') {
+      const row = target.row
+      const col = target.col
+      setGridWithUndo(prev => {
+        const newGrid = cloneGrid(prev)
+        const cell = newGrid[row][col]
+        cell.fixedEdgeMarks[arrowSide] = cell.fixedEdgeMarks[arrowSide] === shape ? null : shape
+        return newGrid
+      })
+      return
+    }
+    // Dashes always go to center fixedMark, regardless of click target
+    const FIXED_CENTER = new Set(['dashV', 'dashH'])
+    if (FIXED_CENTER.has(shape)) {
+      const { row, col } = target
+      setGridWithUndo(prev => {
+        const newGrid = cloneGrid(prev)
+        const cell = newGrid[row][col]
+        cell.fixedMark = cell.fixedMark === shape ? null : shape
+        return newGrid
+      })
+      return
+    }
     setGridWithUndo(prev => {
       const newGrid = cloneGrid(prev)
       const rows = newGrid.length
@@ -645,17 +768,19 @@ export function useGrid(initialRows: number, initialCols: number) {
         const { row, col, side } = target
         const cell = newGrid[row][col]
         cell.fixedEdgeMarks[side] = cell.fixedEdgeMarks[side] === shape ? null : shape
-        // Sync neighbor's matching side
-        const OPPOSITE: Record<number, { dr: number; dc: number; nSide: 0 | 1 | 2 | 3 }> = {
-          0: { dr: -1, dc: 0, nSide: 2 },
-          1: { dr: 0, dc: 1, nSide: 3 },
-          2: { dr: 1, dc: 0, nSide: 0 },
-          3: { dr: 0, dc: -1, nSide: 1 },
-        }
-        const opp = OPPOSITE[side]
-        const nr = row + opp.dr, nc = col + opp.dc
-        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-          newGrid[nr][nc].fixedEdgeMarks[opp.nSide] = cell.fixedEdgeMarks[side]
+        // Sync neighbor's matching side (skip for arrows — they belong to one cell)
+        if (ARROW_EDGE[shape] === undefined) {
+          const OPPOSITE: Record<number, { dr: number; dc: number; nSide: 0 | 1 | 2 | 3 }> = {
+            0: { dr: -1, dc: 0, nSide: 2 },
+            1: { dr: 0, dc: 1, nSide: 3 },
+            2: { dr: 1, dc: 0, nSide: 0 },
+            3: { dr: 0, dc: -1, nSide: 1 },
+          }
+          const opp = OPPOSITE[side]
+          const nr = row + opp.dr, nc = col + opp.dc
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+            newGrid[nr][nc].fixedEdgeMarks[opp.nSide] = cell.fixedEdgeMarks[side]
+          }
         }
       } else if (target.type === 'vertex') {
         const { row, col, corner } = target
@@ -752,13 +877,16 @@ export function useGrid(initialRows: number, initialCols: number) {
         cell.crossed = false
         cell.mark = null
         cell.edgeCrosses = [false, false, false, false]
-        cell.lines = [false, false, false, false]
+        cell.edgeDirections = [0, 0, 0, 0]
+        cell.lines = [...cell.fixedLines] as [boolean, boolean, boolean, boolean]
         cell.borders = [...cell.fixedBorders] as [number, number, number, number]
         if (isEditorRef.current) {
           cell.fixedColor = null
           cell.fixedMark = null
           cell.fixedEdgeMarks = [null, null, null, null]
           cell.fixedVertexMarks = [null, null, null, null]
+          cell.fixedLines = [false, false, false, false]
+          cell.lines = [false, false, false, false]
           // Keep fixedTexture — remove via texture mode, not Delete
         }
       }
@@ -898,8 +1026,54 @@ export function useGrid(initialRows: number, initialCols: number) {
       for (const p of pairs) {
         const c = newGrid[p.row][p.col]
         c.edgeCrosses[p.side] = val
+        c.edgeDirections[p.side] = 0 // clear direction when toggling X directly
         // Remove user border when placing an X
         if (val && c.borders[p.side] > 0 && c.fixedBorders[p.side] === 0) {
+          c.borders[p.side] = 0
+        }
+      }
+      return newGrid
+    })
+  }, [setGridWithUndo])
+
+  const cycleEdgeMark = useCallback((edge: EdgeDescriptor) => {
+    setGridWithUndo(prev => {
+      const rows = prev.length
+      const cols = prev[0]?.length ?? 0
+      const newGrid = cloneGrid(prev)
+      const cell = prev[edge.row][edge.col]
+      const hasCross = cell.edgeCrosses[edge.side]
+      const dir = cell.edgeDirections[edge.side]
+
+      let newCross = false
+      let newDir = 0
+      if (!hasCross && dir === 0) {
+        // none → X
+        newCross = true; newDir = 0
+      } else if (hasCross) {
+        // X → <
+        newCross = false; newDir = 1
+      } else if (dir === 1) {
+        // < → >
+        newCross = false; newDir = 2
+      } else {
+        // > → none
+        newCross = false; newDir = 0
+      }
+
+      // Build list of both cells sharing this edge
+      const pairs: { row: number; col: number; side: 0 | 1 | 2 | 3 }[] = [edge]
+      if (edge.side === 0 && edge.row > 0) pairs.push({ row: edge.row - 1, col: edge.col, side: 2 })
+      if (edge.side === 1 && edge.col < cols - 1) pairs.push({ row: edge.row, col: edge.col + 1, side: 3 })
+      if (edge.side === 2 && edge.row < rows - 1) pairs.push({ row: edge.row + 1, col: edge.col, side: 0 })
+      if (edge.side === 3 && edge.col > 0) pairs.push({ row: edge.row, col: edge.col - 1, side: 1 })
+
+      for (const p of pairs) {
+        const c = newGrid[p.row][p.col]
+        c.edgeCrosses[p.side] = newCross
+        c.edgeDirections[p.side] = newDir
+        // Remove user border when placing an X
+        if (newCross && c.borders[p.side] > 0 && c.fixedBorders[p.side] === 0) {
           c.borders[p.side] = 0
         }
       }
@@ -912,6 +1086,9 @@ export function useGrid(initialRows: number, initialCols: number) {
     setter(prev => {
       const rows = prev.length
       const cols = prev[0]?.length ?? 0
+      const cell = prev[pos.row][pos.col]
+      // Prevent removing a fixed line in player mode
+      if (!value && cell.fixedLines[side]) return prev
       const newGrid = cloneGrid(prev)
       newGrid[pos.row][pos.col].lines[side] = value
       // Set neighbor's matching side
@@ -930,6 +1107,31 @@ export function useGrid(initialRows: number, initialCols: number) {
     })
   }, [setGrid, setGridWithUndo])
 
+  const toggleFixedLine = useCallback((pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => {
+    const setter = withUndo ? setGridWithUndo : setGrid
+    setter(prev => {
+      const rows = prev.length
+      const cols = prev[0]?.length ?? 0
+      const newGrid = cloneGrid(prev)
+      newGrid[pos.row][pos.col].fixedLines[side] = value
+      newGrid[pos.row][pos.col].lines[side] = value
+      // Set neighbor's matching side
+      const OPPOSITE: Record<number, { dr: number; dc: number; nSide: 0 | 1 | 2 | 3 }> = {
+        0: { dr: -1, dc: 0, nSide: 2 },
+        1: { dr: 0, dc: 1, nSide: 3 },
+        2: { dr: 1, dc: 0, nSide: 0 },
+        3: { dr: 0, dc: -1, nSide: 1 },
+      }
+      const opp = OPPOSITE[side]
+      const nr = pos.row + opp.dr, nc = pos.col + opp.dc
+      if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+        newGrid[nr][nc].fixedLines[opp.nSide] = value
+        newGrid[nr][nc].lines[opp.nSide] = value
+      }
+      return newGrid
+    })
+  }, [setGrid, setGridWithUndo])
+
   const resetGrid = useCallback((rows: number, cols: number) => {
     undoStack.current = []
     setGrid(createEmptyGrid(rows, cols))
@@ -941,7 +1143,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     borders: [0,0,0,0], fixedBorders: [0,0,0,0], color: null, labels: {},
     crossed: false, mark: null, fixedMark: null,
     fixedEdgeMarks: [null,null,null,null], fixedVertexMarks: [null,null,null,null],
-    edgeCrosses: [false,false,false,false], lines: [false,false,false,false], selected: false, image: null,
+    edgeCrosses: [false,false,false,false], edgeDirections: [0,0,0,0], lines: [false,false,false,false], fixedLines: [false,false,false,false], selected: false, image: null,
     fixedTexture: null,
   }), [])
 
@@ -1011,7 +1213,9 @@ export function useGrid(initialRows: number, initialCols: number) {
     commitEdges,
     commitFixedEdges,
     toggleEdgeCross,
+    cycleEdgeMark,
     toggleLine,
+    toggleFixedLine,
     resetGrid,
     addRow,
     addCol,

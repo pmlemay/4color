@@ -30,7 +30,9 @@ export interface CellData {
   fixedEdgeMarks: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null] // [top, right, bottom, left]
   fixedVertexMarks: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null] // [TL, TR, BR, BL]
   edgeCrosses: [boolean, boolean, boolean, boolean] // [top, right, bottom, left]
+  edgeDirections: [number, number, number, number] // [top, right, bottom, left] — 0=none, 1=<, 2=>
   lines: [boolean, boolean, boolean, boolean] // [top, right, bottom, left] — player connection lines
+  fixedLines: [boolean, boolean, boolean, boolean] // [top, right, bottom, left] — puzzle-defined lines
   selected: boolean
   image: string | null
   fixedTexture: CellTexture | null
@@ -57,6 +59,7 @@ export interface PuzzleCellData {
   fixedVertexMarks?: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
   image?: string
   fixedTexture?: CellTexture
+  fixedLines?: [boolean, boolean, boolean, boolean]
 }
 
 export interface PuzzleData {
@@ -97,11 +100,11 @@ export interface PuzzleIndexEntry {
   inProgress?: boolean
 }
 
-export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'star' | 'dot'
+export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'star' | 'dot' | 'bigcircle' | 'bigcirclefilled' | 'dashV' | 'dashH' | 'arrowLeft' | 'arrowDown' | 'arrowRight' | 'arrowUp'
 
 export type AutoCrossRule = 'king' | 'rook' | 'bishop' | 'knight'
 
-export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark' | 'fog' | 'fixedTexture'
+export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark' | 'fog' | 'fixedTexture' | 'line' | 'fixedLine'
 
 export interface FogTrigger {
   cells: CellPosition[]
@@ -130,4 +133,5 @@ export interface PuzzleSolution {
   cells: Record<string, string>
   borders?: Record<string, [number, number, number, number]>
   colors?: Record<string, string>
+  lines?: Record<string, [boolean, boolean, boolean, boolean]>
 }

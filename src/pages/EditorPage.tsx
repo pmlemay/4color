@@ -253,23 +253,40 @@ export function EditorPage() {
     'Divide the grid into regions that have rotational symmetry around their center white circle.',
     'Each region has exactly 1 white circle in it.',
   ]
+  const ICEBARN_RULES = [
+    'Draw a path through the centers of some cells, entering the grid at the "IN" marking and exiting at the "OUT" marking.',
+    'The path must travel through all of the arrows in the indicated direction.',
+    'Two perpendicular line segments may intersect each other only on icy cells, but they may not turn at their intersection or otherwise overlap.',
+    'The path may not turn on icy cells, and each orthogonally connected group of icy cells must be passed through at least once.',
+  ]
+  const SLALOM_RULES = [
+    'Draw a non-intersecting loop through the centers of some cells, starting and ending at the circle.',
+    'The loop may not enter blackened cells, and must pass straight through each gate exactly once.',
+    'If a number N is pointing at a gate, it must be the Nth gate visited from the circle.',
+  ]
   const PUZZLE_TYPE_RULES: Record<string, string[]> = {
     heyawake: HEYAWAKE_RULES,
     nurikabe: NURIKABE_RULES,
     starbattle: STARBATTLE_RULES,
     spiralgalaxy: SPIRALGALAXY_RULES,
+    slalom: SLALOM_RULES,
+    icebarn: ICEBARN_RULES,
   }
   const PUZZLE_TYPE_TITLES: Record<string, string> = {
     heyawake: 'Heyawake',
     nurikabe: 'Nurikabe',
     starbattle: 'Star Battle',
     spiralgalaxy: 'Spiral Galaxy',
+    slalom: 'Slalom',
+    icebarn: 'Icebarn',
   }
   const PUZZLE_TYPE_TAGS: Record<string, string> = {
     heyawake: 'Heyawake',
     nurikabe: 'Nurikabe',
     starbattle: 'Star-battle',
     spiralgalaxy: 'Spiral-galaxy',
+    slalom: 'Slalom',
+    icebarn: 'Icebarn',
   }
   const prevPuzzleType = useRef(puzzleType)
 
@@ -300,6 +317,44 @@ export function EditorPage() {
       if (newTag && !next.includes(newTag)) next = [...next, newTag]
       return next
     })
+    // Icebarn: expand grid by +2 in each dimension, add border fog + IN/OUT labels
+    if (newType === 'icebarn') {
+      const r = gridState.grid.length + 2
+      const c = (gridState.grid[0]?.length ?? 1) + 2
+      setRows(r)
+      setCols(c)
+      gridState.resetGrid(r, c)
+      gridState.setGrid(prev => {
+        const g = prev.map(row => row.map(cell => ({ ...cell, labels: { ...cell.labels } })))
+        if (g[0]?.[1]) g[0][1].labels = { middle: { text: 'IN', showThroughFog: true } }
+        if (g[r - 1]?.[c - 2]) g[r - 1][c - 2].labels = { middle: { text: 'OUT', showThroughFog: true } }
+        return g
+      })
+      const borderCells: CellPosition[] = []
+      for (let ri = 0; ri < r; ri++) {
+        for (let ci = 0; ci < c; ci++) {
+          if (ri === 0 || ri === r - 1 || ci === 0 || ci === c - 1) {
+            borderCells.push({ row: ri, col: ci })
+          }
+        }
+      }
+      setFogGroups([{ id: 'fog-border', cells: borderCells, triggers: [] }])
+    } else if (prevPuzzleType.current === 'icebarn') {
+      // Switching away from icebarn: clear the auto-generated fog and IN/OUT labels
+      setFogGroups(prev => prev.filter(g => g.id !== 'fog-border'))
+      gridState.setGrid(prev => {
+        const r = prev.length
+        const c = prev[0]?.length ?? 1
+        const g = prev.map(row => row.map(cell => ({ ...cell })))
+        if (g[0]?.[1]?.labels?.middle?.text === 'IN') {
+          g[0][1] = { ...g[0][1], labels: {} }
+        }
+        if (g[r - 1]?.[c - 2]?.labels?.middle?.text === 'OUT') {
+          g[r - 1][c - 2] = { ...g[r - 1][c - 2], labels: {} }
+        }
+        return g
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -500,6 +555,7 @@ export function EditorPage() {
     const cells: Record<string, string> = {}
     const borders: Record<string, [number, number, number, number]> = {}
     const colors: Record<string, string> = {}
+    const solutionLines: Record<string, [boolean, boolean, boolean, boolean]> = {}
     for (let r = 0; r < gridState.grid.length; r++) {
       for (let c = 0; c < gridState.grid[r].length; c++) {
         const cell = gridState.grid[r][c]
@@ -510,14 +566,20 @@ export function EditorPage() {
           borders[`${r},${c}`] = b
         }
         if (cell.color && !cell.fixedColor) colors[`${r},${c}`] = cell.color
+        const fl = cell.fixedLines
+        const l = cell.lines
+        if ((l[0] && !fl[0]) || (l[1] && !fl[1]) || (l[2] && !fl[2]) || (l[3] && !fl[3])) {
+          solutionLines[`${r},${c}`] = l
+        }
       }
     }
-    if (Object.keys(cells).length === 0 && Object.keys(borders).length === 0 && Object.keys(colors).length === 0) {
-      await showAlert('No solution values, borders, or colors entered.'); return
+    if (Object.keys(cells).length === 0 && Object.keys(borders).length === 0 && Object.keys(colors).length === 0 && Object.keys(solutionLines).length === 0) {
+      await showAlert('No solution values, borders, colors, or lines entered.'); return
     }
     const solution: PuzzleSolution = { id: solutionId, cells }
     if (Object.keys(borders).length > 0) solution.borders = borders
     if (Object.keys(colors).length > 0) solution.colors = colors
+    if (Object.keys(solutionLines).length > 0) solution.lines = solutionLines
     if (import.meta.env.DEV) {
       const result = await saveSolutionToServer(solution)
       if (result.ok) {
@@ -859,6 +921,7 @@ export function EditorPage() {
   // Map click action string to the effective inputMode / activeColor / activeMark
   const suggestedEffectiveMode: InputMode = (() => {
     if (!clickActionLeft) return 'normal'
+    if (clickActionLeft === 'line') return 'line'
     if (clickActionLeft.startsWith('color:')) return 'color'
     if (clickActionLeft.startsWith('mark:')) return 'mark'
     if (clickActionLeft === 'cross') return 'cross'
@@ -888,7 +951,7 @@ export function EditorPage() {
   const touchCycleAction = useRef<string | null>(null)
 
   const handleDragChange = useCallback((sel: CellPosition[]) => {
-    if (!isSuggestedMode || !clickActionLeft) {
+    if (!isSuggestedMode || !clickActionLeft || clickActionLeft === 'line') {
       gridState.onDragChange(sel)
       return
     }
@@ -1128,6 +1191,8 @@ export function EditorPage() {
                 <option value="heyawake">Heyawake</option>
                 <option value="starbattle">Star Battle</option>
                 <option value="spiralgalaxy">Spiral Galaxy</option>
+                <option value="slalom">Slalom</option>
+                <option value="icebarn">Icebarn</option>
               </select>
             </div>
             <div className="info-editor-field">
@@ -1158,6 +1223,7 @@ export function EditorPage() {
                 </optgroup>
                 <optgroup label="Other">
                   <option value="cross">Cross</option>
+                  <option value="line">Line</option>
                 </optgroup>
               </select>
             </div>
@@ -1204,9 +1270,33 @@ export function EditorPage() {
             </div>
             <button className="info-btn" onClick={async () => {
               if (!await showConfirm('This will clear all cell data. To add rows/columns without clearing, use the + buttons around the grid instead.', 'Resize Grid')) return
-              gridState.resetGrid(rows, cols)
+              // Icebarn: add +2 to each dimension for fog border
+              const actualRows = puzzleType === 'icebarn' ? rows + 2 : rows
+              const actualCols = puzzleType === 'icebarn' ? cols + 2 : cols
+              gridState.resetGrid(actualRows, actualCols)
               setFogGroups([])
               gridScale.resetZoom()
+              // Icebarn: add border fog + IN/OUT labels
+              if (puzzleType === 'icebarn') {
+                gridState.setGrid(prev => {
+                  const g = prev.map(r => r.map(c => ({ ...c, labels: { ...c.labels } })))
+                  // IN label at B1 (row 0, col 1)
+                  if (g[0]?.[1]) g[0][1].labels = { middle: { text: 'IN', showThroughFog: true } }
+                  // OUT label at second-to-last col of last row
+                  if (g[actualRows - 1]?.[actualCols - 2]) g[actualRows - 1][actualCols - 2].labels = { middle: { text: 'OUT', showThroughFog: true } }
+                  return g
+                })
+                // 1-cell-wide border fog with no triggers
+                const borderCells: CellPosition[] = []
+                for (let r = 0; r < actualRows; r++) {
+                  for (let c = 0; c < actualCols; c++) {
+                    if (r === 0 || r === actualRows - 1 || c === 0 || c === actualCols - 1) {
+                      borderCells.push({ row: r, col: c })
+                    }
+                  }
+                }
+                setFogGroups([{ id: 'fog-border', cells: borderCells, triggers: [] }])
+              }
             }}>Resize Grid</button>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
@@ -1425,12 +1515,14 @@ export function EditorPage() {
                 clearSelection={handleClearSelection}
                 commitSelection={handleCommitSelection}
                 onDragChange={handleDragChange}
-                onLeftClickCell={isSuggestedMode && clickActionLeft ? handleLeftClickCell : undefined}
-                onRightClickCell={clickActionRight ? handleRightClickCell : undefined}
+                onLeftClickCell={isSuggestedMode && clickActionLeft && clickActionLeft !== 'line' ? handleLeftClickCell : undefined}
+                onRightClickCell={clickActionRight && clickActionRight !== 'line' ? handleRightClickCell : undefined}
                 onCommitEdges={gridState.commitEdges}
                 onCommitFixedEdges={gridState.commitFixedEdges}
                 onToggleEdgeCross={gridState.toggleEdgeCross}
+                onCycleEdgeMark={gridState.cycleEdgeMark}
                 onToggleLine={gridState.toggleLine}
+                onToggleFixedLine={gridState.toggleFixedLine}
                 onToggleFixedMark={gridState.toggleFixedMark}
                 isPinching={gridScale.isPinching}
                 fogPreviewCells={fogPreviewCells}

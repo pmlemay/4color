@@ -12,13 +12,17 @@ const PLAYER_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'border', label: 'Border (B)' },
   { mode: 'edge', label: 'Edge (E)' },
   { mode: 'mark', label: 'Marks (M)' },
+  { mode: 'line', label: 'Line (L)' },
 ]
 
-const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot']
+const MARK_SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot', 'bigcircle', 'bigcirclefilled', 'dashV', 'dashH', 'arrowLeft', 'arrowDown', 'arrowRight', 'arrowUp']
 const MARK_LABELS: Record<MarkShape, string> = {
   circle: '\u25CB', square: '\u25A1', triangle: '\u25B3',
   diamond: '\u25C7', pentagon: '\u2B20', hexagon: '\u2B21',
   star: '\u2605', dot: '\u25CF',
+  bigcircle: '\u25EF', bigcirclefilled: '\u2B24',
+  dashV: '\u2506', dashH: '\u2504',
+  arrowLeft: '\u2190', arrowDown: '\u2193', arrowRight: '\u2192', arrowUp: '\u2191',
 }
 
 const EDITOR_MODES: { mode: InputMode; label: string }[] = [
@@ -30,6 +34,7 @@ const EDITOR_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'fixedMark', label: 'Fixed Mark (Ctrl+M)' },
   { mode: 'label', label: 'Label (Ctrl+L)' },
   { mode: 'fixedTexture', label: 'Texture (Ctrl+T)' },
+  { mode: 'fixedLine', label: 'Fixed Line' },
 ]
 
 interface ToolbarProps {
@@ -205,6 +210,8 @@ export function Toolbar({
         {inputMode === 'suggested' && puzzleType === 'nurikabe' && (<><div>Left-click: toggle black. Right-click: toggle dot</div><div>Touch: black &rarr; dot &rarr; clear</div></>)}
         {inputMode === 'suggested' && puzzleType === 'heyawake' && (<><div>Left-click: toggle black. Right-click: toggle green</div><div>Touch: black &rarr; green &rarr; clear</div></>)}
         {inputMode === 'suggested' && puzzleType === 'starbattle' && (<><div>Left-click: toggle star. Right-click: toggle X</div><div>Touch: star &rarr; X &rarr; clear</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'slalom' && (<><div>Left-click: draw lines. Right-click: toggle X</div><div>Touch: drag between cells to draw lines</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'icebarn' && (<><div>Left-click: draw lines. Right-click: toggle X</div><div>Touch: drag between cells to draw lines</div></>)}
         {inputMode === 'suggested' && !puzzleType && (clickActionLeft ? 'Custom click actions configured.' : 'Select click actions below.')}
         {inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
         {inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
@@ -214,6 +221,7 @@ export function Toolbar({
         {inputMode === 'edge' && 'Click/drag edges to toggle individual borders.'}
         {inputMode === 'fixedTexture' && (activeTexture !== null ? 'Drag to paint texture. Click swatch again to deselect.' : 'Select a texture type and variant.')}
         {inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
+        {inputMode === 'line' && 'Drag between cells to draw lines. Click edges to toggle X. Right-click edges for X only.'}
       </div>
 
       <div className="tb-section">
@@ -255,6 +263,14 @@ export function Toolbar({
                   <option value="mark:hexagon">Hexagon</option>
                   <option value="mark:star">Star</option>
                   <option value="mark:dot">Dot</option>
+                  <option value="mark:bigcircle">Big Circle</option>
+                  <option value="mark:bigcirclefilled">Big Circle Filled</option>
+                  <option value="mark:dashV">Dash Vertical</option>
+                  <option value="mark:dashH">Dash Horizontal</option>
+                  <option value="mark:arrowLeft">Arrow Left</option>
+                  <option value="mark:arrowDown">Arrow Down</option>
+                  <option value="mark:arrowRight">Arrow Right</option>
+                  <option value="mark:arrowUp">Arrow Up</option>
                 </optgroup>
                 <optgroup label="Other">
                   <option value="cross">Cross</option>
@@ -290,6 +306,14 @@ export function Toolbar({
                   <option value="mark:hexagon">Hexagon</option>
                   <option value="mark:star">Star</option>
                   <option value="mark:dot">Dot</option>
+                  <option value="mark:bigcircle">Big Circle</option>
+                  <option value="mark:bigcirclefilled">Big Circle Filled</option>
+                  <option value="mark:dashV">Dash Vertical</option>
+                  <option value="mark:dashH">Dash Horizontal</option>
+                  <option value="mark:arrowLeft">Arrow Left</option>
+                  <option value="mark:arrowDown">Arrow Down</option>
+                  <option value="mark:arrowRight">Arrow Right</option>
+                  <option value="mark:arrowUp">Arrow Up</option>
                 </optgroup>
                 <optgroup label="Other">
                   <option value="cross">Cross</option>
@@ -628,6 +652,14 @@ const CONDITION_OPTIONS: { value: string; label: string }[] = [
   { value: 'mark:hexagon', label: 'Mark: Hexagon' },
   { value: 'mark:star', label: 'Mark: Star' },
   { value: 'mark:dot', label: 'Mark: Dot' },
+  { value: 'mark:bigcircle', label: 'Mark: Big Circle' },
+  { value: 'mark:bigcirclefilled', label: 'Mark: Big Circle Filled' },
+  { value: 'mark:dashV', label: 'Mark: Dash Vertical' },
+  { value: 'mark:dashH', label: 'Mark: Dash Horizontal' },
+  { value: 'mark:arrowLeft', label: 'Mark: Arrow Left' },
+  { value: 'mark:arrowDown', label: 'Mark: Arrow Down' },
+  { value: 'mark:arrowRight', label: 'Mark: Arrow Right' },
+  { value: 'mark:arrowUp', label: 'Mark: Arrow Up' },
   { value: 'cross', label: 'Cross' },
 ]
 

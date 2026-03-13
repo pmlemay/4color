@@ -80,35 +80,10 @@ export function useKeyboard(options: UseKeyboardOptions) {
         return
       }
 
-      // Editor Ctrl+Key shortcuts for fixed modes
-      if (options.isEditor && (e.ctrlKey || e.metaKey) && !e.altKey && options.onInputModeChange) {
-        const upper = e.key.toUpperCase()
-        const CTRL_EDITOR_MODES: Record<string, InputMode> = {
-          N: 'fixed',
-          D: 'fixedDouble',
-          B: 'fixedBorder',
-          E: 'fixedEdge',
-          M: 'fixedMark',
-          L: 'label',
-          T: 'fixedTexture',
-        }
-        // Ctrl+Shift+C for fixedColor (Ctrl+C is copy)
-        if (e.shiftKey && upper === 'C') {
-          e.preventDefault()
-          options.onInputModeChange('fixedColor')
-          return
-        }
-        if (!e.shiftKey && upper in CTRL_EDITOR_MODES) {
-          e.preventDefault()
-          options.onInputModeChange(CTRL_EDITOR_MODES[upper])
-          return
-        }
-      }
-
       // Mode switching hotkeys (bare keys) when no cells are selected
       if (!e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey && options.hasSelection === false && options.onInputModeChange) {
         const upper = e.key.toUpperCase()
-        const MODE_KEYS: Record<string, InputMode> = { S: 'suggested', N: 'normal', C: 'color', X: 'cross', B: 'border', E: 'edge', M: 'mark' }
+        const MODE_KEYS: Record<string, InputMode> = { S: 'suggested', N: 'normal', C: 'color', X: 'cross', B: 'border', E: 'edge', M: 'mark', L: 'line' }
         if (upper in MODE_KEYS) {
           e.preventDefault()
           options.onInputModeChange(MODE_KEYS[upper])
@@ -169,7 +144,7 @@ export function useKeyboard(options: UseKeyboardOptions) {
           options.addNote(value)
           break
         case 'mark': {
-          const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot']
+          const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot', 'bigcircle', 'bigcirclefilled', 'dashV', 'dashH']
           const idx = parseInt(value) - 1
           if (idx >= 0 && idx < SHAPES.length) {
             const shape = SHAPES[idx]

@@ -233,6 +233,7 @@
   user-select: none;
   -webkit-user-select: none;
   backface-visibility: hidden;
+  overflow: visible;
 }
 
 .puzzle-grid td {
@@ -291,7 +292,7 @@
 
 .cell-fixed-value {
   font-weight: bold;
-  font-size: 35px;
+  font-size: 28px;
   text-shadow:
     -1px -1px 0 rgba(255,255,255,0.7),
      1px -1px 0 rgba(255,255,255,0.7),
@@ -388,6 +389,16 @@
 .cell-mark svg {
   width: 34px;
   height: 34px;
+}
+
+/* Edge-positioned marks (arrows) */
+.cell-mark-edge {
+  display: block;
+}
+
+.cell-mark-edge svg {
+  width: auto;
+  height: auto;
 }
 
 /* Notes grid */
@@ -519,39 +530,48 @@ td.cell-has-lines {
 /* Connection lines (player right-click drag between cells) */
 .cell-line {
   position: absolute;
-  background-color: var(--text);
+  background-color: #2ecc71;
   pointer-events: none;
   z-index: 4;
-  opacity: 0.6;
 }
 .cell-line-top {
   left: 50%;
   top: 0;
-  height: 25%;
-  width: 1.5px;
+  height: 50%;
+  width: 3px;
   transform: translateX(-50%);
 }
 .cell-line-right {
   top: 50%;
   right: 0;
-  width: 25%;
-  height: 1.5px;
+  width: 50%;
+  height: 3px;
   transform: translateY(-50%);
 }
 .cell-line-bottom {
   left: 50%;
   bottom: 0;
-  height: 25%;
-  width: 1.5px;
+  height: 50%;
+  width: 3px;
   transform: translateX(-50%);
 }
 .cell-line-left {
   top: 50%;
   left: 0;
-  width: 25%;
-  height: 1.5px;
+  width: 50%;
+  height: 3px;
   transform: translateY(-50%);
 }
+/* Fixed (puzzle-defined) lines — darker shade */
+.cell-line-fixed {
+  background-color: #1a9e54;
+}
+
+/* Lines exiting the grid reach the center of a virtual cell outside */
+.cell-line-top.cell-line-exit    { top: -50%; height: 100%; }
+.cell-line-bottom.cell-line-exit { bottom: -50%; height: 100%; }
+.cell-line-right.cell-line-exit  { right: -50%; width: 100%; }
+.cell-line-left.cell-line-exit   { left: -50%; width: 100%; }
 
 /* Edge cross marks (small X on edges) */
 .edge-x {
@@ -587,6 +607,41 @@ td.cell-has-lines {
 .edge-x-left {
   top: calc(50% - 1px);
   left: 0;
+}
+
+/* Edge direction marks (< and > for line flow) */
+.edge-dir {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+  width: 14px;
+  height: 20px;
+}
+
+.edge-dir-top {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.edge-dir-right {
+  top: 50%;
+  right: 0;
+  left: auto;
+  transform: translate(50%, -50%);
+}
+
+.edge-dir-bottom {
+  bottom: 0;
+  top: auto;
+  left: 50%;
+  transform: translate(-50%, 50%) rotate(-90deg);
+}
+
+.edge-dir-left {
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
 }
 
 /* Fixed marks (editor-placed puzzle decorations) */
@@ -655,6 +710,11 @@ td.cell-has-lines {
   left: 0;
   transform: translate(-50%, -50%);
 }
+
+.fixed-mark-edge-top.fixed-mark-arrow { top: 6px; }
+.fixed-mark-edge-right.fixed-mark-arrow { right: 6px; }
+.fixed-mark-edge-bottom.fixed-mark-arrow { bottom: 6px; }
+.fixed-mark-edge-left.fixed-mark-arrow { left: 6px; }
 
 /* Vertex fixed marks — positioned at corners */
 .fixed-mark-vertex-tl,

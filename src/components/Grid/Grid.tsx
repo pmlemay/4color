@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { CellData, CellPosition, InputMode, MarkShape, EdgeDescriptor } from '../../types'
 import { useDragSelect } from '../../hooks/useDragSelect'
 import { useEdgeDrag, expandEdge, detectEdge } from '../../hooks/useEdgeDrag'
-import { detectMarkTarget, getNearestCell, MarkTarget } from '../../utils/gridHitTest'
+import { detectMarkTarget, getNearestCell, getVirtualCell, MarkTarget } from '../../utils/gridHitTest'
 import { Cell } from './Cell'
 import './Grid.css'
 
@@ -21,8 +21,10 @@ interface GridProps {
   onCommitEdges?: (edges: EdgeDescriptor[]) => void
   onCommitFixedEdges?: (edges: EdgeDescriptor[]) => void
   onToggleEdgeCross?: (edge: EdgeDescriptor, forceValue?: boolean) => void
+  onCycleEdgeMark?: (edge: EdgeDescriptor) => void
   onToggleFixedMark?: (target: MarkTarget, shape: MarkShape) => void
   onToggleLine?: (pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => void
+  onToggleFixedLine?: (pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => void
   isPinching?: boolean
   isTouchDragRef?: React.MutableRefObject<boolean>
   foggedCells?: Set<string>
@@ -30,16 +32,19 @@ interface GridProps {
   revealedFogIds?: Set<string>
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onToggleFixedMark, onToggleLine, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onToggleFixedMark, onToggleLine, onToggleFixedLine, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const beingDeselected = useRef<Set<string>>(new Set())
   const [, setRenderTick] = useState(0)
   const isColorDrag = (inputMode === 'color' || inputMode === 'fixedColor') && activeColor !== null
   const isMarkDrag = inputMode === 'mark' && activeMark != null
   const isTextureDrag = inputMode === 'fixedTexture'
-  const isImmediateMode = inputMode === 'cross' || inputMode === 'border' || inputMode === 'fixedBorder' || isColorDrag || isMarkDrag || isTextureDrag
+  const isFixedMarkDrag = inputMode === 'fixedMark' && activeMark != null
+  const isLineMode = inputMode === 'line' || inputMode === 'fixedLine'
+  const lineToggleFn = inputMode === 'fixedLine' ? onToggleFixedLine : onToggleLine
+  const isImmediateMode = inputMode === 'cross' || inputMode === 'border' || inputMode === 'fixedBorder' || isColorDrag || isMarkDrag || isFixedMarkDrag || isTextureDrag || isLineMode
   const isEdgeMode = inputMode === 'edge' || inputMode === 'fixedEdge'
-  const isFixedMarkMode = inputMode === 'fixedMark' && activeMark != null
+  const isFixedMarkMode = isFixedMarkDrag
 
   const [draftEdges, setDraftEdges] = useState<EdgeDescriptor[]>([])
 
@@ -52,8 +57,13 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
   const rightLineLastCell = useRef<{ row: number; col: number } | null>(null)
   const rightLineAction = useRef<boolean | undefined>(undefined) // true = add, false = remove
   const rightLineFirst = useRef(true) // first toggle in drag gets undo snapshot
+  // Left-click line drag (line mode)
+  const leftLineDragging = useRef(false)
+  const leftLineLastCell = useRef<{ row: number; col: number } | null>(null)
+  const leftLineAction = useRef<boolean | undefined>(undefined)
+  const leftLineFirst = useRef(true)
 
-  const isEdgeCrossMode = isEdgeMode || inputMode === 'border' || inputMode === 'fixedBorder'
+  const isEdgeCrossMode = isEdgeMode || inputMode === 'border' || inputMode === 'fixedBorder' || isLineMode
 
   // Normalize edge key so both sides of the same physical edge map to the same string
   const normalizeEdgeKey = (edge: EdgeDescriptor): string => {
@@ -148,6 +158,10 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       rightEdgeVisited.current.clear()
       rightLineDragging.current = false
       rightLineLastCell.current = null
+      leftLineDragging.current = false
+      leftLineLastCell.current = null
+      leftLineAction.current = undefined
+      leftLineFirst.current = true
       rightLineAction.current = undefined
       rightLineFirst.current = true
     }
@@ -181,26 +195,79 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
     }
   }
 
+  // Get cell position for line drags — uses virtual cells when mouse is outside the table
+  const getLineDragCell = (x: number, y: number, table: HTMLTableElement) => {
+    const rect = table.getBoundingClientRect()
+    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+      return getNearestCell(x, y, table)
+    }
+    return getVirtualCell(x, y, table)
+  }
+
   return (
     <div
       className="grid-container"
       onMouseDown={(e) => {
         // Ignore middle-click — let it pan without affecting selection
         if (e.button === 1) return
-        if (e.button === 0 && isFixedMarkMode && onToggleFixedMark) {
+        if (e.button === 0 && isLineMode && lineToggleFn) {
           e.preventDefault()
           const table = dragSelect.tableRef.current
           if (!table) return
-          const target = detectMarkTarget(e.clientX, e.clientY, table)
-          if (target && !foggedCells?.has(`${target.row},${target.col}`)) onToggleFixedMark(target, activeMark!)
+          const edge = detectEdge(e.clientX, e.clientY, table, 0.25)
+          if (edge) {
+            // Edge click: cycle none → X → < → > → none
+            if (onCycleEdgeMark) onCycleEdgeMark(edge)
+          } else {
+            // Center zone: start line drag (also allow starting from outside the grid)
+            const hit = getLineDragCell(e.clientX, e.clientY, table)
+            if (hit) {
+              {
+                leftLineDragging.current = true
+                leftLineLastCell.current = { row: hit.row, col: hit.col }
+                leftLineAction.current = undefined
+                leftLineFirst.current = true
+              }
+            }
+          }
           return
+        }
+        if (e.button === 2 && isLineMode && onToggleEdgeCross) {
+          e.preventDefault()
+          const table = dragSelect.tableRef.current
+          if (!table) return
+          const edge = detectEdge(e.clientX, e.clientY, table, 0.25)
+          if (edge) {
+            // Right-click on edge: start X drag (reuse rightEdge refs)
+            rightEdgeDragging.current = true
+            rightEdgeVisited.current.clear()
+            const cell = grid[edge.row]?.[edge.col]
+            rightEdgeAction.current = cell ? !cell.edgeCrosses[edge.side] : true
+            const key = normalizeEdgeKey(edge)
+            rightEdgeVisited.current.add(key)
+            onToggleEdgeCross(edge, rightEdgeAction.current)
+          }
+          return
+        }
+        if (e.button === 0 && isFixedMarkMode && onToggleFixedMark) {
+          const table = dragSelect.tableRef.current
+          if (table) {
+            const target = detectMarkTarget(e.clientX, e.clientY, table)
+            if (target && !foggedCells?.has(`${target.row},${target.col}`) && target.type !== 'center') {
+              // Edge/vertex clicks: handle directly, not via drag
+              e.preventDefault()
+              onToggleFixedMark(target, activeMark!)
+              return
+            }
+          }
+          // Center clicks: fall through to drag system
         }
         if (e.button === 2 && isEdgeCrossMode && onToggleEdgeCross) {
           e.preventDefault()
           const table = dragSelect.tableRef.current
           if (!table) return
           const edge = detectEdge(e.clientX, e.clientY, table, 0.25)
-          if (edge && !foggedCells?.has(`${edge.row},${edge.col}`)) {
+          if (edge) {
             // Check if there's a connection line on this edge — if so, enter remove-line mode instead
             const cell = grid[edge.row]?.[edge.col]
             if (cell?.lines[edge.side] && onToggleLine) {
@@ -223,7 +290,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
           } else if (!edge && onToggleLine) {
             // Center zone — start connection line drag
             const hit = getNearestCell(e.clientX, e.clientY, table)
-            if (hit && !foggedCells?.has(`${hit.row},${hit.col}`)) {
+            if (hit) {
               rightLineDragging.current = true
               rightLineLastCell.current = { row: hit.row, col: hit.col }
               rightLineAction.current = undefined
@@ -235,7 +302,63 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
         else dragSelect.handleCellMouseDown(e)
       }}
       onMouseMove={(e) => {
-        if (rightLineDragging.current && onToggleLine) {
+        if (leftLineDragging.current && lineToggleFn) {
+          e.preventDefault()
+          const table = dragSelect.tableRef.current
+          if (!table) return
+          if (leftLineAction.current === false) {
+            const edge = detectEdge(e.clientX, e.clientY, table, 0.25)
+            if (edge) {
+              const cell = grid[edge.row]?.[edge.col]
+              if (cell?.lines[edge.side]) {
+                const withUndo = leftLineFirst.current
+                leftLineFirst.current = false
+                lineToggleFn!({ row: edge.row, col: edge.col }, edge.side, false, withUndo)
+                leftLineLastCell.current = { row: edge.row, col: edge.col }
+                return
+              }
+            }
+          }
+          const rows = grid.length, cols = grid[0]?.length ?? 0
+          const rawHit = getLineDragCell(e.clientX, e.clientY, table)
+          if (!rawHit) return
+          const hit = { row: rawHit.row, col: rawHit.col }
+          const prev = leftLineLastCell.current
+          if (!prev || (hit.row === prev.row && hit.col === prev.col)) return
+          const dr = hit.row - prev.row
+          const dc = hit.col - prev.col
+          if (Math.abs(dr) + Math.abs(dc) !== 1) return
+          // Determine which cell is real and which side to toggle
+          const prevReal = prev.row >= 0 && prev.row < rows && prev.col >= 0 && prev.col < cols
+          const hitReal = hit.row >= 0 && hit.row < rows && hit.col >= 0 && hit.col < cols
+          if (!prevReal && !hitReal) return
+          let realCell: { row: number; col: number }
+          let side: 0 | 1 | 2 | 3
+          if (prevReal) {
+            realCell = prev
+            if (dr === -1) side = 0
+            else if (dc === 1) side = 1
+            else if (dr === 1) side = 2
+            else side = 3
+          } else {
+            realCell = hit
+            // Reverse: from virtual into real, side is opposite
+            if (dr === -1) side = 2
+            else if (dc === 1) side = 3
+            else if (dr === 1) side = 0
+            else side = 1
+          }
+          if (leftLineAction.current === undefined) {
+            const cell = grid[realCell.row]?.[realCell.col]
+            leftLineAction.current = cell ? !cell.lines[side] : true
+          }
+          const withUndo = leftLineFirst.current
+          leftLineFirst.current = false
+          lineToggleFn!(realCell, side, leftLineAction.current, withUndo)
+          leftLineLastCell.current = { row: hit.row, col: hit.col }
+          return
+        }
+        if (rightLineDragging.current && lineToggleFn) {
           e.preventDefault()
           const table = dragSelect.tableRef.current
           if (!table) return
@@ -243,40 +366,51 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
           // travel all the way to cell centers
           if (rightLineAction.current === false) {
             const edge = detectEdge(e.clientX, e.clientY, table, 0.25)
-            if (edge && !foggedCells?.has(`${edge.row},${edge.col}`)) {
+            if (edge) {
               const cell = grid[edge.row]?.[edge.col]
               if (cell?.lines[edge.side]) {
                 const withUndo = rightLineFirst.current
                 rightLineFirst.current = false
-                onToggleLine({ row: edge.row, col: edge.col }, edge.side, false, withUndo)
+                lineToggleFn!({ row: edge.row, col: edge.col }, edge.side, false, withUndo)
                 rightLineLastCell.current = { row: edge.row, col: edge.col }
                 return
               }
             }
           }
-          const hit = getNearestCell(e.clientX, e.clientY, table)
-          if (!hit) return
+          const rows = grid.length, cols = grid[0]?.length ?? 0
+          const rawHit = getLineDragCell(e.clientX, e.clientY, table)
+          if (!rawHit) return
+          const hit = { row: rawHit.row, col: rawHit.col }
           const prev = rightLineLastCell.current
           if (!prev || (hit.row === prev.row && hit.col === prev.col)) return
-          // Must be adjacent (Manhattan distance = 1)
           const dr = hit.row - prev.row
           const dc = hit.col - prev.col
           if (Math.abs(dr) + Math.abs(dc) !== 1) return
-          if (foggedCells?.has(`${hit.row},${hit.col}`)) return
-          // Determine side from prev → current
+          const prevReal = prev.row >= 0 && prev.row < rows && prev.col >= 0 && prev.col < cols
+          const hitReal = hit.row >= 0 && hit.row < rows && hit.col >= 0 && hit.col < cols
+          if (!prevReal && !hitReal) return
+          let realCell: { row: number; col: number }
           let side: 0 | 1 | 2 | 3
-          if (dr === -1) side = 0      // moved up → top side of prev
-          else if (dc === 1) side = 1   // moved right → right side of prev
-          else if (dr === 1) side = 2   // moved down → bottom side of prev
-          else side = 3                  // moved left → left side of prev
-          // On first pair, lock action
+          if (prevReal) {
+            realCell = prev
+            if (dr === -1) side = 0
+            else if (dc === 1) side = 1
+            else if (dr === 1) side = 2
+            else side = 3
+          } else {
+            realCell = hit
+            if (dr === -1) side = 2
+            else if (dc === 1) side = 3
+            else if (dr === 1) side = 0
+            else side = 1
+          }
           if (rightLineAction.current === undefined) {
-            const cell = grid[prev.row]?.[prev.col]
+            const cell = grid[realCell.row]?.[realCell.col]
             rightLineAction.current = cell ? !cell.lines[side] : true
           }
           const withUndo = rightLineFirst.current
           rightLineFirst.current = false
-          onToggleLine(prev, side, rightLineAction.current, withUndo)
+          lineToggleFn!(realCell, side, rightLineAction.current, withUndo)
           rightLineLastCell.current = { row: hit.row, col: hit.col }
           return
         }
@@ -323,6 +457,8 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
                     data={cell}
                     row={ri}
                     col={ci}
+                    totalRows={grid.length}
+                    totalCols={row.length}
                     debug={debug}
                     beingSelected={!isImmediateMode && !isEdgeMode && !isFixedMarkMode && beingSelected.current.some(
                       s => s.row === ri && s.col === ci

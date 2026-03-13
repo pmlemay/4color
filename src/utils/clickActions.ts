@@ -1,10 +1,21 @@
 import { CellData, CellPosition, MarkShape, AutoCrossRule } from '../types'
 import { getAutoCrossTargets } from './autoCross'
 
+const ARROW_EDGE: Record<string, 0 | 1 | 2 | 3> = {
+  arrowLeft: 0, arrowUp: 1, arrowRight: 2, arrowDown: 3,
+}
+const FIXED_CENTER_MARKS = new Set(['dashV', 'dashH'])
+
 /** Check whether a cell currently matches a given click-action */
 export function cellMatchesAction(cell: CellData, action: string): boolean {
   if (action.startsWith('color:')) return cell.color === action.split(':')[1]
-  if (action.startsWith('mark:')) return cell.mark === action.split(':')[1]
+  if (action.startsWith('mark:')) {
+    const markVal = action.split(':')[1]
+    const side = ARROW_EDGE[markVal]
+    if (side !== undefined) return cell.fixedEdgeMarks[side] === markVal
+    if (FIXED_CENTER_MARKS.has(markVal)) return cell.fixedMark === markVal
+    return cell.mark === markVal
+  }
   if (action === 'cross') return cell.crossed
   return false
 }
@@ -34,7 +45,14 @@ export function toggleActionOnCell(cell: CellData, action: string): void {
     cell.color = cell.color === colorVal ? null : colorVal
   } else if (action.startsWith('mark:')) {
     const markVal = action.split(':')[1] as MarkShape
-    cell.mark = cell.mark === markVal ? null : markVal
+    const side = ARROW_EDGE[markVal]
+    if (side !== undefined) {
+      cell.fixedEdgeMarks[side] = cell.fixedEdgeMarks[side] === markVal ? null : markVal
+    } else if (FIXED_CENTER_MARKS.has(markVal)) {
+      cell.fixedMark = cell.fixedMark === markVal ? null : markVal
+    } else {
+      cell.mark = cell.mark === markVal ? null : markVal
+    }
   } else if (action === 'cross') {
     cell.crossed = !cell.crossed
   }
@@ -46,7 +64,15 @@ export function forceApplyActionOnCell(cell: CellData, action: string): void {
   if (action.startsWith('color:')) {
     cell.color = action.split(':')[1]
   } else if (action.startsWith('mark:')) {
-    cell.mark = action.split(':')[1] as MarkShape
+    const markVal = action.split(':')[1] as MarkShape
+    const side = ARROW_EDGE[markVal]
+    if (side !== undefined) {
+      cell.fixedEdgeMarks[side] = markVal
+    } else if (FIXED_CENTER_MARKS.has(markVal)) {
+      cell.fixedMark = markVal
+    } else {
+      cell.mark = markVal
+    }
   } else if (action === 'cross') {
     cell.crossed = true
   }
