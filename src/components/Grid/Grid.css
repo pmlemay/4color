@@ -648,7 +648,7 @@ td.cell-has-lines {
 .fixed-mark {
   position: absolute;
   pointer-events: none;
-  z-index: 5;
+  z-index: 11;
   color: var(--text);
   display: flex;
   align-items: center;

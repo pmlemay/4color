@@ -277,42 +277,42 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
           </span>
         )
       )}
-      {!fogged && fixedEdgeMarks[0] && (
+      {fixedEdgeMarks[0] && (
         <span className={`fixed-mark fixed-mark-edge-top${EDGE_MARKS[fixedEdgeMarks[0]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[0])}
         </span>
       )}
-      {!fogged && fixedEdgeMarks[1] && (
+      {fixedEdgeMarks[1] && (
         <span className={`fixed-mark fixed-mark-edge-right${EDGE_MARKS[fixedEdgeMarks[1]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[1])}
         </span>
       )}
-      {!fogged && fixedEdgeMarks[2] && (
+      {fixedEdgeMarks[2] && (
         <span className={`fixed-mark fixed-mark-edge-bottom${EDGE_MARKS[fixedEdgeMarks[2]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[2])}
         </span>
       )}
-      {!fogged && fixedEdgeMarks[3] && (
+      {fixedEdgeMarks[3] && (
         <span className={`fixed-mark fixed-mark-edge-left${EDGE_MARKS[fixedEdgeMarks[3]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[3])}
         </span>
       )}
-      {!fogged && fixedVertexMarks[0] && (
+      {fixedVertexMarks[0] && (
         <span className="fixed-mark fixed-mark-vertex-tl" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[0])}
         </span>
       )}
-      {!fogged && fixedVertexMarks[1] && (
+      {fixedVertexMarks[1] && (
         <span className="fixed-mark fixed-mark-vertex-tr" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[1])}
         </span>
       )}
-      {!fogged && fixedVertexMarks[2] && (
+      {fixedVertexMarks[2] && (
         <span className="fixed-mark fixed-mark-vertex-br" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[2])}
         </span>
       )}
-      {!fogged && fixedVertexMarks[3] && (
+      {fixedVertexMarks[3] && (
         <span className="fixed-mark fixed-mark-vertex-bl" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[3])}
         </span>
