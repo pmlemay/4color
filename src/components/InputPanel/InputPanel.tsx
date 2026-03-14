@@ -194,6 +194,21 @@ export function InputPanel({
         {inputMode === 'suggested' && puzzleType === 'icebarn' && (
           <div className="ip-hint">Drag between cells to draw lines</div>
         )}
+        {inputMode === 'suggested' && puzzleType === 'yajilin' && (
+          <div className="ip-hint">Drag between cells to draw lines. Tap center for black.</div>
+        )}
+        {inputMode === 'suggested' && puzzleType === 'cave' && (
+          <div className="ip-hint">Tap: black &rarr; green &rarr; clear</div>
+        )}
+        {inputMode === 'suggested' && puzzleType === 'cocktaillamp' && (
+          <div className="ip-hint">Tap: black &rarr; green &rarr; clear</div>
+        )}
+        {inputMode === 'suggested' && puzzleType === 'lits' && (
+          <div className="ip-hint">Tap: black &rarr; dot &rarr; clear</div>
+        )}
+        {inputMode === 'suggested' && puzzleType === 'archipelago' && (
+          <div className="ip-hint">Tap: black &rarr; green &rarr; clear</div>
+        )}
 
         {/* Border, edge and cross modes: no extra context buttons, just the mode is enough */}
         {(inputMode === 'cross' || inputMode === 'border' || inputMode === 'edge' || inputMode === 'line') && (

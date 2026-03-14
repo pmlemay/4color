@@ -25,6 +25,8 @@ interface GridProps {
   onToggleFixedMark?: (target: MarkTarget, shape: MarkShape) => void
   onToggleLine?: (pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => void
   onToggleFixedLine?: (pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => void
+  onLineCenterClick?: (pos: CellPosition) => void
+  onLineRightCenterClick?: (pos: CellPosition) => void
   isPinching?: boolean
   isTouchDragRef?: React.MutableRefObject<boolean>
   foggedCells?: Set<string>
@@ -32,7 +34,7 @@ interface GridProps {
   revealedFogIds?: Set<string>
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onToggleFixedMark, onToggleLine, onToggleFixedLine, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onToggleFixedMark, onToggleLine, onToggleFixedLine, onLineCenterClick, onLineRightCenterClick, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const beingDeselected = useRef<Set<string>>(new Set())
   const [, setRenderTick] = useState(0)
@@ -62,6 +64,8 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
   const leftLineLastCell = useRef<{ row: number; col: number } | null>(null)
   const leftLineAction = useRef<boolean | undefined>(undefined)
   const leftLineFirst = useRef(true)
+  const leftLineStartCell = useRef<{ row: number; col: number } | null>(null)
+  const rightLineStartCell = useRef<{ row: number; col: number } | null>(null)
 
   const isEdgeCrossMode = isEdgeMode || inputMode === 'border' || inputMode === 'fixedBorder' || isLineMode
 
@@ -125,7 +129,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
     onLeftClickCell,
     onRightClickCell,
     isPinching,
-    touchEnabled: !isEdgeMode,
+    touchEnabled: !isEdgeMode && !isLineMode,
     foggedCells,
   })
 
@@ -154,12 +158,18 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
     const handler = () => {
       dragSelect.handleMouseUp()
       edgeDrag.handleMouseUp()
+      // If left line drag ended without drawing any line, treat as center click
+      if (leftLineDragging.current && leftLineAction.current === undefined && leftLineStartCell.current && onLineCenterClickRef.current) {
+        onLineCenterClickRef.current(leftLineStartCell.current)
+      }
       rightEdgeDragging.current = false
       rightEdgeVisited.current.clear()
       rightLineDragging.current = false
       rightLineLastCell.current = null
+      rightLineStartCell.current = null
       leftLineDragging.current = false
       leftLineLastCell.current = null
+      leftLineStartCell.current = null
       leftLineAction.current = undefined
       leftLineFirst.current = true
       rightLineAction.current = undefined
@@ -172,6 +182,154 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       window.removeEventListener('touchend', handler)
     }
   }, [dragSelect.handleMouseUp, edgeDrag.handleMouseUp])
+
+  // Keep refs for native touch handlers to access latest values
+  const lineToggleFnRef = useRef(lineToggleFn)
+  lineToggleFnRef.current = lineToggleFn
+  const onLineCenterClickRef = useRef(onLineCenterClick)
+  onLineCenterClickRef.current = onLineCenterClick
+  const isLineModeRef = useRef(isLineMode)
+  isLineModeRef.current = isLineMode
+  const gridRef = useRef(grid)
+  gridRef.current = grid
+  const isPinchingRef = useRef(isPinching)
+  isPinchingRef.current = isPinching
+
+  // Touch-based line drawing (native handlers with passive: false)
+  useEffect(() => {
+    const table = dragSelect.tableRef.current
+    if (!table) return
+
+    const touchLineDragging = { current: false }
+    const touchLineLastCell = { current: null as { row: number; col: number } | null }
+    const touchLineAction = { current: undefined as boolean | undefined }
+    const touchLineFirst = { current: true }
+    const touchLineStartCell = { current: null as { row: number; col: number } | null }
+    let touchStartTimer: ReturnType<typeof setTimeout> | null = null
+    let pendingTouchPos: { row: number; col: number } | null = null
+
+    const commitTouchLineStart = () => {
+      if (!pendingTouchPos) return
+      const pos = pendingTouchPos
+      touchLineDragging.current = true
+      touchLineLastCell.current = pos
+      touchLineAction.current = undefined
+      touchLineFirst.current = true
+      const g = gridRef.current
+      const rows = g.length, cols = g[0]?.length ?? 0
+      const isReal = pos.row >= 0 && pos.row < rows && pos.col >= 0 && pos.col < cols
+      touchLineStartCell.current = isReal ? pos : null
+      pendingTouchPos = null
+    }
+
+    const cancelPending = () => {
+      if (touchStartTimer) {
+        clearTimeout(touchStartTimer)
+        touchStartTimer = null
+      }
+      pendingTouchPos = null
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (!isLineModeRef.current || !lineToggleFnRef.current) return
+      if (isPinchingRef.current) return
+      if (e.touches.length >= 2) { cancelPending(); return }
+      e.preventDefault()
+      const touch = e.touches[0]
+      const hit = getLineDragCell(touch.clientX, touch.clientY, table)
+      if (hit) {
+        pendingTouchPos = hit
+        touchStartTimer = setTimeout(commitTouchLineStart, 80)
+      }
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isLineModeRef.current || !lineToggleFnRef.current) return
+      if (e.touches.length >= 2) {
+        cancelPending()
+        touchLineDragging.current = false
+        touchLineLastCell.current = null
+        return
+      }
+      // If pending, commit immediately on move to new cell
+      if (pendingTouchPos && touchStartTimer) {
+        const touch = e.touches[0]
+        const hit = getLineDragCell(touch.clientX, touch.clientY, table)
+        if (hit && (hit.row !== pendingTouchPos.row || hit.col !== pendingTouchPos.col)) {
+          clearTimeout(touchStartTimer)
+          touchStartTimer = null
+          commitTouchLineStart()
+        } else {
+          return
+        }
+      }
+      if (!touchLineDragging.current) return
+      e.preventDefault()
+      const touch = e.touches[0]
+      const g = gridRef.current
+      const rows = g.length, cols = g[0]?.length ?? 0
+      const rawHit = getLineDragCell(touch.clientX, touch.clientY, table)
+      if (!rawHit) return
+      const hit = { row: rawHit.row, col: rawHit.col }
+      const prev = touchLineLastCell.current
+      if (!prev || (hit.row === prev.row && hit.col === prev.col)) return
+      const dr = hit.row - prev.row
+      const dc = hit.col - prev.col
+      if (Math.abs(dr) + Math.abs(dc) !== 1) return
+      const prevReal = prev.row >= 0 && prev.row < rows && prev.col >= 0 && prev.col < cols
+      const hitReal = hit.row >= 0 && hit.row < rows && hit.col >= 0 && hit.col < cols
+      if (!prevReal && !hitReal) return
+      let realCell: { row: number; col: number }
+      let side: 0 | 1 | 2 | 3
+      if (prevReal) {
+        realCell = prev
+        if (dr === -1) side = 0
+        else if (dc === 1) side = 1
+        else if (dr === 1) side = 2
+        else side = 3
+      } else {
+        realCell = hit
+        if (dr === -1) side = 2
+        else if (dc === 1) side = 3
+        else if (dr === 1) side = 0
+        else side = 1
+      }
+      if (touchLineAction.current === undefined) {
+        const cell = g[realCell.row]?.[realCell.col]
+        touchLineAction.current = cell ? !cell.lines[side] : true
+      }
+      const withUndo = touchLineFirst.current
+      touchLineFirst.current = false
+      lineToggleFnRef.current!(realCell, side, touchLineAction.current, withUndo)
+      touchLineLastCell.current = hit
+    }
+
+    const handleTouchEnd = () => {
+      // If touch ended without drawing any line, treat as center tap
+      if (pendingTouchPos || (touchLineDragging.current && touchLineAction.current === undefined && touchLineStartCell.current)) {
+        const cell = pendingTouchPos || touchLineStartCell.current
+        if (cell && onLineCenterClickRef.current) {
+          onLineCenterClickRef.current(cell)
+        }
+      }
+      cancelPending()
+      touchLineDragging.current = false
+      touchLineLastCell.current = null
+      touchLineStartCell.current = null
+      touchLineAction.current = undefined
+      touchLineFirst.current = true
+    }
+
+    table.addEventListener('touchstart', handleTouchStart, { passive: false })
+    table.addEventListener('touchmove', handleTouchMove, { passive: false })
+    table.addEventListener('touchend', handleTouchEnd)
+    return () => {
+      table.removeEventListener('touchstart', handleTouchStart)
+      table.removeEventListener('touchmove', handleTouchMove)
+      table.removeEventListener('touchend', handleTouchEnd)
+      cancelPending()
+    }
+  }, [])
 
   // Build a set of draft edge keys for fast lookup per cell
   const draftEdgeSet = useRef<Set<string>>(new Set())
@@ -222,12 +380,13 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
             // Center zone: start line drag (also allow starting from outside the grid)
             const hit = getLineDragCell(e.clientX, e.clientY, table)
             if (hit) {
-              {
-                leftLineDragging.current = true
-                leftLineLastCell.current = { row: hit.row, col: hit.col }
-                leftLineAction.current = undefined
-                leftLineFirst.current = true
-              }
+              leftLineDragging.current = true
+              leftLineLastCell.current = { row: hit.row, col: hit.col }
+              leftLineAction.current = undefined
+              leftLineFirst.current = true
+              const rows = grid.length, cols = grid[0]?.length ?? 0
+              const isReal = hit.row >= 0 && hit.row < rows && hit.col >= 0 && hit.col < cols
+              leftLineStartCell.current = isReal ? hit : null
             }
           }
           return
@@ -246,6 +405,10 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
             const key = normalizeEdgeKey(edge)
             rightEdgeVisited.current.add(key)
             onToggleEdgeCross(edge, rightEdgeAction.current)
+          } else if (onLineRightCenterClick) {
+            // Right-click on cell center: toggle dot mark
+            const hit = getNearestCell(e.clientX, e.clientY, table)
+            if (hit) onLineRightCenterClick(hit)
           }
           return
         }

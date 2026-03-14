@@ -253,6 +253,31 @@ export function EditorPage() {
     'Divide the grid into regions that have rotational symmetry around their center white circle.',
     'Each region has exactly 1 white circle in it.',
   ]
+  const YAJILIN_RULES = [
+    'Shade some cells so that no two shaded cells are orthogonally adjacent and draw a non-intersecting loop through the centers of all the remaining empty cells.',
+    'Clues cannot be shaded, and represent the number of shaded cells in a straight line in the indicated direction.',
+  ]
+  const CAVE_RULES = [
+    'Shade some cells so that the shaded cells are all connected orthogonally by other shaded cells to the edge of the grid, and the remaining unshaded cells form one orthogonally connected area.',
+    'Clues cannot be shaded, and represent the total number of unshaded cells that can be seen in a straight line vertically or horizontally, including itself.',
+  ]
+  const COCKTAILLAMP_RULES = [
+    'Shade some cells such that all shaded cells within a region form a single orthogonally connected group.',
+    'Shaded groups may not be orthogonally adjacent, but must all form a single diagonally connected network.',
+    'Regions with numbers must contain the indicated amount of shaded cells.',
+    'No 2x2 region may be entirely shaded.',
+  ]
+  const LITS_RULES = [
+    'Shade one tetromino of cells in each region so that all shaded cells form one orthogonally connected area.',
+    'Two tetrominoes of the same shape may not share a bold border, counting rotations and reflections as the same.',
+    'No 2x2 region may be entirely shaded.',
+  ]
+  const ARCHIPELAGO_RULES = [
+    'Shade some cells to form groups of orthogonally adjacent shaded cells, called islands. Some shaded cells are given.',
+    'Numbers indicate the amount of cells in their island. An island can have any amount of identical numbers.',
+    'Each diagonally connected network of islands must contain exactly one island of each size from 1 to N, where N is the size of the largest island in the group.',
+    'All islands must be diagonally adjacent to at least one other island.',
+  ]
   const ICEBARN_RULES = [
     'Draw a path through the centers of some cells, entering the grid at the "IN" marking and exiting at the "OUT" marking.',
     'The path must travel through all of the arrows in the indicated direction.',
@@ -271,6 +296,11 @@ export function EditorPage() {
     spiralgalaxy: SPIRALGALAXY_RULES,
     slalom: SLALOM_RULES,
     icebarn: ICEBARN_RULES,
+    yajilin: YAJILIN_RULES,
+    cave: CAVE_RULES,
+    cocktaillamp: COCKTAILLAMP_RULES,
+    lits: LITS_RULES,
+    archipelago: ARCHIPELAGO_RULES,
   }
   const PUZZLE_TYPE_TITLES: Record<string, string> = {
     heyawake: 'Heyawake',
@@ -279,6 +309,11 @@ export function EditorPage() {
     spiralgalaxy: 'Spiral Galaxy',
     slalom: 'Slalom',
     icebarn: 'Icebarn',
+    yajilin: 'Yajilin',
+    cave: 'Cave',
+    cocktaillamp: 'Cocktail Lamp',
+    lits: 'LITS',
+    archipelago: 'Archipelago',
   }
   const PUZZLE_TYPE_TAGS: Record<string, string> = {
     heyawake: 'Heyawake',
@@ -287,6 +322,11 @@ export function EditorPage() {
     spiralgalaxy: 'Spiral-galaxy',
     slalom: 'Slalom',
     icebarn: 'Icebarn',
+    yajilin: 'Yajilin',
+    cave: 'Cave',
+    cocktaillamp: 'Cocktail-lamp',
+    lits: 'LITS',
+    archipelago: 'Archipelago',
   }
   const prevPuzzleType = useRef(puzzleType)
 
@@ -930,6 +970,39 @@ export function EditorPage() {
   const suggestedActiveColor = clickActionLeft?.startsWith('color:') ? clickActionLeft.split(':')[1] : null
   const suggestedActiveMark = clickActionLeft?.startsWith('mark:') ? clickActionLeft.split(':')[1] as MarkShape : null
 
+  // Line mode cell-center left-click: cycle empty → black → dot → empty
+  const handleLineCenterClick = useCallback((pos: CellPosition) => {
+    gridState.setGridWithUndo(prev => {
+      const next = prev.map(row => row.map(cell => ({ ...cell })))
+      const cell = next[pos.row][pos.col]
+      if (cell.color === '9') {
+        cell.color = null
+        cell.mark = 'dot' as MarkShape
+      } else if (cell.mark === 'dot') {
+        cell.mark = null
+      } else {
+        cell.color = '9'
+        cell.mark = null
+      }
+      return next
+    })
+  }, [gridState])
+
+  // Line mode cell-center right-click: toggle dot (clear black if present)
+  const handleLineRightCenterClick = useCallback((pos: CellPosition) => {
+    gridState.setGridWithUndo(prev => {
+      const next = prev.map(row => row.map(cell => ({ ...cell })))
+      const cell = next[pos.row][pos.col]
+      if (cell.mark === 'dot') {
+        cell.mark = null
+      } else {
+        cell.mark = 'dot' as MarkShape
+        cell.color = null
+      }
+      return next
+    })
+  }, [gridState])
+
   const isSuggestedMode = gridState.inputMode === 'suggested'
 
   // Suggested mode: per-cell left-click handler (same pattern as right-click)
@@ -1193,6 +1266,11 @@ export function EditorPage() {
                 <option value="spiralgalaxy">Spiral Galaxy</option>
                 <option value="slalom">Slalom</option>
                 <option value="icebarn">Icebarn</option>
+                <option value="yajilin">Yajilin</option>
+                <option value="cave">Cave</option>
+                <option value="cocktaillamp">Cocktail Lamp</option>
+                <option value="lits">LITS</option>
+                <option value="archipelago">Archipelago</option>
               </select>
             </div>
             <div className="info-editor-field">
@@ -1524,6 +1602,8 @@ export function EditorPage() {
                 onToggleLine={gridState.toggleLine}
                 onToggleFixedLine={gridState.toggleFixedLine}
                 onToggleFixedMark={gridState.toggleFixedMark}
+                onLineCenterClick={handleLineCenterClick}
+                onLineRightCenterClick={handleLineRightCenterClick}
                 isPinching={gridScale.isPinching}
                 fogPreviewCells={fogPreviewCells}
               />

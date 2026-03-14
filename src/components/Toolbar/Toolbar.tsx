@@ -212,6 +212,11 @@ export function Toolbar({
         {inputMode === 'suggested' && puzzleType === 'starbattle' && (<><div>Left-click: toggle star. Right-click: toggle X</div><div>Touch: star &rarr; X &rarr; clear</div></>)}
         {inputMode === 'suggested' && puzzleType === 'slalom' && (<><div>Left-click: draw lines. Right-click: toggle X</div><div>Touch: drag between cells to draw lines</div></>)}
         {inputMode === 'suggested' && puzzleType === 'icebarn' && (<><div>Left-click: draw lines. Right-click: toggle X</div><div>Touch: drag between cells to draw lines</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'yajilin' && (<><div>Left-click: draw lines (click center for black). Right-click: toggle X (click center for dot)</div><div>Touch: drag between cells to draw lines</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'cave' && (<><div>Left-click: toggle black. Right-click: toggle green</div><div>Touch: black &rarr; green &rarr; clear</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'cocktaillamp' && (<><div>Left-click: toggle black. Right-click: toggle green</div><div>Touch: black &rarr; green &rarr; clear</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'lits' && (<><div>Left-click: toggle black. Right-click: toggle dot</div><div>Touch: black &rarr; dot &rarr; clear</div></>)}
+        {inputMode === 'suggested' && puzzleType === 'archipelago' && (<><div>Left-click: toggle black. Right-click: toggle green</div><div>Touch: black &rarr; green &rarr; clear</div></>)}
         {inputMode === 'suggested' && !puzzleType && (clickActionLeft ? 'Custom click actions configured.' : 'Select click actions below.')}
         {inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
         {inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}

@@ -284,6 +284,42 @@ export function PlayerPage() {
   const suggestedActiveColor = clickActionLeft?.startsWith('color:') ? clickActionLeft.split(':')[1] : null
   const suggestedActiveMark = clickActionLeft?.startsWith('mark:') ? clickActionLeft.split(':')[1] as MarkShape : null
 
+  // Line mode cell-center left-click: cycle empty → black → dot → empty
+  const handleLineCenterClick = useCallback((pos: CellPosition) => {
+    gridState.setGridWithUndo(prev => {
+      const next = prev.map(row => row.map(cell => ({ ...cell })))
+      const cell = next[pos.row][pos.col]
+      if (cell.color === '9') {
+        // black → dot
+        cell.color = null
+        cell.mark = 'dot' as MarkShape
+      } else if (cell.mark === 'dot') {
+        // dot → empty
+        cell.mark = null
+      } else {
+        // empty → black
+        cell.color = '9'
+        cell.mark = null
+      }
+      return next
+    })
+  }, [gridState])
+
+  // Line mode cell-center right-click: toggle dot (clear black if present)
+  const handleLineRightCenterClick = useCallback((pos: CellPosition) => {
+    gridState.setGridWithUndo(prev => {
+      const next = prev.map(row => row.map(cell => ({ ...cell })))
+      const cell = next[pos.row][pos.col]
+      if (cell.mark === 'dot') {
+        cell.mark = null
+      } else {
+        cell.mark = 'dot' as MarkShape
+        cell.color = null
+      }
+      return next
+    })
+  }, [gridState])
+
   const is4Color = puzzle?.tags?.includes('4color') ?? false
   const canSubmit = is4Color || !!solution
 
@@ -609,6 +645,8 @@ export function PlayerPage() {
       onToggleEdgeCross={gridState.toggleEdgeCross}
       onCycleEdgeMark={gridState.cycleEdgeMark}
       onToggleLine={gridState.toggleLine}
+      onLineCenterClick={handleLineCenterClick}
+      onLineRightCenterClick={handleLineRightCenterClick}
       isPinching={gridScale.isPinching}
       isTouchDragRef={isTouchDragRef}
       foggedCells={foggedCells}

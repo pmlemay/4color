@@ -207,6 +207,11 @@ export const PUZZLE_TYPE_DEFAULTS: Record<string, { left: string; right: string 
   starbattle: { left: 'mark:star', right: 'cross' },
   slalom: { left: 'line', right: 'cross' },
   icebarn: { left: 'line', right: 'cross' },
+  yajilin: { left: 'line', right: 'cross' },
+  cave: { left: 'color:9', right: 'color:5' },
+  cocktaillamp: { left: 'color:9', right: 'color:5' },
+  lits: { left: 'color:9', right: 'mark:dot' },
+  archipelago: { left: 'color:9', right: 'color:5' },
 }
 
 /** Migrate legacy forcedInputLayout to puzzleType + click actions */
