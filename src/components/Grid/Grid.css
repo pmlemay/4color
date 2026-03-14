@@ -485,6 +485,7 @@
 .color7 { background-color: rgba(30, 136, 229, 0.55); }   /* Blue */
 .color8 { background-color: rgba(126, 87, 194, 0.55); }   /* Purple */
 .color9 { background-color: rgba(20, 20, 20, 0.92); }     /* Near-black */
+[data-theme="dark"] .color9 { background-color: rgba(60, 60, 80, 0.92); } /* Visible dark gray in dark mode */
 
 /* Edge draft overlays */
 .edge-draft {
