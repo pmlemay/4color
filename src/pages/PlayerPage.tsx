@@ -31,6 +31,7 @@ import { PUZZLE_TYPE_DEFAULTS } from '../utils/puzzleIO'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { incrementPuzzleCompletions } from '../utils/puzzleStats'
+import { usePresence } from '../hooks/usePresence'
 
 export function PlayerPage() {
   const { puzzleId } = useParams()
@@ -74,6 +75,8 @@ export function PlayerPage() {
   const fingerprintRef = useRef<string | undefined>(undefined)
   const [puzzleCompleted, setPuzzleCompleted] = useState(false)
   const pendingCompletion = useRef<{ puzzleId: string; timeMs: number } | null>(null)
+
+  usePresence(puzzleId)
 
   const gridRows = puzzle?.gridSize?.rows || 1
   const gridCols = puzzle?.gridSize?.cols || 1

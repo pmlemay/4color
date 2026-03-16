@@ -429,6 +429,36 @@
   font-size: 11px;
 }
 
+/* Currently playing */
+.currently-playing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.currently-playing-label {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.currently-playing-name {
+  padding: 0 6px;
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.currently-playing-more {
+  color: #22c55e;
+  font-size: 11px;
+  font-style: italic;
+}
+
 .completed-info {
   position: absolute;
   bottom: 8px;

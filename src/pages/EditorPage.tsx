@@ -363,7 +363,7 @@ export function EditorPage() {
     const oldTitle = PUZZLE_TYPE_TITLES[prevPuzzleType.current]
     const newTitle = PUZZLE_TYPE_TITLES[newType]
     if (newTitle) {
-      setTitle(newTitle)
+      setTitle(prev => (!prev || prev === oldTitle) ? newTitle : prev)
     } else if (oldTitle) {
       setTitle(prev => prev === oldTitle ? '' : prev)
     }
@@ -423,7 +423,8 @@ export function EditorPage() {
       const vNames = vMale ? vPool.male : vPool.female
       const vName = vNames[Math.floor(Math.random() * vNames.length)]
       const vGender = vMale ? 'Man' : 'Woman'
-      newClues.push(`V (${vGender} - ${vName}). The victim.`)
+      const vPronoun = vMale ? 'He' : 'She'
+      newClues.push(`V (${vGender} - ${vName}). The victim. ${vPronoun} was alone with the murderer.`)
       setClues(newClues)
     }
     // Icebarn: expand grid by +2 in each dimension, add border fog + IN/OUT labels

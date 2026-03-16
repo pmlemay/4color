@@ -12,6 +12,7 @@ import { Modal } from '../Modal/Modal'
 import { LanguagePicker } from '../LanguagePicker'
 import { ThemeToggle } from '../ThemeToggle'
 import { usePuzzleStats } from '../../hooks/usePuzzleStats'
+import { useActivePlayers } from '../../hooks/useActivePlayers'
 import './PuzzleList.css'
 
 export function PuzzleList() {
@@ -22,6 +23,7 @@ export function PuzzleList() {
   const { completedPuzzleIds, completionTimes, displayName, setDisplayName } = useCompletions()
   const leaderboard = useLeaderboard()
   const puzzleStats = usePuzzleStats()
+  const activePlayers = useActivePlayers()
   const { modalProps, showConfirm } = useModal()
   const [showAccount, setShowAccount] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
@@ -348,6 +350,20 @@ export function PuzzleList() {
                             {p.tags.map(t => <span key={t} className="puzzle-tag">{t}</span>)}
                           </div>
                         )}
+                        {activePlayers.has(p.id) && (() => {
+                          const all = activePlayers.get(p.id)!
+                          const shown = all.slice(0, 4)
+                          const extra = all.length - 4
+                          return (
+                            <div className="currently-playing">
+                              <span className="currently-playing-label">Playing now:</span>
+                              {shown.map(ap => (
+                                <span key={ap.uid} className="currently-playing-name notranslate">{ap.displayName}</span>
+                              ))}
+                              {extra > 0 && <span className="currently-playing-more">+{extra} {extra === 1 ? 'other' : 'others'}</span>}
+                            </div>
+                          )
+                        })()}
                         {completedPuzzleIds.has(p.id) && (
                           <span className="completed-info">
                             <span className="completed-badge" title="Completed">&#10003;</span>

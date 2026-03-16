@@ -425,7 +425,7 @@
   {
     "id": "space-station-murdoku",
     "file": "space-station-murdoku.json",
-    "title": "Space Station Murdoku",
+    "title": "Space Station Murdoku (Slalom)",
     "authors": [
       "PmLemay"
     ],
@@ -435,11 +435,13 @@
     },
     "difficulty": "Expert",
     "tags": [
-      "Murdoku"
+      "Murdoku",
+      "Slalom"
     ],
     "autoCrossRules": [
       "rook"
     ],
+    "puzzleType": "murdoku",
     "clickActionRight": "cross",
     "inProgress": true
   },
