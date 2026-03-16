@@ -178,26 +178,73 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     }
   }
 
-  // Count expected solution lines
-  const lineTotal = Object.keys(solution.lines || {}).length
-  let lineFilled = 0
-  if (lineTotal > 0) {
-    for (const [key, expected] of Object.entries(solution.lines!)) {
+  // Count expected solution marks
+  const markTotal = Object.keys(solution.marks || {}).length
+  let markFilled = 0
+  if (markTotal > 0) {
+    for (const [key] of Object.entries(solution.marks!)) {
       const [r, c] = key.split(',').map(Number)
       const cell = grid[r]?.[c]
-      if (!cell) continue
-      // Count as filled if at least one expected line side is drawn
-      const hasAny = expected.some((v, i) => v && cell.lines[i])
-      if (hasAny) lineFilled++
+      if (cell?.mark || cell?.fixedMark) markFilled++
     }
   }
 
-  if ((total > 0 && filled !== total) || !bordersReady || colorFilled !== colorTotal || lineFilled !== lineTotal) {
+  // Edge-based line validation: extract edges from solution and player grid, compare sets.
+  // An edge is a normalized string "r1,c1-r2,c2" representing a line between two adjacent cells.
+  // Side mapping: 0=top(dr=-1), 1=right(dc=+1), 2=bottom(dr=+1), 3=left(dc=-1)
+  const SIDE_DR = [-1, 0, 1, 0]
+  const SIDE_DC = [0, 1, 0, -1]
+
+  function extractEdges(cellLines: Record<string, [boolean, boolean, boolean, boolean]>, fixedGrid?: CellData[][]): Set<string> {
+    const edges = new Set<string>()
+    for (const [key, sides] of Object.entries(cellLines)) {
+      const [r, c] = key.split(',').map(Number)
+      for (let i = 0; i < 4; i++) {
+        if (!sides[i]) continue
+        // Skip fixed lines — only compare player-drawn lines
+        if (fixedGrid && fixedGrid[r]?.[c]?.fixedLines[i]) continue
+        const nr = r + SIDE_DR[i], nc = c + SIDE_DC[i]
+        // Normalize edge key so both cells produce the same string
+        const edgeKey = r < nr || (r === nr && c < nc)
+          ? `${r},${c}-${nr},${nc}`
+          : `${nr},${nc}-${r},${c}`
+        edges.add(edgeKey)
+      }
+    }
+    return edges
+  }
+
+  // Extract expected edges from solution (skip fixed lines — those are already on the grid)
+  const expectedEdges = solution.lines ? extractEdges(solution.lines, grid) : new Set<string>()
+  const lineEdgeTotal = expectedEdges.size
+
+  // Extract player edges from grid (only for cells that appear in the solution, plus their neighbors)
+  let playerEdges = new Set<string>()
+  if (solution.lines) {
+    const playerCellLines: Record<string, [boolean, boolean, boolean, boolean]> = {}
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (grid[r][c].lines.some((l, i) => l && !grid[r][c].fixedLines[i])) {
+          playerCellLines[`${r},${c}`] = grid[r][c].lines
+        }
+      }
+    }
+    playerEdges = extractEdges(playerCellLines, grid)
+  }
+
+  // Count how many expected edges the player has drawn
+  let lineEdgeFilled = 0
+  for (const edge of expectedEdges) {
+    if (playerEdges.has(edge)) lineEdgeFilled++
+  }
+
+  if ((total > 0 && filled !== total) || !bordersReady || colorFilled !== colorTotal || markFilled !== markTotal || lineEdgeFilled !== lineEdgeTotal) {
     const parts: string[] = []
     if (total > 0) parts.push(`${filled}/${total} values`)
     if (borderProgress) parts.push(borderProgress)
     if (colorTotal > 0) parts.push(`${colorFilled}/${colorTotal} colors`)
-    if (lineTotal > 0) parts.push(`${lineFilled}/${lineTotal} lines`)
+    if (markTotal > 0) parts.push(`${markFilled}/${markTotal} marks`)
+    if (lineEdgeTotal > 0) parts.push(`${lineEdgeFilled}/${lineEdgeTotal} lines`)
     return { valid: false, error: `Not ready: ${parts.join(', ')}.` }
   }
 
@@ -222,14 +269,24 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     }
   }
 
-  if (solution.lines) {
-    for (const [key, expected] of Object.entries(solution.lines)) {
+  if (solution.marks) {
+    for (const [key, expected] of Object.entries(solution.marks)) {
       const [r, c] = key.split(',').map(Number)
       const cell = grid[r]?.[c]
-      if (!cell) { wrong++; continue }
-      for (let i = 0; i < 4; i++) {
-        if (expected[i] !== cell.lines[i]) { wrong++; break }
-      }
+      const actual = cell?.mark || cell?.fixedMark || null
+      if (actual !== expected) wrong++
+    }
+  }
+
+  // Line validation: compare edge sets (expected vs player)
+  if (expectedEdges.size > 0) {
+    // Check for missing edges
+    for (const edge of expectedEdges) {
+      if (!playerEdges.has(edge)) wrong++
+    }
+    // Check for extra edges the player drew that aren't in the solution
+    for (const edge of playerEdges) {
+      if (!expectedEdges.has(edge)) wrong++
     }
   }
 

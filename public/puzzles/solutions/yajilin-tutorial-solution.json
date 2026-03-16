@@ -1,18 +1,67 @@
 {
-  "id": "icebarn-tutorial",
+  "id": "yajilin-tutorial",
   "cells": {},
+  "colors": {
+    "2,1": "9",
+    "2,3": "9",
+    "2,5": "9",
+    "4,4": "9",
+    "5,2": "9"
+  },
   "lines": {
+    "0,0": [
+      false,
+      true,
+      true,
+      false
+    ],
     "0,1": [
       false,
+      false,
+      true,
+      true
+    ],
+    "0,3": [
+      false,
+      true,
+      true,
+      false
+    ],
+    "0,4": [
+      false,
+      true,
+      false,
+      true
+    ],
+    "0,5": [
+      false,
+      false,
+      true,
+      true
+    ],
+    "1,0": [
+      true,
       false,
       true,
       false
     ],
     "1,1": [
       true,
+      true,
+      false,
+      false
+    ],
+    "1,2": [
       false,
       true,
-      false
+      false,
+      true
+    ],
+    "1,3": [
+      true,
+      false,
+      false,
+      true
     ],
     "1,4": [
       false,
@@ -21,82 +70,64 @@
       false
     ],
     "1,5": [
-      false,
       true,
+      false,
       false,
       true
     ],
-    "1,6": [
-      false,
-      false,
-      true,
-      true
-    ],
-    "2,1": [
+    "2,0": [
       true,
       false,
       true,
       false
-    ],
-    "2,2": [
-      false,
-      true,
-      true,
-      false
-    ],
-    "2,3": [
-      false,
-      true,
-      false,
-      true
     ],
     "2,4": [
       true,
-      true,
-      true,
-      true
-    ],
-    "2,5": [
-      false,
       false,
       true,
-      true
+      false
     ],
-    "2,6": [
+    "3,0": [
       true,
       false,
       true,
       false
     ],
     "3,1": [
-      true,
       false,
+      true,
       true,
       false
     ],
     "3,2": [
-      true,
       false,
       true,
-      false
+      false,
+      true
+    ],
+    "3,3": [
+      false,
+      false,
+      true,
+      true
     ],
     "3,4": [
       true,
-      false,
       true,
+      false,
       false
     ],
     "3,5": [
-      true,
-      true,
-      false,
-      false
-    ],
-    "3,6": [
-      true,
       false,
       false,
+      true,
       true
+    ],
+    "4,0": [
+      true,
+      false,
+      true,
+      false
     ],
     "4,1": [
       true,
@@ -104,89 +135,47 @@
       true,
       false
     ],
-    "4,2": [
-      true,
-      true,
-      false,
-      false
-    ],
     "4,3": [
-      false,
-      false,
-      true,
-      true
-    ],
-    "4,4": [
-      true,
       true,
       false,
+      true,
       false
     ],
     "4,5": [
-      false,
+      true,
       false,
       true,
-      true
+      false
     ],
-    "5,1": [
+    "5,0": [
       true,
       true,
       false,
       false
     ],
-    "5,2": [
-      false,
+    "5,1": [
       true,
+      false,
       false,
       true
     ],
     "5,3": [
       true,
       true,
-      true,
-      true
+      false,
+      false
     ],
     "5,4": [
       false,
-      false,
       true,
+      false,
       true
     ],
     "5,5": [
       true,
       false,
-      true,
-      false
-    ],
-    "6,3": [
-      true,
-      true,
-      false,
-      false
-    ],
-    "6,4": [
-      true,
-      false,
       false,
       true
-    ],
-    "6,5": [
-      true,
-      true,
-      false,
-      false
-    ],
-    "6,6": [
-      false,
-      false,
-      true,
-      true
-    ],
-    "7,6": [
-      true,
-      false,
-      false,
-      false
     ]
   }
 }

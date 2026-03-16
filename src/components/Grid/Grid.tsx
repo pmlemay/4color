@@ -194,6 +194,8 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
   gridRef.current = grid
   const isPinchingRef = useRef(isPinching)
   isPinchingRef.current = isPinching
+  const foggedCellsRef = useRef(foggedCells)
+  foggedCellsRef.current = foggedCells
 
   // Touch-based line drawing (native handlers with passive: false)
   useEffect(() => {
@@ -279,6 +281,11 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       const prevReal = prev.row >= 0 && prev.row < rows && prev.col >= 0 && prev.col < cols
       const hitReal = hit.row >= 0 && hit.row < rows && hit.col >= 0 && hit.col < cols
       if (!prevReal && !hitReal) return
+      // Block lines between two fogged cells (player mode)
+      const fc = foggedCellsRef.current
+      const prevFogged = prevReal && fc?.has(`${prev.row},${prev.col}`)
+      const hitFogged = hitReal && fc?.has(`${hit.row},${hit.col}`)
+      if (prevFogged && hitFogged) { touchLineLastCell.current = hit; return }
       let realCell: { row: number; col: number }
       let side: 0 | 1 | 2 | 3
       if (prevReal) {
@@ -495,6 +502,10 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
           const prevReal = prev.row >= 0 && prev.row < rows && prev.col >= 0 && prev.col < cols
           const hitReal = hit.row >= 0 && hit.row < rows && hit.col >= 0 && hit.col < cols
           if (!prevReal && !hitReal) return
+          // Block lines between two fogged cells (player mode)
+          const prevFogged = prevReal && foggedCells?.has(`${prev.row},${prev.col}`)
+          const hitFogged = hitReal && foggedCells?.has(`${hit.row},${hit.col}`)
+          if (prevFogged && hitFogged) { leftLineLastCell.current = hit; return }
           let realCell: { row: number; col: number }
           let side: 0 | 1 | 2 | 3
           if (prevReal) {
@@ -552,6 +563,10 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
           const prevReal = prev.row >= 0 && prev.row < rows && prev.col >= 0 && prev.col < cols
           const hitReal = hit.row >= 0 && hit.row < rows && hit.col >= 0 && hit.col < cols
           if (!prevReal && !hitReal) return
+          // Block lines between two fogged cells (player mode)
+          const prevFogged = prevReal && foggedCells?.has(`${prev.row},${prev.col}`)
+          const hitFogged = hitReal && foggedCells?.has(`${hit.row},${hit.col}`)
+          if (prevFogged && hitFogged) { rightLineLastCell.current = hit; return }
           let realCell: { row: number; col: number }
           let side: 0 | 1 | 2 | 3
           if (prevReal) {

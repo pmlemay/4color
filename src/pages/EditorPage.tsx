@@ -247,6 +247,7 @@ export function EditorPage() {
   ]
   const STARBATTLE_RULES = [
     'Place stars in the grid so that each row, column, and bold-outlined region contains the indicated number of stars.',
+    'The value of N is given outside the grid.',
     'Stars may not touch each other, not even diagonally.',
   ]
   const SPIRALGALAXY_RULES = [
@@ -278,6 +279,17 @@ export function EditorPage() {
     'Each diagonally connected network of islands must contain exactly one island of each size from 1 to N, where N is the size of the largest island in the group.',
     'All islands must be diagonally adjacent to at least one other island.',
   ]
+  const MURDOKU_RULES = [
+    'Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.',
+    'Only 1 person per row and per column.',
+    '"Beside" means in the same room and orthogonally adjacent.',
+  ]
+  const ICEWALK_RULES = [
+    'Draw a loop through the centers of some cells which passes through each numbered cell.',
+    'Two perpendicular line segments may intersect each other only on icy cells, but they may not turn at their intersection or otherwise overlap.',
+    'The loop may not turn on icy cells.',
+    'A number indicates how many cells make up the continuous non-icy section of the loop that the number is on.',
+  ]
   const ICEBARN_RULES = [
     'Draw a path through the centers of some cells, entering the grid at the "IN" marking and exiting at the "OUT" marking.',
     'The path must travel through all of the arrows in the indicated direction.',
@@ -301,6 +313,8 @@ export function EditorPage() {
     cocktaillamp: COCKTAILLAMP_RULES,
     lits: LITS_RULES,
     archipelago: ARCHIPELAGO_RULES,
+    icewalk: ICEWALK_RULES,
+    murdoku: MURDOKU_RULES,
   }
   const PUZZLE_TYPE_TITLES: Record<string, string> = {
     heyawake: 'Heyawake',
@@ -314,6 +328,8 @@ export function EditorPage() {
     cocktaillamp: 'Cocktail Lamp',
     lits: 'LITS',
     archipelago: 'Archipelago',
+    icewalk: 'Ice Walk',
+    murdoku: 'Murdoku',
   }
   const PUZZLE_TYPE_TAGS: Record<string, string> = {
     heyawake: 'Heyawake',
@@ -327,6 +343,8 @@ export function EditorPage() {
     cocktaillamp: 'Cocktail-lamp',
     lits: 'LITS',
     archipelago: 'Archipelago',
+    icewalk: 'Ice-walk',
+    murdoku: 'Murdoku',
   }
   const prevPuzzleType = useRef(puzzleType)
 
@@ -357,6 +375,57 @@ export function EditorPage() {
       if (newTag && !next.includes(newTag)) next = [...next, newTag]
       return next
     })
+    // Murdoku: generate random suspect clues (A, B, C... V) with matching first-letter names
+    if (newType === 'murdoku') {
+      const gridRows = gridState.grid.length
+      const gridCols = gridState.grid[0]?.length ?? 1
+      const count = Math.min(gridRows, gridCols)
+      const NAMES: Record<string, { male: string[]; female: string[] }> = {
+        A: { male: ['Alfred', 'Alaric', 'Arthur', 'Adrian', 'Alistair', 'Ambrose', 'Angelo', 'Archibald', 'Augustus', 'Atticus'], female: ['Alice', 'Agatha', 'Adelaide', 'Astrid', 'Amelia', 'Arabella', 'Antonia', 'Anastasia', 'Aurora', 'Abigail'] },
+        B: { male: ['Boris', 'Bruno', 'Barnaby', 'Booker', 'Benedict', 'Bernard', 'Basil', 'Balthazar', 'Beckett', 'Bradford'], female: ['Beatrice', 'Bianca', 'Bridget', 'Bertha', 'Brenda', 'Blanche', 'Bonnie', 'Belinda', 'Blythe', 'Bronwyn'] },
+        C: { male: ['Carlos', 'Cedric', 'Cornelius', 'Cyrus', 'Calvin', 'Casper', 'Chester', 'Clayton', 'Conrad', 'Clifford'], female: ['Clara', 'Celia', 'Charlotte', 'Celeste', 'Camille', 'Cordelia', 'Constance', 'Cassandra', 'Colette', 'Clementine'] },
+        D: { male: ['Diego', 'Desmond', 'Drake', 'Dmitri', 'Donovan', 'Duncan', 'Dante', 'Dalton', 'Dominic', 'Dexter'], female: ['Diana', 'Dolores', 'Dahlia', 'Daphne', 'Delilah', 'Dorothy', 'Daisy', 'Desiree', 'Dinah', 'Dorothea'] },
+        E: { male: ['Edgar', 'Edmund', 'Elias', 'Emilio', 'Ernest', 'Everett', 'Ezra', 'Eugene', 'Elliott', 'Enrique'], female: ['Elena', 'Elise', 'Esmeralda', 'Echo', 'Evelyn', 'Estelle', 'Edith', 'Eloise', 'Emmeline', 'Eugenia'] },
+        F: { male: ['Felix', 'Fletcher', 'Flint', 'Fabian', 'Franklin', 'Frederick', 'Finnegan', 'Forrest', 'Floyd', 'Fergus'], female: ['Fiona', 'Felicia', 'Flora', 'Freya', 'Frances', 'Francesca', 'Fernanda', 'Faith', 'Florence', 'Fleur'] },
+        G: { male: ['George', 'Gareth', 'Gideon', 'Gustav', 'Gordon', 'Gerald', 'Graham', 'Gilbert', 'Grover', 'Gunther'], female: ['Gloria', 'Gemma', 'Greta', 'Giselle', 'Genevieve', 'Guinevere', 'Gwendolyn', 'Gladys', 'Grace', 'Gertrude'] },
+        H: { male: ['Hugo', 'Hawke', 'Hector', 'Harold', 'Harvey', 'Horatio', 'Herbert', 'Henrik', 'Hubert', 'Hamish'], female: ['Helena', 'Harriet', 'Hazel', 'Hilda', 'Henrietta', 'Hermione', 'Heather', 'Holly', 'Helga', 'Hortense'] },
+        I: { male: ['Ivan', 'Igor', 'Isaac', 'Ignacio', 'Irving', 'Isidore', 'Ibrahim', 'Ira', 'Idris', 'Inigo'], female: ['Irene', 'Iris', 'Isolde', 'Ingrid', 'Imogen', 'Isadora', 'Ivy', 'Ilona', 'Ines', 'Imelda'] },
+        J: { male: ['James', 'Jasper', 'Jonas', 'Julian', 'Jerome', 'Jeremiah', 'Jethro', 'Joaquin', 'Julius', 'Jefferson'], female: ['Julia', 'Josephine', 'Jade', 'Jocelyn', 'Jasmine', 'Juliette', 'Jacqueline', 'Judith', 'Joanna', 'Jemima'] },
+        K: { male: ['Klaus', 'Kenneth', 'Kurt', 'Killian', 'Keegan', 'Kingston', 'Kendrick', 'Kasper', 'Kelvin', 'Kieran'], female: ['Karen', 'Kira', 'Katherine', 'Katya', 'Kirsten', 'Keziah', 'Kathleen', 'Kendra', 'Katarina', 'Kelsey'] },
+        L: { male: ['Leon', 'Lazlo', 'Lorenzo', 'Lucian', 'Leopold', 'Lancelot', 'Luther', 'Leander', 'Lionel', 'Lysander'], female: ['Laura', 'Lillian', 'Lydia', 'Lenora', 'Lucille', 'Lorraine', 'Lavinia', 'Lisette', 'Louisa', 'Leona'] },
+        M: { male: ['Marco', 'Magnus', 'Maurice', 'Milton', 'Mortimer', 'Montgomery', 'Malcolm', 'Maximilian', 'Marshall', 'Matthias'], female: ['Maria', 'Mira', 'Margot', 'Minerva', 'Madeleine', 'Miranda', 'Millicent', 'Maude', 'Marcella', 'Mirabel'] },
+        N: { male: ['Nigel', 'Nash', 'Nolan', 'Nestor', 'Nathaniel', 'Nelson', 'Neville', 'Norman', 'Nicholas', 'Norbert'], female: ['Nina', 'Nadia', 'Nora', 'Natasha', 'Nadine', 'Noelle', 'Nicolette', 'Nell', 'Nerissa', 'Nanette'] },
+        O: { male: ['Oscar', 'Otto', 'Orion', 'Oswald', 'Oliver', 'Octavius', 'Orlando', 'Oberon', 'Orville', 'Otis'], female: ['Olivia', 'Orla', 'Octavia', 'Ophelia', 'Odette', 'Olympia', 'Opal', 'Ondine', 'Ottilie', 'Olga'] },
+        P: { male: ['Percy', 'Patrick', 'Philip', 'Preston', 'Percival', 'Phineas', 'Porter', 'Palmer', 'Pemberton', 'Prescott'], female: ['Paula', 'Penelope', 'Priscilla', 'Petra', 'Prudence', 'Portia', 'Pauline', 'Patience', 'Philippa', 'Persephone'] },
+        Q: { male: ['Quinn', 'Quentin', 'Quincy', 'Quillan', 'Quade', 'Quinton', 'Quimby', 'Quillen', 'Quasim', 'Quarles'], female: ['Quinn', 'Queenie', 'Quintessa', 'Quiana', 'Querida', 'Quella', 'Quinella', 'Quillan', 'Qadira', 'Questa'] },
+        R: { male: ['Roland', 'Rupert', 'Rafael', 'Reginald', 'Roderick', 'Randolph', 'Raymond', 'Remington', 'Rowan', 'Rufus'], female: ['Rita', 'Rosalind', 'Regina', 'Rowena', 'Rosemary', 'Ramona', 'Rebecca', 'Renata', 'Roxanne', 'Rosetta'] },
+        S: { male: ['Stefan', 'Simon', 'Sebastian', 'Silas', 'Sylvester', 'Solomon', 'Sterling', 'Spencer', 'Sullivan', 'Sinclair'], female: ['Sophia', 'Selena', 'Sylvia', 'Stella', 'Sabrina', 'Seraphina', 'Sybil', 'Simone', 'Scarlett', 'Susannah'] },
+        T: { male: ['Thomas', 'Theodore', 'Tobias', 'Tristan', 'Thaddeus', 'Thornton', 'Terrence', 'Timothy', 'Tiberius', 'Tucker'], female: ['Tanya', 'Thea', 'Tabitha', 'Tamara', 'Theodora', 'Tatiana', 'Tallulah', 'Temperance', 'Thomasina', 'Trudy'] },
+        U: { male: ['Ulrich', 'Umberto', 'Ugo', 'Ulysses', 'Urban', 'Usher', 'Upton', 'Udo', 'Uriah', 'Uttam'], female: ['Ursula', 'Una', 'Ulyana', 'Undine', 'Unity', 'Ulla', 'Ulrike', 'Umaya', 'Ulyssa', 'Urbana'] },
+        V: { male: ['Victor', 'Vincent', 'Vasco', 'Viktor', 'Virgil', 'Vernon', 'Vaughn', 'Valentin', 'Vladimir', 'Vance'], female: ['Valentina', 'Vivian', 'Viola', 'Vera', 'Veronica', 'Victoria', 'Virginia', 'Violet', 'Venetia', 'Vanessa'] },
+      }
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUV'
+      const suspectLetters = letters.slice(0, count - 1).split('')
+      const newClues: string[] = []
+      for (const letter of suspectLetters) {
+        const pool = NAMES[letter]
+        if (!pool) continue
+        const isMale = Math.random() < 0.5
+        const names = isMale ? pool.male : pool.female
+        const name = names[Math.floor(Math.random() * names.length)]
+        const gender = isMale ? 'Man' : 'Woman'
+        const pronoun = isMale ? 'He' : 'She'
+        newClues.push(`${letter} (${gender} - ${name}). ${pronoun} was...`)
+      }
+      // Last one is always V (victim)
+      const vPool = NAMES['V']
+      const vMale = Math.random() < 0.5
+      const vNames = vMale ? vPool.male : vPool.female
+      const vName = vNames[Math.floor(Math.random() * vNames.length)]
+      const vGender = vMale ? 'Man' : 'Woman'
+      newClues.push(`V (${vGender} - ${vName}). The victim.`)
+      setClues(newClues)
+    }
     // Icebarn: expand grid by +2 in each dimension, add border fog + IN/OUT labels
     if (newType === 'icebarn') {
       const r = gridState.grid.length + 2
@@ -379,6 +448,27 @@ export function EditorPage() {
         }
       }
       setFogGroups([{ id: 'fog-border', cells: borderCells, triggers: [] }])
+    } else if (newType === 'starbattle') {
+      // Star Battle: add 1 extra row at top for fog header with "1" and star labels
+      const r = gridState.grid.length + 1
+      const c = gridState.grid[0]?.length ?? 1
+      setRows(r)
+      setCols(c)
+      gridState.resetGrid(r, c)
+      gridState.setGrid(prev => {
+        const g = prev.map(row => row.map(cell => ({ ...cell, labels: { ...cell.labels } })))
+        // "1" label in second-to-last column of top row
+        if (g[0]?.[c - 2]) g[0][c - 2].labels = { middle: { text: '1', showThroughFog: true } }
+        // Star label in last column of top row
+        if (g[0]?.[c - 1]) g[0][c - 1].labels = { middle: { text: '\u2605', showThroughFog: true } }
+        return g
+      })
+      // Fog the entire top row
+      const topRowCells: CellPosition[] = []
+      for (let ci = 0; ci < c; ci++) {
+        topRowCells.push({ row: 0, col: ci })
+      }
+      setFogGroups([{ id: 'fog-header', cells: topRowCells, triggers: [] }])
     } else if (prevPuzzleType.current === 'icebarn') {
       // Switching away from icebarn: clear the auto-generated fog and IN/OUT labels
       setFogGroups(prev => prev.filter(g => g.id !== 'fog-border'))
@@ -394,6 +484,20 @@ export function EditorPage() {
         }
         return g
       })
+    } else if (prevPuzzleType.current === 'starbattle') {
+      // Switching away from starbattle: clear the auto-generated fog header and labels
+      setFogGroups(prev => prev.filter(g => g.id !== 'fog-header'))
+      gridState.setGrid(prev => {
+        const c = prev[0]?.length ?? 1
+        const g = prev.map(row => row.map(cell => ({ ...cell })))
+        if (g[0]?.[c - 2]?.labels?.middle?.text === '1') {
+          g[0][c - 2] = { ...g[0][c - 2], labels: {} }
+        }
+        if (g[0]?.[c - 1]?.labels?.middle?.text === '\u2605') {
+          g[0][c - 1] = { ...g[0][c - 1], labels: {} }
+        }
+        return g
+      })
     }
   }, [])
 
@@ -405,6 +509,11 @@ export function EditorPage() {
     if (puzzleType === 'starbattle') {
       if (!autoCrossRules.includes('king')) {
         setAutoCrossRulesState(prev => prev.includes('king') ? prev : [...prev, 'king'])
+      }
+    }
+    if (puzzleType === 'murdoku') {
+      if (!autoCrossRules.includes('rook')) {
+        setAutoCrossRulesState(prev => prev.includes('rook') ? prev : [...prev, 'rook'])
       }
     }
 
@@ -454,6 +563,49 @@ export function EditorPage() {
       }
     },
   })
+
+  const handleResizeGrid = async () => {
+    if (!await showConfirm('This will clear all cell data. To add rows/columns without clearing, use the + buttons around the grid instead.', 'Resize Grid')) return
+    // Icebarn: add +2 to each dimension for fog border
+    // Star Battle: add +1 row for fog header
+    const actualRows = puzzleType === 'icebarn' ? rows + 2 : puzzleType === 'starbattle' ? rows + 1 : rows
+    const actualCols = puzzleType === 'icebarn' ? cols + 2 : cols
+    gridState.resetGrid(actualRows, actualCols)
+    setFogGroups([])
+    gridScale.resetZoom()
+    // Icebarn: add border fog + IN/OUT labels
+    if (puzzleType === 'icebarn') {
+      gridState.setGrid(prev => {
+        const g = prev.map(r => r.map(c => ({ ...c, labels: { ...c.labels } })))
+        if (g[0]?.[1]) g[0][1].labels = { middle: { text: 'IN', showThroughFog: true } }
+        if (g[actualRows - 1]?.[actualCols - 2]) g[actualRows - 1][actualCols - 2].labels = { middle: { text: 'OUT', showThroughFog: true } }
+        return g
+      })
+      const borderCells: CellPosition[] = []
+      for (let r = 0; r < actualRows; r++) {
+        for (let c = 0; c < actualCols; c++) {
+          if (r === 0 || r === actualRows - 1 || c === 0 || c === actualCols - 1) {
+            borderCells.push({ row: r, col: c })
+          }
+        }
+      }
+      setFogGroups([{ id: 'fog-border', cells: borderCells, triggers: [] }])
+    }
+    // Star Battle: add top-row fog + "1" and star labels
+    if (puzzleType === 'starbattle') {
+      gridState.setGrid(prev => {
+        const g = prev.map(r => r.map(c => ({ ...c, labels: { ...c.labels } })))
+        if (g[0]?.[actualCols - 2]) g[0][actualCols - 2].labels = { middle: { text: '1', showThroughFog: true } }
+        if (g[0]?.[actualCols - 1]) g[0][actualCols - 1].labels = { middle: { text: '\u2605', showThroughFog: true } }
+        return g
+      })
+      const topRowCells: CellPosition[] = []
+      for (let c = 0; c < actualCols; c++) {
+        topRowCells.push({ row: 0, col: c })
+      }
+      setFogGroups([{ id: 'fog-header', cells: topRowCells, triggers: [] }])
+    }
+  }
 
   const handleSave = async () => {
     if (!difficulty) { await showAlert('Please select a difficulty before saving.'); return }
@@ -579,6 +731,9 @@ export function EditorPage() {
       }
     }
     setSolutionMode(true)
+    if (clickActionLeft) {
+      gridState.setInputMode('suggested')
+    }
   }
 
   const handleExitSolutionMode = () => {
@@ -596,6 +751,7 @@ export function EditorPage() {
     const borders: Record<string, [number, number, number, number]> = {}
     const colors: Record<string, string> = {}
     const solutionLines: Record<string, [boolean, boolean, boolean, boolean]> = {}
+    const solutionMarks: Record<string, string> = {}
     for (let r = 0; r < gridState.grid.length; r++) {
       for (let c = 0; c < gridState.grid[r].length; c++) {
         const cell = gridState.grid[r][c]
@@ -606,20 +762,22 @@ export function EditorPage() {
           borders[`${r},${c}`] = b
         }
         if (cell.color && !cell.fixedColor) colors[`${r},${c}`] = cell.color
+        if (cell.mark && !cell.fixedMark) solutionMarks[`${r},${c}`] = cell.mark
         const fl = cell.fixedLines
         const l = cell.lines
         if ((l[0] && !fl[0]) || (l[1] && !fl[1]) || (l[2] && !fl[2]) || (l[3] && !fl[3])) {
-          solutionLines[`${r},${c}`] = l
+          solutionLines[`${r},${c}`] = [...l] as [boolean, boolean, boolean, boolean]
         }
       }
     }
-    if (Object.keys(cells).length === 0 && Object.keys(borders).length === 0 && Object.keys(colors).length === 0 && Object.keys(solutionLines).length === 0) {
-      await showAlert('No solution values, borders, colors, or lines entered.'); return
+    if (Object.keys(cells).length === 0 && Object.keys(borders).length === 0 && Object.keys(colors).length === 0 && Object.keys(solutionLines).length === 0 && Object.keys(solutionMarks).length === 0) {
+      await showAlert('No solution values, borders, colors, lines, or marks entered.'); return
     }
     const solution: PuzzleSolution = { id: solutionId, cells }
     if (Object.keys(borders).length > 0) solution.borders = borders
     if (Object.keys(colors).length > 0) solution.colors = colors
     if (Object.keys(solutionLines).length > 0) solution.lines = solutionLines
+    if (Object.keys(solutionMarks).length > 0) solution.marks = solutionMarks
     if (import.meta.env.DEV) {
       const result = await saveSolutionToServer(solution)
       if (result.ok) {
@@ -1271,6 +1429,8 @@ export function EditorPage() {
                 <option value="cocktaillamp">Cocktail Lamp</option>
                 <option value="lits">LITS</option>
                 <option value="archipelago">Archipelago</option>
+                <option value="icewalk">Ice Walk</option>
+                <option value="murdoku">Murdoku</option>
               </select>
             </div>
             <div className="info-editor-field">
@@ -1339,43 +1499,14 @@ export function EditorPage() {
             <div className="info-editor-row">
               <div className="info-editor-field">
                 <label>Rows</label>
-                <input type="number" value={rows} onChange={e => setRows(Math.min(99, Math.max(1, Number(e.target.value))))} min={1} max={99} />
+                <input type="number" value={rows} onChange={e => setRows(Math.min(99, Math.max(1, Number(e.target.value))))} min={1} max={99} onKeyDown={e => { if (e.key === 'Enter') handleResizeGrid() }} />
               </div>
               <div className="info-editor-field">
                 <label>Cols</label>
-                <input type="number" value={cols} onChange={e => setCols(Math.min(99, Math.max(1, Number(e.target.value))))} min={1} max={99} />
+                <input type="number" value={cols} onChange={e => setCols(Math.min(99, Math.max(1, Number(e.target.value))))} min={1} max={99} onKeyDown={e => { if (e.key === 'Enter') handleResizeGrid() }} />
               </div>
             </div>
-            <button className="info-btn" onClick={async () => {
-              if (!await showConfirm('This will clear all cell data. To add rows/columns without clearing, use the + buttons around the grid instead.', 'Resize Grid')) return
-              // Icebarn: add +2 to each dimension for fog border
-              const actualRows = puzzleType === 'icebarn' ? rows + 2 : rows
-              const actualCols = puzzleType === 'icebarn' ? cols + 2 : cols
-              gridState.resetGrid(actualRows, actualCols)
-              setFogGroups([])
-              gridScale.resetZoom()
-              // Icebarn: add border fog + IN/OUT labels
-              if (puzzleType === 'icebarn') {
-                gridState.setGrid(prev => {
-                  const g = prev.map(r => r.map(c => ({ ...c, labels: { ...c.labels } })))
-                  // IN label at B1 (row 0, col 1)
-                  if (g[0]?.[1]) g[0][1].labels = { middle: { text: 'IN', showThroughFog: true } }
-                  // OUT label at second-to-last col of last row
-                  if (g[actualRows - 1]?.[actualCols - 2]) g[actualRows - 1][actualCols - 2].labels = { middle: { text: 'OUT', showThroughFog: true } }
-                  return g
-                })
-                // 1-cell-wide border fog with no triggers
-                const borderCells: CellPosition[] = []
-                for (let r = 0; r < actualRows; r++) {
-                  for (let c = 0; c < actualCols; c++) {
-                    if (r === 0 || r === actualRows - 1 || c === 0 || c === actualCols - 1) {
-                      borderCells.push({ row: r, col: c })
-                    }
-                  }
-                }
-                setFogGroups([{ id: 'fog-border', cells: borderCells, triggers: [] }])
-              }
-            }}>Resize Grid</button>
+            <button className="info-btn" onClick={handleResizeGrid}>Resize Grid</button>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
             <button className="info-btn" onClick={handleSave}>Save (Download JSON)</button>

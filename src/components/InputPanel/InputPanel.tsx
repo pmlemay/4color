@@ -194,6 +194,9 @@ export function InputPanel({
         {inputMode === 'suggested' && puzzleType === 'icebarn' && (
           <div className="ip-hint">Drag between cells to draw lines</div>
         )}
+        {inputMode === 'suggested' && puzzleType === 'icewalk' && (
+          <div className="ip-hint">Drag between cells to draw lines</div>
+        )}
         {inputMode === 'suggested' && puzzleType === 'yajilin' && (
           <div className="ip-hint">Drag between cells to draw lines. Tap center for black.</div>
         )}

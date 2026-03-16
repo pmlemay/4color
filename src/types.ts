@@ -134,4 +134,5 @@ export interface PuzzleSolution {
   borders?: Record<string, [number, number, number, number]>
   colors?: Record<string, string>
   lines?: Record<string, [boolean, boolean, boolean, boolean]>
+  marks?: Record<string, string>
 }

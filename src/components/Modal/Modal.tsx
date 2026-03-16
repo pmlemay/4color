@@ -21,6 +21,7 @@ export function Modal({ open, title, message, confirmLabel = 'OK', cancelLabel =
     if (!open) return
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleClose()
+      if (e.key === 'Enter') { e.preventDefault(); onConfirm() }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)

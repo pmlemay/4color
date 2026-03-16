@@ -1,5 +1,22 @@
 [
   {
+    "id": "archipelago-tutorial",
+    "file": "archipelago-tutorial.json",
+    "title": "Archipelago Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 5,
+      "cols": 5
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Archipelago"
+    ],
+    "puzzleType": "archipelago",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5"
+  },
+  {
     "id": "haunted-lighthouse-murdoku",
     "file": "haunted-lighthouse-murdoku.json",
     "title": "Haunted Lighthouse Murdoku",
@@ -40,6 +57,74 @@
     "clickActionRight": "cross"
   },
   {
+    "id": "cocktail-lamp-tutorial",
+    "file": "cocktail-lamp-tutorial.json",
+    "title": "Cocktail Lamp Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Cocktail-lamp"
+    ],
+    "puzzleType": "cocktaillamp",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5"
+  },
+  {
+    "id": "heyawake-tutorial",
+    "file": "heyawake-tutorial.json",
+    "title": "Heyawake Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Heyawake"
+    ],
+    "puzzleType": "heyawake",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5"
+  },
+  {
+    "id": "lits-tutorial",
+    "file": "lits-tutorial.json",
+    "title": "LITS Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "LITS"
+    ],
+    "puzzleType": "lits",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "mark:dot"
+  },
+  {
+    "id": "nurikabe-tutorial",
+    "file": "nurikabe-tutorial.json",
+    "title": "Nurikabe Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Nurikabe"
+    ],
+    "puzzleType": "nurikabe",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "mark:dot"
+  },
+  {
     "id": "sample-4-color-puzzle",
     "file": "sample-4-color-puzzle.json",
     "title": "4-Color",
@@ -54,6 +139,43 @@
     "tags": [
       "4color"
     ],
+    "clickActionRight": "cross"
+  },
+  {
+    "id": "yajilin-tutorial",
+    "file": "yajilin-tutorial.json",
+    "title": "Yajilin Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Yajilin"
+    ],
+    "puzzleType": "yajilin",
+    "clickActionLeft": "line",
+    "clickActionRight": "cross"
+  },
+  {
+    "id": "star-battle-tutorial",
+    "file": "star-battle-tutorial.json",
+    "title": "Star Battle Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 7,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Star-battle"
+    ],
+    "autoCrossRules": [
+      "king"
+    ],
+    "puzzleType": "starbattle",
+    "clickActionLeft": "mark:star",
     "clickActionRight": "cross"
   },
   {
@@ -95,6 +217,23 @@
     "clickActionRight": "cross"
   },
   {
+    "id": "cave-tutorial",
+    "file": "cave-tutorial.json",
+    "title": "Cave Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Cave"
+    ],
+    "puzzleType": "cave",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5"
+  },
+  {
     "id": "hard-4color",
     "file": "hard-4color.json",
     "title": "4-Color",
@@ -115,9 +254,7 @@
     "id": "icebarn-tutorial",
     "file": "icebarn-tutorial.json",
     "title": "Icebarn Tutorial",
-    "authors": [
-      "PmLemay"
-    ],
+    "authors": [],
     "gridSize": {
       "rows": 8,
       "cols": 8
@@ -150,7 +287,7 @@
   {
     "id": "starbattle-murdoku",
     "file": "starbattle-murdoku.json",
-    "title": "StarBattle Murdoku",
+    "title": "Monastery Murdoku (Star-battle)",
     "authors": [
       "PmLemay"
     ],
@@ -160,8 +297,8 @@
     },
     "difficulty": "Very hard",
     "tags": [
-      "Star-battle",
-      "Murdoku"
+      "Murdoku",
+      "Star-battle"
     ],
     "autoCrossRules": [
       "king",
@@ -212,7 +349,7 @@
   {
     "id": "nurikabe-murdoku",
     "file": "nurikabe-murdoku.json",
-    "title": "Nurikabe Murdoku",
+    "title": "Unique Islands Murdoku (Nurikabe)",
     "authors": [
       "PmLemay"
     ],
@@ -305,6 +442,27 @@
     ],
     "clickActionRight": "cross",
     "inProgress": true
+  },
+  {
+    "id": "formula1-murdoku",
+    "file": "formula1-murdoku.json",
+    "title": "Formula1 Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 20,
+      "cols": 21
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross"
   },
   {
     "id": "adventure-1",
