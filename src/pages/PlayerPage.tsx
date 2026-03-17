@@ -48,6 +48,7 @@ export function PlayerPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
+  const [highlightedNote, setHighlightedNote] = useState<string | null>(null)
   const [struckSpecialRuleWords, setStruckSpecialRuleWords] = useState<Set<string>>(new Set())
   const [struckRuleWords, setStruckRuleWords] = useState<Set<string>>(new Set())
   const [struckClueWords, setStruckClueWords] = useState<Set<string>>(new Set())
@@ -57,6 +58,10 @@ export function PlayerPage() {
   const { modalProps, showAlert, showConfirm } = useModal()
   const { completedPuzzleIds, completionTimes, markCompleted } = useCompletions()
   const gridState = useGrid(1, 1)
+  // Clear note highlight when leaving normal/note mode
+  useEffect(() => {
+    if (gridState.inputMode !== 'note' && gridState.inputMode !== 'normal') setHighlightedNote(null)
+  }, [gridState.inputMode])
   const timer = useTimer(0)
   const puzzleLeaderboard = usePuzzleLeaderboard(puzzleId)
   const timerRef = useRef(timer)
@@ -226,6 +231,11 @@ export function PlayerPage() {
     onActiveMarkChange: gridState.setActiveMark,
     toggleMark: gridState.toggleMark,
     hasSelection: gridState.selection.length > 0,
+    selectionCount: gridState.selection.length,
+    clearSelection: gridState.clearSelection,
+    onHighlightedNoteChange: setHighlightedNote,
+    highlightedNote,
+    isMurdoku: puzzle?.tags?.includes('Murdoku') ?? false,
     onInputModeChange: gridState.setInputMode,
     puzzleType,
   })
@@ -654,6 +664,7 @@ export function PlayerPage() {
       isTouchDragRef={isTouchDragRef}
       foggedCells={foggedCells}
       revealedFogIds={revealedFogGroupIds}
+      highlightedNote={highlightedNote}
     />
   )
 
@@ -678,6 +689,11 @@ export function PlayerPage() {
       onSubmit={canSubmit ? handleSubmit : undefined}
       puzzleType={puzzleType || undefined}
       puzzleHasClickActions={puzzleHasClickActions}
+      highlightedNote={highlightedNote}
+      onHighlightedNoteChange={setHighlightedNote}
+      selectionCount={gridState.selection.length}
+      clearSelection={gridState.clearSelection}
+      isMurdoku={puzzle?.tags?.includes('Murdoku') ?? false}
     />
   )
 
@@ -774,6 +790,14 @@ export function PlayerPage() {
           onClickActionLeftChange={setClickActionLeft}
           onClickActionRightChange={setClickActionRight}
           puzzleHasClickActions={puzzleHasClickActions}
+          valueSet={valueSet}
+          onValueInput={gridState.applyValue}
+          onNoteInput={gridState.addNote}
+          highlightedNote={highlightedNote}
+          onHighlightedNoteChange={setHighlightedNote}
+          puzzleTags={puzzle?.tags}
+          selectionCount={gridState.selection.length}
+          clearSelection={gridState.clearSelection}
         />
       </ResizableRight>
 

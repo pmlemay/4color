@@ -32,9 +32,10 @@ interface GridProps {
   foggedCells?: Set<string>
   fogPreviewCells?: Set<string>
   revealedFogIds?: Set<string>
+  highlightedNote?: string | null
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onToggleFixedMark, onToggleLine, onToggleFixedLine, onLineCenterClick, onLineRightCenterClick, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onToggleFixedMark, onToggleLine, onToggleFixedLine, onLineCenterClick, onLineRightCenterClick, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds, highlightedNote }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const beingDeselected = useRef<Set<string>>(new Set())
   const [, setRenderTick] = useState(0)
@@ -647,6 +648,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
                     fogEdges={fogEdges}
                     fogPreview={fogPrev}
                     revealedFogIds={revealedFogIds}
+                    highlightedNote={highlightedNote}
                   />
                 )
               })}

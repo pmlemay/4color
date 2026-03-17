@@ -69,6 +69,13 @@ interface ToolbarProps {
   onClickActionLeftChange?: (action: string) => void
   onClickActionRightChange?: (action: string) => void
   puzzleHasClickActions?: boolean
+  valueSet?: string[]
+  onValueInput?: (val: string) => void
+  onNoteInput?: (val: string) => void
+  highlightedNote?: string | null
+  onHighlightedNoteChange?: (note: string | null) => void
+  puzzleTags?: string[]
+  clearSelection?: () => void
   fogGroups?: FogGroup[]
   fogEditStep?: 'idle' | 'pickFogCells' | 'pickTriggerCells' | 'pickTrigger'
   fogPendingTriggers?: FogTrigger[]
@@ -132,6 +139,13 @@ export function Toolbar({
   onClickActionLeftChange,
   onClickActionRightChange,
   puzzleHasClickActions = false,
+  valueSet,
+  onValueInput,
+  onNoteInput,
+  highlightedNote = null,
+  onHighlightedNoteChange,
+  puzzleTags,
+  clearSelection,
   fogGroups,
   fogEditStep,
   fogPendingTriggers,
@@ -220,7 +234,7 @@ export function Toolbar({
         {inputMode === 'suggested' && !puzzleType && (clickActionLeft ? 'Custom click actions configured.' : 'Select click actions below.')}
         {inputMode === 'normal' && 'Type any key to set value. Same key to remove.'}
         {inputMode === 'color' && (activeColor !== null ? 'Drag to paint. Click swatch again to deselect.' : 'Press 0-9 or click swatch. Click to lock color for drag painting.')}
-        {inputMode === 'note' && 'Type to add/remove notes (max 16).'}
+        {inputMode === 'note' && 'Type to add/remove notes (max 9).'}
         {inputMode === 'cross' && 'Click/drag to toggle X marks.'}
         {inputMode === 'border' && 'Drag to create/remove borders.'}
         {inputMode === 'edge' && 'Click/drag edges to toggle individual borders.'}
@@ -234,6 +248,39 @@ export function Toolbar({
         {renderModeBtn({ mode: 'suggested', label: puzzleHasClickActions ? 'Suggested (S)' : 'Custom (S)' })}
         {PLAYER_MODES.map(renderModeBtn)}
       </div>
+
+      {(inputMode === 'normal' || inputMode === 'note') && puzzleTags?.includes('Murdoku') && valueSet && valueSet.length > 0 && (
+        <div className="tb-section">
+          <div className="tb-section-title">Suspects</div>
+          <div className="tb-values">
+            {valueSet.map(v => (
+              <button
+                key={v}
+                className={`tb-val-btn${highlightedNote === v ? ' tb-val-highlighted' : ''}`}
+                onClick={() => {
+                  const sel = selectionCount ?? 0
+                  if (sel === 0 && highlightedNote === v) {
+                    onHighlightedNoteChange?.(null)
+                  } else if (inputMode === 'note' || sel > 1) {
+                    if (sel > 0) onNoteInput?.(v)
+                    clearSelection?.()
+                    onHighlightedNoteChange?.(v)
+                  } else if (sel === 1) {
+                    onValueInput?.(v)
+                    clearSelection?.()
+                    onHighlightedNoteChange?.(v)
+                  } else {
+                    onHighlightedNoteChange?.(v)
+                  }
+                }}
+                onMouseDown={e => e.preventDefault()}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {inputMode === 'suggested' && !puzzleHasClickActions && (onClickActionLeftChange || onClickActionRightChange) && (
         <div className="tb-section">

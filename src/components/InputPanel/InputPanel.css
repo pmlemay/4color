@@ -92,6 +92,13 @@
   color: white;
 }
 
+.ip-val-btn.ip-val-highlighted {
+  background: lightseagreen;
+  border-color: lightseagreen;
+  color: white;
+  font-weight: 800;
+}
+
 /* Colors row */
 .ip-colors {
   display: flex;

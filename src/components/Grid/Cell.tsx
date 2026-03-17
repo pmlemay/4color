@@ -175,9 +175,10 @@ interface CellProps {
   fogEdges?: [boolean, boolean, boolean, boolean] // top, right, bottom, left neighbors are fogged
   fogPreview?: boolean
   revealedFogIds?: Set<string>
+  highlightedNote?: string | null
 }
 
-export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselected, debug, row, col, totalRows, totalCols, draftEdgeSides, fogged, fogEdges, fogPreview, revealedFogIds }: CellProps) {
+export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselected, debug, row, col, totalRows, totalCols, draftEdgeSides, fogged, fogEdges, fogPreview, revealedFogIds, highlightedNote }: CellProps) {
   const { selected, value, notes, fixedValue, fixedColor, color, borders, fixedBorders, labels, crossed, mark, fixedMark, fixedEdgeMarks, fixedVertexMarks, edgeCrosses, edgeDirections, lines, fixedLines, image, fixedTexture } = data
 
   const hasLines = lines[0] || lines[1] || lines[2] || lines[3]
@@ -186,6 +187,7 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
   if (beingSelected) tdClass += ' cell-being-selected'
   if (fogged) tdClass += ' cell-fogged'
   if (hasLines) tdClass += ' cell-has-lines'
+  if (highlightedNote && !crossed && notes.includes(highlightedNote)) tdClass += ' cell-note-highlight'
 
   let divClass = 'cell-inner'
   if (!fogged) {

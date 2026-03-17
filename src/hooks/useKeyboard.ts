@@ -17,6 +17,11 @@ interface UseKeyboardOptions {
   onActiveMarkChange?: (mark: MarkShape | null) => void
   toggleMark?: (shape: MarkShape) => void
   hasSelection?: boolean
+  selectionCount?: number
+  clearSelection?: () => void
+  onHighlightedNoteChange?: (note: string | null) => void
+  highlightedNote?: string | null
+  isMurdoku?: boolean
   onInputModeChange?: (mode: InputMode) => void
   puzzleType?: string
   isEditor?: boolean
@@ -100,14 +105,30 @@ export function useKeyboard(options: UseKeyboardOptions) {
       if (e.shiftKey) {
         const unshifted = getUnshiftedKey(e.code)
         if (unshifted) {
-          options.addNote(unshifted)
+          if (options.isMurdoku) {
+            options.addNote(unshifted)
+            options.clearSelection?.()
+            options.onHighlightedNoteChange?.(unshifted)
+          } else {
+            options.addNote(unshifted)
+          }
         }
         return
       }
 
       switch (options.inputMode) {
         case 'normal':
-          options.applyValue(value)
+          if (options.isMurdoku && (options.selectionCount ?? 0) > 1) {
+            options.addNote(value)
+            options.clearSelection?.()
+            options.onHighlightedNoteChange?.(value)
+          } else if (options.isMurdoku && (options.selectionCount ?? 0) === 1) {
+            options.applyValue(value)
+            options.clearSelection?.()
+            options.onHighlightedNoteChange?.(value)
+          } else {
+            options.applyValue(value)
+          }
           break
         case 'color':
           if (value === '0') {
@@ -141,7 +162,13 @@ export function useKeyboard(options: UseKeyboardOptions) {
           }
           break
         case 'note':
-          options.addNote(value)
+          if (options.isMurdoku) {
+            options.addNote(value)
+            options.clearSelection?.()
+            options.onHighlightedNoteChange?.(value)
+          } else {
+            options.addNote(value)
+          }
           break
         case 'mark': {
           const SHAPES: MarkShape[] = ['circle', 'square', 'triangle', 'diamond', 'pentagon', 'hexagon', 'star', 'dot', 'bigcircle', 'bigcirclefilled', 'dashV', 'dashH']
@@ -158,5 +185,5 @@ export function useKeyboard(options: UseKeyboardOptions) {
 
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.redo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark, options.hasSelection, options.onInputModeChange, options.puzzleType, options.isEditor])
+  }, [options.inputMode, options.applyValue, options.applyColor, options.applyFixedValue, options.applyFixedColor, options.addNote, options.clearValues, options.eraseColor, options.undo, options.redo, options.onEnter, options.onActiveColorChange, options.onActiveMarkChange, options.toggleMark, options.hasSelection, options.selectionCount, options.clearSelection, options.onHighlightedNoteChange, options.highlightedNote, options.isMurdoku, options.onInputModeChange, options.puzzleType, options.isEditor])
 }

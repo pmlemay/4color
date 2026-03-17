@@ -85,6 +85,38 @@
   box-sizing: border-box;
 }
 
+.tb-values {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+}
+
+.tb-val-btn {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  background: var(--btn-bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tb-val-btn:hover {
+  background: var(--btn-hover);
+}
+
+.tb-val-btn.tb-val-highlighted {
+  background-color: lightseagreen;
+  border-color: lightseagreen;
+  color: white;
+  font-weight: 800;
+}
+
 .tb-palette {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

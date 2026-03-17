@@ -401,13 +401,29 @@
   height: auto;
 }
 
+/* Note highlight */
+.cell-note-highlight {
+  position: relative;
+}
+
+.cell-note-highlight::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: rgba(32, 178, 170, 0.25);
+  border: 3px solid rgba(32, 178, 170, 0.8);
+  border-radius: 2px;
+  z-index: 10;
+  pointer-events: none;
+}
+
 /* Notes grid */
 .notes-grid {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   width: 100%;
   height: 100%;
   line-height: 1;
@@ -416,7 +432,7 @@
 }
 
 .note-item {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: bold;
   color: #222;
   line-height: 1;

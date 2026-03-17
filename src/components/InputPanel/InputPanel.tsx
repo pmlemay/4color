@@ -30,6 +30,11 @@ interface InputPanelProps {
   onSubmit?: () => void
   puzzleType?: string
   puzzleHasClickActions?: boolean
+  highlightedNote?: string | null
+  onHighlightedNoteChange?: (note: string | null) => void
+  selectionCount?: number
+  clearSelection?: () => void
+  isMurdoku?: boolean
 }
 
 const PLAYER_MODES: { mode: InputMode; label: string; icon: string }[] = [
@@ -63,13 +68,32 @@ export function InputPanel({
   onSubmit,
   puzzleType,
   puzzleHasClickActions = false,
+  highlightedNote = null,
+  onHighlightedNoteChange,
+  selectionCount = 0,
+  clearSelection,
+  isMurdoku = false,
 }: InputPanelProps) {
   const isNoteMode = inputMode === 'note'
   const isColorMode = inputMode === 'color'
   const isMarkMode = inputMode === 'mark'
 
   const handleValueTap = (val: string) => {
-    if (isNoteMode) {
+    if (isMurdoku) {
+      if (selectionCount === 0 && highlightedNote === val) {
+        onHighlightedNoteChange?.(null)
+      } else if (isNoteMode || selectionCount > 1) {
+        if (selectionCount > 0) onNoteInput(val)
+        clearSelection?.()
+        onHighlightedNoteChange?.(val)
+      } else if (selectionCount === 1) {
+        onValueInput(val)
+        clearSelection?.()
+        onHighlightedNoteChange?.(val)
+      } else {
+        onHighlightedNoteChange?.(val)
+      }
+    } else if (isNoteMode) {
       onNoteInput(val)
     } else {
       onValueInput(val)
@@ -107,7 +131,7 @@ export function InputPanel({
         {(inputMode === 'normal' || isNoteMode) && (
           <div className="ip-values">
             {valueSet.map(v => (
-              <button key={v} className="ip-val-btn" onClick={() => handleValueTap(v)}>
+              <button key={v} className={`ip-val-btn${isMurdoku && highlightedNote === v ? ' ip-val-highlighted' : ''}`} onClick={() => handleValueTap(v)}>
                 {v}
               </button>
             ))}

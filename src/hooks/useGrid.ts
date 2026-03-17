@@ -5,7 +5,7 @@ import { createEmptyGrid } from '../utils/puzzleIO'
 import { applyBordersToSelection } from '../utils/borders'
 import { getAutoCrossTargets } from '../utils/autoCross'
 
-const MAX_NOTES = 16
+const MAX_NOTES = 9
 const MAX_UNDO = 500
 
 function cloneGrid(grid: CellData[][]): CellData[][] {
