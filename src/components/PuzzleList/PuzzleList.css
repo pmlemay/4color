@@ -264,6 +264,7 @@
   display: block;
   flex: 1;
   padding: 16px;
+  min-height: 150px;
   border: none;
   border-radius: 0;
   text-decoration: none;
@@ -317,9 +318,28 @@
   opacity: 0.7;
 }
 
+.puzzle-thumbnail {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  max-width: 64px;
+  max-height: 64px;
+  width: auto;
+  height: auto;
+  opacity: 0.7;
+  pointer-events: none;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.puzzle-card:hover .puzzle-thumbnail {
+  opacity: 1;
+}
+
 .puzzle-card h3 {
   margin: 0 0 8px;
   font-size: 18px;
+  padding-right: 68px;
 }
 
 .puzzle-difficulty {
@@ -415,9 +435,10 @@
 /* Tags on cards */
 .puzzle-tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 4px;
   margin-top: 6px;
+  overflow: hidden;
 }
 
 .puzzle-tag {
@@ -427,6 +448,8 @@
   background: var(--btn-bg);
   color: var(--text-muted);
   font-size: 11px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Currently playing */
@@ -436,36 +459,35 @@
   align-items: center;
   gap: 4px;
   margin-top: 6px;
-  font-size: 11px;
-}
-
-.currently-playing-label {
-  color: #22c55e;
-  font-weight: 600;
 }
 
 .currently-playing-name {
-  padding: 0 6px;
+  padding: 1px 7px;
   border-radius: 8px;
   background: rgba(34, 197, 94, 0.15);
   color: #22c55e;
   font-size: 11px;
-  line-height: 1.6;
+  line-height: 1.7;
+  white-space: nowrap;
 }
 
 .currently-playing-more {
+  padding: 1px 7px;
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.15);
   color: #22c55e;
   font-size: 11px;
-  font-style: italic;
+  line-height: 1.7;
+  white-space: nowrap;
 }
 
 .completed-info {
-  position: absolute;
-  bottom: 8px;
-  right: 10px;
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-top: 6px;
+  margin-right: 6px;
+  justify-content: flex-end;
 }
 
 .completed-badge {

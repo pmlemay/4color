@@ -14,7 +14,8 @@
     ],
     "puzzleType": "archipelago",
     "clickActionLeft": "color:9",
-    "clickActionRight": "color:5"
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/archipelago-tutorial.png"
   },
   {
     "id": "haunted-lighthouse-murdoku",
@@ -34,7 +35,8 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/haunted-lighthouse-murdoku.png"
   },
   {
     "id": "dinner-party-murdoku",
@@ -54,7 +56,8 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/dinner-party-murdoku.png"
   },
   {
     "id": "cocktail-lamp-tutorial",
@@ -71,7 +74,8 @@
     ],
     "puzzleType": "cocktaillamp",
     "clickActionLeft": "color:9",
-    "clickActionRight": "color:5"
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/cocktail-lamp-tutorial.png"
   },
   {
     "id": "heyawake-tutorial",
@@ -88,7 +92,8 @@
     ],
     "puzzleType": "heyawake",
     "clickActionLeft": "color:9",
-    "clickActionRight": "color:5"
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/heyawake-tutorial.png"
   },
   {
     "id": "lits-tutorial",
@@ -105,7 +110,8 @@
     ],
     "puzzleType": "lits",
     "clickActionLeft": "color:9",
-    "clickActionRight": "mark:dot"
+    "clickActionRight": "mark:dot",
+    "thumbnail": "thumbnails/lits-tutorial.png"
   },
   {
     "id": "nurikabe-tutorial",
@@ -122,7 +128,8 @@
     ],
     "puzzleType": "nurikabe",
     "clickActionLeft": "color:9",
-    "clickActionRight": "mark:dot"
+    "clickActionRight": "mark:dot",
+    "thumbnail": "thumbnails/nurikabe-tutorial.png"
   },
   {
     "id": "sample-4-color-puzzle",
@@ -139,7 +146,8 @@
     "tags": [
       "4color"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/sample-4-color-puzzle.png"
   },
   {
     "id": "yajilin-tutorial",
@@ -156,7 +164,8 @@
     ],
     "puzzleType": "yajilin",
     "clickActionLeft": "line",
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/yajilin-tutorial.png"
   },
   {
     "id": "star-battle-tutorial",
@@ -176,7 +185,8 @@
     ],
     "puzzleType": "starbattle",
     "clickActionLeft": "mark:star",
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/star-battle-tutorial.png"
   },
   {
     "id": "neighbourhood-watch-murdoku",
@@ -196,7 +206,8 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/neighbourhood-watch-murdoku.png"
   },
   {
     "id": "spiral-galaxy-2",
@@ -214,7 +225,8 @@
       "Spiral-galaxy"
     ],
     "puzzleType": "spiralgalaxy",
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/spiral-galaxy-2.png"
   },
   {
     "id": "cave-tutorial",
@@ -231,7 +243,8 @@
     ],
     "puzzleType": "cave",
     "clickActionLeft": "color:9",
-    "clickActionRight": "color:5"
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/cave-tutorial.png"
   },
   {
     "id": "hard-4color",
@@ -248,7 +261,8 @@
     "tags": [
       "4color"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/hard-4color.png"
   },
   {
     "id": "icebarn-tutorial",
@@ -265,7 +279,8 @@
     ],
     "puzzleType": "icebarn",
     "clickActionLeft": "line",
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/icebarn-tutorial.png"
   },
   {
     "id": "slalom-tutorial",
@@ -282,7 +297,8 @@
     ],
     "puzzleType": "slalom",
     "clickActionLeft": "line",
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/slalom-tutorial.png"
   },
   {
     "id": "starbattle-murdoku",
@@ -304,7 +320,8 @@
       "king",
       "rook"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/starbattle-murdoku.png"
   },
   {
     "id": "pirate-ship-murdoku",
@@ -324,7 +341,8 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/pirate-ship-murdoku.png"
   },
   {
     "id": "knights-murdoku",
@@ -344,7 +362,8 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/knights-murdoku.png"
   },
   {
     "id": "nurikabe-murdoku",
@@ -365,7 +384,8 @@
     "autoCrossRules": [
       "rook"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/nurikabe-murdoku.png"
   },
   {
     "id": "4color-3",
@@ -382,7 +402,8 @@
     "tags": [
       "4color"
     ],
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/4color-3.png"
   },
   {
     "id": "castle-siege-murdoku",
@@ -403,7 +424,8 @@
       "rook"
     ],
     "clickActionRight": "cross",
-    "inProgress": true
+    "inProgress": true,
+    "thumbnail": "thumbnails/castle-siege-murdoku.png"
   },
   {
     "id": "spiral-galaxy-murdoku",
@@ -420,7 +442,8 @@
     "tags": [
       "Murdoku",
       "Spiral-galaxy"
-    ]
+    ],
+    "thumbnail": "thumbnails/spiral-galaxy-murdoku.png"
   },
   {
     "id": "space-station-murdoku",
@@ -443,7 +466,8 @@
     ],
     "puzzleType": "murdoku",
     "clickActionRight": "cross",
-    "inProgress": true
+    "inProgress": true,
+    "thumbnail": "thumbnails/space-station-murdoku.png"
   },
   {
     "id": "formula1-murdoku",
@@ -464,7 +488,8 @@
       "rook"
     ],
     "puzzleType": "murdoku",
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/formula1-murdoku.png"
   },
   {
     "id": "adventure-1",
@@ -485,6 +510,7 @@
       "Nurikabe"
     ],
     "clickActionLeft": "color:4",
-    "clickActionRight": "color:5"
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/adventure-1.png"
   }
 ]

@@ -341,26 +341,28 @@ export function PuzzleList() {
                   {group.puzzles.map(p => (
                     <div key={p.id} className={`puzzle-card-row${p.inProgress ? ' puzzle-in-progress' : ''}`}>
                       <Link to={`/play/${p.id}`} className={`puzzle-card${completedPuzzleIds.has(p.id) ? ' puzzle-completed' : ''}`}>
+                        {p.thumbnail && <img src={`${import.meta.env.BASE_URL}puzzles/${p.thumbnail}`} alt="" className="puzzle-thumbnail" />}
                         <h3>{p.title}</h3>
                         <p className="puzzle-meta">
                           {p.authors && p.authors.length > 0 ? <>by {p.authors.join(', ')} &middot; </> : ''}{p.gridSize.rows}&times;{p.gridSize.cols}
                         </p>
                         {p.tags && p.tags.length > 0 && (
                           <div className="puzzle-tags">
-                            {p.tags.map(t => <span key={t} className="puzzle-tag">{t}</span>)}
+                            {p.tags.slice(0, 3).map(t => <span key={t} className="puzzle-tag">{t}</span>)}
+                            {p.tags.length > 3 && <span className="puzzle-tag puzzle-tag-more">+{p.tags.length - 3}</span>}
                           </div>
                         )}
                         {activePlayers.has(p.id) && (() => {
                           const all = activePlayers.get(p.id)!
-                          const shown = all.slice(0, 4)
-                          const extra = all.length - 4
+                          const shown = all.slice(0, 3)
+                          const extra = all.length - 3
+                          const truncate = (s: string) => s.length > 10 ? s.slice(0, 10) + '\u2026' : s
                           return (
                             <div className="currently-playing">
-                              <span className="currently-playing-label">Playing now:</span>
                               {shown.map(ap => (
-                                <span key={ap.uid} className="currently-playing-name notranslate">{ap.displayName}</span>
+                                <span key={ap.uid} className="currently-playing-name notranslate" title={ap.displayName}>{truncate(ap.displayName)}</span>
                               ))}
-                              {extra > 0 && <span className="currently-playing-more">+{extra} {extra === 1 ? 'other' : 'others'}</span>}
+                              {extra > 0 && <span className="currently-playing-more">+{extra}</span>}
                             </div>
                           )
                         })()}

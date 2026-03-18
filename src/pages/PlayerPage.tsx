@@ -32,6 +32,7 @@ import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { incrementPuzzleCompletions } from '../utils/puzzleStats'
 import { usePresence } from '../hooks/usePresence'
+import { captureThumbnail } from '../utils/captureThumbnail'
 
 export function PlayerPage() {
   const { puzzleId } = useParams()
@@ -58,10 +59,11 @@ export function PlayerPage() {
   const { modalProps, showAlert, showConfirm } = useModal()
   const { completedPuzzleIds, completionTimes, markCompleted } = useCompletions()
   const gridState = useGrid(1, 1)
-  // Clear note highlight when leaving normal/note mode
+  // Clear note highlight when leaving normal/note mode or when interacting with grid in other ways
   useEffect(() => {
     if (gridState.inputMode !== 'note' && gridState.inputMode !== 'normal') setHighlightedNote(null)
   }, [gridState.inputMode])
+  const clearHighlightOnAction = useCallback(() => setHighlightedNote(null), [])
   const timer = useTimer(0)
   const puzzleLeaderboard = usePuzzleLeaderboard(puzzleId)
   const timerRef = useRef(timer)
@@ -151,6 +153,13 @@ export function PlayerPage() {
     })
     return () => { cancelled = true }
   }, [puzzleId])
+
+  // Capture thumbnail after puzzle grid renders (dev only)
+  useEffect(() => {
+    if (!puzzleId || loading || !puzzle) return
+    const timer = setTimeout(() => captureThumbnail(puzzleId), 1500)
+    return () => clearTimeout(timer)
+  }, [puzzleId, loading, puzzle])
 
   // React to completedPuzzleIds loading (may arrive after puzzle fetch)
   useEffect(() => {
@@ -652,14 +661,14 @@ export function PlayerPage() {
       clearSelection={handleClearSelection}
       commitSelection={handleCommitSelection}
       onDragChange={handleDragChange}
-      onLeftClickCell={isSuggestedMode && clickActionLeft && clickActionLeft !== 'line' ? handleLeftClickCell : undefined}
-      onRightClickCell={clickActionRight && clickActionRight !== 'line' ? handleRightClickCell : undefined}
-      onCommitEdges={gridState.commitEdges}
-      onToggleEdgeCross={gridState.toggleEdgeCross}
+      onLeftClickCell={isSuggestedMode && clickActionLeft && clickActionLeft !== 'line' ? (...a: Parameters<typeof handleLeftClickCell>) => { clearHighlightOnAction(); handleLeftClickCell(...a) } : undefined}
+      onRightClickCell={clickActionRight && clickActionRight !== 'line' ? (...a: Parameters<typeof handleRightClickCell>) => { clearHighlightOnAction(); handleRightClickCell(...a) } : undefined}
+      onCommitEdges={(...a) => { clearHighlightOnAction(); gridState.commitEdges(...a) }}
+      onToggleEdgeCross={(...a) => { clearHighlightOnAction(); gridState.toggleEdgeCross(...a) }}
       onCycleEdgeMark={gridState.cycleEdgeMark}
-      onToggleLine={gridState.toggleLine}
-      onLineCenterClick={handleLineCenterClick}
-      onLineRightCenterClick={handleLineRightCenterClick}
+      onToggleLine={(...a) => { clearHighlightOnAction(); gridState.toggleLine(...a) }}
+      onLineCenterClick={(...a) => { clearHighlightOnAction(); handleLineCenterClick(...a) }}
+      onLineRightCenterClick={(...a) => { clearHighlightOnAction(); handleLineRightCenterClick(...a) }}
       isPinching={gridScale.isPinching}
       isTouchDragRef={isTouchDragRef}
       foggedCells={foggedCells}

@@ -24,6 +24,13 @@ function rebuildPuzzleIndex(writeVersion = true) {
     if (data.clickActionLeft) entry.clickActionLeft = data.clickActionLeft
     if (data.clickActionRight) entry.clickActionRight = data.clickActionRight
     if (data.inProgress) entry.inProgress = true
+    // Check for captured thumbnail PNG
+    const safeId = String(data.id).replace(/[^a-z0-9_-]/gi, '_')
+    const thumbDir = join(puzzlesDir, 'thumbnails')
+    const thumbPath = join(thumbDir, `${safeId}.png`)
+    if (existsSync(thumbPath)) {
+      entry.thumbnail = `thumbnails/${safeId}.png`
+    }
     return entry
   })
   index.sort((a: any, b: any) => {
@@ -49,6 +56,21 @@ function puzzleSavePlugin(): Plugin {
     configureServer(server) {
       // Serve puzzle JSON files directly from disk so newly added files work without restart
       // Serve puzzle and solution JSON from disk with no-cache so newly saved files are available immediately
+      // Serve thumbnail PNGs from disk (directory may be created after server start)
+      server.middlewares.use((req, res, next) => {
+        const thumbMatch = req.url?.match(/^(?:\/4color)?\/puzzles\/thumbnails\/([^/]+\.png)$/)
+        if (thumbMatch) {
+          const filePath = join(__dirname, 'public', 'puzzles', 'thumbnails', thumbMatch[1])
+          if (existsSync(filePath)) {
+            res.setHeader('Content-Type', 'image/png')
+            res.setHeader('Cache-Control', 'no-cache, no-store')
+            res.end(readFileSync(filePath))
+            return
+          }
+        }
+        next()
+      })
+
       server.middlewares.use((req, res, next) => {
         // Match /puzzles/*.json or /4color/puzzles/*.json
         const puzzleMatch = req.url?.match(/^(?:\/4color)?\/puzzles\/([^/.]+\.json)$/)
@@ -117,6 +139,37 @@ function puzzleSavePlugin(): Plugin {
             // Rebuild index (skip version.json to avoid triggering reload)
             rebuildPuzzleIndex(false)
 
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ ok: true, file: targetFile }))
+          } catch (e: unknown) {
+            res.statusCode = 500
+            res.end(JSON.stringify({ ok: false, error: String(e) }))
+          }
+        })
+      })
+
+      server.middlewares.use('/api/save-thumbnail', (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405
+          res.end('Method not allowed')
+          return
+        }
+        let body = ''
+        req.on('data', chunk => { body += chunk })
+        req.on('end', () => {
+          try {
+            const { id, dataUrl } = JSON.parse(body)
+            const safeId = String(id).replace(/[^a-z0-9_-]/gi, '_')
+            if (!safeId) { res.statusCode = 400; res.end('Invalid id'); return }
+            const dir = join(__dirname, 'public', 'puzzles', 'thumbnails')
+            mkdirSync(dir, { recursive: true })
+            // dataUrl is "data:image/png;base64,..."
+            const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '')
+            const buf = Buffer.from(base64, 'base64')
+            const targetFile = `${safeId}.png`
+            writeFileSync(join(dir, targetFile), buf)
+            // Rebuild index to pick up the new thumbnail
+            rebuildPuzzleIndex(false)
             res.setHeader('Content-Type', 'application/json')
             res.end(JSON.stringify({ ok: true, file: targetFile }))
           } catch (e: unknown) {

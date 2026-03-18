@@ -1,7 +1,8 @@
-import { readdirSync, readFileSync, writeFileSync } from 'fs'
+import { readdirSync, readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
 const puzzlesDir = join(import.meta.dirname, '..', 'public', 'puzzles')
+const thumbDir = join(puzzlesDir, 'thumbnails')
 const files = readdirSync(puzzlesDir).filter(f => f.endsWith('.json') && f !== 'index.json')
 
 let skipped = 0
@@ -23,6 +24,12 @@ const index = files.map(f => {
   if (data.clickActionLeft) entry.clickActionLeft = data.clickActionLeft
   if (data.clickActionRight) entry.clickActionRight = data.clickActionRight
   if (data.inProgress) entry.inProgress = true
+  // Check for captured thumbnail PNG
+  const safeId = String(data.id).replace(/[^a-z0-9_-]/gi, '_')
+  const thumbPath = join(thumbDir, `${safeId}.png`)
+  if (existsSync(thumbPath)) {
+    entry.thumbnail = `thumbnails/${safeId}.png`
+  }
   return entry
 })
 

@@ -98,6 +98,7 @@ export interface PuzzleIndexEntry {
   clickActionRight?: string
   forcedInputLayout?: string // backward compat only
   inProgress?: boolean
+  thumbnail?: string
 }
 
 export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon' | 'hexagon' | 'star' | 'dot' | 'bigcircle' | 'bigcirclefilled' | 'dashV' | 'dashH' | 'arrowLeft' | 'arrowDown' | 'arrowRight' | 'arrowUp'

@@ -40,8 +40,11 @@ export function useActivePlayers(): Map<string, ActivePlayer[]> {
         }
 
         const list = grouped.get(data.puzzleId)
-        if (list) list.push(entry)
-        else grouped.set(data.puzzleId, [entry])
+        if (list) {
+          if (!list.some(p => p.uid === entry.uid)) list.push(entry)
+        } else {
+          grouped.set(data.puzzleId, [entry])
+        }
       }
 
       setPlayers(grouped)

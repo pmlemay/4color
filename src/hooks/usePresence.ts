@@ -6,27 +6,43 @@ import { useCompletions } from './useCompletions'
 
 const HEARTBEAT_MS = 30_000
 
+function getSessionId(): string {
+  let id = sessionStorage.getItem('presenceSessionId')
+  if (!id) {
+    id = Math.random().toString(36).slice(2) + Date.now().toString(36)
+    sessionStorage.setItem('presenceSessionId', id)
+  }
+  return id
+}
+
 /**
- * Writes a presence document for the current signed-in user while they are on a puzzle page.
- * Heartbeats every 30s so stale entries can be detected. Cleans up on unmount / tab close.
+ * Writes a presence document while on a puzzle page.
+ * Doc ID is {userId}__{puzzleId} so multiple puzzles can be open simultaneously.
+ * Heartbeats every 30s so stale entries can be detected.
  */
 export function usePresence(puzzleId: string | undefined) {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const { displayName } = useCompletions()
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const docIdRef = useRef<string | null>(null)
+  const activeRefPath = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!user || !puzzleId) return
+    if (!puzzleId) return
+    // Wait for auth to resolve and displayName to load before writing
+    if (authLoading) return
+    if (user && !displayName) return
 
-    const docId = user.uid
-    docIdRef.current = docId
+    const userId = user ? user.uid : `anon_${getSessionId()}`
+    const docId = `${userId}__${puzzleId}`
     const ref = doc(db, 'presence', docId)
-    const name = displayName || user.displayName || 'Anonymous'
+    activeRefPath.current = docId
+    const name = user
+      ? (displayName || user.displayName || 'Anonymous')
+      : 'Anonymous'
 
     const write = () => {
       setDoc(ref, {
-        uid: user.uid,
+        uid: userId,
         displayName: name,
         puzzleId,
         lastSeen: serverTimestamp(),
@@ -39,17 +55,14 @@ export function usePresence(puzzleId: string | undefined) {
     // Heartbeat
     intervalRef.current = setInterval(write, HEARTBEAT_MS)
 
-    // Cleanup on unmount
     const cleanup = () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
+      intervalRef.current = null
       deleteDoc(ref).catch(() => {})
-      docIdRef.current = null
+      activeRefPath.current = null
     }
 
-    // Also clean up on tab close / navigation
     const handleUnload = () => {
-      // Use navigator.sendBeacon for reliability on tab close
-      // Fall back to deleteDoc which may not complete
       deleteDoc(ref).catch(() => {})
     }
 
@@ -61,5 +74,5 @@ export function usePresence(puzzleId: string | undefined) {
       window.removeEventListener('pagehide', handleUnload)
       cleanup()
     }
-  }, [user, puzzleId, displayName])
+  }, [user, authLoading, puzzleId, displayName])
 }
