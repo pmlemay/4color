@@ -4,7 +4,7 @@
 // (the gh-pages npm package can't handle 4000+ icon files).
 
 const { execSync } = require('child_process')
-const { mkdtempSync } = require('fs')
+const { mkdtempSync, cpSync, writeFileSync } = require('fs')
 const { join } = require('path')
 const os = require('os')
 
@@ -22,9 +22,9 @@ try {
   const run = (cmd) => execSync(cmd, { cwd: tmpDir, stdio: 'inherit' })
   run('git init')
   run('git checkout -b gh-pages')
-  execSync(`cp -r "${distDir}/"* "${tmpDir}/"`, { stdio: 'inherit' })
+  cpSync(join(__dirname, '..', 'dist'), tmpDir, { recursive: true })
   // .nojekyll prevents GitHub Pages from ignoring files starting with _
-  execSync(`touch "${tmpDir}/.nojekyll"`, { stdio: 'inherit' })
+  writeFileSync(join(tmpDir, '.nojekyll'), '')
   run('git add -A')
   run('git commit -m "Deploy"')
   run(`git remote add origin ${remote}`)
