@@ -1,5 +1,5 @@
 {
-  "id": "spiral-galaxy-murdoku",
+  "id": "spiral-galaxy-murdoku-2",
   "title": "Spiral Galaxy Murdoku",
   "authors": [
     "PmLemay"
@@ -10,32 +10,33 @@
     "3. All unoccupied rooms have exactly one black hole. All black holes are in unoccupied rooms. All black holes are shown."
   ],
   "rules": [
-    "Add borders to the grid to satisfy all special rules and all clues."
+    "Add borders to the grid to satisfy all special rules and all clues.",
+    "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
+    "Only 1 person per row and per column.",
+    "\"Beside\" means in the same room and orthogonally adjacent."
   ],
   "clues": [
-    "A (Alfred) His room shares at least 1 border with G and K's room",
-    "B (Bobby) His room shares at least 1 border with E's room",
-    "C (Charles) There is exactly 2 columns between his room and A's Room (at their closest point)",
-    "D (Denis) is in a room that borders at least 2 occupied rooms",
-    "E (Eric) His room layout and orientation is the same than F's room",
-    "F (Felix) His room shares at least 1 border with I room",
-    "G (Gerard) is in a room of area 1 which no other room can be, occupied or not.",
-    "H (Hector) His room area is at least triple the area of C's room",
-    "I (Idris) His room shares at least 3 horizontal borders with B's room",
-    "J (Joel) is in a room with the same area as D's room",
-    "K (Khan) His room reaches at least 1 cell higher than C's room",
-    "V (Vinny) is the victim and is alone with the killer"
+    "A (Woman - Agatha). She was in a room that shared a diagonnal corner with Ernest's room.",
+    "B (Man - Bradford). He was in a room that had at least a 2x2 region.",
+    "C (Woman - Celeste). Her room shared the same highest row as Ernest's room. (They both reach the same north-most row)",
+    "D (Man - Duncan). His room area was smaller than Helen's room.",
+    "E (Man - Ernest). He was in a room with the same total height as 2 other rooms.",
+    "F (Man - Finnegan). His room area was the same as only one other person's room area.",
+    "G (Man - George). His room shares a border with Celeste's room.",
+    "H (Woman - Helen). Her room shares borders with 3 other people's room.",
+    "V (Woman - Virginia). The victim. She was alone with the murderer."
   ],
-  "difficulty": "Very hard",
+  "difficulty": "Hard",
   "tags": [
     "Murdoku",
     "Spiral-galaxy"
   ],
   "autoCrossRules": [],
+  "puzzleType": "murdoku",
   "clickActionRight": "cross",
   "gridSize": {
-    "rows": 12,
-    "cols": 12
+    "rows": 9,
+    "cols": 9
   },
   "cells": [
     {
@@ -45,38 +46,28 @@
     },
     {
       "row": 0,
+      "col": 6,
+      "fixedValue": "D"
+    },
+    {
+      "row": 0,
       "col": 8,
-      "fixedValue": "G"
+      "image": "img0"
     },
     {
       "row": 1,
-      "col": 9,
+      "col": 2,
       "fixedValue": "A"
     },
     {
-      "row": 1,
-      "col": 11,
-      "image": "img0"
-    },
-    {
       "row": 2,
-      "col": 2,
-      "fixedValue": "C"
-    },
-    {
-      "row": 3,
       "col": 3,
-      "image": "img0"
+      "fixedValue": "V"
     },
     {
       "row": 3,
-      "col": 7,
-      "fixedValue": "K"
-    },
-    {
-      "row": 4,
-      "col": 0,
-      "image": "img0"
+      "col": 5,
+      "fixedValue": "B"
     },
     {
       "row": 4,
@@ -84,59 +75,34 @@
       "fixedValue": "E"
     },
     {
-      "row": 5,
-      "col": 5,
-      "fixedValue": "B"
+      "row": 4,
+      "col": 2,
+      "image": "img0"
     },
     {
       "row": 5,
-      "col": 7,
+      "col": 4,
+      "fixedValue": "C"
+    },
+    {
+      "row": 6,
+      "col": 5,
       "image": "img0"
     },
     {
       "row": 6,
-      "col": 0,
-      "fixedValue": "V"
-    },
-    {
-      "row": 7,
-      "col": 10,
-      "fixedValue": "F"
-    },
-    {
-      "row": 8,
-      "col": 4,
-      "fixedValue": "I"
-    },
-    {
-      "row": 9,
-      "col": 1,
-      "image": "img0"
-    },
-    {
-      "row": 9,
-      "col": 10,
-      "image": "img0"
-    },
-    {
-      "row": 9,
-      "col": 11,
-      "fixedValue": "J"
-    },
-    {
-      "row": 10,
-      "col": 4,
-      "image": "img0"
-    },
-    {
-      "row": 10,
-      "col": 6,
+      "col": 8,
       "fixedValue": "H"
     },
     {
-      "row": 11,
-      "col": 3,
-      "fixedValue": "D"
+      "row": 7,
+      "col": 7,
+      "fixedValue": "G"
+    },
+    {
+      "row": 8,
+      "col": 0,
+      "fixedValue": "F"
     }
   ],
   "createdAt": "2026-03-19",

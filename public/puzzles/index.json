@@ -345,6 +345,26 @@
     "thumbnail": "thumbnails/pirate-ship-murdoku.png"
   },
   {
+    "id": "spiral-galaxy-murdoku-2",
+    "file": "spiral-galaxy-murdoku-2.json",
+    "title": "Spiral Galaxy Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Murdoku",
+      "Spiral-galaxy"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/spiral-galaxy-murdoku-2.png"
+  },
+  {
     "id": "knights-murdoku",
     "file": "knights-murdoku.json",
     "title": "Knights Murdoku",
@@ -443,6 +463,7 @@
       "Murdoku",
       "Spiral-galaxy"
     ],
+    "clickActionRight": "cross",
     "thumbnail": "thumbnails/spiral-galaxy-murdoku.png"
   },
   {
