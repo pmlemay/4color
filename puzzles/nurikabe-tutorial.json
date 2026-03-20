@@ -1,0 +1,61 @@
+{
+  "id": "nurikabe-tutorial",
+  "title": "Nurikabe Tutorial",
+  "authors": [],
+  "rules": [
+    "Each island (dots) contains exactly one clue.",
+    "The number of squares in each island equals the value of the clue.",
+    "All islands are isolated from each other horizontally and vertically.",
+    "There are no shaded (black) areas of 2x2 or larger.",
+    "When completed, all shaded cells form a continuous path."
+  ],
+  "clues": [
+    "The 5 goes down 4 and left 1",
+    "The 3 goes left then up"
+  ],
+  "difficulty": "Very easy",
+  "tags": [
+    "Nurikabe"
+  ],
+  "autoCrossRules": [],
+  "puzzleType": "nurikabe",
+  "clickActionLeft": "color:9",
+  "clickActionRight": "mark:dot",
+  "gridSize": {
+    "rows": 6,
+    "cols": 6
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "fixedValue": "1"
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "fixedValue": "2"
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "fixedValue": "5"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedValue": "1"
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "fixedValue": "3"
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "fixedValue": "2"
+    }
+  ],
+  "createdAt": "2026-03-14"
+}
