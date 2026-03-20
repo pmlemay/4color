@@ -205,7 +205,8 @@
     ],
     "puzzleType": "ero-regions",
     "clickActionLeft": "edge",
-    "clickActionRight": "cross"
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/ero-regions.png"
   },
   {
     "id": "neighbourhood-watch-murdoku",
