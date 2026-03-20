@@ -406,6 +406,11 @@ export function PuzzleList() {
                 Rule text source:{' '}
                 <a href="https://docs.google.com/document/d/11U3UAH6V7k9JTpF_WIKLiREc5KYbJGQP89EUBMLtjW0/edit?tab=t.0" target="_blank" rel="noopener noreferrer">Eric Fox's Dictionary of Rulesets</a>.
               </p>
+              <p style={{ marginTop: 4 }}>
+                Thank you to Manuel Garand, creator of the{' '}
+                <a href="https://www.murdoku.com/play/" target="_blank" rel="noopener noreferrer">Murdoku</a>{' '}
+                puzzle type.
+              </p>
             </div>
             <div className="modal-actions">
               <button className="modal-btn" onClick={() => setShowAbout(false)}>Close</button>
