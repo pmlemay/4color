@@ -157,7 +157,7 @@ export function PlayerPage() {
   // Capture thumbnail after puzzle grid renders (dev only)
   useEffect(() => {
     if (!puzzleId || loading || !puzzle) return
-    const timer = setTimeout(() => captureThumbnail(puzzleId), 1500)
+    const timer = setTimeout(() => captureThumbnail(puzzleId), 500)
     return () => clearTimeout(timer)
   }, [puzzleId, loading, puzzle])
 

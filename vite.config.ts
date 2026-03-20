@@ -163,11 +163,18 @@ function puzzleSavePlugin(): Plugin {
             if (!safeId) { res.statusCode = 400; res.end('Invalid id'); return }
             const dir = join(__dirname, 'public', 'puzzles', 'thumbnails')
             mkdirSync(dir, { recursive: true })
+            const targetFile = `${safeId}.png`
+            const targetPath = join(dir, targetFile)
+            // Never overwrite an existing thumbnail
+            if (existsSync(targetPath)) {
+              res.setHeader('Content-Type', 'application/json')
+              res.end(JSON.stringify({ ok: true, file: targetFile, skipped: true }))
+              return
+            }
             // dataUrl is "data:image/png;base64,..."
             const base64 = dataUrl.replace(/^data:image\/\w+;base64,/, '')
             const buf = Buffer.from(base64, 'base64')
-            const targetFile = `${safeId}.png`
-            writeFileSync(join(dir, targetFile), buf)
+            writeFileSync(targetPath, buf)
             // Rebuild index to pick up the new thumbnail
             rebuildPuzzleIndex(false)
             res.setHeader('Content-Type', 'application/json')
