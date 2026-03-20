@@ -236,6 +236,9 @@ export function InputPanel({
         {inputMode === 'suggested' && puzzleType === 'archipelago' && (
           <div className="ip-hint">Tap: black &rarr; green &rarr; clear</div>
         )}
+        {inputMode === 'suggested' && puzzleType === 'ero-regions' && (
+          <div className="ip-hint">Drag edges to draw borders</div>
+        )}
 
         {/* Border, edge and cross modes: no extra context buttons, just the mode is enough */}
         {(inputMode === 'cross' || inputMode === 'border' || inputMode === 'edge' || inputMode === 'line') && (

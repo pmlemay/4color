@@ -298,6 +298,7 @@ export function PlayerPage() {
   const suggestedEffectiveMode: InputMode = (() => {
     if (!clickActionLeft) return 'normal'
     if (clickActionLeft === 'line') return 'line'
+    if (clickActionLeft === 'edge') return 'edge'
     if (clickActionLeft.startsWith('color:')) return 'color'
     if (clickActionLeft.startsWith('mark:')) return 'mark'
     if (clickActionLeft === 'cross') return 'cross'
@@ -481,7 +482,7 @@ export function PlayerPage() {
   const touchProcessed = useRef<Set<string>>(new Set())
 
   const handleDragChange = useCallback((sel: CellPosition[]) => {
-    if (!isSuggestedMode || !clickActionLeft || clickActionLeft === 'line') {
+    if (!isSuggestedMode || !clickActionLeft || clickActionLeft === 'line' || clickActionLeft === 'edge') {
       gridState.onDragChange(sel)
       return
     }
@@ -661,7 +662,7 @@ export function PlayerPage() {
       clearSelection={handleClearSelection}
       commitSelection={handleCommitSelection}
       onDragChange={handleDragChange}
-      onLeftClickCell={isSuggestedMode && clickActionLeft && clickActionLeft !== 'line' ? (...a: Parameters<typeof handleLeftClickCell>) => { clearHighlightOnAction(); handleLeftClickCell(...a) } : undefined}
+      onLeftClickCell={isSuggestedMode && clickActionLeft && clickActionLeft !== 'line' && clickActionLeft !== 'edge' ? (...a: Parameters<typeof handleLeftClickCell>) => { clearHighlightOnAction(); handleLeftClickCell(...a) } : undefined}
       onRightClickCell={clickActionRight && clickActionRight !== 'line' ? (...a: Parameters<typeof handleRightClickCell>) => { clearHighlightOnAction(); handleRightClickCell(...a) } : undefined}
       onCommitEdges={(...a) => { clearHighlightOnAction(); gridState.commitEdges(...a) }}
       onToggleEdgeCross={(...a) => { clearHighlightOnAction(); gridState.toggleEdgeCross(...a) }}

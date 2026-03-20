@@ -301,6 +301,13 @@ export function EditorPage() {
     'The loop may not enter blackened cells, and must pass straight through each gate exactly once.',
     'If a number N is pointing at a gate, it must be the Nth gate visited from the circle.',
   ]
+  const ERO_REGIONS_RULES = [
+    'Divide the grid into regions by drawing borders.',
+    'Exactly 1 letter per region.',
+    'O = Odd cell count & non-rectangular region.',
+    'E = Even cell count & non-rectangular region.',
+    'R = Rectangular region, either odd or even.',
+  ]
   const PUZZLE_TYPE_RULES: Record<string, string[]> = {
     heyawake: HEYAWAKE_RULES,
     nurikabe: NURIKABE_RULES,
@@ -315,6 +322,7 @@ export function EditorPage() {
     archipelago: ARCHIPELAGO_RULES,
     icewalk: ICEWALK_RULES,
     murdoku: MURDOKU_RULES,
+    'ero-regions': ERO_REGIONS_RULES,
   }
   const PUZZLE_TYPE_TITLES: Record<string, string> = {
     heyawake: 'Heyawake',
@@ -330,6 +338,7 @@ export function EditorPage() {
     archipelago: 'Archipelago',
     icewalk: 'Ice Walk',
     murdoku: 'Murdoku',
+    'ero-regions': 'ERO Regions',
   }
   const PUZZLE_TYPE_TAGS: Record<string, string> = {
     heyawake: 'Heyawake',
@@ -345,6 +354,7 @@ export function EditorPage() {
     archipelago: 'Archipelago',
     icewalk: 'Ice-walk',
     murdoku: 'Murdoku',
+    'ero-regions': 'ERO-regions',
   }
   const prevPuzzleType = useRef(puzzleType)
 
@@ -1432,6 +1442,7 @@ export function EditorPage() {
                 <option value="archipelago">Archipelago</option>
                 <option value="icewalk">Ice Walk</option>
                 <option value="murdoku">Murdoku</option>
+                <option value="ero-regions">ERO Regions</option>
               </select>
             </div>
             <div className="info-editor-field">
@@ -1463,6 +1474,7 @@ export function EditorPage() {
                 <optgroup label="Other">
                   <option value="cross">Cross</option>
                   <option value="line">Line</option>
+                  <option value="edge">Edge</option>
                 </optgroup>
               </select>
             </div>
@@ -1494,6 +1506,7 @@ export function EditorPage() {
                 </optgroup>
                 <optgroup label="Other">
                   <option value="cross">Cross</option>
+                  <option value="edge">Edge</option>
                 </optgroup>
               </select>
             </div>

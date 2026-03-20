@@ -1,0 +1,125 @@
+{
+  "id": "ero-regions",
+  "title": "ERO Regions",
+  "authors": [
+    "Xx_Henry_xX"
+  ],
+  "rules": [
+    "Divide the grid into regions by drawing borders.",
+    "Exactly 1 letter per region.",
+    "O = Odd cell count & non-rectangular region.",
+    "E = Even cell count & non-rectangular region.",
+    "R = Rectangular region, either odd or even."
+  ],
+  "clues": [],
+  "difficulty": "Easy",
+  "tags": [
+    "ERO-regions"
+  ],
+  "autoCrossRules": [],
+  "puzzleType": "ero-regions",
+  "clickActionLeft": "edge",
+  "clickActionRight": "cross",
+  "gridSize": {
+    "rows": 7,
+    "cols": 7
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 5,
+      "fixedValue": "R"
+    },
+    {
+      "row": 0,
+      "col": 6,
+      "fixedValue": "R"
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "fixedValue": "E"
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "fixedValue": "R"
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "fixedValue": "O"
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "fixedValue": "O"
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "fixedValue": "R"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedValue": "E"
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "fixedValue": "O"
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "fixedValue": "R"
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "fixedValue": "E"
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "fixedValue": "R"
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "fixedValue": "O"
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "fixedValue": "R"
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "fixedValue": "E"
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "fixedValue": "R"
+    },
+    {
+      "row": 5,
+      "col": 6,
+      "fixedValue": "O"
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "fixedValue": "E"
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "fixedValue": "O"
+    }
+  ],
+  "createdAt": "2026-03-20"
+}

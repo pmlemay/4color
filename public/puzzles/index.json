@@ -189,6 +189,25 @@
     "thumbnail": "thumbnails/star-battle-tutorial.png"
   },
   {
+    "id": "ero-regions",
+    "file": "ero-regions.json",
+    "title": "ERO Regions",
+    "authors": [
+      "Xx_Henry_xX"
+    ],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "ERO-regions"
+    ],
+    "puzzleType": "ero-regions",
+    "clickActionLeft": "edge",
+    "clickActionRight": "cross"
+  },
+  {
     "id": "neighbourhood-watch-murdoku",
     "file": "neighbourhood-watch-murdoku.json",
     "title": "Neighbourhood Watch Murdoku",

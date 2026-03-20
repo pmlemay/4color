@@ -213,6 +213,7 @@ export const PUZZLE_TYPE_DEFAULTS: Record<string, { left: string; right: string 
   lits: { left: 'color:9', right: 'mark:dot' },
   archipelago: { left: 'color:9', right: 'color:5' },
   icewalk: { left: 'line', right: 'cross' },
+  'ero-regions': { left: 'edge', right: 'cross' },
 }
 
 /** Migrate legacy forcedInputLayout to puzzleType + click actions */
