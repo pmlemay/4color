@@ -4,6 +4,10 @@
   "authors": [
     "PmLemay"
   ],
+  "specialRules": [
+    "Only chairs, crew beds and medical beds icons can be occupied",
+    "A looping wire (line) is passing in every room at least once, not going on a cell with a person nor an object. You must also draw the complete looping line to complete the puzzle."
+  ],
   "rules": [
     "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
     "Only 1 person per row and per column.",
@@ -11,20 +15,20 @@
   ],
   "clues": [
     "A (Man - Alaric). He was in Navigation and the only one sitting in a chair.",
-    "B (Woman - Bonnie). She was in the Crew Quarters and saw two different wire trails.",
-    "C (Man - Cornelius). He was...",
-    "D (Man - Diego). He was...",
+    "B (Woman - Bonnie). She was not on a bed in the Crew Quarters and saw two different wire trails.",
+    "C (Man - Cornelius). He was alone in the armory and not beside a gun. He also saw that the wire did not pass beside him nor the any gun.",
+    "D (Man - Diego). He saw the wire in exactly 2 cells directly north of him in his room before turning or changing room.",
     "E (Man - Eugene). He was south of the wire, in the Navigation room.",
-    "F (Man - Felix). He was...",
-    "G (Man - Gunther). He was...",
-    "H (Man - Horatio). He was...",
-    "I (Woman - Isolde). She was...",
-    "J (Man - Julius). He was in the Medbay and saw different wires passing between each bed.",
-    "K (Woman - Keziah). She was...",
-    "L (Man - Lucian). He was...",
-    "M (Man - Marco). He was...",
-    "N (Man - Nelson). He was...",
-    "O (Man - Orlando). He was...",
+    "F (Man - Felix). He was south of Gunther. He was not alone. Everyone is his room was beside the wire.",
+    "G (Man - Gunther). He was beside a reactor.",
+    "H (Man - Horatio). The wire entered 3 times in his room and he was not beside a wrench.",
+    "I (Woman - Isolde). She was in the Reactor room not beside the wire.",
+    "J (Man - Julius). He was in a Medbay bed and saw different wires passing between each bed.",
+    "K (Woman - Keziah). She was the only one in Engineering beside the wire and she was not alone.",
+    "L (Man - Lucian). He was west of Bonnie.",
+    "M (Man - Marco). He was in the bridge not beside a wrench.",
+    "N (Man - Nelson). He was alone and not beside the wire.",
+    "O (Man - Orlando). He was beside the radio in Comms Tower",
     "V (Man - Vernon). The victim. He was alone with the murderer."
   ],
   "difficulty": "Expert",
@@ -37,7 +41,6 @@
   ],
   "puzzleType": "murdoku",
   "clickActionRight": "cross",
-  "inProgress": true,
   "gridSize": {
     "rows": 16,
     "cols": 16
@@ -91,7 +94,8 @@
         2,
         0,
         0
-      ]
+      ],
+      "image": "img0"
     },
     {
       "row": 0,
@@ -611,7 +615,8 @@
         0,
         2,
         0
-      ]
+      ],
+      "image": "img0"
     },
     {
       "row": 3,
@@ -742,8 +747,7 @@
         0,
         0,
         0
-      ],
-      "image": "img2"
+      ]
     },
     {
       "row": 4,
@@ -875,6 +879,11 @@
     },
     {
       "row": 5,
+      "col": 11,
+      "image": "img7"
+    },
+    {
+      "row": 5,
       "col": 12,
       "image": "img7"
     },
@@ -886,7 +895,8 @@
         0,
         2,
         0
-      ]
+      ],
+      "image": "img0"
     },
     {
       "row": 5,
@@ -1204,7 +1214,8 @@
         0,
         0,
         2
-      ]
+      ],
+      "image": "img10"
     },
     {
       "row": 8,
@@ -1622,7 +1633,7 @@
       ],
       "labels": {
         "bottom": {
-          "text": "Reactor"
+          "text": "Reactor Room"
         }
       }
     },
@@ -2383,7 +2394,7 @@
       ]
     }
   ],
-  "createdAt": "2026-03-16",
+  "createdAt": "2026-04-10",
   "images": {
     "img0": "data:image/png;base64,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",
     "img1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAKi0lEQVR4AexZe1AU9x3/3HFwvAVMjQooL5VqQIMgPhNp0JipzUxIfKXyT2tNqAEzZtpMbKP1gVY7g9ZndGynTqkPJEarRaKG+KiCoPE1AqKAgAoHHnLccS/u0d934bZ7u8thZ5pEM97s57ff3+f73vvt3u6eEj+Qz/NGnrYv8vk38rR/I2GswA19wJfxwxj60n/X/CBWC78Jl9YWxl5g+K0cGhsbLxcVFX0lp/ueuHMsL9XMdgA1omLS74KCgrLDw8Pj9Xo95BAaGjpm2rRpcXK675LTarW4f/8+hgwZMiowMDCbamdQUSOTFArF2tWrV6Oqqgpnz55Ffn7+U4uCggJcunQJ5eXlWL58Oah21sgkaiQvPT0ds2fPxu7du7F48WJkZWU91cjOzsbevXsxa9YsTJ8+nfWBPGokOSYmBoMHD8aKFSugGKbEe1VZsiAPwvi//RJpl1fyUP8oCOrY0Rh1ruWJEFVQD4LP8HiQrzAWxaYchL7qoBpzc3MxaNAgDB8+nEyTlTS60N3dDaVKAZ8gtQQFbx6El78PRq/NQNikOKiCfHm8tHEuLLWVePSXDVAGBnsEfAKhDAhGx8E8WBuqQb7CWBSbclCugtkHmLm0FqqRanXVTXslDf3h7vEadDbqMGr5bITPSZGYh02OQ8SCVBivlaH7wT2J3kU4rA50ay2wtTTAXFXO+ZCvS+/aUw7K1Xm/E3dYbhfvad9vI5qrLSjdWAqlv1q2CVfwyAUTYbpeis7igy5KsrcbbRxnOHsY5spLIB+OkBmoGa9Af5RuuIiWK80yFu6U50acQNutNugadJh6+jfunoKZ3dyNB4WXoVAq0LZjNRxdnQJtj2jvssFhssNh1OPx33M52weHKkC+PRbSccrJj2DUmqFrlMYTW3tsxNxhxrU9VzE0YzyUam+xLze3GZjNe3uhOXIZ436VhJCYENyZGcvp+IEdEKfNwU0bMkdzNmSrOXoF15gvxeCUokEVqEb6lU8R8WaCSCOdemzEbrXj8d12DGTngNLbS+rNGDqqHd80IH3TTEz9dBqmrngFDosJ7fu3M23PZjfbYTfaoTu6C06LmbMhW/IhX4rRYykduzQGlG8qg6XTIlUKGI+NFC0+jhdnJeCFtHiBy3/FtpIq1G4+hbR1aYh5PZZTRP0kGnA4oD9zHHZ9B8fZdFZuuRkvnQCcDnA2TEM+5EsxKBajJJtPWAC0tZ04Mv9ziU5IeGyETjIvdsn18vMR+nCy0+GEsUEL3wE+iJ4RzXHcoACW3MuB+dp5tOdvhaVZDye7rOu+2A5L5QVOB2bD2bKBfCkGxaKYjHLbFCovKNhqaL3R6saLJx4bERsL53ajFXc3nUTKh6nwDfMTqjjZ298b7fu2waZ5CLu2Gbojn4E4TikYyDdlaSoXi2IKVP+T6LEROhp+EaHyAZ1Odi50Q6VWQaHgDjFvZ9FZQHB06dH6p8UcHCYDx4nXukKhgMpXxcUCi8kHEQh+4aGgWgSUROyzEeMjI7z8vBGaEiNx6o/YM3YXfjZ9MHIWxsBSXcGBZOL2JO7qz12iD02J5moxaU0SnYvosxHTIxMUXkp4D5AuG/R+1AN84Rvq2zuT7v78SQKmvDwQU5MGgmSpRQ/jG+IL9QB1z0RmVIX4c7UY27pktD1Un40EDg2E02aHWaPrsZQZu9l5YjVYJRo6F9oeW9DUYsKGZaPxRwaSiSOd2MHaZUW3sVtM83NLi46rJXBoEM+JhT4bUQer2bXfCu35GrEPP3d0O0DgiV5h/pc/xzeVOryVXY7oCH9EhftzMnGk6zXjdxSDwBMigWqgCwHVJFLx0z4bIQu6HNoMFhKlUCrYsvOHqd0Ep539dAssQqJD8NP8t1CjsyPitVOIZCCZONIJTDlfiuHNlg9YTMh8bF0WUC0yKp7y2AhvJSPQb0tM9msozyuDSWuUWERMicScf85H0q+TOZBMnNiQfCkGxaKYYv2Tzj02QkUY69tgbNRK4tENYmhyFHyGhuHkh19K9EQEvBiASR9P5kAycWKQrzo8DKHjo0ExxXr6oeyqa8N4dkDEOuHcYyNjfzEOHdcaob/1QOjDy0HxQzEgMQJN5xpRnFXE808qFL//L843OCECQfFDZN30lQ+gu96IRFaLrEEv6bER+rELiwuDoUbD1nLP3WuvX89OAYxZ/w5efCMBtUV38dVHp2Bhd8w9yr5HsjnNbO+eqOV8KQZYLLGH0+7gclMNVItYL5x7bIR+I5KyklG3o4S7ggkdhXLi5ncRmTkZlQdv4evlJbi4/oLsyelk92ekI5sqZjuM+ZCvMJZQpisV5aYaqBahTix7bISMY2bGYNj04ahY8BlN+0TcsteRevgDaOqMuLKjAvtn/gP7Z+S7g3Gk09QbkfrFByCfPgMyBeWk3FQDm3rc+m1EzX516ZLZVduKq+/vlT3SlEHJ7rmCx4Qj9fMlSL+VC6vCB3qt1Q1WeHO61MIlCB4dDvKBzIe+uavsgYtyhkSFgGqQMXOj+m2ErF9dk4aXMhNhqGZ3sewhijhPoFubiUey8cr5T9ww8WgOSOfJl3Q6lsNwu5nL+eraNKL6hVKhUMDLywuuDz0fN1c8dE35/fTcNCTMGYWqPxwBXZJ5xf9ZoNiUg3JRTnF4qk3H3uiIeeW+ffuSVq1axfH37t1DZ5MOR949jF0/3ikBPb8b7mhQlrENXyev+lZAsSkH5ZKrgWrrbOrEzZs3uZpdg/LQoUOxGo2GmwcHB6Pmdg0y52dibHyiBOPGjENKSgqSxozFy/EJ3wooNuWgXHI1UG1UI3vpztXsGpSHDx8+tHXrVtec3nJjy5YtKCkp4ZGTk4N09n5YCHpXLLQRy3l5eRIf4sR2wvnRo0clPpRz8+bNfC1UG3sTz9frEvo92YuLi7F06VKsX7/eDfT2fs2aNa44bnubzYbMzEw3e/InjnRuxoLJnDlzJD7kt3DhQmjZ3wkCU4nosRG73Y7q6mokqrrR/vY4mOYm8ZgbMQA3btyAwWCQBFWpVNwa1ov+a6F1TTqJAyPoH4CLFy9Cnz0U5qXhPPLfCEN9fT2sVulzD3PjN2rkcl1dHVpaWnjSJdDVbODAgTjXpkdh02M3FDQ+hr+/PwICAlzm/N7BXgcVFhbiwIEDbiCOdLyhQJgxYwZ8fHyw/N+dKKwx8Shr7ruB1tZWNDQ0UJQKamTZ6dOncezYMThlHv4nT56MjLffQdaV+8gsreeRPGECFi1aBIVC5iaJhW5qakJRUZEbiGMq2S0jIwPbt2/HX2ucWHiincfxjhdAyzgkJIT3s1jY8wmrlZb9mTNniF9GjZSyBn6/cuVKxMdLX8TFxsZi27Zt3BKrqamBC3R02V9xFEQCpVIJukDs3LkTQhBHOolDLzFv3jxcv36dz0G5qFDy8/PreXdAS8xsNmMCO5Dr1q0D1c7cy6gRGxNy2Xre+vDhw2q6rIkxmP0JNGLECIwcOZJHZGQkxHbCOR1B8hOCOKGNnBwXF8fnoHxRUVEQ+tFSj4iIQHNz8212fm6l2hls1Ajbc1sOG6cwbHxGMI3VSTWzHSBshIh2Nnz8jKCN1clv4kZ4xbMmPG/kafvGfjDfyH8AAAD//wjoXl4AAAAGSURBVAMAseg7v9MxgqwAAAAASUVORK5CYII=",

@@ -681,6 +681,7 @@ export function EditorPage() {
           selected: false,
           edgeCrosses: [false, false, false, false] as [boolean, boolean, boolean, boolean],
           borders: [...cell.fixedBorders] as [number, number, number, number],
+          lines: [...cell.fixedLines] as [boolean, boolean, boolean, boolean],
         }))
       )
     )

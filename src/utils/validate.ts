@@ -155,10 +155,16 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
   if (solution.borders) {
     const solutionBorderLookup: BorderLookup = (r, c) => {
       const key = `${r},${c}`
-      if (solution.borders![key]) return solution.borders![key]
-      return grid[r][c].fixedBorders
+      const fb = grid[r][c].fixedBorders
+      const sb = solution.borders![key]
+      if (!sb) return fb
+      return [Math.max(sb[0], fb[0]), Math.max(sb[1], fb[1]), Math.max(sb[2], fb[2]), Math.max(sb[3], fb[3])] as [number, number, number, number]
     }
-    const playerBorderLookup: BorderLookup = (r, c) => grid[r][c].borders
+    const playerBorderLookup: BorderLookup = (r, c) => {
+      const b = grid[r][c].borders
+      const fb = grid[r][c].fixedBorders
+      return [Math.max(b[0], fb[0]), Math.max(b[1], fb[1]), Math.max(b[2], fb[2]), Math.max(b[3], fb[3])] as [number, number, number, number]
+    }
     const expectedRegions = findRegionsFromBorders(rows, cols, solutionBorderLookup)
     const actualRegions = findRegionsFromBorders(rows, cols, playerBorderLookup)
     if (!regionsMatch(expectedRegions, actualRegions)) {
@@ -232,19 +238,21 @@ export function validateSolution(grid: CellData[][], solution: PuzzleSolution): 
     playerEdges = extractEdges(playerCellLines, grid)
   }
 
-  // Count how many expected edges the player has drawn
-  let lineEdgeFilled = 0
-  for (const edge of expectedEdges) {
-    if (playerEdges.has(edge)) lineEdgeFilled++
+  // Check whether all expected edges have been drawn (without revealing count)
+  let linesComplete = true
+  if (lineEdgeTotal > 0) {
+    for (const edge of expectedEdges) {
+      if (!playerEdges.has(edge)) { linesComplete = false; break }
+    }
   }
 
-  if ((total > 0 && filled !== total) || !bordersReady || colorFilled !== colorTotal || markFilled !== markTotal || lineEdgeFilled !== lineEdgeTotal) {
+  if ((total > 0 && filled !== total) || !bordersReady || colorFilled !== colorTotal || markFilled !== markTotal || !linesComplete) {
     const parts: string[] = []
     if (total > 0) parts.push(`${filled}/${total} values`)
     if (borderProgress) parts.push(borderProgress)
-    if (colorTotal > 0) parts.push(`${colorFilled}/${colorTotal} colors`)
-    if (markTotal > 0) parts.push(`${markFilled}/${markTotal} marks`)
-    if (lineEdgeTotal > 0) parts.push(`${lineEdgeFilled}/${lineEdgeTotal} lines`)
+    if (colorTotal > 0) parts.push(`colors: ${colorFilled === colorTotal ? 'complete' : 'incomplete'}`)
+    if (markTotal > 0) parts.push(`marks: ${markFilled === markTotal ? 'complete' : 'incomplete'}`)
+    if (lineEdgeTotal > 0) parts.push(`lines: ${linesComplete ? 'complete' : 'incomplete'}`)
     return { valid: false, error: `Not ready: ${parts.join(', ')}.` }
   }
 

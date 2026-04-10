@@ -507,7 +507,6 @@
     ],
     "puzzleType": "murdoku",
     "clickActionRight": "cross",
-    "inProgress": true,
     "thumbnail": "thumbnails/space-station-murdoku.png"
   },
   {
