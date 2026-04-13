@@ -1,7 +1,7 @@
 [
   {
-    "id": "murdoku",
-    "file": "murdoku.json",
+    "id": "trail-murdoku",
+    "file": "trail-murdoku.json",
     "title": "Trail Murdoku",
     "authors": [
       "PmLemay"
@@ -19,7 +19,7 @@
     ],
     "puzzleType": "murdoku",
     "clickActionRight": "cross",
-    "thumbnail": "thumbnails/murdoku.png"
+    "thumbnail": "thumbnails/trail-murdoku.png"
   },
   {
     "id": "archipelago-tutorial",
@@ -364,6 +364,28 @@
     ],
     "clickActionRight": "cross",
     "thumbnail": "thumbnails/starbattle-murdoku.png"
+  },
+  {
+    "id": "hockey-game-murdoku",
+    "file": "hockey-game-murdoku.json",
+    "title": "Hockey Game Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/hockey-game-murdoku.png"
   },
   {
     "id": "pirate-ship-murdoku",

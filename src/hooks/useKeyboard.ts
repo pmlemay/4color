@@ -107,7 +107,6 @@ export function useKeyboard(options: UseKeyboardOptions) {
         if (unshifted) {
           if (options.isMurdoku) {
             options.addNote(unshifted)
-            options.clearSelection?.()
             options.onHighlightedNoteChange?.(unshifted)
           } else {
             options.addNote(unshifted)
