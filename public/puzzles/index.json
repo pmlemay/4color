@@ -1,5 +1,27 @@
 [
   {
+    "id": "murdoku",
+    "file": "murdoku.json",
+    "title": "Trail Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 4,
+      "cols": 4
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/murdoku.png"
+  },
+  {
     "id": "archipelago-tutorial",
     "file": "archipelago-tutorial.json",
     "title": "Archipelago Tutorial",
