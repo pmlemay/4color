@@ -1,0 +1,58 @@
+{
+  "id": "yajilin-tutorial",
+  "title": "Yajilin Tutorial",
+  "authors": [],
+  "rules": [
+    "Shade some cells so that no two shaded cells are orthogonally adjacent and draw a non-intersecting loop through the centers of all the remaining empty cells.",
+    "Clues cannot be shaded, and represent the number of shaded cells in a straight line in the indicated direction."
+  ],
+  "clues": [],
+  "difficulty": "Very easy",
+  "tags": [
+    "Yajilin"
+  ],
+  "autoCrossRules": [],
+  "puzzleType": "yajilin",
+  "clickActionLeft": "line",
+  "clickActionRight": "cross",
+  "gridSize": {
+    "rows": 6,
+    "cols": 6
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 2,
+      "fixedValue": "0",
+      "fixedEdgeMarks": [
+        "arrowLeft",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedValue": "2",
+      "fixedEdgeMarks": [
+        "arrowRight",
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "fixedValue": "1",
+      "fixedEdgeMarks": [
+        "arrowRight",
+        null,
+        null,
+        null
+      ]
+    }
+  ],
+  "createdAt": "2026-03-14"
+}
