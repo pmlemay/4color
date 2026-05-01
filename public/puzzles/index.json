@@ -424,6 +424,9 @@
       "Murdoku",
       "Spiral-galaxy"
     ],
+    "autoCrossRules": [
+      "rook"
+    ],
     "puzzleType": "murdoku",
     "clickActionRight": "cross",
     "thumbnail": "thumbnails/spiral-galaxy-murdoku-2.png"
@@ -448,6 +451,29 @@
     ],
     "clickActionRight": "cross",
     "thumbnail": "thumbnails/knights-murdoku.png"
+  },
+  {
+    "id": "book1-37",
+    "file": "book1-37.json",
+    "title": "Book1 #37",
+    "authors": [
+      "Mgarand"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "inProgress": true,
+    "thumbnail": "thumbnails/book1-37.png"
   },
   {
     "id": "nurikabe-murdoku",
