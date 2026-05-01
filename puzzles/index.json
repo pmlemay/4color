@@ -1,0 +1,626 @@
+[
+  {
+    "id": "trail-murdoku",
+    "file": "trail-murdoku.json",
+    "title": "Trail Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 4,
+      "cols": 4
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/trail-murdoku.png"
+  },
+  {
+    "id": "archipelago-tutorial",
+    "file": "archipelago-tutorial.json",
+    "title": "Archipelago Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 5,
+      "cols": 5
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Archipelago"
+    ],
+    "puzzleType": "archipelago",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/archipelago-tutorial.png"
+  },
+  {
+    "id": "haunted-lighthouse-murdoku",
+    "file": "haunted-lighthouse-murdoku.json",
+    "title": "Haunted Lighthouse Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 5,
+      "cols": 5
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/haunted-lighthouse-murdoku.png"
+  },
+  {
+    "id": "dinner-party-murdoku",
+    "file": "dinner-party-murdoku.json",
+    "title": "Dinner Party Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/dinner-party-murdoku.png"
+  },
+  {
+    "id": "cocktail-lamp-tutorial",
+    "file": "cocktail-lamp-tutorial.json",
+    "title": "Cocktail Lamp Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Cocktail-lamp"
+    ],
+    "puzzleType": "cocktaillamp",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/cocktail-lamp-tutorial.png"
+  },
+  {
+    "id": "heyawake-tutorial",
+    "file": "heyawake-tutorial.json",
+    "title": "Heyawake Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Heyawake"
+    ],
+    "puzzleType": "heyawake",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/heyawake-tutorial.png"
+  },
+  {
+    "id": "lits-tutorial",
+    "file": "lits-tutorial.json",
+    "title": "LITS Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "LITS"
+    ],
+    "puzzleType": "lits",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "mark:dot",
+    "thumbnail": "thumbnails/lits-tutorial.png"
+  },
+  {
+    "id": "nurikabe-tutorial",
+    "file": "nurikabe-tutorial.json",
+    "title": "Nurikabe Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Nurikabe"
+    ],
+    "puzzleType": "nurikabe",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "mark:dot",
+    "thumbnail": "thumbnails/nurikabe-tutorial.png"
+  },
+  {
+    "id": "sample-4-color-puzzle",
+    "file": "sample-4-color-puzzle.json",
+    "title": "4-Color",
+    "authors": [
+      "Ai"
+    ],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "4color"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/sample-4-color-puzzle.png"
+  },
+  {
+    "id": "yajilin-tutorial",
+    "file": "yajilin-tutorial.json",
+    "title": "Yajilin Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Yajilin"
+    ],
+    "puzzleType": "yajilin",
+    "clickActionLeft": "line",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/yajilin-tutorial.png"
+  },
+  {
+    "id": "star-battle-tutorial",
+    "file": "star-battle-tutorial.json",
+    "title": "Star Battle Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 7,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Star-battle"
+    ],
+    "autoCrossRules": [
+      "king"
+    ],
+    "puzzleType": "starbattle",
+    "clickActionLeft": "mark:star",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/star-battle-tutorial.png"
+  },
+  {
+    "id": "ero-regions",
+    "file": "ero-regions.json",
+    "title": "ERO Regions",
+    "authors": [
+      "Xx_Henry_xX"
+    ],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "ERO-regions"
+    ],
+    "puzzleType": "ero-regions",
+    "clickActionLeft": "edge",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/ero-regions.png"
+  },
+  {
+    "id": "neighbourhood-watch-murdoku",
+    "file": "neighbourhood-watch-murdoku.json",
+    "title": "Neighbourhood Watch Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/neighbourhood-watch-murdoku.png"
+  },
+  {
+    "id": "spiral-galaxy-2",
+    "file": "spiral-galaxy-2.json",
+    "title": "Spiral Galaxy",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Spiral-galaxy"
+    ],
+    "puzzleType": "spiralgalaxy",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/spiral-galaxy-2.png"
+  },
+  {
+    "id": "cave-tutorial",
+    "file": "cave-tutorial.json",
+    "title": "Cave Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Cave"
+    ],
+    "puzzleType": "cave",
+    "clickActionLeft": "color:9",
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/cave-tutorial.png"
+  },
+  {
+    "id": "hard-4color",
+    "file": "hard-4color.json",
+    "title": "4-Color",
+    "authors": [
+      "Ai"
+    ],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "4color"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/hard-4color.png"
+  },
+  {
+    "id": "icebarn-tutorial",
+    "file": "icebarn-tutorial.json",
+    "title": "Icebarn Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Icebarn"
+    ],
+    "puzzleType": "icebarn",
+    "clickActionLeft": "line",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/icebarn-tutorial.png"
+  },
+  {
+    "id": "slalom-tutorial",
+    "file": "slalom-tutorial.json",
+    "title": "Slalom Tutorial",
+    "authors": [],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Slalom"
+    ],
+    "puzzleType": "slalom",
+    "clickActionLeft": "line",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/slalom-tutorial.png"
+  },
+  {
+    "id": "starbattle-murdoku",
+    "file": "starbattle-murdoku.json",
+    "title": "Monastery Murdoku (Star-battle)",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "Murdoku",
+      "Star-battle"
+    ],
+    "autoCrossRules": [
+      "king",
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/starbattle-murdoku.png"
+  },
+  {
+    "id": "hockey-game-murdoku",
+    "file": "hockey-game-murdoku.json",
+    "title": "Hockey Game Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/hockey-game-murdoku.png"
+  },
+  {
+    "id": "pirate-ship-murdoku",
+    "file": "pirate-ship-murdoku.json",
+    "title": "Pirate Ship Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/pirate-ship-murdoku.png"
+  },
+  {
+    "id": "spiral-galaxy-murdoku-2",
+    "file": "spiral-galaxy-murdoku-2.json",
+    "title": "Spiral Galaxy Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Murdoku",
+      "Spiral-galaxy"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/spiral-galaxy-murdoku-2.png"
+  },
+  {
+    "id": "knights-murdoku",
+    "file": "knights-murdoku.json",
+    "title": "Knights Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/knights-murdoku.png"
+  },
+  {
+    "id": "book1-37",
+    "file": "book1-37.json",
+    "title": "Book1 #37",
+    "authors": [
+      "Mgarand"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "inProgress": true,
+    "thumbnail": "thumbnails/book1-37.png"
+  },
+  {
+    "id": "nurikabe-murdoku",
+    "file": "nurikabe-murdoku.json",
+    "title": "Unique Islands Murdoku (Nurikabe)",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Expert",
+    "tags": [
+      "Murdoku",
+      "Nurikabe"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/nurikabe-murdoku.png"
+  },
+  {
+    "id": "4color-3",
+    "file": "4color-3.json",
+    "title": "4-Color",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "4color"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/4color-3.png"
+  },
+  {
+    "id": "castle-siege-murdoku",
+    "file": "castle-siege-murdoku.json",
+    "title": "Castle Siege Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 12,
+      "cols": 12
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "inProgress": true,
+    "thumbnail": "thumbnails/castle-siege-murdoku.png"
+  },
+  {
+    "id": "spiral-galaxy-murdoku",
+    "file": "spiral-galaxy-murdoku.json",
+    "title": "Spiral Galaxy Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 12,
+      "cols": 12
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "Murdoku",
+      "Spiral-galaxy"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/spiral-galaxy-murdoku.png"
+  },
+  {
+    "id": "space-station-murdoku",
+    "file": "space-station-murdoku.json",
+    "title": "Space Station Murdoku (Slalom)",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 16,
+      "cols": 16
+    },
+    "difficulty": "Expert",
+    "tags": [
+      "Murdoku",
+      "Slalom"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/space-station-murdoku.png"
+  },
+  {
+    "id": "formula1-murdoku",
+    "file": "formula1-murdoku.json",
+    "title": "Formula1 Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 20,
+      "cols": 21
+    },
+    "difficulty": "Very hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/formula1-murdoku.png"
+  },
+  {
+    "id": "adventure-1",
+    "file": "adventure-1.json",
+    "title": "Adventure #1",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 47,
+      "cols": 47
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Progressive",
+      "Lohkous",
+      "LITS",
+      "Nurikabe"
+    ],
+    "clickActionLeft": "color:4",
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/adventure-1.png"
+  }
+]
