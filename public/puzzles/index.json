@@ -307,6 +307,25 @@
     "thumbnail": "thumbnails/hard-4color.png"
   },
   {
+    "id": "double-murdoku",
+    "file": "double-murdoku.json",
+    "title": "Double Murdoku - Clean Up",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Expert",
+    "tags": [
+      "Murdoku"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/double-murdoku.png"
+  },
+  {
     "id": "icebarn-tutorial",
     "file": "icebarn-tutorial.json",
     "title": "Icebarn Tutorial",
