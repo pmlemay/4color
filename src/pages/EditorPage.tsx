@@ -747,7 +747,7 @@ export function EditorPage() {
           if (existing.marks) {
             for (const [key, m] of Object.entries(existing.marks)) {
               const [r, c] = key.split(',').map(Number)
-              if (next[r]?.[c]) next[r][c].mark = m
+              if (next[r]?.[c]) next[r][c].mark = m as MarkShape
             }
           }
           return next
