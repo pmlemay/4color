@@ -232,7 +232,6 @@ export function PuzzleList() {
             </ol>
           )}
         </div>
-        <div className="sidebar-spacer" />
       </aside>
 
       <div className="puzzle-list-main" ref={mainRef}>

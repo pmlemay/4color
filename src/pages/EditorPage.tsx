@@ -719,7 +719,7 @@ export function EditorPage() {
     // Load existing solution if any (only when puzzle is on server)
     if (puzzleId) {
       const existing = await fetchPuzzleSolution(puzzleId)
-      if (existing && (Object.keys(existing.cells).length > 0 || Object.keys(existing.borders || {}).length > 0 || Object.keys(existing.colors || {}).length > 0)) {
+      if (existing && (Object.keys(existing.cells).length > 0 || Object.keys(existing.borders || {}).length > 0 || Object.keys(existing.colors || {}).length > 0 || Object.keys(existing.lines || {}).length > 0 || Object.keys(existing.marks || {}).length > 0)) {
         gridState.setGrid(prev => {
           const next = prev.map(row => row.map(cell => ({ ...cell })))
           for (const [key, val] of Object.entries(existing.cells)) {
@@ -736,6 +736,18 @@ export function EditorPage() {
             for (const [key, col] of Object.entries(existing.colors)) {
               const [r, c] = key.split(',').map(Number)
               if (next[r]?.[c]) next[r][c].color = col
+            }
+          }
+          if (existing.lines) {
+            for (const [key, l] of Object.entries(existing.lines)) {
+              const [r, c] = key.split(',').map(Number)
+              if (next[r]?.[c]) next[r][c].lines = [...l] as [boolean, boolean, boolean, boolean]
+            }
+          }
+          if (existing.marks) {
+            for (const [key, m] of Object.entries(existing.marks)) {
+              const [r, c] = key.split(',').map(Number)
+              if (next[r]?.[c]) next[r][c].mark = m
             }
           }
           return next

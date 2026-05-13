@@ -51,10 +51,6 @@
   color: var(--text-muted);
 }
 
-.sidebar-spacer {
-  flex: 1;
-}
-
 .auth-btn-full {
   width: 100%;
   text-align: center;
@@ -564,9 +560,6 @@
     overflow: visible;
     width: 100%;
     min-width: 0;
-  }
-  .sidebar-spacer {
-    display: none;
   }
   .leaderboard-list {
     flex-direction: row;

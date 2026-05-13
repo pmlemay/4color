@@ -187,7 +187,11 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
   if (beingSelected) tdClass += ' cell-being-selected'
   if (fogged) tdClass += ' cell-fogged'
   if (hasLines) tdClass += ' cell-has-lines'
-  if (highlightedNote && !crossed && notes.includes(highlightedNote)) tdClass += ' cell-note-highlight'
+  if (highlightedNote && !crossed && (
+    fixedValue ? fixedValue === highlightedNote
+    : value ? value === highlightedNote
+    : notes.includes(highlightedNote)
+  )) tdClass += ' cell-note-highlight'
 
   let divClass = 'cell-inner'
   if (!fogged) {
