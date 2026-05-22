@@ -641,5 +641,24 @@
     "clickActionLeft": "color:4",
     "clickActionRight": "color:5",
     "thumbnail": "thumbnails/adventure-1.png"
+  },
+  {
+    "id": "adventure-2",
+    "file": "adventure-2.json",
+    "title": "Adventure #2",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 47,
+      "cols": 47
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Progressive"
+    ],
+    "clickActionLeft": "color:4",
+    "clickActionRight": "color:5",
+    "thumbnail": "thumbnails/adventure-2.png"
   }
 ]

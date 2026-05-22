@@ -221,7 +221,7 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
         )}
         {image && <img src={image} className="cell-image" alt="" draggable={false} />}
         {crossed && <span className="cell-cross">&times;</span>}
-        {mark && (
+        {!fogged && mark && (
           EDGE_MARKS[mark] ? (
             <span className="cell-mark cell-mark-edge" style={EDGE_MARKS[mark].position} aria-hidden="true">
               {renderMarkSvg(mark, true)}
@@ -272,7 +272,7 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
       {!fogged && edgeDirections[1] > 0 && <span className="edge-dir edge-dir-right">{renderChevron(edgeDirections[1])}</span>}
       {!fogged && edgeDirections[2] > 0 && <span className="edge-dir edge-dir-bottom">{renderChevron(edgeDirections[2])}</span>}
       {!fogged && edgeDirections[3] > 0 && col === 0 && <span className="edge-dir edge-dir-left">{renderChevron(edgeDirections[3])}</span>}
-      {fixedMark && (
+      {!fogged && fixedMark && (
         EDGE_MARKS[fixedMark] ? (
           <span className="fixed-mark cell-mark-edge" style={EDGE_MARKS[fixedMark].position} aria-hidden="true">
             {renderMarkSvg(fixedMark, true)}
@@ -283,42 +283,42 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
           </span>
         )
       )}
-      {fixedEdgeMarks[0] && (
+      {!fogged && fixedEdgeMarks[0] && (
         <span className={`fixed-mark fixed-mark-edge-top${EDGE_MARKS[fixedEdgeMarks[0]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[0])}
         </span>
       )}
-      {fixedEdgeMarks[1] && (
+      {!fogged && fixedEdgeMarks[1] && (
         <span className={`fixed-mark fixed-mark-edge-right${EDGE_MARKS[fixedEdgeMarks[1]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[1])}
         </span>
       )}
-      {fixedEdgeMarks[2] && (
+      {!fogged && fixedEdgeMarks[2] && (
         <span className={`fixed-mark fixed-mark-edge-bottom${EDGE_MARKS[fixedEdgeMarks[2]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[2])}
         </span>
       )}
-      {fixedEdgeMarks[3] && (
+      {!fogged && fixedEdgeMarks[3] && (
         <span className={`fixed-mark fixed-mark-edge-left${EDGE_MARKS[fixedEdgeMarks[3]] ? ' fixed-mark-arrow' : ''}`} aria-hidden="true">
           {renderMarkSvg(fixedEdgeMarks[3])}
         </span>
       )}
-      {fixedVertexMarks[0] && (
+      {!fogged && fixedVertexMarks[0] && (
         <span className="fixed-mark fixed-mark-vertex-tl" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[0])}
         </span>
       )}
-      {fixedVertexMarks[1] && (
+      {!fogged && fixedVertexMarks[1] && (
         <span className="fixed-mark fixed-mark-vertex-tr" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[1])}
         </span>
       )}
-      {fixedVertexMarks[2] && (
+      {!fogged && fixedVertexMarks[2] && (
         <span className="fixed-mark fixed-mark-vertex-br" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[2])}
         </span>
       )}
-      {fixedVertexMarks[3] && (
+      {!fogged && fixedVertexMarks[3] && (
         <span className="fixed-mark fixed-mark-vertex-bl" aria-hidden="true">
           {renderMarkSvg(fixedVertexMarks[3])}
         </span>
