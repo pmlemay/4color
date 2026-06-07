@@ -82,6 +82,28 @@
     "thumbnail": "thumbnails/dinner-party-murdoku.png"
   },
   {
+    "id": "book2-1",
+    "file": "book2-1.json",
+    "title": "Book2 #1",
+    "authors": [
+      "Mgarand"
+    ],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Very easy",
+    "tags": [
+      "Murdoku Helper"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "clickActionRight": "cross",
+    "inProgress": true,
+    "thumbnail": "thumbnails/book2-1.png"
+  },
+  {
     "id": "cocktail-lamp-tutorial",
     "file": "cocktail-lamp-tutorial.json",
     "title": "Cocktail Lamp Tutorial",
@@ -451,6 +473,29 @@
     "thumbnail": "thumbnails/spiral-galaxy-murdoku-2.png"
   },
   {
+    "id": "star-murdoku",
+    "file": "star-murdoku.json",
+    "title": "Star Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 9,
+      "cols": 9
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "inProgress": true,
+    "thumbnail": "thumbnails/star-murdoku.png"
+  },
+  {
     "id": "knights-murdoku",
     "file": "knights-murdoku.json",
     "title": "Knights Murdoku",
@@ -535,9 +580,31 @@
     "thumbnail": "thumbnails/4color-3.png"
   },
   {
+    "id": "the-office-building",
+    "file": "the-office-building.json",
+    "title": "The Office Building Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 11,
+      "cols": 11
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/the-office-building.png"
+  },
+  {
     "id": "castle-siege-murdoku",
     "file": "castle-siege-murdoku.json",
-    "title": "Castle Siege Murdoku",
+    "title": "Castle Murdoku",
     "authors": [
       "PmLemay"
     ],
@@ -545,13 +612,14 @@
       "rows": 12,
       "cols": 12
     },
-    "difficulty": "Very hard",
+    "difficulty": "Medium",
     "tags": [
       "Murdoku"
     ],
     "autoCrossRules": [
       "rook"
     ],
+    "puzzleType": "murdoku",
     "clickActionRight": "cross",
     "inProgress": true,
     "thumbnail": "thumbnails/castle-siege-murdoku.png"

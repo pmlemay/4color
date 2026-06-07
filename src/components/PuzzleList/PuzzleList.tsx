@@ -353,8 +353,13 @@ export function PuzzleList() {
                         )}
                         {activePlayers.has(p.id) && (() => {
                           const all = activePlayers.get(p.id)!
-                          const shown = all.slice(0, 3)
-                          const extra = all.length - 3
+                          const sorted = [...all].sort((a, b) => {
+                            const aAnon = a.displayName === 'Anonymous' ? 1 : 0
+                            const bAnon = b.displayName === 'Anonymous' ? 1 : 0
+                            return aAnon - bAnon
+                          })
+                          const shown = sorted.slice(0, 3)
+                          const extra = sorted.length - 3
                           const truncate = (s: string) => s.length > 10 ? s.slice(0, 10) + '\u2026' : s
                           return (
                             <div className="currently-playing">
