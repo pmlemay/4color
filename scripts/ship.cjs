@@ -21,6 +21,10 @@ if (wdDirty || untracked) {
   console.log('No changes to commit, skipping commit/push.')
 }
 
-const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
-const r = spawnSync(npmCmd, ['run', 'deploy'], { stdio: 'inherit' })
+// shell: true is required to spawn npm's .cmd shim on Windows (Node 20.12+/24 throws EINVAL otherwise)
+const r = spawnSync('npm', ['run', 'deploy'], { stdio: 'inherit', shell: true })
+if (r.error) {
+  console.error('Deploy failed to start:', r.error.message)
+  process.exit(1)
+}
 if (r.status !== 0) process.exit(r.status ?? 1)
