@@ -350,7 +350,8 @@ export function PlayerPage() {
     timer.pause()
     const timeMs = timer.elapsedMs
     setPuzzleCompleted(true)
-    if (puzzleId) {
+    // In-progress puzzles should not count toward player stats
+    if (puzzleId && !puzzle?.inProgress) {
       incrementPuzzleCompletions(puzzleId)
       if (user) {
         markCompleted(puzzleId, timeMs)
@@ -360,7 +361,7 @@ export function PlayerPage() {
         setCompletionStep('signin')
       }
     }
-  }, [puzzleId, markCompleted, timer, user])
+  }, [puzzleId, puzzle, markCompleted, timer, user])
 
   const handleSubmit = useCallback(async () => {
     let result: { valid: boolean; error?: string }
