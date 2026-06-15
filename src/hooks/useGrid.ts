@@ -619,6 +619,29 @@ export function useGrid(initialRows: number, initialCols: number) {
     [selection, setGridWithUndo]
   )
 
+  // Apply/toggle a note on specific cells (not the current selection) — used when a
+  // note value is pre-selected and the player taps cells to drop that note directly.
+  const addNoteToCells = useCallback(
+    (cells: CellPosition[], value: string) => {
+      if (cells.length === 0) return
+      setGridWithUndo(prev => {
+        const newGrid = cloneGrid(prev)
+        for (const pos of cells) {
+          const cell = newGrid[pos.row][pos.col]
+          if (cell.crossed) continue
+          const idx = cell.notes.indexOf(value)
+          if (idx !== -1) {
+            cell.notes.splice(idx, 1)
+          } else if (cell.notes.length < MAX_NOTES) {
+            cell.notes.push(value)
+          }
+        }
+        return newGrid
+      })
+    },
+    [setGridWithUndo]
+  )
+
   const applyLabel = useCallback(
     (align: LabelAlign, text: string, showThroughFog?: boolean, revealWithFog?: string) => {
       if (selection.length === 0) return
@@ -1196,6 +1219,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     applyFixedValue,
     applyFixedColor,
     addNote,
+    addNoteToCells,
     applyLabel,
     removeLabel,
     toggleCross,

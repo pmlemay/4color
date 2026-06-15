@@ -531,8 +531,15 @@ export function PlayerPage() {
       touchCycleAction.current = null
       return
     }
+    // Note mode with a pre-selected note: tapping cells drops that note directly,
+    // so the player doesn't have to re-tap the letter for each cell.
+    if (gridState.inputMode === 'note' && highlightedNote && !ctrlHeld && sel.length > 0) {
+      gridState.addNoteToCells(sel, highlightedNote)
+      gridState.clearSelection()
+      return
+    }
     gridState.commitSelection(sel, ctrlHeld)
-  }, [isSuggestedMode, gridState])
+  }, [isSuggestedMode, gridState, highlightedNote])
 
   const handleClearSelection = useCallback(() => {
     touchProcessed.current.clear()
