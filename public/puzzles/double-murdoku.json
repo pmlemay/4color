@@ -11,7 +11,9 @@
   ],
   "rules": [
     "Place everyone on the grid according to their clue to find the murderer. They were in a region alone with the victim.",
-    "\"Beside\" means in the same room and orthogonally adjacent."
+    "\"Beside\" means in the same room and orthogonally adjacent.",
+    "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
+    "Only 1 person per row and per column."
   ],
   "clues": [
     "A (Man - Albert). He was beside a cleaning cart.",
@@ -31,11 +33,13 @@
     "O (Woman - Ophelia) She was beside a polisher machine.",
     "V (Woman - Virginia). The victim. She was alone with the murderer."
   ],
-  "difficulty": "Expert",
+  "difficulty": "Very hard",
   "tags": [
     "Murdoku"
   ],
-  "autoCrossRules": [],
+  "autoCrossRules": [
+    "rook"
+  ],
   "puzzleType": "murdoku",
   "clickActionRight": "cross",
   "gridSize": {
@@ -997,7 +1001,7 @@
       }
     }
   ],
-  "createdAt": "2026-05-12",
+  "createdAt": "2026-06-16",
   "images": {
     "img0": "data:image/png;base64,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",
     "img1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAFNklEQVR4AeyYW2xURRjH/3P27NlLd0sDpYBt5WKTmtAgYhRsgqAPBKIliIJFmpQ1+mAUMT40+mCiCcZsjTxINEJxaXhqRBOzJECAxIZoIEqi3GKVcIkJt9aFdktpu7tnP7+ZLUK6LXvGbTdN6HZ+Ped8859v5j/TbuaMgRyfjvDLoY7wOurcUU9dO+vbc8jHrPqP8Lr2P5vXyT6p8+tXQrkS5zSSK8FEqdcyYhbdrKEziCrOVUbp4uOKHXt2Rbe1tCla2vZHd393SNH67eHnRzJ68Prmx450bY5Kolc/jG46QIp3f6Ro8y8Z4oE5NSO1HS2mZUSYyWkE1N2F+F5yT4yoDgRFGvbckTo2XKL0Tg5IPedkXZ2EIPNRXdLtn8bPjouWEcdZRxBGLjS83XqpgSSx/viRESR5hQpmJK9ROmg8acTBJBVUMrkiBZ1uB53prYi5AKLkQAZfC4QVVoSWVeGtFTMVjbUBvLrYq2is9TfTlaPdkkbP680b3JsgeclowPLEGsVKeg5fzT+m+LTqGLbMOq6osOIOhn9XomcELBdFgMIPwKewTAOeISxTwHJBYQgWEKaAMWD4LGR+3Hw14YZE/va5UpB4jRQ8QxjciJM7LoZj5QQXahlJ9sZ+A9lPF4KBbu5LY/K0jCAxGBcVzx4vBPbggNY/iZ4RjRkqtFTLSCJYUf3z3xSRnLpG33TEKCJJfByNUFObwv5sf8TeflhxrH1rpPVSgyJyYWNDLnO79x5c2rr3cETS75lanUt/b72WEdsdnMlfJiEJAa/xzpXviV96KEQEBScPcZ1C3t/BMMRivr9vIRjVvPvlthRKGZ6Z9xUPq9QyMqyt1qMLovTI9S0LMrw5T6uxA3HBjHjdVj0Z6ZMZzJ0OxqYlGUsjWh2PtXjSyFjPaL75HswVCYheLHKdUDxqn8C8RAZz/RSITWUKo84P1wpLsXDOk1hr1itWYi1qk6sUSxMv1NLlo+eG0/CU95O1izyQTA/ozbGW2kAaXtGvsNAPNw0oRDGnKTEBSdAAAkLhdfsQFMWKAILwU0Dhgc/Hf0pVw3GbKCv2CkhcnIbrHRdNueO8BRdqGbFvdZ8B0qsLQaLnBvflfD60jKQHb8dE+fJ9hSA50B9zbgPQMqKTuNBaLSNd7lnzQgcpLPngKIWbf83w0XEq1hn42U6q6viHwpLzXZfDfJac4a9pYbq4UOEJJrX2Y1pGel0llbzLbZLwwPlKCn4ZD/Cz42IaqdkANUmIOAfQxDtmzjV05WfTl6p0nJCFWkZYr1W27Wrb/nlLG0m+3PMD7d57SHH295OTZ7+jzeS4rshonY5HfNLIeMxqPjkfzBWp9Pbh/UdOKd4oP4UNpacV75X99D2f77YPp/GZshfXLymFZM0TxVhVYymWzh7Ew8nTinL7CkTwiwy+rRDudxQQ5VoLpLUiflcK1UU9irneHlR6MpiClvDJyrLhTC0yyyumWpA8xDvjGbxLlpT6bfjSPQpvegAwF2ZwzQcEb4olfGwMjY+hoS2kVLsvPSN2CtQX0wKd5yHRbmcntczoGSEbNNinBeKdkGi3o/Q4GsmVWnYuZzKVAHj1suQypup4tqU2S/D/A3orkqMfMXgbxs1rzFWIWzey1DJm3LzK9dcgtVmCPAJjaoTcXlDxdNCUGaCikqxhyZiqkxrWZgnyCIypEbhMkMVmGJhW9rA49l+9y8yuzyOiZYRSqZgQYp8OgNgn0WkjtelkYvxedVN9PWeMmo2rdRDLmlZLdNpIbX88Pn6HD5jAn38BAAD//7D4bFMAAAAGSURBVAMAnOmFFlXnBwIAAAAASUVORK5CYII=",
