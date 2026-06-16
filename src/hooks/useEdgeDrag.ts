@@ -27,6 +27,11 @@ function edgeKey(e: EdgeDescriptor): string {
   return `${e.row},${e.col},${e.side}`
 }
 
+// How far the cursor must travel along a new edge (as a fraction of the cell, measured
+// from the corner shared with the current path tip) before that edge is added as the next
+// segment. Without this, the next segment appears the instant the cursor touches 1px of it.
+const EDGE_ENTRY_THRESHOLD = 0.2
+
 /**
  * Get the two grid-intersection endpoints of an edge.
  * Grid intersections are at integer coordinates: (row, col) where
@@ -62,12 +67,12 @@ function tipVerticesAt(path: EdgeDescriptor[], idx: number, rows: number, cols: 
   return [e1]
 }
 
-export function detectEdge(
+/** Detailed edge hit, including how far the cursor sits along the edge (0..1). */
+function detectEdgeDetailed(
   clientX: number,
   clientY: number,
   tableEl: HTMLTableElement,
-  deadzone?: number,
-): EdgeDescriptor | null {
+): { edge: EdgeDescriptor; perp: number; along: number } | null {
   const hit = getNearestCell(clientX, clientY, tableEl)
   if (!hit) return null
   const { td, row, col } = hit
@@ -89,16 +94,29 @@ export function detectEdge(
     if (distances[i] < distances[minIdx]) minIdx = i
   }
 
+  // Position along the edge (0 = first endpoint, 1 = second endpoint per edgeEndpoints)
+  const along = (minIdx === 0 || minIdx === 2) ? fx : fy
+
+  return { edge: { row, col, side: minIdx as 0 | 1 | 2 | 3 }, perp: distances[minIdx], along }
+}
+
+export function detectEdge(
+  clientX: number,
+  clientY: number,
+  tableEl: HTMLTableElement,
+  deadzone?: number,
+): EdgeDescriptor | null {
+  const d = detectEdgeDetailed(clientX, clientY, tableEl)
+  if (!d) return null
+
   // Deadzone: reject if cursor is too far from the edge (perpendicular)
   // or too close to a corner (parallel position along the edge)
   if (deadzone != null) {
-    if (distances[minIdx] > deadzone) return null
-    // Reject if cursor is near a corner (parallel position along the edge)
-    const along = (minIdx === 0 || minIdx === 2) ? fx : fy
-    if (along < 0.2 || along > 0.8) return null
+    if (d.perp > deadzone) return null
+    if (d.along < 0.2 || d.along > 0.8) return null
   }
 
-  return { row, col, side: minIdx as 0 | 1 | 2 | 3 }
+  return d.edge
 }
 
 export function useEdgeDrag({ tableRef, rows, cols, onDraftChange, onCommit, onTapEdge, isPinching, enabled = true, foggedCells }: UseEdgeDragOptions) {
@@ -111,8 +129,9 @@ export function useEdgeDrag({ tableRef, rows, cols, onDraftChange, onCommit, onT
   const addEdge = useCallback((clientX: number, clientY: number) => {
     const table = tableRef.current
     if (!table) return
-    const raw = detectEdge(clientX, clientY, table)
-    if (!raw) return
+    const detail = detectEdgeDetailed(clientX, clientY, table)
+    if (!detail) return
+    const raw = detail.edge
 
     // Block edges on fogged cells
     const fog = optionsRef.current.foggedCells
@@ -121,6 +140,22 @@ export function useEdgeDrag({ tableRef, rows, cols, onDraftChange, onCommit, onT
     const { rows: r, cols: c } = optionsRef.current
     const norm = normalizeEdge(raw, r, c)
     const key = edgeKey(norm)
+
+    // Entry threshold: when this is a NEW edge connecting to the current path tip
+    // (continuing or turning), require the cursor to have moved EDGE_ENTRY_THRESHOLD
+    // along it from the shared corner before registering it. This stops the next
+    // segment from appearing the instant the cursor grazes its edge zone.
+    const lastIdx = draftPath.current.length - 1
+    if (lastIdx >= 0 && key !== edgeKey(normalizeEdge(draftPath.current[lastIdx], r, c))) {
+      const [ep1, ep2] = edgeEndpoints(norm)
+      const tips = tipVerticesAt(draftPath.current, lastIdx, r, c)
+      // along: 0 → ep1, 1 → ep2. Penetration is measured from whichever endpoint
+      // is the shared connection vertex with the current tip.
+      let penetration: number | null = null
+      if (tips.includes(ep1)) penetration = detail.along
+      else if (tips.includes(ep2)) penetration = 1 - detail.along
+      if (penetration !== null && penetration < EDGE_ENTRY_THRESHOLD) return
+    }
 
     // Backtrack: if this edge is already in the path, truncate to it
     const existingIdx = draftPath.current.findIndex(e => edgeKey(normalizeEdge(e, r, c)) === key)

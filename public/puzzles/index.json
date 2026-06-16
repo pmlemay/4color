@@ -492,7 +492,6 @@
     ],
     "puzzleType": "murdoku",
     "clickActionRight": "cross",
-    "inProgress": true,
     "thumbnail": "thumbnails/star-murdoku.png"
   },
   {
@@ -589,7 +588,7 @@
       "rows": 12,
       "cols": 12
     },
-    "difficulty": "Medium",
+    "difficulty": "Hard",
     "tags": [
       "Murdoku"
     ],

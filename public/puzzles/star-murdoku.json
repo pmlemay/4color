@@ -200,7 +200,6 @@
       "triggerMode": "all"
     }
   ],
-  "inProgress": true,
   "gridSize": {
     "rows": 9,
     "cols": 9
@@ -751,5 +750,5 @@
       ]
     }
   ],
-  "createdAt": "2026-06-06"
+  "createdAt": "2026-06-16"
 }

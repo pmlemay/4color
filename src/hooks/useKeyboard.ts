@@ -57,15 +57,15 @@ export function useKeyboard(options: UseKeyboardOptions) {
       // Don't intercept when typing in input fields
       if ((e.target as HTMLElement).tagName === 'INPUT') return
 
-      // Ctrl+Z undo
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+      // Ctrl+Z undo (case-insensitive so Caps Lock doesn't break it)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
         e.preventDefault()
         options.undo()
         return
       }
 
-      // Ctrl+Y redo
-      if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+      // Ctrl+Y redo (case-insensitive so Caps Lock doesn't break it)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
         e.preventDefault()
         options.redo()
         return
