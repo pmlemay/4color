@@ -13,7 +13,8 @@
     "Star-battle"
   ],
   "autoCrossRules": [
-    "king"
+    "king",
+    "rook"
   ],
   "puzzleType": "starbattle",
   "clickActionLeft": "mark:star",
@@ -488,5 +489,5 @@
       ]
     }
   ],
-  "createdAt": "2026-03-15"
+  "createdAt": "2026-06-17"
 }

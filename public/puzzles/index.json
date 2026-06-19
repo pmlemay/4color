@@ -225,7 +225,8 @@
       "Star-battle"
     ],
     "autoCrossRules": [
-      "king"
+      "king",
+      "rook"
     ],
     "puzzleType": "starbattle",
     "clickActionLeft": "mark:star",
@@ -327,6 +328,28 @@
     ],
     "clickActionRight": "cross",
     "thumbnail": "thumbnails/hard-4color.png"
+  },
+  {
+    "id": "4-color-murdoku",
+    "file": "4-color-murdoku.json",
+    "title": "4-Color Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 8,
+      "cols": 8
+    },
+    "difficulty": "Expert",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/4-color-murdoku.png"
   },
   {
     "id": "icebarn-tutorial",
