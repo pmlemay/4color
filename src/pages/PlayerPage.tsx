@@ -132,11 +132,10 @@ export function PlayerPage() {
         if (data.clickActionLeft) {
           gridState.setInputMode('suggested')
         }
-        // Fetch solution file if it exists (for murdoku etc.) — skip for 4color (self-validating)
-        const is4c = data.tags?.includes('4color')
-        if (!is4c) {
-          fetchPuzzleSolution(puzzleId).then(sol => { if (!cancelled && sol) setSolution(sol) })
-        }
+        // Always fetch the solution file if it exists. Normally 4color puzzles are
+        // self-validating, but if an explicit solution is provided it takes precedence
+        // (e.g. a 4color-tagged puzzle whose answer uses letters), so we still load it.
+        fetchPuzzleSolution(puzzleId).then(sol => { if (!cancelled && sol) setSolution(sol) })
         // Only start timer if puzzle not already completed
         if (!completedPuzzleIds.has(puzzleId)) {
           timerRef.current.reset(savedElapsedMs)
@@ -343,7 +342,10 @@ export function PlayerPage() {
     })
   }, [gridState])
 
-  const is4Color = puzzle?.tags?.includes('4color') ?? false
+  // A provided solution takes precedence over 4color auto-validation: validate against
+  // the solution (which may use letters) instead of the built-in 4color color check.
+  const hasSolution = !!(solution?.cells && Object.keys(solution.cells).length > 0)
+  const is4Color = (puzzle?.tags?.includes('4color') ?? false) && !hasSolution
   const canSubmit = is4Color || !!solution
 
   const triggerCompletion = useCallback(() => {

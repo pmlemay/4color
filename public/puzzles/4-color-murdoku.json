@@ -29,7 +29,8 @@
   ],
   "difficulty": "Expert",
   "tags": [
-    "Murdoku"
+    "Murdoku",
+    "4color"
   ],
   "autoCrossRules": [
     "rook"
