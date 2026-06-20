@@ -7,7 +7,8 @@
   "specialRules": [
     "All regions start with exactly 2 colored square.",
     "All regions had different total height.",
-    "All regions had different total width."
+    "All regions had different total width.",
+    "No region was of total height 8."
   ],
   "rules": [
     "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
@@ -28,7 +29,8 @@
   ],
   "difficulty": "Expert",
   "tags": [
-    "Murdoku"
+    "Murdoku",
+    "4color"
   ],
   "autoCrossRules": [
     "rook"
@@ -365,5 +367,5 @@
       ]
     }
   ],
-  "createdAt": "2026-06-19"
+  "createdAt": "2026-06-20"
 }
