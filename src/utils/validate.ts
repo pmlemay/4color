@@ -72,7 +72,97 @@ function regionsMatch(map1: number[][], map2: number[][]): boolean {
   return true
 }
 
+/** A clue cell holds a numeric fixedValue indicating its region's size. */
+function isNumericClue(cell: CellData): boolean {
+  return !!cell.fixedValue && /^\d+$/.test(cell.fixedValue)
+}
+
+/**
+ * Clue-based 4-Color (Fillomino-style): there are no predefined regions. The player
+ * paints colors; a "region" is a connected group of orthogonally-adjacent same-colored
+ * cells. Each region must contain exactly one numeric clue equal to its size. Borders are
+ * ignored entirely. (Two same-colored regions can't touch — they'd be one region.)
+ */
+function validate4ColorClues(grid: CellData[][]): { valid: boolean; error?: string } {
+  const rows = grid.length
+  const cols = grid[0].length
+
+  // All cells must be colored
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (getEffectiveColor(grid[r][c]) === null) {
+        return { valid: false, error: 'Some cells are not colored.' }
+      }
+    }
+  }
+
+  // Build color-connected regions and validate each against its clue
+  const seen: boolean[][] = Array.from({ length: rows }, () => Array(cols).fill(false))
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (seen[r][c]) continue
+      const color = getEffectiveColor(grid[r][c])
+      const queue: [number, number][] = [[r, c]]
+      seen[r][c] = true
+      const cells: [number, number][] = []
+      while (queue.length > 0) {
+        const [cr, cc] = queue.shift()!
+        cells.push([cr, cc])
+        const neighbors: [number, number][] = [[cr - 1, cc], [cr + 1, cc], [cr, cc - 1], [cr, cc + 1]]
+        for (const [nr, nc] of neighbors) {
+          if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue
+          if (seen[nr][nc]) continue
+          if (getEffectiveColor(grid[nr][nc]) === color) {
+            seen[nr][nc] = true
+            queue.push([nr, nc])
+          }
+        }
+      }
+      // Each region must contain exactly one clue, matching its size
+      const clues = cells.filter(([cr, cc]) => isNumericClue(grid[cr][cc]))
+      if (clues.length === 0) {
+        return { valid: false, error: 'A region has no clue.' }
+      }
+      if (clues.length > 1) {
+        return { valid: false, error: 'A region contains more than one clue.' }
+      }
+      const expected = parseInt(grid[clues[0][0]][clues[0][1]].fixedValue!, 10)
+      if (cells.length !== expected) {
+        return { valid: false, error: `A region's size (${cells.length}) does not match its clue (${expected}).` }
+      }
+    }
+  }
+
+  // Exactly 4 colors, each used for an equal number of cells
+  const colorCounts = new Map<string, number>()
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const color = getEffectiveColor(grid[r][c])!
+      colorCounts.set(color, (colorCounts.get(color) || 0) + 1)
+    }
+  }
+  if (colorCounts.size !== 4) {
+    return { valid: false, error: `Used ${colorCounts.size} colors — exactly 4 required.` }
+  }
+  const counts = [...colorCounts.values()]
+  if (counts.some(n => n !== counts[0])) {
+    return { valid: false, error: 'Each color must be used for an equal number of cells.' }
+  }
+
+  return { valid: true }
+}
+
 export function validate4Color(grid: CellData[][]): { valid: boolean; error?: string } {
+  // Clue-based variant: no predefined regions, numeric clues drive region sizes.
+  let hasClues = false
+  for (const row of grid) {
+    for (const cell of row) {
+      if (isNumericClue(cell)) { hasClues = true; break }
+    }
+    if (hasClues) break
+  }
+  if (hasClues) return validate4ColorClues(grid)
+
   const rows = grid.length
   const cols = grid[0].length
   const regionMap = findRegions(grid)

@@ -1,0 +1,2309 @@
+{
+  "id": "murdoku-highschool",
+  "title": "Murdoku Highschool",
+  "authors": [
+    "JacobTW2"
+  ],
+  "specialRules": [
+    "There was one teacher per classroom",
+    "Each classroom was of the subject of the teacher inside of it"
+  ],
+  "rules": [
+    "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
+    "Only 1 person per row and per column.",
+    "\"Beside\" means in the same room and orthogonally adjacent."
+  ],
+  "clues": [
+    "A (Man - Arthur). Art Teacher - There was a student in the top row of his classroom",
+    "B (Woman - Bianca). Biology Teacher. She was beside a microscope",
+    "C (Man - Charles). Chemistry Teacher. He was alone with a student  southeast of him that was in a chair",
+    "D (Man - Draco). Drama Teacher. He was the only teacher in a chair. He was east of charles",
+    "E (Man - Ernest). He was in the biology classroom with another student. He was one space below an object",
+    "F (Man - Fabian). He was beside a basketball",
+    "G (Woman - Gladys). She was in the top row",
+    "H (Man - Hawke). He was the only person beside a computer",
+    "I (Man - Idris). He was in the same row as the bus stop",
+    "J (Woman - Jodie). She was in the bottom right of corner of a classroom",
+    "L (Man - Liam). There was a table in his row. He was west of Idris",
+    "K (Man - Keiran). He was beside a locker. South of it",
+    "M (Woman - Martina). She was in the drama classroom and south of Fabian",
+    "V (Man - Vincent). The victim. He was alone with the murderer."
+  ],
+  "difficulty": "Hard",
+  "tags": [
+    "Murdoku"
+  ],
+  "autoCrossRules": [
+    "rook"
+  ],
+  "puzzleType": "murdoku",
+  "clickActionRight": "cross",
+  "inProgress": true,
+  "gridSize": {
+    "rows": 14,
+    "cols": 14
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "image": "img0",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 6,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 7,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 8,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 9,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 10,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 11,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 12,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 0,
+      "col": 13,
+      "image": "img0",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "image": "img1",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "image": "img1",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 5,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 6,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 7,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 8,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 9,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 10,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 11,
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 12,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 1,
+      "col": 13,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "image": "img2",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 6,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 7,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 8,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 9,
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 11,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 12,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 13,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "image": "img0",
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Classroom D"
+        }
+      },
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "image": "img3",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Playground"
+        }
+      },
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 7,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 8,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "grass",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 10,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 11,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 12,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 13,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img3",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img3",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 7,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 8,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 9,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 4,
+      "col": 11,
+      "image": "img1",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 4,
+      "col": 12,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 4,
+      "col": 13,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 5,
+      "col": 6,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 5,
+      "col": 7,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 5,
+      "col": 8,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 5,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 5,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 5,
+      "col": 11,
+      "image": "img3",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 5,
+      "col": 12,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 5,
+      "col": 13,
+      "image": "img3",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Toilets"
+        }
+      },
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "image": "img3",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 6,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 6,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "image": "img3",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 6,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 6,
+      "col": 5,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 6,
+      "col": 6,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 6,
+      "col": 7,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 6,
+      "col": 8,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 6,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "image": "img2",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 6,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Classroom A"
+        }
+      },
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 6,
+      "col": 11,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 6,
+      "col": 12,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 6,
+      "col": 13,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "image": "img1",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 7,
+      "col": 0,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 7,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 7,
+      "col": 2,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 7,
+      "col": 3,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "image": "img5",
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 7,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 7,
+      "col": 5,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 7,
+      "col": 7,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 7,
+      "col": 8,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 7,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 7,
+      "col": 10,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 7,
+      "col": 11,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 7,
+      "col": 12,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 7,
+      "col": 13,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 8,
+      "col": 0,
+      "image": "img6",
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 8,
+      "col": 1,
+      "image": "img5",
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 8,
+      "col": 2,
+      "image": "img6",
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 8,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 8,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 8,
+      "col": 5,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 8,
+      "col": 6,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 8,
+      "col": 7,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 8,
+      "col": 8,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 8,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 8,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 8,
+      "col": 11,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 8,
+      "col": 12,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 8,
+      "col": 13,
+      "image": "img3",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 9,
+      "col": 0,
+      "image": "img3",
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 9,
+      "col": 1,
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 9,
+      "col": 2,
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 9,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 9,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 9,
+      "col": 5,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 9,
+      "col": 6,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 9,
+      "col": 7,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 9,
+      "col": 8,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 9,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 9,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 9,
+      "col": 11,
+      "image": "img3",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 9,
+      "col": 12,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 9,
+      "col": 13,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 10,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Staff room"
+        }
+      },
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 10,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 10,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 10,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "image": "img5",
+      "fixedTexture": {
+        "type": "carpet",
+        "variant": 1
+      }
+    },
+    {
+      "row": 10,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Hallway"
+        }
+      },
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 10,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 10,
+      "col": 6,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 10,
+      "col": 7,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 10,
+      "col": 8,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 10,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "image": "img4",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 10,
+      "col": 10,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Classroom B"
+        }
+      },
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 10,
+      "col": 11,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 10,
+      "col": 12,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 10,
+      "col": 13,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 11,
+      "col": 0,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 11,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img3",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 11,
+      "col": 2,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 11,
+      "col": 3,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img3",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 11,
+      "col": 4,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 11,
+      "col": 5,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 11,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 11,
+      "col": 7,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 11,
+      "col": 8,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 11,
+      "col": 9,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 2
+      }
+    },
+    {
+      "row": 11,
+      "col": 10,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 11,
+      "col": 11,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "image": "img2",
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 11,
+      "col": 12,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 11,
+      "col": 13,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 0,
+      "image": "img1",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 12,
+      "col": 1,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 12,
+      "col": 2,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 12,
+      "col": 3,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 12,
+      "col": 4,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 12,
+      "col": 5,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "image": "img6",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 12,
+      "col": 6,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 7,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 8,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 9,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 10,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 11,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 12,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 12,
+      "col": 13,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 0,
+      "labels": {
+        "bottom": {
+          "text": "Classroom C"
+        }
+      },
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 13,
+      "col": 1,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 13,
+      "col": 2,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 13,
+      "col": 3,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 13,
+      "col": 4,
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 13,
+      "col": 5,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 0
+      }
+    },
+    {
+      "row": 13,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Entrance"
+        }
+      },
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 7,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 8,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 9,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 10,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 11,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 12,
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    },
+    {
+      "row": 13,
+      "col": 13,
+      "image": "img7",
+      "fixedTexture": {
+        "type": "pavement",
+        "variant": 1
+      }
+    }
+  ],
+  "createdAt": "2026-06-21",
+  "images": {
+    "img0": "data:image/png;base64,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",
+    "img1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAEoUlEQVR4AeyZe2hOYRzHNyEKuct1lEtyjxCRS+EPJEXkfpdbCOVSJrckrVymbY0t963lD5H9gy3MmmiWqY1iaWIlKaWo+Xzf3jPnXeec9z1n573E1vf7/p7r7/l9z/Oc5zznrEXSP/LXLCQaE1lfXz8BTvbiO2FmBAFzEZAnkl6LdYWEEELgK4m6APaDvWA2ZadgV9IRIe5CCHYXkebC1tCM5WRawYgQFyEEPxumwD5EuQhaISs5OfmTVYVVWcyFEHwKgQTuBewwgp2ETYNm1JLJgBEj5kKITAF2wI6HeQjbiZjdpBdDA65mQ51iKoSgTzPobGhAgtIoz0BMPoV9YQmUWEzkiJkQgt1GWHugFTZSX0zFbwRNghHfG/QJIGZCGG0MdMIUKisQNB3rGlEXQmC9FRVXeR12M3SCnhtDnRrY1UVdCAPrhs5BUApitPanUfYWWiGdNulWFeHKoiqE4E8QgLbXVdgC8vMItIj0THgTmvGIuq3mAjfpqAkh6IUEsh8aGEtCs7OfgGvgUvInoVDHzwroGVERgogRRJQDG6MNBSeovwrbIuYA+Y1wCemPWM/wXQgBBoIlovbQDsuoKKGttlo9/B6QbxJ8F0I0x6GO5BhHjKK2CDGe7wv6N8BXIQSl7VXHjYYBwiRaUn+eftnYJsFPIQqknB8va30tYl7AgfT3BF+EEEBHOIMbVuekQUSicxPGFfTkr8aP3bHe0ZkvQhjhFtTWuhsxP6FOsm6WGN0DWEzffMR0gHpn2Y7Vth2odPppshAGOsoAs2AXeIZ8LtTWqneMGZRFutQMEbrP3tDvPjwLn+NPHEnaFk0SwgAL8HwImqH372fUaWt9SMU4GG6p5QZnQk/8i7TXe7ueQ/L1irxmpRyf3UlbwrMQnPbH4w1oBV29J7TZRoCfoZZaY8Hmfi9pq+ePcc6aSJ818ArUNr0j2NioD2b/Gs9CcKEPBhqcpC3OEeAl1RKQni86tlgtNZ2/dGEG07aUtqVYM64FM3qrDCZDjSchBKf1PzXUlW2uxqghwNuktXzuYs14R8Y4CZSRDgH9vlJQATtDS7gWgojVeNoJI0EhQaSaG5Kvgnry67XXqNI98CGYmcsY3YLpgCGvo7/Ob5WBAosfV0JwOBofl2Ek+E4jY22TDAVi9lFibAJjyX8hfwdqiWn3W814veFByoyt/B5pS7gSgofXsB3sBLWD6O1vAGmt7WFYCdU61vfb+QRXRZkTjCu8V41oPx+rMXSk1wXT/XSMsnkwn/qQ2aWsAa6E4OgX/AG/wTpYC9/DalgJy2EZfAp1AzcMFCbRgyuvb11J9BtO2yNQL16F2Ey4jHLtfCSt4UqItQvfShchJgO2I+hUuBTOgZvgdcqHOI2USEIUp16yigk6E26BC2EWfExlT2iLRBOiQHV43EDiAtQX+vVY3XMYeySiEPtoHWqahThcnLhUNc9IXC67w6BhZ4Stbxr0FQ7xGFWubVghrj3GqYOtEKYgVSQunTwx/kF+Rf88JiXZCmGQwyaS9BW++3YS4mvk0XbWLCTaV9it//9iRvRPyUSi4yTZzggvM/pXWELRSckfAAAA//+Y1h99AAAABklEQVQDANpxAYPHEtMvAAAAAElFTkSuQmCC",
+    "img2": "data:image/png;base64,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",
+    "img3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAEgUlEQVR4AeyZS2gUQRCGE70pKCIiKAoq+FZQfKOooKLiwYNvLx7Ugy8Q8XUynlTIQYzoIQc9qSTgTXxjLmpEiFHJISIaoxgVyUGIBAnE71+6197Z2Zne3dnsIgn1p2q6qqvqn56endkdUvWf/A0SqbSFHFwRd0X6+/vngRpQB26CB6AFdIIeA9kak08xitWcmW6uQu2CV4TmJgE10kJx4Qz6ENgB1oJ5YAIYZiBbY/IpRrGa00aep0C5JhFbkORNhIIzwSWqtQI1ouYwi5JlzFauVuUGea9SXkRMgQaKHgYjQNKinMrdYGp55/cmYhKLxCzv7IUHqkZeZLyJ0FMtUAHUgIhqqaZXMS8irMZusm0AAy0bTO3Yul5EyKLrFlUW8aodS4Qzsoj2F4NyyWJ6WB5XPJYICRaCcksiRFaWmwX1EyGyhkTllkSIjCo3C+qPBJHis0ciE1SKc5BIpayE7cNnRc4SLFxE64kXFSpJD7aR8ApQbQEzt8QSqa6urjE4itYj+37S/QSlku8k3kmt2eAgSNVnLFJCifBJuhHUgycGp9CpdwQS15PxOCiVHKbGLSVXTXAB2D5qsdfLF0QWEQL3EHQH7AWrDM6h04/VFLrOcUmE3I1KTB86cXptOMGx7eMY9l18NegMySBCgCZdy4j4d6DHapGzI++skaD+5OTahq2aqCw5Q69b3dEMIjjiHtV3EWOl3RoJapeIe9LCShxwB4NEXF+YPZYzoS8R5HuvfwmjQ/moMQ49HnhLkIg2ctzkqSagy+igesWA9tgN9FVw3kC2xuRTDMNZYldkSpYne+C2O5RBhI2mQnH3bJdID8leAM1Zhx5OjvlgE9gNDoDTBrI1Jt98xQLN0dz72L+AL5E6ctYRn5YMIholQHeE0dhLwDcQFJfIDOKXAN3rH6J/c1kMBaPARDAbLDWQrTH5hioWaI7m6pY6nUKWyGTsoKgXfW00hnlHgs4sIgogsBvoTKeuWY05mCYb/2PwWTaNbgeXwWuO+0A3UFNv0c8MZGtMvj5iX4LzYAv+KnJ1gUeyQaoG2pUO/M9B6IdxKBFndhgRuyJVNLED6FtGfYAdZN5c4CsLCDwJGsnRDvZhW5ljDUeH9ZJ2F0LE3YibyaTHFlRRopOz0ckww7GtWRQRXQo2UVpz9uzLVpK34NRdkNz6tjFdyzFCe7H+QlZEc7UxpbUBpZPAV5PEXXEzlFJFrUiuyZbIj1SJZP51mjRh+0OuXL3IV+WzIquJDOIjYxIRCfoKPbZEpMNyFE6EW10vaAqDWISNFzMWk7NX/lyIXBE23lSgH2D0tCnIjoNvXFyeoF+361w8Yi+tD8zUDzD6tBdkx8E3Li5P0P+GXnJK5IpwmehTuonZA42sevTyhz5ySiQRzSLB6kqAeolCLJGoyZXk8ybCpneluVQkKNIM0uJbx5sICd3HkXscl0rc3F98i+RDxD6OnGXP6M7kWyOvOJNbL1ual3pNkBEHbyIUWAEkJSNhm6WIXrZQ1XqRssOR2ptIZJYKcA4SqYBFyGjhLwAAAP//w0q82wAAAAZJREFUAwDXCHqDopP4EAAAAABJRU5ErkJggg==",
+    "img4": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAEoklEQVR4AeyYO8gVVxSFJyFdQhJCQkhImZAEUgRShLxIAimCVhailqIWioqFhYigIqJ2vgq1tVEQURFUBB+goIIP8IGioo2i+EALwUpd3zBrOGe8M+eMIPwj92ev2Wf2Xmvfs+ec/87Mfb94R/7GjUy0hRyvyHhF3tIVeCe31jxdrGNvgN+lwfbp0FePRrKCGn218Jkz+iJcke8U+fsN8IU02F869NWjkaygRl8tfOaMPmqkDAz1EK7IUHso591s5IKi7wmLhC77WclPhaahQ0+dZs7n5ODAdcyemtT2+SiPDj116nyzkToxtEHYyAtNHsgVu3T4twM3lDM39B7PVr5NT07pAi7w2J7abVrizM1c66N/dpoCkO7owNdbG54pb27oPT6rfJuWnNLlZ5sfemq3aYkzt6a+LEbQYH++1EkOnojXtPUK5GjhwBU9MmqSywFzrcW+EnVgqIOwEfbbdTXCPtwk32WzlJwsYOjs0aGnDrFRIAcHbqiFS01qM24DOvTUsT7aWjTl/XmzrUoVZ5+frMboGOLRsY+pQ2wUyMGBiwaOPTWpTawN6NBTx7qoEe9LCpzSYWUH7ikHX64IvcdblGjTk1O61Jkfemq3aYkzt6Y+aoSbDIB0WocVHbivnLn2eKBUsVWHNj05pQu4wGN7ardpiTM3c62PGmG/fSsGy5aD/eJi6Ozna5CjhQM31EpaUJNcDpir9VEj7LePVI2nyhz8KS6Gzp7iOVo4cEMtNahJLgfM1fqoEQoNFnVHg+2gmvi4kepCTBgXroi/AXjeWaIZThUOCCmzzp6b2gyJFgrcE+RazRp7iBt0mCJsFlJW68JGLOI9ep1OeFyeJH9IyLUzIvLNs0OeR4nf5J8LubZARF6c9sgz5oJqmLZmIzy/XJLsf+GIgDEpfA72VqTt8jOF24JvYBombbcYnwu3BN4Wd8pnWbORLysVV3ZxNf6q8jnum4q0Rt4r+bXGuYb+ochcBLZ49meHjXC7/1hFtgmPhXPCr8JSocvQkcfP1eA/4YpwV1gt1D/ZaNw0NMTsN+qEFeHOThNsT4VazbrohugHtzmScTUuyvOAxh1Uw1azzv6wmDTySD51Eayx58I9kO68wIX4Rb7LrIsaCVfnE6l/EnLMOns0P+rwmZAya+zNj97+HBzha109GEEaVGjcyERbrvGKTOQV8XMLX5vHNdEURCnNOvvLiqa0cEQrf20MPeOUljxzhOvPHPn1e0KMfzLwVBzM29N+mYIpPRzR6s+3lppoU2COob4uRNA3lx90wkt+CtxrRC1/DQn9dJ2ktHBEe01LzZSWPHMM9VEjvt1/L8byDIhSmnX20xRN6eGIVv6SEnrGKS155gjXnxk1QgLwBAshBbYB/CZ4l0hp4TR1nFMzpSXPHOHX8N4k4H8cHtpSe5T8B4gE6+x5tCHfBTiSvvbPTs0unXPMMdRHK+Km/hDjaAY+FAezzn6Vgik9HNHqz7eWmikteeYY6utCBAcNXwmaOKgDv632xVXpsLU69NWikaygRl8tfOaMPloR3uj4auuLa2WlouA9v68WDXJq9NXCZ87oo0bKwFAPrwAAAP//MUlTNwAAAAZJREFUAwCBAr901DZpDAAAAABJRU5ErkJggg==",
+    "img5": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAABBUlEQVR4AeyXzQ3CMAyFC5O1nDsKsALsAKP0TjYLsSKrEpUSxcSVkz6E6/7Iz/b7eul56OSHRayBBBEQUXIAr5aSsWJZEBFbp1QIIkrGimVBRGydUiGIKBkrlgURsXVKhSCiZKxYtiYR8RA1CrFIDRdraoBITTdraPVL5DZPvoX4pdgvkbCpayTCmOt/Q+S1fKYWYl0hnm0Wibfj8TqP432+PDni3f2O3JcyzZLqnFyECv3gHxx0vWdwX8q5vtlFcgJWnmMRKyR4DhBhJ6xkELFCgucAEXZCKRfLgkixZcoFIKJscLH8MYi8F+fCR9aJo9imPwu4L2WaJSV3DCIpB6w964bIFwAA//98BUsXAAAABklEQVQDAOoJ/mW3lqhZAAAAAElFTkSuQmCC",
+    "img6": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAEk0lEQVR4AeyZyYsUSRTG05mBGZhh3ED7pqJ4ULtVWhFUtN1QEMGLHgTxIIgK4tIXPYgt/gGCeHA7CIKIiBt6c2m9iIr7QUTB5Sh48yZY/r7oeGlUVmZlZUqXVVrN++K9+OK9yPcyIqo6s/6IfpG/36OQSqWys1KpDJREjxab2F2Ct3uwy863U3NkIW9FdhF4oCRmEifZTSOgInFl51MumiMVeYUo6OqIcn9nFEzoBMHbZ7ALC7FXQV3JK+Qr0RUQsSUmg74mY7KuDZSDcsFMl7xCND7Ch25H324ydE0uGSkH5SI7FXUHUyNalOwU0moL01mRzooM0x3obK1hurGlp+2sSOlbN0yBnRUZphtbetrOiqTcup9KNbwiPA31g2ZLf6N3J68QPcyMbfLDVM3DG8WMBcoFlS55hWh8AaHNfqBKXk85KBdSSZe6g+khrcnmFXKPtO+0CJQLqaRL3UI42RtAX4tgQ3oJQ2xmIRzwUcBepm2RO/05wLjlnlsfcFM8ty/gRmILFrfX+0yBN26d55YHXK/ntgTcKHFpyCwE5z5gL9MWYkvm0IgX/sWWLKFRX8B0spJWfeFvbEG2sIq+5E8a9YVF2JL/adQX5mJLNGZ5iBdXg3qFKEELeCiDLXYM2Fa74rltAffGc+Yj/ZFxQbaD93kF7/roHZ67iG3cMXHgATApVchii0a7yYIlHoDTS7vxAbfHc9MDTltH20qQbZjmffsD33GeMx93DTh3bbSkWCFMPpoovadFRV9oHsPNRtsSb8WWaPmN2ygCaCWNk9a+FmQbtF1wjTbRGKe56Eaa23FcsxviEVAOqGgm3H8yksjaWmHlz1juL+AJMOnSRHSuARMVGtE5CkJ5T0dAxeK2Db0eYHLdz9llBPoFUBHPNeaxzOsqlVVIuK3uK4I7oS1j/z5M9NwMeOMmea474OIbEnLYutMRehKw+Bk+fmLATRcHXA5oia2m7BhZhWh7mJM76HTOAfvXYQW2RG/cjVsjApwGxt0mqQlCyGGfApK1NOarOLqRPvGMOysCWA6Y0VI1SdQUwkV1PtyPNN7ZHTaWuBuYnNQYndnA5Ijneo3wWttK8F2n5nnfw6431OijXVvz+FDXtXZOXQ6KAfqxqOac1BSCY7it6EZdFGfLn6XnyxE/fYlm+ST5qT5mKnHJsao+fu5MoiXKOdwx4iKRzgiapNMtxmyps/R+fCSbabJ8kvwJfCWraZJjyf5NfEJJ5phaSHxAw8gc+7If1573Zq6ax0r8hdcgKCo1OVatCBMnz0cjF9CvSReI1cOPnhsaiZHPPzTakk/Rn0ERqfk+qSqEmWoqhcuT+xzLTzhpNfTLEmbDsphY3Qht3zAoz1beVdtLRBiUPOjhWJZ9yQ/cRWvyIrhAjERnQroIqnJNFqIkikwm3/NquLOvwWBBvFQs0MMbqpBU5RoXwh4vcz505bfE/pAwyWNQVGZx0fj7JC6EWUaCg22EQ+Q6BjiJC2FLvAMDbYYPrgqauBCWqRcMthnc4zB1VH0h6ozok6CdoJxVx/dC2FI3QLvJDVcFTby1sNtavgEAAP//FjVFiAAAAAZJREFUAwCKbeqhccntWgAAAABJRU5ErkJggg==",
+    "img7": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAADcElEQVR4AeyYPWgUQRTHJzYKIjZB8aOwUUTEDwRFRUxQDAiCFhFFECJoJYKohTa5FCoYEcHGFH6AohAbEcRAhEQQxSb4gUXEwkJBUSGkid35+y87y2yyt5u77Lp7Zo/3uzfzZufNe/Pm7vZ2jvlPXmUiRStkWZGyIhntwOw8WtVqdS6shF3QBRW4BYMwChPwHd5AP/TCSdgH62BhRgUxiRVh8fVwAV4RxB/4BM/hNnTDMdgNq2AeLIbN0Aln4QY8gXcwhh8lfBW9nX5qEpkIi+wF7fQEK72Fi7AV0hAlfAZHL1ljHB6ANgJT4xIkgjMdE+1WFXdPQTutHaaZmSzA82HQ0SSEqipHt34JEmHqIGi3ULnJokZXdhMZxUlPSlTwI1x/tm+1xmzb6gHmhYQydUIfDMB9uASqZOi6IJGWlpZfUEmJHvwI15/tW60x27ZaCQUBEvAJOv0g3YE+AudBR3E1OpAgEVmY2JY3ikMQh5LqUxtUvQPoU/ADtsBlCCSUCFZ9nQ6h84KljSEJHZ1ur2NMF9VV9R6j9VW+B/tH2M91h9CeTE5ExmHe8oKlPVnmvRvzheDvGudF/z3dmyDZoTcRSoSL2nNGG6i47B3AT3Ui+Orblvs6+ZfdXviPtQ10DcdnRcTaG3zba1+HE2HSEEj0QbPXZK61oLALcSq+0X4G8+EOY0vQntDupWE/P/rhpmvCiXiWxt/Snnkch7o9akN/JoERUIK6f8NkDpLwBzVE6DMiQ1EgSAXdTjzXYRw2wlLQcTrK+CPagRQ2EUVIsGNwGnS0NmFrpb0N7tEOSaETcSMl+BH47drcdlMkwmdDdxy6O6/5JdQUifg7r2+qnX57imqmRKYE7xrKRNzdKEK7rEgRquDGUFbE3Y0itKdVEX6QOuAceD9KM9TBv7o0NyAxEYLWE0M93bjCwvpRmikP8akHCrhLT2ITYcFWlkp9UXzqEc81dGoSmwirrIWsRLflqflOSiS1hbJ2NKsS0cMxF22unna4tslt3W4La4+a80LGtIitCH9khkEPxzxYVAmgjHHtEW09AhVKpuYcU/tV90hsInV7y3FCVCLBDtaIK2k8alrSHI2LqLnWFjseSoQjYp806khYB4FmXEfNuyYwJjSmM4drYn0ynrhuKJGEmAo9XCZStPKUFSkrktEO/AUAAP//Hab7lgAAAAZJREFUAwDWWESDN1aquAAAAABJRU5ErkJggg=="
+  }
+}

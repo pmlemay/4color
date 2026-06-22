@@ -82,6 +82,24 @@
     "thumbnail": "thumbnails/dinner-party-murdoku.png"
   },
   {
+    "id": "4-color",
+    "file": "4-color.json",
+    "title": "4-Color",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 6,
+      "cols": 6
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "4color"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/4-color.png"
+  },
+  {
     "id": "book2-1",
     "file": "book2-1.json",
     "title": "Book2 #1",
@@ -645,6 +663,29 @@
     ],
     "clickActionRight": "cross",
     "thumbnail": "thumbnails/spiral-galaxy-murdoku.png"
+  },
+  {
+    "id": "murdoku-highschool",
+    "file": "murdoku-highschool.json",
+    "title": "Murdoku Highschool",
+    "authors": [
+      "JacobTW2"
+    ],
+    "gridSize": {
+      "rows": 14,
+      "cols": 14
+    },
+    "difficulty": "Hard",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "inProgress": true,
+    "thumbnail": "thumbnails/murdoku-highschool.png"
   },
   {
     "id": "space-station-murdoku",

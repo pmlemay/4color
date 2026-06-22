@@ -5,10 +5,10 @@
     "PmLemay"
   ],
   "specialRules": [
-    "All regions start with exactly 2 colored square.",
+    "Every region must contain exactly two of the initially colored cells.",
     "All regions had different total height.",
     "All regions had different total width.",
-    "No region was of total height 8."
+    "No region was of total height nor width of 8."
   ],
   "rules": [
     "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
@@ -367,5 +367,5 @@
       ]
     }
   ],
-  "createdAt": "2026-06-20"
+  "createdAt": "2026-06-22"
 }

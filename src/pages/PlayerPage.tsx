@@ -744,6 +744,7 @@ export function PlayerPage() {
             if (e.button !== 0) return
             if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
               gridState.clearSelection()
+              clearHighlightOnAction()
             }
           }}
         >
@@ -778,6 +779,7 @@ export function PlayerPage() {
             if (e.button !== 0) return
             if (!(e.target as HTMLElement).closest('.puzzle-grid')) {
               gridState.clearSelection()
+              clearHighlightOnAction()
             }
           }}
         >
