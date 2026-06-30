@@ -623,6 +623,28 @@
     "thumbnail": "thumbnails/the-office-building.png"
   },
   {
+    "id": "soccer-game-murdoku",
+    "file": "soccer-game-murdoku.json",
+    "title": "Soccer Game Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 12,
+      "cols": 12
+    },
+    "difficulty": "Easy",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/soccer-game-murdoku.png"
+  },
+  {
     "id": "castle-siege-murdoku",
     "file": "castle-siege-murdoku.json",
     "title": "Castle Murdoku",
@@ -633,7 +655,7 @@
       "rows": 12,
       "cols": 12
     },
-    "difficulty": "Hard",
+    "difficulty": "Very hard",
     "tags": [
       "Murdoku"
     ],
