@@ -72,9 +72,10 @@ function regionsMatch(map1: number[][], map2: number[][]): boolean {
   return true
 }
 
-/** A clue cell holds a numeric fixedValue indicating its region's size. */
-function isNumericClue(cell: CellData): boolean {
-  return !!cell.fixedValue && /^\d+$/.test(cell.fixedValue)
+/** A clue cell holds any fixedValue. A numeric value gives the region's exact size; a
+ * non-numeric value (e.g. "*") is a wildcard — the region just needs exactly one clue. */
+function isClue(cell: CellData): boolean {
+  return !!cell.fixedValue
 }
 
 /**
@@ -118,17 +119,21 @@ function validate4ColorClues(grid: CellData[][]): { valid: boolean; error?: stri
           }
         }
       }
-      // Each region must contain exactly one clue, matching its size
-      const clues = cells.filter(([cr, cc]) => isNumericClue(grid[cr][cc]))
+      // Each region must contain exactly one clue. A numeric clue also fixes the size;
+      // a non-numeric clue (e.g. "*") is a wildcard and only requires the single clue.
+      const clues = cells.filter(([cr, cc]) => isClue(grid[cr][cc]))
       if (clues.length === 0) {
         return { valid: false, error: 'A region has no clue.' }
       }
       if (clues.length > 1) {
         return { valid: false, error: 'A region contains more than one clue.' }
       }
-      const expected = parseInt(grid[clues[0][0]][clues[0][1]].fixedValue!, 10)
-      if (cells.length !== expected) {
-        return { valid: false, error: `A region's size (${cells.length}) does not match its clue (${expected}).` }
+      const clueValue = grid[clues[0][0]][clues[0][1]].fixedValue!
+      if (/^\d+$/.test(clueValue)) {
+        const expected = parseInt(clueValue, 10)
+        if (cells.length !== expected) {
+          return { valid: false, error: `A region's size (${cells.length}) does not match its clue (${expected}).` }
+        }
       }
     }
   }
@@ -153,11 +158,11 @@ function validate4ColorClues(grid: CellData[][]): { valid: boolean; error?: stri
 }
 
 export function validate4Color(grid: CellData[][]): { valid: boolean; error?: string } {
-  // Clue-based variant: no predefined regions, numeric clues drive region sizes.
+  // Clue-based variant: no predefined regions, clues drive region sizes.
   let hasClues = false
   for (const row of grid) {
     for (const cell of row) {
-      if (isNumericClue(cell)) { hasClues = true; break }
+      if (isClue(cell)) { hasClues = true; break }
     }
     if (hasClues) break
   }

@@ -601,6 +601,24 @@
     "thumbnail": "thumbnails/4color-3.png"
   },
   {
+    "id": "snake-link-flow",
+    "file": "snake-link-flow.json",
+    "title": "Snake Link Flow",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Link-Flow"
+    ],
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/snake-link-flow.png"
+  },
+  {
     "id": "the-office-building",
     "file": "the-office-building.json",
     "title": "The Office Building Murdoku",
