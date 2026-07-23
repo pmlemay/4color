@@ -1,0 +1,69 @@
+{
+  "id": "archipelago-tutorial",
+  "title": "Archipelago Tutorial",
+  "authors": [],
+  "rules": [
+    "Shade some cells to form groups of orthogonally adjacent shaded cells, called islands. Some shaded cells are given.",
+    "Numbers indicate the amount of cells in their island. An island can have any amount of identical numbers.",
+    "Each diagonally connected network of islands must contain exactly one island of each size from 1 to N, where N is the size of the largest island in the group.",
+    "All islands must be diagonally adjacent to at least one other island."
+  ],
+  "clues": [
+    "The 4's form a square. The 3 goes up."
+  ],
+  "difficulty": "Very easy",
+  "tags": [
+    "Archipelago"
+  ],
+  "autoCrossRules": [],
+  "puzzleType": "archipelago",
+  "clickActionLeft": "color:9",
+  "clickActionRight": "color:5",
+  "gridSize": {
+    "rows": 5,
+    "cols": 5
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "fixedColor": "9"
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "fixedValue": "4",
+      "fixedColor": "9"
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "fixedValue": "3",
+      "fixedColor": "9"
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "fixedValue": "4",
+      "fixedColor": "9"
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "fixedColor": "9"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedValue": "1",
+      "fixedColor": "9"
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "fixedValue": "1",
+      "fixedColor": "9"
+    }
+  ],
+  "createdAt": "2026-03-15"
+}

@@ -1,0 +1,86 @@
+{
+  "id": "snake-link-flow",
+  "title": "Snake Link Flow",
+  "authors": [
+    "PmLemay"
+  ],
+  "rules": [
+    "Connect each pair of matching colored dots with a continuous path of the same color.",
+    "The paths must collectively cover every cell of the grid.",
+    "Paths must remain one cell wide and may not form any 2×2 block of the same color."
+  ],
+  "clues": [],
+  "difficulty": "Medium",
+  "tags": [
+    "Link-Flow"
+  ],
+  "autoCrossRules": [],
+  "clickActionRight": "cross",
+  "gridSize": {
+    "rows": 10,
+    "cols": 10
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "fixedColor": "1",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "fixedColor": "1",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 2,
+      "col": 7,
+      "fixedColor": "8",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "fixedColor": "8",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "fixedColor": "3",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 6,
+      "col": 3,
+      "fixedColor": "7",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 7,
+      "col": 0,
+      "fixedColor": "5",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "fixedColor": "3",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 8,
+      "col": 8,
+      "fixedColor": "7",
+      "fixedMark": "bigcircle"
+    },
+    {
+      "row": 9,
+      "col": 3,
+      "fixedColor": "5",
+      "fixedMark": "bigcircle"
+    }
+  ],
+  "createdAt": "2026-07-07"
+}
