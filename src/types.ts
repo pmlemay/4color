@@ -35,6 +35,7 @@ export interface CellData {
   fixedLines: [boolean, boolean, boolean, boolean] // [top, right, bottom, left] — puzzle-defined lines
   selected: boolean
   image: string | null
+  edgeImages: [string | null, string | null, string | null, string | null] // [top, right, bottom, left] — mirrored onto the neighbour's matching side
   fixedTexture: CellTexture | null
 }
 
@@ -58,6 +59,7 @@ export interface PuzzleCellData {
   fixedEdgeMarks?: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
   fixedVertexMarks?: [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null]
   image?: string
+  edgeImages?: [string | null, string | null, string | null, string | null]
   fixedTexture?: CellTexture
   fixedLines?: [boolean, boolean, boolean, boolean]
 }
@@ -105,7 +107,7 @@ export type MarkShape = 'circle' | 'square' | 'triangle' | 'diamond' | 'pentagon
 
 export type AutoCrossRule = 'king' | 'rook' | 'bishop' | 'knight'
 
-export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark' | 'fog' | 'fixedTexture' | 'line' | 'fixedLine'
+export type InputMode = 'normal' | 'suggested' | 'color' | 'fixed' | 'fixedColor' | 'fixedDouble' | 'note' | 'label' | 'cross' | 'border' | 'edge' | 'fixedBorder' | 'fixedEdge' | 'mark' | 'fixedMark' | 'fog' | 'fixedTexture' | 'line' | 'fixedLine' | 'edgeImage'
 
 export interface FogTrigger {
   cells: CellPosition[]

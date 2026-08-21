@@ -6,6 +6,10 @@ import { detectMarkTarget, getNearestCell, getVirtualCell, MarkTarget } from '..
 import { Cell } from './Cell'
 import './Grid.css'
 
+// How close to an edge a click must land (as a fraction of the cell) to target it in
+// edgeImage mode. Wide enough that most of the cell picks a wall, dead centre picks none.
+const EDGE_IMAGE_DEADZONE = 0.35
+
 interface GridProps {
   grid: CellData[][]
   selection: CellPosition[]
@@ -22,6 +26,7 @@ interface GridProps {
   onCommitFixedEdges?: (edges: EdgeDescriptor[]) => void
   onToggleEdgeCross?: (edge: EdgeDescriptor, forceValue?: boolean) => void
   onCycleEdgeMark?: (edge: EdgeDescriptor) => void
+  onSetEdgeImage?: (edge: EdgeDescriptor, mode: 'toggle' | 'place' | 'remove', withUndo: boolean) => void
   onToggleFixedMark?: (target: MarkTarget, shape: MarkShape) => void
   onToggleLine?: (pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => void
   onToggleFixedLine?: (pos: CellPosition, side: 0 | 1 | 2 | 3, value: boolean, withUndo?: boolean) => void
@@ -35,7 +40,7 @@ interface GridProps {
   highlightedNote?: string | null
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onToggleFixedMark, onToggleLine, onToggleFixedLine, onLineCenterClick, onLineRightCenterClick, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds, highlightedNote }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onSetEdgeImage, onToggleFixedMark, onToggleLine, onToggleFixedLine, onLineCenterClick, onLineRightCenterClick, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds, highlightedNote }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const beingDeselected = useRef<Set<string>>(new Set())
   const [, setRenderTick] = useState(0)
@@ -47,9 +52,16 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
   const lineToggleFn = inputMode === 'fixedLine' ? onToggleFixedLine : onToggleLine
   const isImmediateMode = inputMode === 'cross' || inputMode === 'border' || inputMode === 'fixedBorder' || isColorDrag || isMarkDrag || isFixedMarkDrag || isTextureDrag || isLineMode
   const isEdgeMode = inputMode === 'edge' || inputMode === 'fixedEdge'
+  const isEdgeImageMode = inputMode === 'edgeImage' && onSetEdgeImage != null
   const isFixedMarkMode = isFixedMarkDrag
 
   const [draftEdges, setDraftEdges] = useState<EdgeDescriptor[]>([])
+
+  // Edge image painting drag (edgeImage mode) — left paints, right erases
+  const edgeImageDragging = useRef(false)
+  const edgeImageVisited = useRef<Set<string>>(new Set())
+  const edgeImagePaintMode = useRef<'toggle' | 'place' | 'remove'>('toggle')
+  const edgeImageFirst = useRef(true) // first edge in the drag gets the undo snapshot
 
   // Right-click edge drag for placing multiple X marks
   const rightEdgeDragging = useRef(false)
@@ -130,7 +142,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
     onLeftClickCell,
     onRightClickCell,
     isPinching,
-    touchEnabled: !isEdgeMode && !isLineMode,
+    touchEnabled: !isEdgeMode && !isLineMode && !isEdgeImageMode,
     foggedCells,
   })
 
@@ -163,6 +175,9 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       if (leftLineDragging.current && leftLineAction.current === undefined && leftLineStartCell.current && onLineCenterClickRef.current) {
         onLineCenterClickRef.current(leftLineStartCell.current)
       }
+      edgeImageDragging.current = false
+      edgeImageVisited.current.clear()
+      edgeImageFirst.current = true
       rightEdgeDragging.current = false
       rightEdgeVisited.current.clear()
       rightLineDragging.current = false
@@ -339,6 +354,39 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
     }
   }, [])
 
+  // Touch: tap an edge to toggle the edge image
+  const edgeImageTouchRef = useRef({ enabled: isEdgeImageMode, onSetEdgeImage, foggedCells })
+  edgeImageTouchRef.current = { enabled: isEdgeImageMode, onSetEdgeImage, foggedCells }
+
+  useEffect(() => {
+    const table = dragSelect.tableRef.current
+    if (!table) return
+
+    let start: { x: number; y: number } | null = null
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (!edgeImageTouchRef.current.enabled) return
+      if (e.touches.length >= 2) { start = null; return }
+      e.preventDefault()
+      start = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    }
+
+    const onTouchEnd = () => {
+      const { enabled, onSetEdgeImage: setImage, foggedCells: fog } = edgeImageTouchRef.current
+      if (!enabled || !start || !setImage) { start = null; return }
+      const edge = detectEdge(start.x, start.y, table, EDGE_IMAGE_DEADZONE)
+      if (edge && !fog?.has(`${edge.row},${edge.col}`)) setImage(edge, 'toggle', true)
+      start = null
+    }
+
+    table.addEventListener('touchstart', onTouchStart, { passive: false })
+    table.addEventListener('touchend', onTouchEnd)
+    return () => {
+      table.removeEventListener('touchstart', onTouchStart)
+      table.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [])
+
   // Build a set of draft edge keys for fast lookup per cell
   const draftEdgeSet = useRef<Set<string>>(new Set())
   const draftSidesMap = useRef<Map<string, Set<number>>>(new Map())
@@ -376,6 +424,25 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       onMouseDown={(e) => {
         // Ignore middle-click — let it pan without affecting selection
         if (e.button === 1) return
+        if (isEdgeImageMode) {
+          e.preventDefault()
+          const table = dragSelect.tableRef.current
+          if (!table) return
+          edgeImageDragging.current = true
+          edgeImageVisited.current.clear()
+          edgeImagePaintMode.current = e.button === 2 ? 'remove' : 'toggle'
+          edgeImageFirst.current = true
+          const edge = detectEdge(e.clientX, e.clientY, table, EDGE_IMAGE_DEADZONE)
+          if (edge && !foggedCells?.has(`${edge.row},${edge.col}`)) {
+            edgeImageVisited.current.add(normalizeEdgeKey(edge))
+            onSetEdgeImage!(edge, edgeImagePaintMode.current, true)
+            edgeImageFirst.current = false
+            // A lone click toggles, but once dragging we only place — so dragging along
+            // a wall paints a run instead of flipping each edge it crosses
+            if (edgeImagePaintMode.current === 'toggle') edgeImagePaintMode.current = 'place'
+          }
+          return
+        }
         if (e.button === 0 && isLineMode && lineToggleFn) {
           e.preventDefault()
           const table = dragSelect.tableRef.current
@@ -473,6 +540,22 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
         else dragSelect.handleCellMouseDown(e)
       }}
       onMouseMove={(e) => {
+        if (edgeImageDragging.current && isEdgeImageMode) {
+          e.preventDefault()
+          const table = dragSelect.tableRef.current
+          if (!table) return
+          const edge = detectEdge(e.clientX, e.clientY, table, EDGE_IMAGE_DEADZONE)
+          if (edge && !foggedCells?.has(`${edge.row},${edge.col}`)) {
+            const key = normalizeEdgeKey(edge)
+            if (!edgeImageVisited.current.has(key)) {
+              edgeImageVisited.current.add(key)
+              onSetEdgeImage!(edge, edgeImagePaintMode.current, edgeImageFirst.current)
+              edgeImageFirst.current = false
+              if (edgeImagePaintMode.current === 'toggle') edgeImagePaintMode.current = 'place'
+            }
+          }
+          return
+        }
         if (leftLineDragging.current && lineToggleFn) {
           e.preventDefault()
           const table = dragSelect.tableRef.current

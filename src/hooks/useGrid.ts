@@ -8,6 +8,14 @@ import { getAutoCrossTargets } from '../utils/autoCross'
 const MAX_NOTES = 9
 const MAX_UNDO = 500
 
+/** For each side, the neighbour that shares it and the side it shares. */
+const OPPOSITE_SIDES: Record<number, { dr: number; dc: number; nSide: 0 | 1 | 2 | 3 }> = {
+  0: { dr: -1, dc: 0, nSide: 2 },
+  1: { dr: 0, dc: 1, nSide: 3 },
+  2: { dr: 1, dc: 0, nSide: 0 },
+  3: { dr: 0, dc: -1, nSide: 1 },
+}
+
 function cloneGrid(grid: CellData[][]): CellData[][] {
   return grid.map(row => row.map(cell => ({
     ...cell,
@@ -20,6 +28,7 @@ function cloneGrid(grid: CellData[][]): CellData[][] {
     fixedLines: [...cell.fixedLines] as [boolean, boolean, boolean, boolean],
     fixedEdgeMarks: [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
     fixedVertexMarks: [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
+    edgeImages: [...(cell.edgeImages || [null, null, null, null])] as [string | null, string | null, string | null, string | null],
   })))
 }
 
@@ -38,6 +47,7 @@ function cloneForUndo(grid: CellData[][]): CellData[][] {
     fixedLines: [...cell.fixedLines] as [boolean, boolean, boolean, boolean],
     fixedEdgeMarks: [...cell.fixedEdgeMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
     fixedVertexMarks: [...cell.fixedVertexMarks] as [MarkShape | null, MarkShape | null, MarkShape | null, MarkShape | null],
+    edgeImages: [...(cell.edgeImages || [null, null, null, null])] as [string | null, string | null, string | null, string | null],
   })))
 }
 
@@ -885,6 +895,34 @@ export function useGrid(initialRows: number, initialCols: number) {
     })
   }, [selection, setGridWithUndo])
 
+  /**
+   * Place/remove an image on a single edge, mirrored onto the neighbour's matching side.
+   * `mode` 'toggle' clears the edge when it already holds this image, 'place' always sets,
+   * 'remove' always clears. `withUndo` false lets a drag paint many edges under one undo entry.
+   */
+  const setEdgeImage = useCallback((edge: EdgeDescriptor, image: string, mode: 'toggle' | 'place' | 'remove', withUndo = true) => {
+    const setter = withUndo ? setGridWithUndo : setGrid
+    setter(prev => {
+      const rows = prev.length
+      const cols = prev[0]?.length ?? 0
+      const cell = prev[edge.row]?.[edge.col]
+      if (!cell) return prev
+      const current = cell.edgeImages[edge.side]
+      const next = mode === 'remove' ? null
+        : mode === 'place' ? image
+        : (current === image ? null : image)
+      if (current === next) return prev
+      const newGrid = cloneGrid(prev)
+      newGrid[edge.row][edge.col].edgeImages[edge.side] = next
+      const opp = OPPOSITE_SIDES[edge.side]
+      const nr = edge.row + opp.dr, nc = edge.col + opp.dc
+      if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+        newGrid[nr][nc].edgeImages[opp.nSide] = next
+      }
+      return newGrid
+    })
+  }, [setGrid, setGridWithUndo])
+
   const isEditorRef = useRef(false)
   const setIsEditor = useCallback((v: boolean) => { isEditorRef.current = v }, [])
 
@@ -1167,6 +1205,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     crossed: false, mark: null, fixedMark: null,
     fixedEdgeMarks: [null,null,null,null], fixedVertexMarks: [null,null,null,null],
     edgeCrosses: [false,false,false,false], edgeDirections: [0,0,0,0], lines: [false,false,false,false], fixedLines: [false,false,false,false], selected: false, image: null,
+    edgeImages: [null,null,null,null],
     fixedTexture: null,
   }), [])
 
@@ -1232,6 +1271,7 @@ export function useGrid(initialRows: number, initialCols: number) {
     setActiveTexture,
     applyImage,
     removeImage,
+    setEdgeImage,
     clearValues,
     applyBorders,
     commitEdges,

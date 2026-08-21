@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { CellData, MarkShape, CellTexture } from '../../types'
 import { getTextureColors } from '../../utils/textures'
 
@@ -161,6 +161,37 @@ function textureBackground(tex: CellTexture): string {
   }
 }
 
+const EDGE_IMAGE_SIDES = ['top', 'right', 'bottom', 'left'] as const
+
+// How lopsided artwork must be before it counts as long-and-thin rather than square-ish.
+const EDGE_IMAGE_TURN_RATIO = 1.5
+
+/**
+ * Image sitting on one edge of a cell (a door or window on a wall).
+ * Long, thin artwork should run along the wall, so it gets turned a quarter turn
+ * whenever its long axis points across the edge — wide art on a vertical edge, tall
+ * art on a horizontal one. Square-ish icons always stay upright.
+ */
+function EdgeImage({ src, side }: { src: string; side: typeof EDGE_IMAGE_SIDES[number] }) {
+  const [aspect, setAspect] = useState(1)
+  const vertical = side === 'left' || side === 'right'
+  const turned = vertical
+    ? aspect >= EDGE_IMAGE_TURN_RATIO
+    : aspect <= 1 / EDGE_IMAGE_TURN_RATIO
+  return (
+    <img
+      src={src}
+      className={`edge-image edge-image-${side}${turned ? ' edge-image-turned' : ''}`}
+      alt=""
+      draggable={false}
+      onLoad={e => {
+        const { naturalWidth, naturalHeight } = e.currentTarget
+        setAspect(naturalHeight ? naturalWidth / naturalHeight : 1)
+      }}
+    />
+  )
+}
+
 interface CellProps {
   data: CellData
   beingSelected: boolean
@@ -179,7 +210,7 @@ interface CellProps {
 }
 
 export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselected, debug, row, col, totalRows, totalCols, draftEdgeSides, fogged, fogEdges, fogPreview, revealedFogIds, highlightedNote }: CellProps) {
-  const { selected, value, notes, fixedValue, fixedColor, color, borders, fixedBorders, labels, crossed, mark, fixedMark, fixedEdgeMarks, fixedVertexMarks, edgeCrosses, edgeDirections, lines, fixedLines, image, fixedTexture } = data
+  const { selected, value, notes, fixedValue, fixedColor, color, borders, fixedBorders, labels, crossed, mark, fixedMark, fixedEdgeMarks, fixedVertexMarks, edgeCrosses, edgeDirections, lines, fixedLines, image, edgeImages, fixedTexture } = data
 
   const hasLines = lines[0] || lines[1] || lines[2] || lines[3]
   let tdClass = 'grid-cell cell-enabled'
@@ -256,6 +287,9 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
           {bLeft > 0 && <div className="cell-border cell-border-left" style={{ width: `${bLeft}px` }} />}
         </>
       )}
+      {!fogged && EDGE_IMAGE_SIDES.map((side, i) => (
+        edgeImages[i] && <EdgeImage key={side} src={edgeImages[i]!} side={side} />
+      ))}
       {!fogged && draftEdgeSides && draftEdgeSides.has(0) && <div className="edge-draft edge-draft-top" />}
       {!fogged && draftEdgeSides && draftEdgeSides.has(1) && <div className="edge-draft edge-draft-right" />}
       {!fogged && draftEdgeSides && draftEdgeSides.has(2) && <div className="edge-draft edge-draft-bottom" />}

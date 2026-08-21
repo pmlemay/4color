@@ -57,6 +57,8 @@ interface ToolbarProps {
   onImageApply?: () => void
   onImageRemove?: () => void
   onImageImport?: () => void
+  edgeImageMode?: boolean
+  onEdgeImageModeToggle?: () => void
   activeMark?: MarkShape | null
   onActiveMarkChange?: (mark: MarkShape | null) => void
   onMarkSelect?: (shape: MarkShape) => void
@@ -127,6 +129,8 @@ export function Toolbar({
   onImageApply,
   onImageRemove,
   onImageImport,
+  edgeImageMode = false,
+  onEdgeImageModeToggle,
   activeMark = null,
   onActiveMarkChange,
   onMarkSelect,
@@ -242,6 +246,7 @@ export function Toolbar({
         {inputMode === 'fixedTexture' && (activeTexture !== null ? 'Drag to paint texture. Click swatch again to deselect.' : 'Select a texture type and variant.')}
         {inputMode === 'mark' && (activeMark !== null ? 'Drag to paint mark. Click swatch again to deselect.' : 'Press 1-6 or click swatch to select shape.')}
         {inputMode === 'line' && 'Drag between cells to draw lines. Click edges to toggle X. Right-click edges for X only.'}
+        {inputMode === 'edgeImage' && (<><div>Click or drag edges to place the image.</div><div>Click again or right-click to remove.</div></>)}
       </div>
 
       <div className="tb-section">
@@ -663,6 +668,14 @@ export function Toolbar({
           <button className="tb-btn" onClick={onImageImport}>Import Image</button>
           {selectedImageIndex !== null && (
             <button className="tb-btn" onClick={onImageApply}>Apply to Cells</button>
+          )}
+          {onEdgeImageModeToggle && (selectedImageIndex !== null || edgeImageMode) && (
+            <button
+              className={`tb-btn ${edgeImageMode ? 'selected' : ''}`}
+              onClick={onEdgeImageModeToggle}
+            >
+              {edgeImageMode ? 'Exit Edge Image Mode' : 'Select Edges to Apply'}
+            </button>
           )}
           <button className="tb-btn" onClick={onImageRemove}>Remove Image</button>
         </div>

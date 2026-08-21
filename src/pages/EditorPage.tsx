@@ -15,7 +15,7 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
-import { PuzzleData, PuzzleSolution, CellData, CellPosition, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
+import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
 
@@ -72,6 +72,7 @@ export function EditorPage() {
   const [fogPreviewGroupId, setFogPreviewGroupId] = useState<string | null>(null)
   const [revealedFogGroupIds, setRevealedFogGroupIds] = useState<Set<string>>(new Set())
   const prevInputMode = useRef<InputMode>('normal')
+  const modeBeforeEdgeImage = useRef<InputMode>('normal')
   const fogEditingTrigger = useRef<{ index: number; trigger: FogTrigger } | null>(null)
 
   // Map from grid undo stack depth (before the push) to the fog shift applied.
@@ -151,9 +152,8 @@ export function EditorPage() {
     gridState.setGrid(puzzleToGrid(puzzle))
     const images = new Set<string>()
     for (const cell of puzzle.cells) {
-      if (cell.image) {
-        const resolved = puzzle.images?.[cell.image] ?? cell.image
-        images.add(resolved)
+      for (const ref of [cell.image, ...(cell.edgeImages || [])]) {
+        if (ref) images.add(puzzle.images?.[ref] ?? ref)
       }
     }
     setImageLibrary(Array.from(images))
@@ -700,6 +700,7 @@ export function EditorPage() {
   function extractPuzzleDefinition(grid: CellData[][]): object {
     return grid.map(row => row.map(cell => ({
       fv: cell.fixedValue, fc: cell.fixedColor, fb: cell.fixedBorders, l: cell.labels, i: cell.image,
+      ei: cell.edgeImages,
     })))
   }
 
@@ -1120,12 +1121,35 @@ export function EditorPage() {
     setRevealedFogGroupIds(new Set())
   }, [fogGroups])
 
+  const edgeImageMode = gridState.inputMode === 'edgeImage'
+
   const handleImageSelect = useCallback((index: number | null) => {
     setSelectedImageIndex(index)
-    if (index !== null) {
+    // Keep edge image mode active while switching between images, but leave it
+    // when the image is deselected — there'd be nothing left to place.
+    if (gridState.inputMode === 'edgeImage') {
+      if (index === null) gridState.setInputMode(modeBeforeEdgeImage.current)
+    } else if (index !== null) {
       gridState.setInputMode('normal')
     }
   }, [gridState])
+
+  const handleEdgeImageModeToggle = useCallback(() => {
+    if (gridState.inputMode === 'edgeImage') {
+      gridState.setInputMode(modeBeforeEdgeImage.current)
+      return
+    }
+    if (selectedImageIndex === null) return
+    modeBeforeEdgeImage.current = gridState.inputMode
+    gridState.clearSelection()
+    gridState.setInputMode('edgeImage')
+  }, [gridState, selectedImageIndex])
+
+  const handleSetEdgeImage = useCallback((edge: EdgeDescriptor, mode: 'toggle' | 'place' | 'remove', withUndo: boolean) => {
+    const image = selectedImageIndex !== null ? imageLibrary[selectedImageIndex] : null
+    if (!image) return
+    gridState.setEdgeImage(edge, image, mode, withUndo)
+  }, [gridState, imageLibrary, selectedImageIndex])
 
   const rightDragAction = useRef<boolean | undefined>(undefined)
 
@@ -1757,6 +1781,7 @@ export function EditorPage() {
                 onCommitFixedEdges={gridState.commitFixedEdges}
                 onToggleEdgeCross={gridState.toggleEdgeCross}
                 onCycleEdgeMark={gridState.cycleEdgeMark}
+                onSetEdgeImage={handleSetEdgeImage}
                 onToggleLine={gridState.toggleLine}
                 onToggleFixedLine={gridState.toggleFixedLine}
                 onToggleFixedMark={gridState.toggleFixedMark}
@@ -1801,6 +1826,8 @@ export function EditorPage() {
           onImageApply={handleImageApply}
           onImageRemove={gridState.removeImage}
           onImageImport={() => imageInputRef.current?.click()}
+          edgeImageMode={edgeImageMode}
+          onEdgeImageModeToggle={handleEdgeImageModeToggle}
           onIconAdd={handleIconAdd}
           puzzleType={puzzleType || undefined}
           clickActionLeft={clickActionLeft || undefined}

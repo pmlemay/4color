@@ -24,6 +24,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
       fixedLines: [false, false, false, false] as [boolean, boolean, boolean, boolean],
       selected: false,
       image: null,
+      edgeImages: [null, null, null, null] as [string | null, string | null, string | null, string | null],
       fixedTexture: null,
     }))
   )
@@ -41,6 +42,11 @@ export function gridToPuzzle(
       if (cell.image && !imageToId.has(cell.image)) {
         imageToId.set(cell.image, `img${imgCounter++}`)
       }
+      for (const edgeImage of cell.edgeImages) {
+        if (edgeImage && !imageToId.has(edgeImage)) {
+          imageToId.set(edgeImage, `img${imgCounter++}`)
+        }
+      }
     }
   }
 
@@ -53,7 +59,8 @@ export function gridToPuzzle(
       const hasFixedVertexMarks = cell.fixedVertexMarks.some(m => m !== null)
       const hasLabels = Object.values(cell.labels).some(l => l?.text)
       const hasFixedLines = cell.fixedLines.some(l => l)
-      if (cell.fixedValue || cell.fixedColor || hasBorders || hasLabels || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image || cell.fixedTexture || hasFixedLines) {
+      const hasEdgeImages = cell.edgeImages.some(i => i !== null)
+      if (cell.fixedValue || cell.fixedColor || hasBorders || hasLabels || cell.fixedMark || hasFixedEdgeMarks || hasFixedVertexMarks || cell.image || hasEdgeImages || cell.fixedTexture || hasFixedLines) {
         const entry: PuzzleCellData = { row: r, col: c }
         if (cell.fixedValue) entry.fixedValue = cell.fixedValue
         if (cell.fixedColor) entry.fixedColor = cell.fixedColor
@@ -63,6 +70,9 @@ export function gridToPuzzle(
         if (hasFixedEdgeMarks) entry.fixedEdgeMarks = cell.fixedEdgeMarks
         if (hasFixedVertexMarks) entry.fixedVertexMarks = cell.fixedVertexMarks
         if (cell.image) entry.image = imageToId.get(cell.image)!
+        if (hasEdgeImages) {
+          entry.edgeImages = cell.edgeImages.map(i => i ? imageToId.get(i)! : null) as [string | null, string | null, string | null, string | null]
+        }
         if (cell.fixedTexture) entry.fixedTexture = cell.fixedTexture
         if (hasFixedLines) entry.fixedLines = cell.fixedLines
         cells.push(entry)
@@ -118,6 +128,9 @@ export function puzzleToGrid(puzzle: PuzzleData): CellData[][] {
     if (cell.image) {
       // Resolve image ID to base64, or use directly if it's already base64 (backward compat)
       grid[cell.row][cell.col].image = images[cell.image] ?? cell.image
+    }
+    if (cell.edgeImages) {
+      grid[cell.row][cell.col].edgeImages = cell.edgeImages.map(i => i ? (images[i] ?? i) : null) as [string | null, string | null, string | null, string | null]
     }
     if (cell.fixedTexture) grid[cell.row][cell.col].fixedTexture = { ...cell.fixedTexture }
     if (cell.fixedLines) {

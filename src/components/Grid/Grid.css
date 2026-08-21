@@ -339,6 +339,77 @@
   z-index: 0;
 }
 
+/* Edge images (doors, windows...) — straddle the edge, painted over borders.
+   The box spans --edge-image-length along the edge and --edge-image-thickness across it;
+   object-fit keeps the aspect ratio, so wide artwork ends up as a thin band on the wall
+   while square icons still render large enough to read. */
+.edge-image {
+  --edge-image-length: 80%;
+  --edge-image-thickness: 40%;
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.edge-image-top,
+.edge-image-bottom {
+  width: var(--edge-image-length);
+  height: var(--edge-image-thickness);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.edge-image-left,
+.edge-image-right {
+  width: var(--edge-image-thickness);
+  height: var(--edge-image-length);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.edge-image-top { top: calc(var(--edge-image-thickness) / -2); }
+.edge-image-bottom { bottom: calc(var(--edge-image-thickness) / -2); }
+.edge-image-left { left: calc(var(--edge-image-thickness) / -2); }
+.edge-image-right { right: calc(var(--edge-image-thickness) / -2); }
+
+/* Artwork whose long axis points across the edge (wide art on a vertical edge, tall art
+   on a horizontal one) — laid out in the opposite band shape, then turned a quarter turn
+   so it runs along the wall. The box is centred on the edge so the turn pivots on it. */
+.edge-image-left.edge-image-turned,
+.edge-image-right.edge-image-turned {
+  width: var(--edge-image-length);
+  height: var(--edge-image-thickness);
+  top: 50%;
+}
+
+.edge-image-top.edge-image-turned,
+.edge-image-bottom.edge-image-turned {
+  width: var(--edge-image-thickness);
+  height: var(--edge-image-length);
+  left: 50%;
+}
+
+.edge-image-left.edge-image-turned {
+  left: 0;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.edge-image-right.edge-image-turned {
+  right: 0;
+  transform: translate(50%, -50%) rotate(90deg);
+}
+
+.edge-image-top.edge-image-turned {
+  top: 0;
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.edge-image-bottom.edge-image-turned {
+  bottom: 0;
+  transform: translate(-50%, 50%) rotate(90deg);
+}
+
 /* Cell value and notes — above images */
 .cell-value {
   position: relative;
