@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
-import { db } from '../firebase'
+import { useMemo } from 'react'
+import { useCompletionsIndex } from './useCompletionsIndex'
 
 export interface LeaderboardEntry {
   uid: string
@@ -9,33 +8,12 @@ export interface LeaderboardEntry {
 }
 
 export function useLeaderboard() {
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([])
+  const records = useCompletionsIndex()
 
-  useEffect(() => {
-    const q = query(
-      collection(db, 'completions_index'),
-      orderBy('count', 'desc')
-    )
-    return onSnapshot(q, snap => {
-      const results: LeaderboardEntry[] = []
-      snap.forEach(doc => {
-        const data = doc.data()
-        const count = data.times ? Object.keys(data.times).length : data.count || 0
-        if (count > 0) {
-          results.push({
-            uid: doc.id,
-            displayName: data.displayName || 'Anonymous',
-            count,
-          })
-        }
-      })
-      results.sort((a, b) => b.count - a.count)
-      setEntries(results)
-    }, () => {
-      // Firestore error — ignore silently
-      setEntries([])
-    })
-  }, [])
-
-  return entries
+  return useMemo(() => (
+    records
+      .filter(r => r.count > 0)
+      .map(r => ({ uid: r.uid, displayName: r.displayName, count: r.count }))
+      .sort((a, b) => b.count - a.count)
+  ), [records])
 }

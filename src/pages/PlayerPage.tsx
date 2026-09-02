@@ -57,7 +57,7 @@ export function PlayerPage() {
   const [revealedFogGroupIds, setRevealedFogGroupIds] = useState<Set<string>>(new Set())
 
   const { modalProps, showAlert, showConfirm } = useModal()
-  const { completedPuzzleIds, completionTimes, markCompleted } = useCompletions()
+  const { completedPuzzleIds, completionTimes, displayName, markCompleted } = useCompletions()
   const gridState = useGrid(1, 1)
   // Clear note highlight when leaving normal/note mode or when interacting with grid in other ways
   useEffect(() => {
@@ -83,7 +83,9 @@ export function PlayerPage() {
   const [puzzleCompleted, setPuzzleCompleted] = useState(false)
   const pendingCompletion = useRef<{ puzzleId: string; timeMs: number } | null>(null)
 
-  usePresence(puzzleId)
+  // displayName is passed down so usePresence doesn't open a second listener
+  // on the same completions_index document this page already watches.
+  usePresence(puzzleId, displayName)
 
   const gridRows = puzzle?.gridSize?.rows || 1
   const gridCols = puzzle?.gridSize?.cols || 1

@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import { collection, query, where, onSnapshot } from 'firebase/firestore'
-import { db } from '../firebase'
+import { useMemo } from 'react'
+import { useCompletionsIndex } from './useCompletionsIndex'
 
 export interface PuzzleLeaderboardEntry {
   uid: string
@@ -9,34 +8,13 @@ export interface PuzzleLeaderboardEntry {
 }
 
 export function usePuzzleLeaderboard(puzzleId: string | undefined) {
-  const [entries, setEntries] = useState<PuzzleLeaderboardEntry[]>([])
+  const records = useCompletionsIndex()
 
-  useEffect(() => {
-    if (!puzzleId) return
-    // Query all users who have at least 1 completion, then filter client-side
-    const q = query(
-      collection(db, 'completions_index'),
-      where('count', '>', 0)
-    )
-    return onSnapshot(q, snap => {
-      const results: PuzzleLeaderboardEntry[] = []
-      snap.forEach(doc => {
-        const data = doc.data()
-        const times = data.times as Record<string, number> | undefined
-        if (times && puzzleId in times && times[puzzleId] > 0) {
-          results.push({
-            uid: doc.id,
-            displayName: data.displayName || 'Anonymous',
-            time: times[puzzleId],
-          })
-        }
-      })
-      results.sort((a, b) => a.time - b.time)
-      setEntries(results)
-    }, () => {
-      setEntries([])
-    })
-  }, [puzzleId])
-
-  return entries
+  return useMemo(() => {
+    if (!puzzleId) return []
+    return records
+      .filter(r => r.times[puzzleId] > 0)
+      .map(r => ({ uid: r.uid, displayName: r.displayName, time: r.times[puzzleId] }))
+      .sort((a, b) => a.time - b.time)
+  }, [records, puzzleId])
 }

@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from '../contexts/AuthContext'
+import { refreshCompletionsIndex } from './useCompletionsIndex'
 
 export function useCompletions() {
   const { user } = useAuth()
@@ -69,6 +70,9 @@ export function useCompletions() {
       const name = user.displayName || 'Anonymous'
       await setDoc(ref, { uid: user.uid, times: { [puzzleId]: time }, count: 1, displayName: name }).catch(() => {})
     }
+    // The leaderboards read from a cache now, so nudge it or the new time
+    // wouldn't show up for another five minutes.
+    refreshCompletionsIndex().catch(() => {})
   }, [user])
 
   const unmarkCompleted = useCallback(async (puzzleId: string) => {
