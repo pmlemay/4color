@@ -523,7 +523,7 @@
      1px  1px 0 rgba(0,0,0,0.8);
 }
 
-/* Labels */
+/* Labels — above edge images (6) the way they already sit above cell images (0) */
 .cell-label {
   position: absolute;
   left: 2px;
@@ -531,7 +531,7 @@
   color: var(--text);
   white-space: nowrap;
   pointer-events: none;
-  z-index: 1;
+  z-index: 7;
   line-height: 1;
 }
 
@@ -573,6 +573,24 @@
 .color8 { background-color: rgba(126, 87, 194, 0.55); }   /* Purple */
 .color9 { background-color: rgba(20, 20, 20, 0.92); }     /* Near-black */
 [data-theme="dark"] .color9 { background-color: rgba(60, 60, 80, 0.92); } /* Visible dark gray in dark mode */
+
+/* Pale map-tile fills — editor-only fixed colors, kept at 50% so they read as a
+   background wash and never compete with clues, marks or images.
+   --tile is the solid hue; the toolbar swatch reuses it over a white base so the
+   preview stays readable at this alpha. */
+.colorcream { --tile: 253, 246, 232; }  /* Interior floor / off-white */
+.colorsand  { --tile: 245, 228, 187; }  /* Warm tan floor */
+.colorstone { --tile: 188, 196, 199; }  /* Sidewalk gray */
+.colorslate { --tile: 143, 165, 172; }  /* Street blue-gray */
+.colorsky   { --tile: 165, 221, 237; }  /* Water */
+.colorice   { --tile: 211, 238, 243; }  /* Shallow water / glass */
+.colorlilac { --tile: 179, 179, 230; }  /* Furniture periwinkle */
+.colormoss  { --tile: 155, 220, 175; }  /* Grass */
+
+.colorcream, .colorsand, .colorstone, .colorslate,
+.colorsky, .colorice, .colorlilac, .colormoss {
+  background-color: rgba(var(--tile), 0.5);
+}
 
 /* Edge draft overlays */
 .edge-draft {

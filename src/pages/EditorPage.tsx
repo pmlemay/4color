@@ -19,15 +19,58 @@ import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, Inp
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
 
-/** Convert 0-based column index to Excel-style letter label (A, B, ... Z, AA, AB, ...) */
-function colLabel(index: number): string {
-  let label = ''
-  let n = index
-  do {
-    label = String.fromCharCode(65 + (n % 26)) + label
-    n = Math.floor(n / 26) - 1
-  } while (n >= 0)
-  return label
+const MURDOKU_NAMES: Record<string, { male: string[]; female: string[] }> = {
+  A: { male: ['Alfred', 'Alaric', 'Arthur', 'Adrian', 'Alistair', 'Ambrose', 'Angelo', 'Archibald', 'Augustus', 'Atticus'], female: ['Alice', 'Agatha', 'Adelaide', 'Astrid', 'Amelia', 'Arabella', 'Antonia', 'Anastasia', 'Aurora', 'Abigail'] },
+  B: { male: ['Boris', 'Bruno', 'Barnaby', 'Booker', 'Benedict', 'Bernard', 'Basil', 'Balthazar', 'Beckett', 'Bradford'], female: ['Beatrice', 'Bianca', 'Bridget', 'Bertha', 'Brenda', 'Blanche', 'Bonnie', 'Belinda', 'Blythe', 'Bronwyn'] },
+  C: { male: ['Carlos', 'Cedric', 'Cornelius', 'Cyrus', 'Calvin', 'Casper', 'Chester', 'Clayton', 'Conrad', 'Clifford'], female: ['Clara', 'Celia', 'Charlotte', 'Celeste', 'Camille', 'Cordelia', 'Constance', 'Cassandra', 'Colette', 'Clementine'] },
+  D: { male: ['Diego', 'Desmond', 'Drake', 'Dmitri', 'Donovan', 'Duncan', 'Dante', 'Dalton', 'Dominic', 'Dexter'], female: ['Diana', 'Dolores', 'Dahlia', 'Daphne', 'Delilah', 'Dorothy', 'Daisy', 'Desiree', 'Dinah', 'Dorothea'] },
+  E: { male: ['Edgar', 'Edmund', 'Elias', 'Emilio', 'Ernest', 'Everett', 'Ezra', 'Eugene', 'Elliott', 'Enrique'], female: ['Elena', 'Elise', 'Esmeralda', 'Echo', 'Evelyn', 'Estelle', 'Edith', 'Eloise', 'Emmeline', 'Eugenia'] },
+  F: { male: ['Felix', 'Fletcher', 'Flint', 'Fabian', 'Franklin', 'Frederick', 'Finnegan', 'Forrest', 'Floyd', 'Fergus'], female: ['Fiona', 'Felicia', 'Flora', 'Freya', 'Frances', 'Francesca', 'Fernanda', 'Faith', 'Florence', 'Fleur'] },
+  G: { male: ['George', 'Gareth', 'Gideon', 'Gustav', 'Gordon', 'Gerald', 'Graham', 'Gilbert', 'Grover', 'Gunther'], female: ['Gloria', 'Gemma', 'Greta', 'Giselle', 'Genevieve', 'Guinevere', 'Gwendolyn', 'Gladys', 'Grace', 'Gertrude'] },
+  H: { male: ['Hugo', 'Hawke', 'Hector', 'Harold', 'Harvey', 'Horatio', 'Herbert', 'Henrik', 'Hubert', 'Hamish'], female: ['Helena', 'Harriet', 'Hazel', 'Hilda', 'Henrietta', 'Hermione', 'Heather', 'Holly', 'Helga', 'Hortense'] },
+  I: { male: ['Ivan', 'Igor', 'Isaac', 'Ignacio', 'Irving', 'Isidore', 'Ibrahim', 'Ira', 'Idris', 'Inigo'], female: ['Irene', 'Iris', 'Isolde', 'Ingrid', 'Imogen', 'Isadora', 'Ivy', 'Ilona', 'Ines', 'Imelda'] },
+  J: { male: ['James', 'Jasper', 'Jonas', 'Julian', 'Jerome', 'Jeremiah', 'Jethro', 'Joaquin', 'Julius', 'Jefferson'], female: ['Julia', 'Josephine', 'Jade', 'Jocelyn', 'Jasmine', 'Juliette', 'Jacqueline', 'Judith', 'Joanna', 'Jemima'] },
+  K: { male: ['Klaus', 'Kenneth', 'Kurt', 'Killian', 'Keegan', 'Kingston', 'Kendrick', 'Kasper', 'Kelvin', 'Kieran'], female: ['Karen', 'Kira', 'Katherine', 'Katya', 'Kirsten', 'Keziah', 'Kathleen', 'Kendra', 'Katarina', 'Kelsey'] },
+  L: { male: ['Leon', 'Lazlo', 'Lorenzo', 'Lucian', 'Leopold', 'Lancelot', 'Luther', 'Leander', 'Lionel', 'Lysander'], female: ['Laura', 'Lillian', 'Lydia', 'Lenora', 'Lucille', 'Lorraine', 'Lavinia', 'Lisette', 'Louisa', 'Leona'] },
+  M: { male: ['Marco', 'Magnus', 'Maurice', 'Milton', 'Mortimer', 'Montgomery', 'Malcolm', 'Maximilian', 'Marshall', 'Matthias'], female: ['Maria', 'Mira', 'Margot', 'Minerva', 'Madeleine', 'Miranda', 'Millicent', 'Maude', 'Marcella', 'Mirabel'] },
+  N: { male: ['Nigel', 'Nash', 'Nolan', 'Nestor', 'Nathaniel', 'Nelson', 'Neville', 'Norman', 'Nicholas', 'Norbert'], female: ['Nina', 'Nadia', 'Nora', 'Natasha', 'Nadine', 'Noelle', 'Nicolette', 'Nell', 'Nerissa', 'Nanette'] },
+  O: { male: ['Oscar', 'Otto', 'Orion', 'Oswald', 'Oliver', 'Octavius', 'Orlando', 'Oberon', 'Orville', 'Otis'], female: ['Olivia', 'Orla', 'Octavia', 'Ophelia', 'Odette', 'Olympia', 'Opal', 'Ondine', 'Ottilie', 'Olga'] },
+  P: { male: ['Percy', 'Patrick', 'Philip', 'Preston', 'Percival', 'Phineas', 'Porter', 'Palmer', 'Pemberton', 'Prescott'], female: ['Paula', 'Penelope', 'Priscilla', 'Petra', 'Prudence', 'Portia', 'Pauline', 'Patience', 'Philippa', 'Persephone'] },
+  Q: { male: ['Quinn', 'Quentin', 'Quincy', 'Quillan', 'Quade', 'Quinton', 'Quimby', 'Quillen', 'Quasim', 'Quarles'], female: ['Quinn', 'Queenie', 'Quintessa', 'Quiana', 'Querida', 'Quella', 'Quinella', 'Quillan', 'Qadira', 'Questa'] },
+  R: { male: ['Roland', 'Rupert', 'Rafael', 'Reginald', 'Roderick', 'Randolph', 'Raymond', 'Remington', 'Rowan', 'Rufus'], female: ['Rita', 'Rosalind', 'Regina', 'Rowena', 'Rosemary', 'Ramona', 'Rebecca', 'Renata', 'Roxanne', 'Rosetta'] },
+  S: { male: ['Stefan', 'Simon', 'Sebastian', 'Silas', 'Sylvester', 'Solomon', 'Sterling', 'Spencer', 'Sullivan', 'Sinclair'], female: ['Sophia', 'Selena', 'Sylvia', 'Stella', 'Sabrina', 'Seraphina', 'Sybil', 'Simone', 'Scarlett', 'Susannah'] },
+  T: { male: ['Thomas', 'Theodore', 'Tobias', 'Tristan', 'Thaddeus', 'Thornton', 'Terrence', 'Timothy', 'Tiberius', 'Tucker'], female: ['Tanya', 'Thea', 'Tabitha', 'Tamara', 'Theodora', 'Tatiana', 'Tallulah', 'Temperance', 'Thomasina', 'Trudy'] },
+  U: { male: ['Ulrich', 'Umberto', 'Ugo', 'Ulysses', 'Urban', 'Usher', 'Upton', 'Udo', 'Uriah', 'Uttam'], female: ['Ursula', 'Una', 'Ulyana', 'Undine', 'Unity', 'Ulla', 'Ulrike', 'Umaya', 'Ulyssa', 'Urbana'] },
+  V: { male: ['Victor', 'Vincent', 'Vasco', 'Viktor', 'Virgil', 'Vernon', 'Vaughn', 'Valentin', 'Vladimir', 'Vance'], female: ['Valentina', 'Vivian', 'Viola', 'Vera', 'Veronica', 'Victoria', 'Virginia', 'Violet', 'Venetia', 'Vanessa'] },
+}
+
+/** Suspect letters, in order. V is excluded — it is always reserved for the victim. */
+const MURDOKU_SUSPECT_LETTERS = 'ABCDEFGHIJKLMNOPQRSTU'
+
+/** Matches a generated-but-not-yet-written-in clue, so regenerating can't destroy authored text. */
+const MURDOKU_BLANK_CLUE = /^[A-V] \((?:Man|Woman) - \w+\)\. (?:(?:He|She) was\.\.\.|The victim\. (?:He|She) was alone with the murderer\.)$/
+
+/** One person per row and per column, so the grid's short side sets the cast size: N-1 suspects + the victim. */
+function generateMurdokuClues(gridRows: number, gridCols: number): string[] {
+  const suspectCount = Math.min(Math.min(gridRows, gridCols) - 1, MURDOKU_SUSPECT_LETTERS.length)
+  const pick = (letter: string) => {
+    const pool = MURDOKU_NAMES[letter]
+    const isMale = Math.random() < 0.5
+    const names = isMale ? pool.male : pool.female
+    return {
+      name: names[Math.floor(Math.random() * names.length)],
+      gender: isMale ? 'Man' : 'Woman',
+      pronoun: isMale ? 'He' : 'She',
+    }
+  }
+  const clues: string[] = []
+  for (const letter of MURDOKU_SUSPECT_LETTERS.slice(0, Math.max(0, suspectCount))) {
+    const person = pick(letter)
+    clues.push(`${letter} (${person.gender} - ${person.name}). ${person.pronoun} was...`)
+  }
+  const victim = pick('V')
+  clues.push(`V (${victim.gender} - ${victim.name}). The victim. ${victim.pronoun} was alone with the murderer.`)
+  return clues
 }
 
 export function EditorPage() {
@@ -385,57 +428,15 @@ export function EditorPage() {
       if (newTag && !next.includes(newTag)) next = [...next, newTag]
       return next
     })
-    // Murdoku: generate random suspect clues (A, B, C... V) with matching first-letter names
+    // Murdoku: seed one suspect clue per letter plus the victim, with matching first-letter names.
+    // Only on a fresh selection — if the rules or the seeded clues have been edited, leave them alone.
     if (newType === 'murdoku') {
-      const gridRows = gridState.grid.length
-      const gridCols = gridState.grid[0]?.length ?? 1
-      const count = Math.min(gridRows, gridCols)
-      const NAMES: Record<string, { male: string[]; female: string[] }> = {
-        A: { male: ['Alfred', 'Alaric', 'Arthur', 'Adrian', 'Alistair', 'Ambrose', 'Angelo', 'Archibald', 'Augustus', 'Atticus'], female: ['Alice', 'Agatha', 'Adelaide', 'Astrid', 'Amelia', 'Arabella', 'Antonia', 'Anastasia', 'Aurora', 'Abigail'] },
-        B: { male: ['Boris', 'Bruno', 'Barnaby', 'Booker', 'Benedict', 'Bernard', 'Basil', 'Balthazar', 'Beckett', 'Bradford'], female: ['Beatrice', 'Bianca', 'Bridget', 'Bertha', 'Brenda', 'Blanche', 'Bonnie', 'Belinda', 'Blythe', 'Bronwyn'] },
-        C: { male: ['Carlos', 'Cedric', 'Cornelius', 'Cyrus', 'Calvin', 'Casper', 'Chester', 'Clayton', 'Conrad', 'Clifford'], female: ['Clara', 'Celia', 'Charlotte', 'Celeste', 'Camille', 'Cordelia', 'Constance', 'Cassandra', 'Colette', 'Clementine'] },
-        D: { male: ['Diego', 'Desmond', 'Drake', 'Dmitri', 'Donovan', 'Duncan', 'Dante', 'Dalton', 'Dominic', 'Dexter'], female: ['Diana', 'Dolores', 'Dahlia', 'Daphne', 'Delilah', 'Dorothy', 'Daisy', 'Desiree', 'Dinah', 'Dorothea'] },
-        E: { male: ['Edgar', 'Edmund', 'Elias', 'Emilio', 'Ernest', 'Everett', 'Ezra', 'Eugene', 'Elliott', 'Enrique'], female: ['Elena', 'Elise', 'Esmeralda', 'Echo', 'Evelyn', 'Estelle', 'Edith', 'Eloise', 'Emmeline', 'Eugenia'] },
-        F: { male: ['Felix', 'Fletcher', 'Flint', 'Fabian', 'Franklin', 'Frederick', 'Finnegan', 'Forrest', 'Floyd', 'Fergus'], female: ['Fiona', 'Felicia', 'Flora', 'Freya', 'Frances', 'Francesca', 'Fernanda', 'Faith', 'Florence', 'Fleur'] },
-        G: { male: ['George', 'Gareth', 'Gideon', 'Gustav', 'Gordon', 'Gerald', 'Graham', 'Gilbert', 'Grover', 'Gunther'], female: ['Gloria', 'Gemma', 'Greta', 'Giselle', 'Genevieve', 'Guinevere', 'Gwendolyn', 'Gladys', 'Grace', 'Gertrude'] },
-        H: { male: ['Hugo', 'Hawke', 'Hector', 'Harold', 'Harvey', 'Horatio', 'Herbert', 'Henrik', 'Hubert', 'Hamish'], female: ['Helena', 'Harriet', 'Hazel', 'Hilda', 'Henrietta', 'Hermione', 'Heather', 'Holly', 'Helga', 'Hortense'] },
-        I: { male: ['Ivan', 'Igor', 'Isaac', 'Ignacio', 'Irving', 'Isidore', 'Ibrahim', 'Ira', 'Idris', 'Inigo'], female: ['Irene', 'Iris', 'Isolde', 'Ingrid', 'Imogen', 'Isadora', 'Ivy', 'Ilona', 'Ines', 'Imelda'] },
-        J: { male: ['James', 'Jasper', 'Jonas', 'Julian', 'Jerome', 'Jeremiah', 'Jethro', 'Joaquin', 'Julius', 'Jefferson'], female: ['Julia', 'Josephine', 'Jade', 'Jocelyn', 'Jasmine', 'Juliette', 'Jacqueline', 'Judith', 'Joanna', 'Jemima'] },
-        K: { male: ['Klaus', 'Kenneth', 'Kurt', 'Killian', 'Keegan', 'Kingston', 'Kendrick', 'Kasper', 'Kelvin', 'Kieran'], female: ['Karen', 'Kira', 'Katherine', 'Katya', 'Kirsten', 'Keziah', 'Kathleen', 'Kendra', 'Katarina', 'Kelsey'] },
-        L: { male: ['Leon', 'Lazlo', 'Lorenzo', 'Lucian', 'Leopold', 'Lancelot', 'Luther', 'Leander', 'Lionel', 'Lysander'], female: ['Laura', 'Lillian', 'Lydia', 'Lenora', 'Lucille', 'Lorraine', 'Lavinia', 'Lisette', 'Louisa', 'Leona'] },
-        M: { male: ['Marco', 'Magnus', 'Maurice', 'Milton', 'Mortimer', 'Montgomery', 'Malcolm', 'Maximilian', 'Marshall', 'Matthias'], female: ['Maria', 'Mira', 'Margot', 'Minerva', 'Madeleine', 'Miranda', 'Millicent', 'Maude', 'Marcella', 'Mirabel'] },
-        N: { male: ['Nigel', 'Nash', 'Nolan', 'Nestor', 'Nathaniel', 'Nelson', 'Neville', 'Norman', 'Nicholas', 'Norbert'], female: ['Nina', 'Nadia', 'Nora', 'Natasha', 'Nadine', 'Noelle', 'Nicolette', 'Nell', 'Nerissa', 'Nanette'] },
-        O: { male: ['Oscar', 'Otto', 'Orion', 'Oswald', 'Oliver', 'Octavius', 'Orlando', 'Oberon', 'Orville', 'Otis'], female: ['Olivia', 'Orla', 'Octavia', 'Ophelia', 'Odette', 'Olympia', 'Opal', 'Ondine', 'Ottilie', 'Olga'] },
-        P: { male: ['Percy', 'Patrick', 'Philip', 'Preston', 'Percival', 'Phineas', 'Porter', 'Palmer', 'Pemberton', 'Prescott'], female: ['Paula', 'Penelope', 'Priscilla', 'Petra', 'Prudence', 'Portia', 'Pauline', 'Patience', 'Philippa', 'Persephone'] },
-        Q: { male: ['Quinn', 'Quentin', 'Quincy', 'Quillan', 'Quade', 'Quinton', 'Quimby', 'Quillen', 'Quasim', 'Quarles'], female: ['Quinn', 'Queenie', 'Quintessa', 'Quiana', 'Querida', 'Quella', 'Quinella', 'Quillan', 'Qadira', 'Questa'] },
-        R: { male: ['Roland', 'Rupert', 'Rafael', 'Reginald', 'Roderick', 'Randolph', 'Raymond', 'Remington', 'Rowan', 'Rufus'], female: ['Rita', 'Rosalind', 'Regina', 'Rowena', 'Rosemary', 'Ramona', 'Rebecca', 'Renata', 'Roxanne', 'Rosetta'] },
-        S: { male: ['Stefan', 'Simon', 'Sebastian', 'Silas', 'Sylvester', 'Solomon', 'Sterling', 'Spencer', 'Sullivan', 'Sinclair'], female: ['Sophia', 'Selena', 'Sylvia', 'Stella', 'Sabrina', 'Seraphina', 'Sybil', 'Simone', 'Scarlett', 'Susannah'] },
-        T: { male: ['Thomas', 'Theodore', 'Tobias', 'Tristan', 'Thaddeus', 'Thornton', 'Terrence', 'Timothy', 'Tiberius', 'Tucker'], female: ['Tanya', 'Thea', 'Tabitha', 'Tamara', 'Theodora', 'Tatiana', 'Tallulah', 'Temperance', 'Thomasina', 'Trudy'] },
-        U: { male: ['Ulrich', 'Umberto', 'Ugo', 'Ulysses', 'Urban', 'Usher', 'Upton', 'Udo', 'Uriah', 'Uttam'], female: ['Ursula', 'Una', 'Ulyana', 'Undine', 'Unity', 'Ulla', 'Ulrike', 'Umaya', 'Ulyssa', 'Urbana'] },
-        V: { male: ['Victor', 'Vincent', 'Vasco', 'Viktor', 'Virgil', 'Vernon', 'Vaughn', 'Valentin', 'Vladimir', 'Vance'], female: ['Valentina', 'Vivian', 'Viola', 'Vera', 'Veronica', 'Victoria', 'Virginia', 'Violet', 'Venetia', 'Vanessa'] },
+      const prevRules = PUZZLE_TYPE_RULES[prevPuzzleType.current] || []
+      const rulesUntouched = rules.length === prevRules.length && rules.every((rule, i) => rule === prevRules[i])
+      const cluesUntouched = clues.every(clue => MURDOKU_BLANK_CLUE.test(clue))
+      if (rulesUntouched && cluesUntouched) {
+        setClues(generateMurdokuClues(gridState.grid.length, gridState.grid[0]?.length ?? 1))
       }
-      const letters = 'ABCDEFGHIJKLMNOPQRSTUV'
-      const suspectLetters = letters.slice(0, count - 1).split('')
-      const newClues: string[] = []
-      for (const letter of suspectLetters) {
-        const pool = NAMES[letter]
-        if (!pool) continue
-        const isMale = Math.random() < 0.5
-        const names = isMale ? pool.male : pool.female
-        const name = names[Math.floor(Math.random() * names.length)]
-        const gender = isMale ? 'Man' : 'Woman'
-        const pronoun = isMale ? 'He' : 'She'
-        newClues.push(`${letter} (${gender} - ${name}). ${pronoun} was...`)
-      }
-      // Last one is always V (victim)
-      const vPool = NAMES['V']
-      const vMale = Math.random() < 0.5
-      const vNames = vMale ? vPool.male : vPool.female
-      const vName = vNames[Math.floor(Math.random() * vNames.length)]
-      const vGender = vMale ? 'Man' : 'Woman'
-      const vPronoun = vMale ? 'He' : 'She'
-      newClues.push(`V (${vGender} - ${vName}). The victim. ${vPronoun} was alone with the murderer.`)
-      setClues(newClues)
     }
     // Icebarn: expand grid by +2 in each dimension, add border fog + IN/OUT labels
     if (newType === 'icebarn') {
@@ -510,7 +511,9 @@ export function EditorPage() {
         return g
       })
     }
-  }, [])
+    // gridState.grid is a dependency: without it the handler keeps the grid from the first
+    // render and sizes everything (murdoku cast, icebarn/starbattle expansion) off the old dimensions.
+  }, [gridState.grid, rules, clues])
 
   useEffect(() => {
     gridState.setPuzzleType(puzzleType)
@@ -1753,7 +1756,7 @@ export function EditorPage() {
                   <div key={ci} className={`grid-header-cell${selectedCols.has(ci) ? ' selected' : ''}`}
                     onMouseDown={e => handleHeaderMouseDown('col', ci, e)}
                     onMouseEnter={e => handleHeaderMouseEnter('col', ci, e)}
-                  >{colLabel(ci)}</div>
+                  >{`C${ci + 1}`}</div>
                 ))}
               </div>
               {/* Row headers (left) */}
@@ -1762,7 +1765,7 @@ export function EditorPage() {
                   <div key={ri} className={`grid-header-cell${selectedRows.has(ri) ? ' selected' : ''}`}
                     onMouseDown={e => handleHeaderMouseDown('row', ri, e)}
                     onMouseEnter={e => handleHeaderMouseEnter('row', ri, e)}
-                  >{ri + 1}</div>
+                  >{`R${ri + 1}`}</div>
                 ))}
               </div>
               <Grid
@@ -1813,7 +1816,7 @@ export function EditorPage() {
           onActiveMarkChange={gridState.setActiveMark}
           onMarkSelect={shape => gridState.toggleMark(shape)}
           onMarkErase={gridState.eraseMark}
-          onLabelApply={(align, text, showThroughFog, revealWithFog) => gridState.applyLabel(align, text, showThroughFog, revealWithFog)}
+          onLabelApply={(align, label) => gridState.applyLabel(align, label)}
           onLabelRemove={(align) => gridState.removeLabel(align)}
           selectedCellLabels={gridState.selection.length === 1 ? gridState.grid[gridState.selection[0].row][gridState.selection[0].col].labels : null}
           onUndo={handleUndo}

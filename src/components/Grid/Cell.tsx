@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CellData, MarkShape, CellTexture } from '../../types'
+import { CellData, CellLabel, MarkShape, CellTexture } from '../../types'
 import { getTextureColors } from '../../utils/textures'
 
 const SHAPE_PATHS: Record<MarkShape, string> = {
@@ -192,6 +192,15 @@ function EdgeImage({ src, side }: { src: string; side: typeof EDGE_IMAGE_SIDES[n
   )
 }
 
+/** Bold and size are optional overrides — labels without them keep the CSS defaults. */
+function labelStyle(label: CellLabel): React.CSSProperties | undefined {
+  if (!label.bold && !label.size) return undefined
+  return {
+    fontWeight: label.bold ? 700 : undefined,
+    fontSize: label.size ? `${label.size}px` : undefined,
+  }
+}
+
 interface CellProps {
   data: CellData
   beingSelected: boolean
@@ -272,9 +281,12 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
         ) : (
           !crossed && displayValue && <span className="cell-value notranslate">{displayValue}</span>
         )}
-        {labels.top?.text && (!labels.top.revealWithFog || !revealedFogIds || revealedFogIds.has(labels.top.revealWithFog)) && <span className="cell-label cell-label-top">{labels.top.text}</span>}
-        {labels.middle?.text && (!labels.middle.revealWithFog || !revealedFogIds || revealedFogIds.has(labels.middle.revealWithFog)) && <span className="cell-label cell-label-middle">{labels.middle.text}</span>}
-        {labels.bottom?.text && (!labels.bottom.revealWithFog || !revealedFogIds || revealedFogIds.has(labels.bottom.revealWithFog)) && <span className="cell-label cell-label-bottom">{labels.bottom.text}</span>}
+        {(['top', 'middle', 'bottom'] as const).map(pos => {
+          const lbl = labels[pos]
+          if (!lbl?.text) return null
+          if (lbl.revealWithFog && revealedFogIds && !revealedFogIds.has(lbl.revealWithFog)) return null
+          return <span key={pos} className={`cell-label cell-label-${pos}`} style={labelStyle(lbl)}>{lbl.text}</span>
+        })}
         {debug && (
           <span className="debug-overlay">{row},{col}</span>
         )}
@@ -369,7 +381,7 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
         if (!lbl?.text) return null
         const revealed = lbl.revealWithFog ? (revealedFogIds?.has(lbl.revealWithFog) ?? false) : false
         if (!lbl.showThroughFog && !revealed) return null
-        return <span key={pos} className={`cell-label cell-label-${pos} cell-label-over-fog`}>{lbl.text}</span>
+        return <span key={pos} className={`cell-label cell-label-${pos} cell-label-over-fog`} style={labelStyle(lbl)}>{lbl.text}</span>
       })}
     </td>
   )

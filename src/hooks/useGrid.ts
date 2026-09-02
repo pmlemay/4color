@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { CellData, CellPosition, InputMode, LabelAlign, MarkShape, AutoCrossRule, EdgeDescriptor, CellTexture } from '../types'
+import { CellData, CellLabel, CellPosition, InputMode, LabelAlign, MarkShape, AutoCrossRule, EdgeDescriptor, CellTexture } from '../types'
 import { MarkTarget } from '../utils/gridHitTest'
 import { createEmptyGrid } from '../utils/puzzleIO'
 import { applyBordersToSelection } from '../utils/borders'
@@ -653,18 +653,20 @@ export function useGrid(initialRows: number, initialCols: number) {
   )
 
   const applyLabel = useCallback(
-    (align: LabelAlign, text: string, showThroughFog?: boolean, revealWithFog?: string) => {
+    (align: LabelAlign, label: CellLabel) => {
       if (selection.length === 0) return
       setGridWithUndo(prev => {
         const newGrid = cloneGrid(prev)
         for (const pos of selection) {
           const cell = newGrid[pos.row][pos.col]
           const existing = cell.labels[align]
-          if (existing?.text === text && existing?.showThroughFog === showThroughFog && existing?.revealWithFog === revealWithFog) {
-            cell.labels = { ...cell.labels, [align]: null }
-          } else {
-            cell.labels = { ...cell.labels, [align]: { text, showThroughFog, revealWithFog } }
-          }
+          // Re-applying an identical label clears it, so Apply doubles as a toggle
+          const unchanged = existing?.text === label.text
+            && existing?.showThroughFog === label.showThroughFog
+            && existing?.revealWithFog === label.revealWithFog
+            && existing?.bold === label.bold
+            && existing?.size === label.size
+          cell.labels = { ...cell.labels, [align]: unchanged ? null : { ...label } }
         }
         return newGrid
       })

@@ -11,6 +11,8 @@ export interface CellLabel {
   text: string
   showThroughFog?: boolean
   revealWithFog?: string  // fog group ID — label hidden until that group is revealed
+  bold?: boolean
+  size?: number  // font-size in px; omitted means the default 11px
 }
 
 export type CellLabels = Partial<Record<LabelAlign, CellLabel | null>>

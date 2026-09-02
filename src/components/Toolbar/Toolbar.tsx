@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { InputMode, LabelAlign, MarkShape, CellPosition, CellLabels, FogGroup, FogTrigger, CellTexture, TextureType } from '../../types'
+import { useState, useEffect, useCallback } from 'react'
+import { InputMode, LabelAlign, MarkShape, CellPosition, CellLabel, CellLabels, FogGroup, FogTrigger, CellTexture, TextureType } from '../../types'
 import { TEXTURE_TYPES, TEXTURE_LABELS, getTextureColors, getTextureVariants } from '../../utils/textures'
 import { IconBrowser } from './IconBrowser'
 import './Toolbar.css'
@@ -37,6 +37,29 @@ const EDITOR_MODES: { mode: InputMode; label: string }[] = [
   { mode: 'fixedLine', label: 'Fixed Line' },
 ]
 
+/**
+ * Pale map-tile fills for backgrounds (streets, water, grass, floors).
+ * Editor-only — they are never offered in the player's own color palette,
+ * and they have no keyboard shortcut since 0-9 are taken by the vivid colors.
+ */
+/**
+ * Label font sizes in px. 11 is the CSS default and is stored as `undefined`,
+ * so labels made before this option existed keep rendering unchanged.
+ */
+const LABEL_SIZES = [11, 13, 15, 18, 21, 24, 28, 32, 40]
+const DEFAULT_LABEL_SIZE = 11
+
+const PALE_COLORS: { id: string; label: string }[] = [
+  { id: 'cream', label: 'Cream' },
+  { id: 'sand', label: 'Sand' },
+  { id: 'stone', label: 'Stone' },
+  { id: 'slate', label: 'Slate' },
+  { id: 'sky', label: 'Sky' },
+  { id: 'ice', label: 'Ice' },
+  { id: 'lilac', label: 'Lilac' },
+  { id: 'moss', label: 'Moss' },
+]
+
 interface ToolbarProps {
   inputMode: InputMode
   onInputModeChange: (mode: InputMode) => void
@@ -44,7 +67,7 @@ interface ToolbarProps {
   onColorErase?: () => void
   activeColor?: string | null
   onActiveColorChange?: (color: string | null) => void
-  onLabelApply?: (align: LabelAlign, text: string, showThroughFog?: boolean, revealWithFog?: string) => void
+  onLabelApply?: (align: LabelAlign, label: CellLabel) => void
   onLabelRemove?: (align: LabelAlign) => void
   selectedCellLabels?: CellLabels | null
   onUndo: () => void
@@ -186,6 +209,21 @@ export function Toolbar({
   const [labelText, setLabelText] = useState('')
   const [labelAlign, setLabelAlign] = useState<LabelAlign>('top')
   const [labelFogMode, setLabelFogMode] = useState<'hidden' | 'always' | string>('hidden') // 'hidden' | 'always' | fog group id
+  const [labelBold, setLabelBold] = useState(false)
+  const [labelSize, setLabelSize] = useState(DEFAULT_LABEL_SIZE)
+
+  const loadLabelFields = useCallback((lbl: CellLabel | null | undefined) => {
+    setLabelText(lbl?.text || '')
+    if (lbl?.revealWithFog) setLabelFogMode(lbl.revealWithFog)
+    else if (lbl?.showThroughFog) setLabelFogMode('always')
+    else setLabelFogMode('hidden')
+    // Bold and size stick between labels so a run of new ones stays consistent —
+    // only an existing label overrides them, with its own styling.
+    if (lbl?.text) {
+      setLabelBold(lbl.bold ?? false)
+      setLabelSize(lbl.size ?? DEFAULT_LABEL_SIZE)
+    }
+  }, [])
 
   // Populate label fields from selected cell's existing label
   useEffect(() => {
@@ -195,17 +233,13 @@ export function Toolbar({
       const lbl = selectedCellLabels[align]
       if (lbl?.text) {
         setLabelAlign(align)
-        setLabelText(lbl.text)
-        if (lbl.revealWithFog) setLabelFogMode(lbl.revealWithFog)
-        else if (lbl.showThroughFog) setLabelFogMode('always')
-        else setLabelFogMode('hidden')
+        loadLabelFields(lbl)
         return
       }
     }
     // No label found — clear fields
-    setLabelText('')
-    setLabelFogMode('hidden')
-  }, [showLabel, selectedCellLabels])
+    loadLabelFields(null)
+  }, [showLabel, selectedCellLabels, loadLabelFields])
 
   const renderModeBtn = (m: { mode: InputMode; label: string }) => (
     <button
@@ -419,6 +453,28 @@ export function Toolbar({
               </button>
             ))}
           </div>
+          {inputMode === 'fixedColor' && (
+            <>
+              <div className="tb-section-title tb-subsection-title">Pale (fixed only)</div>
+              <div className="tb-palette">
+                {PALE_COLORS.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    className={`palette-swatch palette-swatch-pale color${id} ${activeColor === id ? 'active-color' : ''}`}
+                    onClick={() => {
+                      if (activeColor === id) {
+                        onActiveColorChange?.(null)
+                      } else {
+                        onActiveColorChange?.(id)
+                        onColorSelect?.(id)
+                      }
+                    }}
+                    title={`${label}${activeColor === id ? ' (active — drag to paint)' : ''}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
           {activeColor !== null && (
             <button className="tb-btn" onClick={() => onActiveColorChange?.(null)}>Deselect Color</button>
           )}
@@ -518,21 +574,34 @@ export function Toolbar({
                         className={`tb-btn-sm ${labelAlign === align ? 'selected' : ''}`}
                         onClick={() => {
                           setLabelAlign(align)
-                          const lbl = selectedCellLabels?.[align]
-                          if (lbl?.text) {
-                            setLabelText(lbl.text)
-                            if (lbl.revealWithFog) setLabelFogMode(lbl.revealWithFog)
-                            else if (lbl.showThroughFog) setLabelFogMode('always')
-                            else setLabelFogMode('hidden')
-                          } else {
-                            setLabelText('')
-                            setLabelFogMode('hidden')
-                          }
+                          loadLabelFields(selectedCellLabels?.[align])
                         }}
                       >
                         {align.charAt(0).toUpperCase() + align.slice(1)}
                       </button>
                     ))}
+                  </div>
+                  <div className="tb-row">
+                    <button
+                      className={`tb-btn-sm ${labelBold ? 'selected' : ''}`}
+                      onClick={() => setLabelBold(b => !b)}
+                      title="Bold"
+                      style={{ flex: '0 0 32px', fontWeight: 700 }}
+                    >
+                      B
+                    </button>
+                    <select
+                      style={{ flex: 1, fontSize: 12 }}
+                      value={labelSize}
+                      onChange={e => setLabelSize(Number(e.target.value))}
+                      title="Label size"
+                    >
+                      {LABEL_SIZES.map(size => (
+                        <option key={size} value={size}>
+                          {size === DEFAULT_LABEL_SIZE ? `${size}px (default)` : `${size}px`}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   {fogGroups && fogGroups.length > 0 && (
                     <label className="tb-row" style={{ fontSize: '0.85em', gap: 4, flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -554,9 +623,13 @@ export function Toolbar({
                     className="tb-btn"
                     onClick={() => {
                       if (labelText.trim()) {
-                        const showThrough = labelFogMode === 'always' ? true : undefined
-                        const revealWith = labelFogMode !== 'hidden' && labelFogMode !== 'always' ? labelFogMode : undefined
-                        onLabelApply?.(labelAlign, labelText.trim(), showThrough, revealWith)
+                        onLabelApply?.(labelAlign, {
+                          text: labelText.trim(),
+                          showThroughFog: labelFogMode === 'always' ? true : undefined,
+                          revealWithFog: labelFogMode !== 'hidden' && labelFogMode !== 'always' ? labelFogMode : undefined,
+                          bold: labelBold || undefined,
+                          size: labelSize === DEFAULT_LABEL_SIZE ? undefined : labelSize,
+                        })
                       }
                     }}
                   >

@@ -705,6 +705,29 @@
     "thumbnail": "thumbnails/space-station-murdoku.png"
   },
   {
+    "id": "the-casino-murdoku",
+    "file": "the-casino-murdoku.json",
+    "title": "The Casino Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 16,
+      "cols": 16
+    },
+    "difficulty": "Expert",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "inProgress": true,
+    "thumbnail": "thumbnails/the-casino-murdoku.png"
+  },
+  {
     "id": "formula1-murdoku",
     "file": "formula1-murdoku.json",
     "title": "Formula1 Murdoku",
