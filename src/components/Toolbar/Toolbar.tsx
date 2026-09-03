@@ -75,6 +75,10 @@ interface ToolbarProps {
   onErase: () => void
   isEditor?: boolean
   imageLibrary?: string[]
+  /** Data URIs currently in the shared default bucket, shown with a filled star. */
+  defaultImages?: string[]
+  /** Omitted outside dev — the star only renders when this is provided. */
+  onToggleDefaultImage?: (image: string) => void
   selectedImageIndex?: number | null
   onImageSelect?: (index: number | null) => void
   onImageApply?: () => void
@@ -147,6 +151,8 @@ export function Toolbar({
   onErase,
   isEditor = false,
   imageLibrary = [],
+  defaultImages = [],
+  onToggleDefaultImage,
   selectedImageIndex = null,
   onImageSelect,
   onImageApply,
@@ -726,16 +732,31 @@ export function Toolbar({
           <div className="tb-section-title">Images</div>
           {imageLibrary.length > 0 && (
             <div className="tb-image-grid">
-              {imageLibrary.map((img, i) => (
-                <button
-                  key={i}
-                  className={`tb-image-thumb ${selectedImageIndex === i ? 'selected' : ''}`}
-                  onClick={() => onImageSelect?.(selectedImageIndex === i ? null : i)}
-                  title={`Image ${i + 1}`}
-                >
-                  <img src={img} alt="" draggable={false} />
-                </button>
-              ))}
+              {imageLibrary.map((img, i) => {
+                const isDefault = defaultImages.includes(img)
+                return (
+                  <div key={i} className="tb-image-thumb-wrap">
+                    <button
+                      className={`tb-image-thumb ${selectedImageIndex === i ? 'selected' : ''}`}
+                      onClick={() => onImageSelect?.(selectedImageIndex === i ? null : i)}
+                      title={`Image ${i + 1}`}
+                    >
+                      <img src={img} alt="" draggable={false} />
+                    </button>
+                    {onToggleDefaultImage && (
+                      <button
+                        className={`tb-image-default-star ${isDefault ? 'active' : ''}`}
+                        onClick={e => { e.stopPropagation(); onToggleDefaultImage(img) }}
+                        title={isDefault
+                          ? 'In the shared default images — click to remove for everyone'
+                          : 'Add to the shared default images (saves immediately)'}
+                      >
+                        {isDefault ? '★' : '☆'}
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           )}
           <button className="tb-btn" onClick={onImageImport}>Import Image</button>

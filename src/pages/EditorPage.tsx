@@ -15,6 +15,7 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
+import { fetchDefaultImages, setDefaultImage } from '../utils/defaultImages'
 import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
@@ -96,7 +97,13 @@ export function EditorPage() {
   const [newRule, setNewRule] = useState('')
   const [newClue, setNewClue] = useState('')
   const [imageLibrary, setImageLibrary] = useState<string[]>([])
+  const [defaultImages, setDefaultImages] = useState<string[]>([])
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  // Shared bucket first, so its indices stay put as puzzle images come and go
+  const allImages = useMemo(() => {
+    const inBucket = new Set(defaultImages)
+    return [...defaultImages, ...imageLibrary.filter(img => !inBucket.has(img))]
+  }, [defaultImages, imageLibrary])
   const [knownTags, setKnownTags] = useState<string[]>([])
   const [knownAuthors, setKnownAuthors] = useState<string[]>([])
   const [autoCrossRules, setAutoCrossRulesState] = useState<AutoCrossRule[]>([])
@@ -162,6 +169,10 @@ export function EditorPage() {
   const gridScale = useGridScale({ rows: gridState.grid.length, cols: gridState.grid[0]?.length ?? 0, autoResetZoom: false })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    fetchDefaultImages().then(setDefaultImages)
+  }, [])
 
   useEffect(() => {
     fetchPuzzleIndex().then(entries => {
@@ -572,8 +583,8 @@ export function EditorPage() {
     puzzleType,
     isEditor: true,
     onEnter: () => {
-      if (selectedImageIndex !== null && imageLibrary[selectedImageIndex]) {
-        gridState.applyImage(imageLibrary[selectedImageIndex])
+      if (selectedImageIndex !== null && allImages[selectedImageIndex]) {
+        gridState.applyImage(allImages[selectedImageIndex])
       }
     },
   })
@@ -1149,10 +1160,10 @@ export function EditorPage() {
   }, [gridState, selectedImageIndex])
 
   const handleSetEdgeImage = useCallback((edge: EdgeDescriptor, mode: 'toggle' | 'place' | 'remove', withUndo: boolean) => {
-    const image = selectedImageIndex !== null ? imageLibrary[selectedImageIndex] : null
+    const image = selectedImageIndex !== null ? allImages[selectedImageIndex] : null
     if (!image) return
     gridState.setEdgeImage(edge, image, mode, withUndo)
-  }, [gridState, imageLibrary, selectedImageIndex])
+  }, [gridState, allImages, selectedImageIndex])
 
   const rightDragAction = useRef<boolean | undefined>(undefined)
 
@@ -1378,9 +1389,21 @@ export function EditorPage() {
   }, [])
 
   const handleImageApply = () => {
-    if (selectedImageIndex === null || !imageLibrary[selectedImageIndex]) return
-    gridState.applyImage(imageLibrary[selectedImageIndex])
+    if (selectedImageIndex === null || !allImages[selectedImageIndex]) return
+    gridState.applyImage(allImages[selectedImageIndex])
   }
+
+  // Dev-only: promote an imported image into the bucket every new puzzle starts
+  // with. Writes through to disk right away — no need to save the puzzle.
+  const handleToggleDefaultImage = useCallback(async (image: string) => {
+    const include = !defaultImages.includes(image)
+    const result = await setDefaultImage(image, include)
+    if (!result.ok) {
+      showAlert(result.error || 'Could not update the default image bucket.', 'Default Images')
+      return
+    }
+    setDefaultImages(result.images ?? [])
+  }, [defaultImages, showAlert])
 
   const handleLoad = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -1823,7 +1846,9 @@ export function EditorPage() {
           onRedo={handleRedo}
           onErase={gridState.clearValues}
           isEditor={!solutionMode}
-          imageLibrary={imageLibrary}
+          imageLibrary={allImages}
+          defaultImages={defaultImages}
+          onToggleDefaultImage={isDev ? handleToggleDefaultImage : undefined}
           selectedImageIndex={selectedImageIndex}
           onImageSelect={handleImageSelect}
           onImageApply={handleImageApply}

@@ -724,7 +724,6 @@
     ],
     "puzzleType": "murdoku",
     "clickActionRight": "cross",
-    "inProgress": true,
     "thumbnail": "thumbnails/the-casino-murdoku.png"
   },
   {

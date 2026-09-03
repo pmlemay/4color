@@ -211,6 +211,44 @@ function puzzleSavePlugin(): Plugin {
           }
         })
       })
+
+      // Toggles one image in the shared default bucket. The server does the
+      // merge so the caller never has to send the whole list back, and the
+      // write lands immediately whether or not the puzzle is ever saved.
+      server.middlewares.use('/api/save-default-images', (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405
+          res.end('Method not allowed')
+          return
+        }
+        let body = ''
+        req.on('data', chunk => { body += chunk })
+        req.on('end', () => {
+          try {
+            const { image, include } = JSON.parse(body)
+            if (typeof image !== 'string' || !image.startsWith('data:image/')) {
+              res.statusCode = 400
+              res.end(JSON.stringify({ ok: false, error: 'Invalid image' }))
+              return
+            }
+            const filePath = join(__dirname, 'public', 'default-images.json')
+            let images: string[] = []
+            if (existsSync(filePath)) {
+              const parsed = JSON.parse(readFileSync(filePath, 'utf-8'))
+              if (Array.isArray(parsed.images)) images = parsed.images
+            }
+            const next = include
+              ? (images.includes(image) ? images : [...images, image])
+              : images.filter((i: string) => i !== image)
+            writeFileSync(filePath, JSON.stringify({ images: next }, null, 2) + '\n')
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ ok: true, images: next }))
+          } catch (e: unknown) {
+            res.statusCode = 500
+            res.end(JSON.stringify({ ok: false, error: String(e) }))
+          }
+        })
+      })
     },
   }
 }
@@ -221,7 +259,7 @@ export default defineConfig(({ command }) => ({
   server: {
     watch: {
       // Ignore public/puzzles so saving puzzles via API doesn't trigger page reloads
-      ignored: ['**/public/puzzles/**', '**/public/version.json'],
+      ignored: ['**/public/puzzles/**', '**/public/version.json', '**/public/default-images.json'],
     },
   },
 }))

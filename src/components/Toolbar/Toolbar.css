@@ -249,6 +249,39 @@
   gap: 3px;
 }
 
+.tb-image-thumb-wrap {
+  position: relative;
+  display: flex;
+}
+
+.tb-image-thumb-wrap .tb-image-thumb {
+  width: 100%;
+}
+
+/* Dev-only star for promoting an image into the shared default bucket */
+.tb-image-default-star {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--text-muted);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tb-image-default-star.active {
+  color: goldenrod;
+}
+
 .tb-image-thumb {
   aspect-ratio: 1;
   border: 2px solid var(--border);
