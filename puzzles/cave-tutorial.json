@@ -1,0 +1,75 @@
+{
+  "id": "cave-tutorial",
+  "title": "Cave Tutorial",
+  "authors": [],
+  "rules": [
+    "Shade some cells so that the shaded cells are all connected orthogonally by other shaded cells to the edge of the grid, and the remaining unshaded cells form one orthogonally connected area.",
+    "Clues cannot be shaded, and represent the total number of unshaded cells that can be seen in a straight line vertically or horizontally, including itself."
+  ],
+  "clues": [],
+  "difficulty": "Very easy",
+  "tags": [
+    "Cave"
+  ],
+  "autoCrossRules": [],
+  "puzzleType": "cave",
+  "clickActionLeft": "color:9",
+  "clickActionRight": "color:5",
+  "gridSize": {
+    "rows": 7,
+    "cols": 7
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 6,
+      "fixedValue": "3"
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "fixedValue": "4"
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "fixedValue": "3"
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "fixedValue": "2"
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "fixedValue": "7"
+    },
+    {
+      "row": 3,
+      "col": 6,
+      "fixedValue": "2"
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "fixedValue": "13"
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "fixedValue": "7"
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "fixedValue": "11"
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "fixedValue": "12"
+    }
+  ],
+  "createdAt": "2026-03-14"
+}

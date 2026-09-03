@@ -1,0 +1,12 @@
+{
+  "id": "star-battle-tutorial",
+  "cells": {},
+  "marks": {
+    "1,1": "star",
+    "2,5": "star",
+    "3,3": "star",
+    "4,0": "star",
+    "5,2": "star",
+    "6,4": "star"
+  }
+}

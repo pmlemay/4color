@@ -1,0 +1,371 @@
+{
+  "id": "4-color-murdoku",
+  "title": "4-Color Murdoku",
+  "authors": [
+    "PmLemay"
+  ],
+  "specialRules": [
+    "Every region must contain exactly two of the initially colored cells.",
+    "All regions had different total height.",
+    "All regions had different total width.",
+    "No region was of total height nor width of 8."
+  ],
+  "rules": [
+    "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
+    "Only 1 person per row and per column.",
+    "\"Beside\" means in the same room and orthogonally adjacent.",
+    "Color each region so that no two adjacent regions share the same color.",
+    "All cells in a region must be the same color."
+  ],
+  "clues": [
+    "A (Woman - Adelaide). She was in a region of height 2.",
+    "B (Man - Bernard). He was not in a green region. He was north of Gertrude.",
+    "C (Man - Chester). He was on the same diagonal and same region as Gertrude. He was also north of Bernard.",
+    "D (Man - Diego). He was on the north-most row of his region but not on the first row.",
+    "E (Man - Edgar). He was in the 5th row. He was also west of Chester.",
+    "F (Man - Franklin). He was in the same diagonal as Adelaide in the orange region.",
+    "G (Woman - Gertrude). She was in the highest total height and highest total width region. (i.e. no region was wider nor taller than hers)",
+    "V (Woman - Vanessa). The victim. She was alone with the murderer."
+  ],
+  "difficulty": "Expert",
+  "tags": [
+    "Murdoku",
+    "4color"
+  ],
+  "autoCrossRules": [
+    "rook"
+  ],
+  "puzzleType": "murdoku",
+  "clickActionRight": "cross",
+  "gridSize": {
+    "rows": 8,
+    "cols": 8
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "fixedColor": "5",
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 6,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 7,
+      "fixedColor": "1",
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 1,
+      "col": 7,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "fixedColor": "1"
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "fixedColor": "3"
+    },
+    {
+      "row": 2,
+      "col": 7,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "fixedColor": "7"
+    },
+    {
+      "row": 3,
+      "col": 7,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "fixedColor": "1"
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "fixedColor": "1"
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "fixedColor": "5"
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "fixedColor": "5"
+    },
+    {
+      "row": 4,
+      "col": 7,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "fixedColor": "7"
+    },
+    {
+      "row": 5,
+      "col": 7,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 6,
+      "col": 7,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 0,
+      "fixedColor": "5",
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 7,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 7,
+      "fixedColor": "3",
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    }
+  ],
+  "createdAt": "2026-06-22"
+}

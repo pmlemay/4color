@@ -1,0 +1,421 @@
+{
+  "id": "haunted-lighthouse-murdoku",
+  "title": "Haunted Lighthouse Murdoku",
+  "authors": [
+    "PmLemay"
+  ],
+  "rules": [
+    "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
+    "Only 1 person per row and per column.",
+    "\"Beside\" means in the same room and orthogonally adjacent.",
+    "No icons can be occupied."
+  ],
+  "clues": [
+    "A (Woman - Agatha) is in the Lantern Room.",
+    "B (Man   - Boris) is directly north of a ghost.",
+    "C (Woman - Celia) is in the Stairs.",
+    "D (Man   - Desmond) is in the docks but not in the water.",
+    "V (Woman - Vivian) is the victim and is alone with the killer."
+  ],
+  "difficulty": "Very easy",
+  "tags": [
+    "Murdoku"
+  ],
+  "autoCrossRules": [
+    "rook"
+  ],
+  "clickActionRight": "cross",
+  "gridSize": {
+    "rows": 5,
+    "cols": 5
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Lantern Room"
+        }
+      },
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "borders": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ],
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Watch Room"
+        }
+      },
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 2
+      }
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 2
+      }
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ],
+      "image": "img0",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ],
+      "image": "img1",
+      "fixedTexture": {
+        "type": "bricks",
+        "variant": 1
+      }
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Stairs"
+        }
+      },
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 1
+      }
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 2
+      }
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 2
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "borders": [
+        2,
+        2,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Dock"
+        }
+      },
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "borders": [
+        2,
+        0,
+        2,
+        2
+      ],
+      "image": "img1",
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 1
+      }
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 1
+      }
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "borders": [
+        2,
+        0,
+        0,
+        2
+      ],
+      "labels": {
+        "top": {
+          "text": "Keeper's Room"
+        }
+      },
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "borders": [
+        2,
+        2,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "gravel",
+        "variant": 0
+      }
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "borders": [
+        0,
+        2,
+        2,
+        2
+      ],
+      "fixedTexture": {
+        "type": "wood",
+        "variant": 1
+      }
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        0,
+        2
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "borders": [
+        0,
+        2,
+        0,
+        0
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "fixedColor": "7",
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "fixedColor": "7",
+      "borders": [
+        0,
+        0,
+        2,
+        0
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "fixedColor": "7",
+      "borders": [
+        2,
+        2,
+        2,
+        0
+      ],
+      "fixedTexture": {
+        "type": "water",
+        "variant": 0
+      }
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        2,
+        2
+      ],
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "borders": [
+        0,
+        2,
+        2,
+        0
+      ],
+      "image": "img1",
+      "fixedTexture": {
+        "type": "dirt",
+        "variant": 2
+      }
+    }
+  ],
+  "createdAt": "2026-04-13",
+  "images": {
+    "img0": "data:image/png;base64,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",
+    "img1": "data:image/png;base64,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"
+  }
+}

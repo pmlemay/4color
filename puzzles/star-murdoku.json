@@ -1,0 +1,754 @@
+{
+  "id": "star-murdoku",
+  "title": "Star Murdoku",
+  "authors": [
+    "PmLemay"
+  ],
+  "specialRules": [
+    "There was 1 empty row and 1 empty column."
+  ],
+  "rules": [
+    "Place everyone on the grid according to their clue to find the murderer. He was in a region alone with the victim.",
+    "Only 1 person per row and per column.",
+    "\"Beside\" means in the same room and orthogonally adjacent."
+  ],
+  "clues": [
+    "A (Woman - Alicia). She was alone with someone in Sirius.",
+    "B (Man - Bradford). He was east of Donovan.",
+    "C (Man - Chester). He was with two other man in Polaris.",
+    "D (Man - Donovan). He was not in the first row.",
+    "E (Woman - Elena). She was alone.",
+    "F (Woman - Felicia). She was in the same diagonal as Elena.",
+    "G (Man - Gregory). He was west of Antonia.",
+    "V (Woman - Vivian). The victim. She was alone with the murderer."
+  ],
+  "difficulty": "Medium",
+  "tags": [
+    "Murdoku"
+  ],
+  "autoCrossRules": [
+    "rook"
+  ],
+  "puzzleType": "murdoku",
+  "clickActionRight": "cross",
+  "fogGroups": [
+    {
+      "id": "fog-1780714797692",
+      "cells": [
+        {
+          "row": 0,
+          "col": 0
+        },
+        {
+          "row": 0,
+          "col": 1
+        },
+        {
+          "row": 0,
+          "col": 2
+        },
+        {
+          "row": 0,
+          "col": 3
+        },
+        {
+          "row": 1,
+          "col": 0
+        },
+        {
+          "row": 1,
+          "col": 1
+        },
+        {
+          "row": 1,
+          "col": 2
+        },
+        {
+          "row": 2,
+          "col": 0
+        },
+        {
+          "row": 2,
+          "col": 1
+        },
+        {
+          "row": 3,
+          "col": 0
+        },
+        {
+          "row": 5,
+          "col": 0
+        },
+        {
+          "row": 5,
+          "col": 8
+        },
+        {
+          "row": 6,
+          "col": 0
+        },
+        {
+          "row": 6,
+          "col": 1
+        },
+        {
+          "row": 6,
+          "col": 7
+        },
+        {
+          "row": 6,
+          "col": 8
+        },
+        {
+          "row": 7,
+          "col": 0
+        },
+        {
+          "row": 7,
+          "col": 1
+        },
+        {
+          "row": 7,
+          "col": 2
+        },
+        {
+          "row": 7,
+          "col": 6
+        },
+        {
+          "row": 7,
+          "col": 7
+        },
+        {
+          "row": 7,
+          "col": 8
+        },
+        {
+          "row": 8,
+          "col": 0
+        },
+        {
+          "row": 8,
+          "col": 1
+        },
+        {
+          "row": 8,
+          "col": 2
+        },
+        {
+          "row": 8,
+          "col": 3
+        },
+        {
+          "row": 8,
+          "col": 5
+        },
+        {
+          "row": 8,
+          "col": 6
+        },
+        {
+          "row": 8,
+          "col": 7
+        },
+        {
+          "row": 8,
+          "col": 8
+        },
+        {
+          "row": 3,
+          "col": 8
+        },
+        {
+          "row": 2,
+          "col": 8
+        },
+        {
+          "row": 1,
+          "col": 8
+        },
+        {
+          "row": 0,
+          "col": 8
+        },
+        {
+          "row": 0,
+          "col": 7
+        },
+        {
+          "row": 0,
+          "col": 6
+        },
+        {
+          "row": 0,
+          "col": 5
+        },
+        {
+          "row": 1,
+          "col": 6
+        },
+        {
+          "row": 1,
+          "col": 7
+        },
+        {
+          "row": 2,
+          "col": 7
+        }
+      ],
+      "triggers": [],
+      "triggerMode": "all"
+    }
+  ],
+  "gridSize": {
+    "rows": 9,
+    "cols": 9
+  },
+  "cells": [
+    {
+      "row": 0,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 0,
+      "col": 4,
+      "borders": [
+        1,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 0,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "borders": [
+        1,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 1,
+      "col": 4,
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 1,
+      "col": 5,
+      "borders": [
+        1,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 1,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 4,
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 2,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 2,
+      "col": 6,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 2,
+      "col": 7,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Sirius"
+        }
+      }
+    },
+    {
+      "row": 3,
+      "col": 4,
+      "borders": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 3,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Rigel"
+        }
+      }
+    },
+    {
+      "row": 3,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 7,
+      "borders": [
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 3,
+      "col": 8,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "borders": [
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 4,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 4,
+      "col": 5,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 6,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 7,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 4,
+      "col": 8,
+      "borders": [
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "labels": {
+        "bottom": {
+          "text": "Vega"
+        }
+      }
+    },
+    {
+      "row": 5,
+      "col": 4,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 5,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "labels": {
+        "bottom": {
+          "text": "Polaris"
+        }
+      }
+    },
+    {
+      "row": 5,
+      "col": 6,
+      "borders": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 7,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 5,
+      "col": 8,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 6,
+      "col": 1,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 2,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 6,
+      "col": 5,
+      "borders": [
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 6,
+      "borders": [
+        1,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 6,
+      "col": 7,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 7,
+      "col": 2,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 3,
+      "borders": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 7,
+      "col": 5,
+      "borders": [
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    {
+      "row": 7,
+      "col": 6,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "row": 8,
+      "col": 3,
+      "borders": [
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "row": 8,
+      "col": 4,
+      "borders": [
+        0,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "row": 8,
+      "col": 5,
+      "borders": [
+        1,
+        0,
+        0,
+        1
+      ]
+    }
+  ],
+  "createdAt": "2026-06-16"
+}
