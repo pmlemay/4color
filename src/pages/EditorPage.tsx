@@ -15,8 +15,8 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
-import { encodeSharedPuzzle, buildShareUrl } from '../utils/shareLink'
-import { putSharedPuzzle, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
+import { encodeSharedPuzzle, decodeSharedPuzzle, buildShareUrl } from '../utils/shareLink'
+import { putSharedPuzzle, getSharedPuzzle, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
 import { fetchDefaultImages, setDefaultImage } from '../utils/defaultImages'
 import { useAuth } from '../contexts/AuthContext'
 import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
@@ -85,6 +85,8 @@ export function EditorPage() {
   const debug = searchParams.get('debug') === 'true'
   const paramRows = Number(searchParams.get('rows')) || 10
   const paramCols = Number(searchParams.get('cols')) || 10
+  // Reopening one of your own shared puzzles — the way back in after a cache clear.
+  const sharedParam = searchParams.get('shared')
 
   const { theme, toggle: toggleTheme } = useTheme()
   const [rows, setRows] = useState(paramRows)
@@ -115,6 +117,9 @@ export function EditorPage() {
   const [clickActionLeft, setClickActionLeft] = useState('')
   const [clickActionRight, setClickActionRight] = useState('cross')
   const [inProgress, setInProgress] = useState(false)
+  // A shared puzzle's solution: read from its payload, edited in solution mode,
+  // and written back out by the next Share. It has no solution file.
+  const [sharedSolution, setSharedSolution] = useState<PuzzleSolution | null>(null)
 
   const [fogGroups, setFogGroups] = useState<FogGroup[]>([])
   const [fogEditStep, setFogEditStep] = useState<'idle' | 'pickFogCells' | 'pickTriggerCells' | 'pickTrigger'>('idle')
@@ -241,12 +246,14 @@ export function EditorPage() {
   }, [puzzleId])
 
   // --- Auto-save draft to localStorage ---
-  const draftKey = `editor-draft-${puzzleId || 'new'}`
+  // A reopened shared puzzle gets its own slot, so it never overwrites the
+  // draft of a new puzzle in progress.
+  const draftKey = `editor-draft-${puzzleId || sharedParam || 'new'}`
   const draftLoaded = useRef(false)
 
   // Restore draft on mount for new puzzles
   useEffect(() => {
-    if (draftLoaded.current || puzzleId) return
+    if (draftLoaded.current || puzzleId || sharedParam) return
     const raw = localStorage.getItem(draftKey)
     if (!raw) { draftLoaded.current = true; return }
     try {
@@ -254,6 +261,55 @@ export function EditorPage() {
     } catch { /* ignore corrupt drafts */ }
     draftLoaded.current = true
   }, [])
+
+  // Reopen a shared puzzle from the database, preferring a local draft of it the
+  // same way an existing puzzle does.
+  useEffect(() => {
+    if (draftLoaded.current || puzzleId || !sharedParam) return
+    let cancelled = false
+
+    const raw = localStorage.getItem(draftKey)
+    let loadedFromDraft = false
+    if (raw) {
+      try {
+        loadPuzzleIntoEditor(JSON.parse(raw) as PuzzleData)
+        gridScale.resetZoom()
+        draftLoaded.current = true
+        loadedFromDraft = true
+      } catch { /* fall through to the stored version */ }
+    }
+
+    if (loadedFromDraft) return
+    getSharedPuzzle(sharedParam)
+      .then(payload => (payload ? decodeSharedPuzzle(payload) : null))
+      .then(decoded => {
+        if (cancelled || !decoded) return
+        loadPuzzleIntoEditor(decoded.puzzle)
+        gridScale.resetZoom()
+        draftLoaded.current = true
+      })
+    return () => { cancelled = true }
+  }, [sharedParam])
+
+  /**
+   * The solution comes from the payload no matter where the definition came
+   * from, since a draft only ever holds the puzzle.
+   *
+   * Deliberately its own effect with no `draftLoaded` guard: StrictMode runs
+   * effects twice, and the pass that loads a draft flips that ref, so a guarded
+   * fetch gets cancelled on the first pass and skipped on the second — leaving
+   * solution mode with nothing to show.
+   */
+  useEffect(() => {
+    if (puzzleId || !sharedParam) return
+    let cancelled = false
+    getSharedPuzzle(sharedParam)
+      .then(payload => (payload ? decodeSharedPuzzle(payload) : null))
+      .then(decoded => {
+        if (!cancelled && decoded) setSharedSolution(decoded.solution ?? null)
+      })
+    return () => { cancelled = true }
+  }, [puzzleId, sharedParam])
 
   // Auto-save draft every 3 seconds when state changes
   useEffect(() => {
@@ -689,10 +745,12 @@ export function EditorPage() {
         return
       }
     }
-    const shareKey = puzzleId || 'new'
+    const shareKey = puzzleId || sharedParam || 'new'
     const id = editorPuzzleId || puzzleId || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
     const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
-    const solution = puzzleId ? await fetchPuzzleSolution(puzzleId) : null
+    // A shared puzzle's solution lives in its payload, not in a solution file —
+    // without this the re-share would silently drop it.
+    const solution = puzzleId ? await fetchPuzzleSolution(puzzleId) : sharedSolution
     const selfValidating = (tags || []).includes('4color')
     if (!solution && !selfValidating) {
       if (!await showConfirm('No saved solution for this puzzle, so players won\'t be able to submit. Share anyway?', 'No Solution')) return
@@ -700,8 +758,9 @@ export function EditorPage() {
     try {
       const payload = await encodeSharedPuzzle({ puzzle, solution: solution || undefined })
       // Reuse this slot's id so links already handed out serve the new version.
-      const existingId = getShareId(shareKey)
-      const docId = await putSharedPuzzle(payload, existingId)
+      // A reopened puzzle knows its own id even when the local registry is gone.
+      const existingId = sharedParam || getShareId(shareKey)
+      const docId = await putSharedPuzzle(payload, puzzle.title, existingId)
       setShareId(shareKey, docId)
       await navigator.clipboard.writeText(buildShareUrl(docId))
       await showAlert(
@@ -786,9 +845,10 @@ export function EditorPage() {
     } else {
       gridState.setInputMode('normal')
     }
-    // Load existing solution if any (only when puzzle is on server)
-    if (puzzleId) {
-      const existing = await fetchPuzzleSolution(puzzleId)
+    // Load existing solution if any. A puzzle on the server has a solution file;
+    // a shared one carries its solution inside the payload instead.
+    {
+      const existing = puzzleId ? await fetchPuzzleSolution(puzzleId) : sharedSolution
       if (existing && (Object.keys(existing.cells).length > 0 || Object.keys(existing.borders || {}).length > 0 || Object.keys(existing.colors || {}).length > 0 || Object.keys(existing.lines || {}).length > 0 || Object.keys(existing.marks || {}).length > 0)) {
         gridState.setGrid(prev => {
           const next = prev.map(row => row.map(cell => ({ ...cell })))
@@ -872,6 +932,13 @@ export function EditorPage() {
     if (Object.keys(colors).length > 0) solution.colors = colors
     if (Object.keys(solutionLines).length > 0) solution.lines = solutionLines
     if (Object.keys(solutionMarks).length > 0) solution.marks = solutionMarks
+    // A shared puzzle has no solution file to write to — hold the solution so
+    // the next Share carries it, which is where it actually gets stored.
+    if (!puzzleId && sharedParam) {
+      setSharedSolution(solution)
+      await showAlert('Solution kept for this puzzle. Press Share Playable Version to store it.', 'Solution Updated')
+      return
+    }
     if (import.meta.env.DEV) {
       const result = await saveSolutionToServer(solution)
       if (result.ok) {

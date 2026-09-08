@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PuzzleIndexEntry } from '../../types'
-import { fetchPuzzleIndex } from '../../utils/puzzleIO'
+import { fetchPuzzleIndex, savePuzzleToServer, saveSolutionToServer } from '../../utils/puzzleIO'
 import { useTheme } from '../../hooks/useTheme'
 import { useAuth } from '../../contexts/AuthContext'
 import { useCompletions } from '../../hooks/useCompletions'
@@ -13,6 +13,8 @@ import { LanguagePicker } from '../LanguagePicker'
 import { ThemeToggle } from '../ThemeToggle'
 import { usePuzzleStats } from '../../hooks/usePuzzleStats'
 import { useActivePlayers } from '../../hooks/useActivePlayers'
+import { listMySharedPuzzles, listAllSharedPuzzles, deleteSharedPuzzle, getSharedPuzzle, SharedPuzzleMeta } from '../../utils/sharedPuzzles'
+import { buildShareUrl, decodeSharedPuzzle } from '../../utils/shareLink'
 import './PuzzleList.css'
 
 export function PuzzleList() {
@@ -24,7 +26,7 @@ export function PuzzleList() {
   const leaderboard = useLeaderboard()
   const puzzleStats = usePuzzleStats()
   const activePlayers = useActivePlayers()
-  const { modalProps, showConfirm } = useModal()
+  const { modalProps, showConfirm, showAlert } = useModal()
   const [showAccount, setShowAccount] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
   const [editingName, setEditingName] = useState('')
@@ -47,6 +49,98 @@ export function PuzzleList() {
   })
 
   const mainRef = useRef<HTMLDivElement>(null)
+  const [myShared, setMyShared] = useState<SharedPuzzleMeta[]>([])
+  // Which row just had its link copied — a clipboard write is otherwise silent.
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  // The author's own shared puzzles. One read per puzzle, and only for a
+  // signed-in user looking at their own list.
+  useEffect(() => {
+    if (!user) { setMyShared([]); return }
+    let cancelled = false
+    listMySharedPuzzles().then(list => { if (!cancelled) setMyShared(list) })
+    return () => { cancelled = true }
+  }, [user])
+
+  // Debug view of everyone's shared puzzles. The rules decide whether this
+  // returns anything — for a non-admin the query is rejected and comes back empty.
+  const [allShared, setAllShared] = useState<SharedPuzzleMeta[]>([])
+
+  useEffect(() => {
+    if (!debug || !user) { setAllShared([]); return }
+    let cancelled = false
+    listAllSharedPuzzles().then(list => { if (!cancelled) setAllShared(list) })
+    return () => { cancelled = true }
+  }, [debug, user])
+
+  const sharedByOwner = useMemo(() => {
+    const groups = new Map<string, SharedPuzzleMeta[]>()
+    for (const p of allShared) {
+      const list = groups.get(p.owner)
+      if (list) list.push(p)
+      else groups.set(p.owner, [p])
+    }
+    return [...groups.values()].sort((a, b) => a[0].ownerName.localeCompare(b[0].ownerName))
+  }, [allShared])
+
+  const handleDeleteShared = async (puzzle: SharedPuzzleMeta) => {
+    if (!await showConfirm(
+      `Delete "${puzzle.title}"? Anyone holding its link will no longer be able to play it.`,
+      'Delete Shared Puzzle', 'Delete',
+    )) return
+    await deleteSharedPuzzle(puzzle.id)
+    setMyShared(prev => prev.filter(p => p.id !== puzzle.id))
+    setAllShared(prev => prev.filter(p => p.id !== puzzle.id))
+  }
+
+  const handleCopySharedLink = async (puzzle: SharedPuzzleMeta) => {
+    await navigator.clipboard.writeText(buildShareUrl(puzzle.id))
+    setCopiedId(puzzle.id)
+    setTimeout(() => setCopiedId(prev => (prev === puzzle.id ? null : prev)), 1500)
+  }
+
+  /**
+   * Promotes someone else's shared puzzle into a real indexed one. Writes the
+   * puzzle and its solution through the dev-server endpoints and lets them
+   * rebuild the index, so it's localhost-only — a real puzzle is a file in the
+   * repo, and the deployed site has no server to write one. Still needs a
+   * deploy afterwards to reach players.
+   */
+  const handlePromoteShared = async (meta: SharedPuzzleMeta) => {
+    const payload = await getSharedPuzzle(meta.id)
+    const decoded = payload ? await decodeSharedPuzzle(payload) : null
+    if (!decoded) { await showAlert('Could not read that shared puzzle.', 'Promote Failed'); return }
+
+    const index = await fetchPuzzleIndex()
+    const taken = new Set(index.map(e => e.id))
+    const base = (decoded.puzzle.title || 'untitled').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
+    let id = base
+    for (let n = 2; taken.has(id); n++) id = `${base}-${n}`
+
+    const credited = (decoded.puzzle.authors || []).join(', ') || meta.ownerName
+    if (!await showConfirm(
+      `Publish "${decoded.puzzle.title}" by ${credited} as a real puzzle (id: ${id})?`
+      + (decoded.solution ? '' : ' It has no solution, so players won\'t be able to submit.')
+      + ' It reaches players on your next deploy.',
+      'Promote to Real Puzzle', 'Publish',
+    )) return
+
+    const puzzle = { ...decoded.puzzle, id }
+    delete puzzle.inProgress
+    const saved = await savePuzzleToServer(puzzle)
+    if (!saved.ok) { await showAlert(saved.error || 'Save failed.', 'Promote Failed'); return }
+    if (decoded.solution) {
+      const savedSolution = await saveSolutionToServer({ ...decoded.solution, id })
+      if (!savedSolution.ok) {
+        await showAlert(`Puzzle written to puzzles/${saved.file}, but its solution failed: ${savedSolution.error}`, 'Partly Done')
+        return
+      }
+    }
+    // The save endpoint rebuilds the index itself, so re-reading it shows the new puzzle.
+    fetchPuzzleIndex().then(data => setPuzzles(isDev ? data : data.filter(p => !p.inProgress)))
+    await showAlert(`Published as puzzles/${saved.file}. Deploy to make it live.`, 'Promoted')
+  }
 
   // Persist filter state to sessionStorage
   useEffect(() => { sessionStorage.setItem('filterTags', JSON.stringify([...selectedTags])) }, [selectedTags])
@@ -255,6 +349,59 @@ export function PuzzleList() {
         <div className="puzzle-list-actions">
           <Link to="/edit" className="new-puzzle-btn">Create New Puzzle</Link>
         </div>
+
+        {user && myShared.length > 0 && (
+          <div className="my-shared">
+            <div className="my-shared-title">My Shared Puzzles</div>
+            <p className="my-shared-hint">
+              Only you can see this list. These live in your account, not the public puzzle
+              list, so they survive clearing your browser data.
+            </p>
+            {myShared.map(p => (
+              <div key={p.id} className="my-shared-row">
+                <span className="my-shared-name">{p.title}</span>
+                <span className="my-shared-date">{new Date(p.updatedAt).toLocaleDateString()}</span>
+                <Link to={`/play/shared?d=${p.id}`} className="my-shared-btn">Play</Link>
+                <Link to={`/edit?shared=${p.id}`} className="my-shared-btn">Edit</Link>
+                <button className="my-shared-btn" onClick={() => handleCopySharedLink(p)}>
+                  {copiedId === p.id ? 'Copied!' : 'Copy Link'}
+                </button>
+                <button className="my-shared-btn" onClick={() => handleDeleteShared(p)}>Delete</button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {debug && allShared.length > 0 && (
+          <div className="my-shared my-shared-debug">
+            <div className="my-shared-title">All Shared Puzzles — debug ({allShared.length})</div>
+            <p className="my-shared-hint">
+              Every user&apos;s shared puzzles, playable without their link. Visible only to
+              an admin uid — the rules reject this query for anyone else.
+            </p>
+            {sharedByOwner.map(puzzles => (
+              <div key={puzzles[0].owner} className="my-shared-group">
+                <div className="my-shared-owner">
+                  {puzzles[0].ownerName}
+                  <span className="my-shared-uid">{puzzles[0].owner}</span>
+                </div>
+                {puzzles.map(p => (
+                  <div key={p.id} className="my-shared-row">
+                    <span className="my-shared-name">{p.title}</span>
+                    <span className="my-shared-date">{new Date(p.updatedAt).toLocaleDateString()}</span>
+                    <Link to={`/play/shared?d=${p.id}`} className="my-shared-btn">Play</Link>
+                    <button className="my-shared-btn" onClick={() => handleCopySharedLink(p)}>
+                      {copiedId === p.id ? 'Copied!' : 'Copy Link'}
+                    </button>
+                    {isDev && (
+                      <button className="my-shared-btn promote" onClick={() => handlePromoteShared(p)}>Publish</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
 
         {(allTags.length > 0 || allDifficulties.length > 0 || allAuthors.length > 0) && (
           <div className="filter-bars">

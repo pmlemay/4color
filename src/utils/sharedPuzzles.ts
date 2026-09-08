@@ -1,8 +1,16 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, QueryDocumentSnapshot } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 
 const COLLECTION = 'shared_puzzles'
 const ID_STORE = 'shared-puzzle-ids'
+
+export interface SharedPuzzleMeta {
+  id: string
+  title: string
+  updatedAt: number
+  owner: string
+  ownerName: string
+}
 
 /**
  * Cached for the life of the page, so a reload is what picks up a puzzle the
@@ -22,7 +30,11 @@ function randomId(): string {
 /**
  * Author-side map of editor slot → share document id, so re-sharing overwrites
  * the doc people already hold links to instead of minting a new one. Keyed the
- * same way as the editor draft: the puzzle id, or 'new' for an unsaved draft.
+ * same way as the editor draft: the puzzle id, the shared doc id, or 'new'.
+ *
+ * This is only a convenience: it lives in localStorage, so clearing the cache
+ * loses it. The durable record is the `owner` field on the document itself —
+ * that's what listMySharedPuzzles recovers from.
  */
 function readIds(): Record<string, string> {
   try {
@@ -68,21 +80,46 @@ export function moveShareId(fromKey: string, toKey: string): void {
 
 /**
  * Writes the payload, reusing `existingId` so old links serve the new version.
- * `owner` is what lets the rules allow that overwrite for the author alone,
- * so sharing requires being signed in.
+ * `owner` is what lets the rules allow that overwrite for the author alone, and
+ * what makes the puzzle recoverable later, so sharing requires being signed in.
+ * `title` is stored in the clear purely so the author's list is readable
+ * without decompressing every payload.
  */
-export async function putSharedPuzzle(payload: string, existingId?: string | null): Promise<string> {
+export async function putSharedPuzzle(payload: string, title: string, existingId?: string | null): Promise<string> {
   const uid = auth.currentUser?.uid
   if (!uid) throw new Error('Sign in to share a puzzle.')
   const id = existingId || randomId()
   const now = Date.now()
+  const ownerName = auth.currentUser?.displayName || 'Anonymous'
+  // `owner` goes on every write, not just the first. Re-sharing a puzzle whose
+  // doc has since been deleted is a create as far as the rules are concerned,
+  // and the create rule demands an owner — without it the write is rejected and
+  // a still-loaded puzzle can never be re-shared. With it, the same id is
+  // simply revived and old links start working again.
   await setDoc(
     doc(db, COLLECTION, id),
-    existingId ? { payload, updatedAt: now } : { payload, owner: uid, createdAt: now, updatedAt: now },
+    existingId
+      ? { payload, title, owner: uid, ownerName, updatedAt: now }
+      : { payload, title, owner: uid, ownerName, createdAt: now, updatedAt: now },
     { merge: true },
   )
   cache.set(id, payload)
   return id
+}
+
+function toMeta(d: QueryDocumentSnapshot): SharedPuzzleMeta {
+  const data = d.data()
+  return {
+    id: d.id,
+    title: (data.title as string) || 'Untitled',
+    updatedAt: (data.updatedAt as number) || 0,
+    owner: (data.owner as string) || '',
+    ownerName: (data.ownerName as string) || 'Unknown',
+  }
+}
+
+function byNewest(a: SharedPuzzleMeta, b: SharedPuzzleMeta): number {
+  return b.updatedAt - a.updatedAt
 }
 
 export async function getSharedPuzzle(id: string): Promise<string | null> {
@@ -96,4 +133,40 @@ export async function getSharedPuzzle(id: string): Promise<string | null> {
   } catch {
     return null
   }
+}
+
+/**
+ * The signed-in author's own shared puzzles, newest first. The rules only
+ * permit listing your own, so this is the query that recovers a puzzle after a
+ * cleared cache. Sorted client-side to avoid needing a composite index.
+ */
+export async function listMySharedPuzzles(): Promise<SharedPuzzleMeta[]> {
+  const uid = auth.currentUser?.uid
+  if (!uid) return []
+  try {
+    const snap = await getDocs(query(collection(db, COLLECTION), where('owner', '==', uid)))
+    return snap.docs.map(toMeta).sort(byNewest)
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Every user's shared puzzles. Authority is the rules' admin-uid check, not the
+ * caller — for anyone else this query is rejected and comes back empty, so a
+ * `?debug=true` in the URL grants nothing on its own.
+ */
+export async function listAllSharedPuzzles(): Promise<SharedPuzzleMeta[]> {
+  if (!auth.currentUser) return []
+  try {
+    const snap = await getDocs(collection(db, COLLECTION))
+    return snap.docs.map(toMeta).sort(byNewest)
+  } catch {
+    return []
+  }
+}
+
+export async function deleteSharedPuzzle(id: string): Promise<void> {
+  await deleteDoc(doc(db, COLLECTION, id))
+  cache.delete(id)
 }

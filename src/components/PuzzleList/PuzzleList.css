@@ -183,6 +183,101 @@
   opacity: 0.9;
 }
 
+/* The author's own shared puzzles — deliberately set apart from the public list */
+.my-shared {
+  max-width: 640px;
+  margin: 0 auto 24px;
+  padding: 12px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  text-align: left;
+}
+
+.my-shared-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.my-shared-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 4px 0 10px;
+  line-height: 1.4;
+}
+
+.my-shared-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+}
+
+.my-shared-name {
+  flex: 1;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.my-shared-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.my-shared-btn {
+  padding: 3px 10px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--btn-bg);
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.my-shared-btn:hover {
+  background: var(--btn-hover);
+}
+
+.my-shared-btn.promote {
+  background: lightseagreen;
+  border-color: lightseagreen;
+  color: white;
+}
+
+.my-shared-debug {
+  border-style: solid;
+  border-color: goldenrod;
+}
+
+.my-shared-group {
+  margin-top: 8px;
+}
+
+.my-shared-owner {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  padding-top: 6px;
+}
+
+.my-shared-uid {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
 .empty-state {
   text-align: center;
   color: var(--text-muted);
