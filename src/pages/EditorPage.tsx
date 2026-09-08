@@ -16,7 +16,7 @@ import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
 import { encodeSharedPuzzle, decodeSharedPuzzle, buildShareUrl } from '../utils/shareLink'
-import { putSharedPuzzle, getSharedPuzzle, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
+import { putSharedPuzzle, getSharedPuzzle, getSiteDisplayName, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
 import { fetchDefaultImages, setDefaultImage } from '../utils/defaultImages'
 import { useAuth } from '../contexts/AuthContext'
 import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
@@ -747,7 +747,11 @@ export function EditorPage() {
     }
     const shareKey = puzzleId || sharedParam || 'new'
     const id = editorPuzzleId || puzzleId || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
+    // Credit the name they chose on the site. Without the fallback a visitor's
+    // puzzle carries no author at all, and publishing it would credit nobody.
+    const ownerName = await getSiteDisplayName()
+    const credited = authors.length ? authors : [ownerName]
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors: credited, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
     // A shared puzzle's solution lives in its payload, not in a solution file —
     // without this the re-share would silently drop it.
     const solution = puzzleId ? await fetchPuzzleSolution(puzzleId) : sharedSolution
@@ -760,7 +764,7 @@ export function EditorPage() {
       // Reuse this slot's id so links already handed out serve the new version.
       // A reopened puzzle knows its own id even when the local registry is gone.
       const existingId = sharedParam || getShareId(shareKey)
-      const docId = await putSharedPuzzle(payload, puzzle.title, existingId)
+      const docId = await putSharedPuzzle({ payload, title: puzzle.title, ownerName, existingId })
       setShareId(shareKey, docId)
       await navigator.clipboard.writeText(buildShareUrl(docId))
       await showAlert(

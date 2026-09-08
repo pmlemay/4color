@@ -85,12 +85,14 @@ export function moveShareId(fromKey: string, toKey: string): void {
  * `title` is stored in the clear purely so the author's list is readable
  * without decompressing every payload.
  */
-export async function putSharedPuzzle(payload: string, title: string, existingId?: string | null): Promise<string> {
+export async function putSharedPuzzle(
+  { payload, title, ownerName, existingId }:
+  { payload: string; title: string; ownerName: string; existingId?: string | null },
+): Promise<string> {
   const uid = auth.currentUser?.uid
   if (!uid) throw new Error('Sign in to share a puzzle.')
   const id = existingId || randomId()
   const now = Date.now()
-  const ownerName = auth.currentUser?.displayName || 'Anonymous'
   // `owner` goes on every write, not just the first. Re-sharing a puzzle whose
   // doc has since been deleted is a create as far as the rules are concerned,
   // and the create rule demands an owner — without it the write is rejected and
@@ -105,6 +107,23 @@ export async function putSharedPuzzle(payload: string, title: string, existingId
   )
   cache.set(id, payload)
   return id
+}
+
+/**
+ * The name the user picked on the site, which is what a published puzzle should
+ * credit — `auth.displayName` is their Google account name, usually their real
+ * one. One read, only when sharing; falls back to the account name.
+ */
+export async function getSiteDisplayName(): Promise<string> {
+  const user = auth.currentUser
+  if (!user) return 'Anonymous'
+  try {
+    const snap = await getDoc(doc(db, 'completions_index', user.uid))
+    const chosen = snap.exists() ? (snap.data().displayName as string) : ''
+    return chosen || user.displayName || 'Anonymous'
+  } catch {
+    return user.displayName || 'Anonymous'
+  }
 }
 
 function toMeta(d: QueryDocumentSnapshot): SharedPuzzleMeta {
