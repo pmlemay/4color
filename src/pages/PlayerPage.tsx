@@ -19,6 +19,8 @@ import { SlidePanel } from '../components/SlidePanel'
 import { LanguagePicker } from '../components/LanguagePicker'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { fetchPuzzle, fetchPuzzleSolution, puzzleToGrid } from '../utils/puzzleIO'
+import { decodeSharedPuzzle } from '../utils/shareLink'
+import { getSharedPuzzle } from '../utils/sharedPuzzles'
 import { savePlayerData, loadPlayerData, clearPlayerData, applyPlayerData, puzzleFingerprint } from '../utils/playerSave'
 import { validate4Color, validateSolution } from '../utils/validate'
 import { useCompletions } from '../hooks/useCompletions'
@@ -40,11 +42,18 @@ export function PlayerPage() {
   const [searchParams] = useSearchParams()
   const debug = searchParams.get('debug') === 'true'
 
+  // A shared link plays entirely locally: no presence, leaderboard, stats or
+  // completion records. That keeps unpublished drafts out of them, and keeps the
+  // whole feature at one Firestore read per opened link.
+  const sharedDocId = searchParams.get('d')
+  const isShared = !!sharedDocId
+  const localId = isShared ? `shared-${sharedDocId}` : puzzleId
+
   const { theme, toggle: toggleTheme } = useTheme()
   const { user, signIn } = useAuth()
   const isMobile = useIsMobile()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [completionStep, setCompletionStep] = useState<'none' | 'signin' | 'keepclear'>('none')
+  const [completionStep, setCompletionStep] = useState<'none' | 'signin' | 'keepclear' | 'shared'>('none')
   const [puzzle, setPuzzle] = useState<PuzzleData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -65,7 +74,7 @@ export function PlayerPage() {
   }, [gridState.inputMode])
   const clearHighlightOnAction = useCallback(() => setHighlightedNote(null), [])
   const timer = useTimer(0)
-  const puzzleLeaderboard = usePuzzleLeaderboard(puzzleId)
+  const puzzleLeaderboard = usePuzzleLeaderboard(isShared ? undefined : puzzleId)
   const timerRef = useRef(timer)
   timerRef.current = timer
   const gridRef = gridState.gridRef
@@ -85,7 +94,7 @@ export function PlayerPage() {
 
   // displayName is passed down so usePresence doesn't open a second listener
   // on the same completions_index document this page already watches.
-  usePresence(puzzleId, displayName)
+  usePresence(isShared ? undefined : puzzleId, displayName)
 
   const gridRows = puzzle?.gridSize?.rows || 1
   const gridCols = puzzle?.gridSize?.cols || 1
@@ -104,17 +113,29 @@ export function PlayerPage() {
   }, [puzzle, solution])
 
   useEffect(() => {
-    if (!puzzleId) return
+    if (!localId) return
     let cancelled = false
     loaded.current = false
-    fetchPuzzle(puzzleId).then(data => {
+
+    // A shared link carries its own puzzle and solution, so nothing is fetched
+    // by id and no solution file is looked up.
+    const resolve = async (): Promise<{ data: PuzzleData | null; shared?: PuzzleSolution | null }> => {
+      if (isShared) {
+        const payload = await getSharedPuzzle(sharedDocId!)
+        const decoded = payload ? await decodeSharedPuzzle(payload) : null
+        return { data: decoded?.puzzle ?? null, shared: decoded?.solution ?? null }
+      }
+      return { data: await fetchPuzzle(puzzleId!) }
+    }
+
+    resolve().then(({ data, shared }) => {
       if (cancelled) return
       if (data) {
         setPuzzle(data)
         const fp = puzzleFingerprint(data)
         fingerprintRef.current = fp
         let grid = puzzleToGrid(data)
-        const saved = loadPlayerData(puzzleId, fp)
+        const saved = loadPlayerData(localId, fp)
         let savedElapsedMs = 0
         if (saved) {
           grid = applyPlayerData(grid, saved)
@@ -137,9 +158,13 @@ export function PlayerPage() {
         // Always fetch the solution file if it exists. Normally 4color puzzles are
         // self-validating, but if an explicit solution is provided it takes precedence
         // (e.g. a 4color-tagged puzzle whose answer uses letters), so we still load it.
-        fetchPuzzleSolution(puzzleId).then(sol => { if (!cancelled && sol) setSolution(sol) })
+        if (isShared) {
+          if (shared) setSolution(shared)
+        } else {
+          fetchPuzzleSolution(puzzleId!).then(sol => { if (!cancelled && sol) setSolution(sol) })
+        }
         // Only start timer if puzzle not already completed
-        if (!completedPuzzleIds.has(puzzleId)) {
+        if (!completedPuzzleIds.has(localId)) {
           timerRef.current.reset(savedElapsedMs)
           setTimeout(() => { timerRef.current.start() }, 0)
         } else {
@@ -153,22 +178,22 @@ export function PlayerPage() {
       setLoading(false)
     })
     return () => { cancelled = true }
-  }, [puzzleId])
+  }, [puzzleId, sharedDocId])
 
   // Capture thumbnail after puzzle grid renders (dev only)
   useEffect(() => {
-    if (!puzzleId || loading || !puzzle) return
+    if (!puzzleId || isShared || loading || !puzzle) return
     const timer = setTimeout(() => captureThumbnail(puzzleId), 500)
     return () => clearTimeout(timer)
-  }, [puzzleId, loading, puzzle])
+  }, [puzzleId, isShared, loading, puzzle])
 
   // React to completedPuzzleIds loading (may arrive after puzzle fetch)
   useEffect(() => {
-    if (puzzleId && completedPuzzleIds.has(puzzleId) && !puzzleCompleted) {
+    if (localId && completedPuzzleIds.has(localId) && !puzzleCompleted) {
       setPuzzleCompleted(true)
       timerRef.current.pause()
     }
-  }, [puzzleId, completedPuzzleIds, puzzleCompleted])
+  }, [localId, completedPuzzleIds, puzzleCompleted])
 
   // After sign-in, persist any pending completion
   useEffect(() => {
@@ -181,21 +206,21 @@ export function PlayerPage() {
 
   // Flush save immediately using refs (always latest state)
   const flushSave = useCallback(() => {
-    if (!puzzleId || !loaded.current) return
+    if (!localId || !loaded.current) return
     if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null }
-    savePlayerData(puzzleId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, struckSpecialRuleWordsRef.current, timerRef.current.elapsedMs, revealedFogGroupIdsRef.current, fingerprintRef.current)
-  }, [puzzleId])
+    savePlayerData(localId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, struckSpecialRuleWordsRef.current, timerRef.current.elapsedMs, revealedFogGroupIdsRef.current, fingerprintRef.current)
+  }, [localId])
 
   // Auto-save on changes (debounced)
   useEffect(() => {
-    if (!puzzleId || !loaded.current) return
+    if (!localId || !loaded.current) return
     if (saveTimer.current) clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(() => {
       saveTimer.current = null
-      savePlayerData(puzzleId, gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, timerRef.current.elapsedMs, revealedFogGroupIds, fingerprintRef.current)
+      savePlayerData(localId, gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, timerRef.current.elapsedMs, revealedFogGroupIds, fingerprintRef.current)
     }, 500)
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current) }
-  }, [gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, puzzleId, revealedFogGroupIds])
+  }, [gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, localId, revealedFogGroupIds])
 
   // Save on unmount, visibility change, beforeunload, and pagehide
   // pagehide is more reliable than beforeunload on iOS Safari/Chrome
@@ -215,10 +240,10 @@ export function PlayerPage() {
 
   // Periodically save timer progress (every 10s) so iOS refreshes don't lose time
   useEffect(() => {
-    if (!puzzleId || puzzleCompleted) return
+    if (!localId || puzzleCompleted) return
     const interval = setInterval(() => { if (loaded.current) flushSave() }, 10000)
     return () => clearInterval(interval)
-  }, [puzzleId, puzzleCompleted, flushSave])
+  }, [localId, puzzleCompleted, flushSave])
 
   const puzzleType = puzzle?.puzzleType || ''
   const puzzleHasClickActions = !!(puzzle?.clickActionLeft)
@@ -269,7 +294,7 @@ export function PlayerPage() {
     setStruckRuleWords(new Set())
     setStruckClueWords(new Set())
     setRevealedFogGroupIds(new Set())
-    if (puzzleId) clearPlayerData(puzzleId)
+    if (localId) clearPlayerData(localId)
   }
 
   const handleClearPlayerInput = async () => {
@@ -354,7 +379,13 @@ export function PlayerPage() {
     timer.pause()
     const timeMs = timer.elapsedMs
     setPuzzleCompleted(true)
-    // In-progress puzzles should not count toward player stats
+    // A shared link records nothing, but the player still gets told they solved
+    // it — and told the time isn't going anywhere, since nothing here is saved.
+    if (isShared) {
+      setCompletionStep('shared')
+      return
+    }
+    // In-progress puzzles should not count toward player stats.
     if (puzzleId && !puzzle?.inProgress) {
       incrementPuzzleCompletions(puzzleId)
       if (user) {
@@ -365,7 +396,7 @@ export function PlayerPage() {
         setCompletionStep('signin')
       }
     }
-  }, [puzzleId, puzzle, markCompleted, timer, user])
+  }, [puzzleId, isShared, puzzle, markCompleted, timer, user])
 
   const handleSubmit = useCallback(async () => {
     let result: { valid: boolean; error?: string }
@@ -574,18 +605,26 @@ export function PlayerPage() {
             </div>
           </div>
         ) : (
-          <div className="modal-actions">
-            <button className="modal-btn" onClick={handleCompletionKeep}>Keep</button>
-            <button className="modal-btn modal-btn-confirm" onClick={handleCompletionClear}>Clear Puzzle</button>
-          </div>
+          <>
+            {completionStep === 'shared' && (
+              <p className="modal-message">
+                Solved in {timer.formatted}. This is a shared puzzle, so the time isn&apos;t
+                recorded on the leaderboard.
+              </p>
+            )}
+            <div className="modal-actions">
+              <button className="modal-btn" onClick={handleCompletionKeep}>Keep</button>
+              <button className="modal-btn modal-btn-confirm" onClick={handleCompletionClear}>Clear Puzzle</button>
+            </div>
+          </>
         )}
       </div>
     </div>
   )
 
   const timerDisplay = puzzleCompleted
-    ? puzzleId && completionTimes.has(puzzleId)
-      ? <div className="info-timer completed">{formatTime(completionTimes.get(puzzleId)!)}</div>
+    ? localId && completionTimes.has(localId)
+      ? <div className="info-timer completed">{formatTime(completionTimes.get(localId)!)}</div>
       : null
     : <div className="info-timer">{timer.formatted}</div>
 

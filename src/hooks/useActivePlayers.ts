@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { collection, getDocs, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore'
+import { collection, getDocs, query, where, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore'
 import { db } from '../firebase'
 
 export interface ActivePlayer {
@@ -63,7 +63,14 @@ export function useActivePlayers(): Map<string, ActivePlayer[]> {
     const fetchNow = async () => {
       lastFetch = Date.now()
       try {
-        const snap = await getDocs(collection(db, 'presence'))
+        // Filter server-side: reading the whole collection billed a read for
+        // every stale doc too, and those were thrown away on arrival.
+        // groupByPuzzle still re-checks staleness to absorb client clock skew.
+        const active = query(
+          collection(db, 'presence'),
+          where('lastSeen', '>', Timestamp.fromMillis(Date.now() - STALE_MS)),
+        )
+        const snap = await getDocs(active)
         if (!cancelled) setPlayers(groupByPuzzle(snap.docs))
       } catch {
         if (!cancelled) setPlayers(new Map())

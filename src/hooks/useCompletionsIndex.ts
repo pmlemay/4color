@@ -57,10 +57,12 @@ export function refreshCompletionsIndex(): Promise<CompletionRecord[]> {
   return load(true)
 }
 
-export function useCompletionsIndex(): CompletionRecord[] {
+/** `enabled: false` skips the read entirely — a shared-link view has no leaderboard. */
+export function useCompletionsIndex(enabled = true): CompletionRecord[] {
   const [records, setRecords] = useState<CompletionRecord[]>(() => cache ?? [])
 
   useEffect(() => {
+    if (!enabled) return
     let active = true
     const notify = (next: CompletionRecord[]) => { if (active) setRecords(next) }
     listeners.add(notify)
@@ -69,7 +71,7 @@ export function useCompletionsIndex(): CompletionRecord[] {
       active = false
       listeners.delete(notify)
     }
-  }, [])
+  }, [enabled])
 
   return records
 }

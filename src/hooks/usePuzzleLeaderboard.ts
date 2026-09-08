@@ -8,7 +8,7 @@ export interface PuzzleLeaderboardEntry {
 }
 
 export function usePuzzleLeaderboard(puzzleId: string | undefined) {
-  const records = useCompletionsIndex()
+  const records = useCompletionsIndex(!!puzzleId)
 
   return useMemo(() => {
     if (!puzzleId) return []

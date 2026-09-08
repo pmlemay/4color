@@ -15,7 +15,10 @@ import { ThemeToggle } from '../components/ThemeToggle'
 import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
+import { encodeSharedPuzzle, buildShareUrl } from '../utils/shareLink'
+import { putSharedPuzzle, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
 import { fetchDefaultImages, setDefaultImage } from '../utils/defaultImages'
+import { useAuth } from '../contexts/AuthContext'
 import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
@@ -76,6 +79,7 @@ function generateMurdokuClues(gridRows: number, gridCols: number): string[] {
 
 export function EditorPage() {
   const { puzzleId } = useParams()
+  const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const debug = searchParams.get('debug') === 'true'
@@ -651,6 +655,8 @@ export function EditorPage() {
       puzzle.id = puzzleId
     }
     setEditorPuzzleId(puzzle.id)
+    // A draft shared before its first save keeps that link once it has a real id.
+    if (!puzzleId) moveShareId('new', puzzle.id)
     if (import.meta.env.DEV) {
       const result = await savePuzzleToServer(puzzle)
       if (result.ok) {
@@ -664,15 +670,64 @@ export function EditorPage() {
     downloadPuzzleJSON(puzzle)
   }
 
+  /**
+   * Publishes the current definition (plus its solution, if the puzzle has one
+   * saved) as a playable link. Normal edit mode only — in solution mode the grid
+   * carries the answers, which gridToPuzzle would bake in as fixed values.
+   */
+  const handleShare = async () => {
+    if (!user) {
+      const proceed = await showConfirm(
+        'A share link is tied to your account, so you can update it later and keep the same URL.',
+        'Sign In Required', 'Sign in with Google', 'Cancel',
+      )
+      if (!proceed) return
+      try {
+        await signIn()
+      } catch {
+        await showAlert('Sign-in was cancelled or failed.', 'Not Signed In')
+        return
+      }
+    }
+    const shareKey = puzzleId || 'new'
+    const id = editorPuzzleId || puzzleId || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
+    const solution = puzzleId ? await fetchPuzzleSolution(puzzleId) : null
+    const selfValidating = (tags || []).includes('4color')
+    if (!solution && !selfValidating) {
+      if (!await showConfirm('No saved solution for this puzzle, so players won\'t be able to submit. Share anyway?', 'No Solution')) return
+    }
+    try {
+      const payload = await encodeSharedPuzzle({ puzzle, solution: solution || undefined })
+      // Reuse this slot's id so links already handed out serve the new version.
+      const existingId = getShareId(shareKey)
+      const docId = await putSharedPuzzle(payload, existingId)
+      setShareId(shareKey, docId)
+      await navigator.clipboard.writeText(buildShareUrl(docId))
+      await showAlert(
+        existingId
+          ? 'Link updated — anyone who already has it now sees this version. Copied to clipboard.'
+          : 'Playable link copied to clipboard.',
+        'Shared',
+      )
+    } catch {
+      await showAlert('Could not create the share link.', 'Share Failed')
+    }
+  }
+
   const handleClearAll = async () => {
     if (await showConfirm('Are you sure you want to clear all? This cannot be undone.', 'Clear All')) {
       gridState.resetGrid(rows, cols)
+      // Starting over is a new puzzle, so it gets a new link.
+      clearShareId(puzzleId || 'new')
     }
   }
 
   const handleDiscardDraft = async () => {
     if (!await showConfirm('Discard draft and reload puzzle from file?', 'Discard Draft')) return
     clearDraft()
+    // Abandoning the draft retires its link — the next share starts a new one.
+    clearShareId(puzzleId || 'new')
     if (puzzleId) {
       // Reload from file
       const puzzle = await fetchPuzzle(puzzleId)
@@ -1599,6 +1654,7 @@ export function EditorPage() {
             <button className="info-btn" onClick={handleClearPlayerInput}>Clear Player Input</button>
             <button className="info-btn" onClick={handleDiscardDraft}>Discard Draft</button>
             <button className="info-btn" onClick={handleEnterSolutionMode}>Enter Solution Mode</button>
+            <button className="info-btn" onClick={handleShare}>Share Playable Version</button>
             <input
               ref={imageInputRef}
               type="file"
