@@ -40,7 +40,10 @@ export function PlayerPage() {
   const { puzzleId } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  // Cell coordinates stay behind the explicit param — they'd cover every cell otherwise.
   const debug = searchParams.get('debug') === 'true'
+  const showEditButton = isDev || debug
 
   // A shared link plays entirely locally: no presence, leaderboard, stats or
   // completion records. That keeps unpublished drafts out of them, and keeps the
@@ -662,7 +665,7 @@ export function PlayerPage() {
         aboveRules={!isMobile ? <div className="info-section">
           {timerDisplay}
           <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
-          {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+          {showEditButton && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
         </div> : undefined}
         struckSpecialRuleWords={struckSpecialRuleWords}
         onStruckSpecialRuleWordsChange={setStruckSpecialRuleWords}
@@ -694,7 +697,7 @@ export function PlayerPage() {
           aboveRules={<div className="info-section">
             {timerDisplay}
             <button className="info-btn" onClick={handleClearPlayerInput}>Reset My Input</button>
-            {debug && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
+            {showEditButton && <button className="info-btn" onClick={() => navigate(`/edit/${puzzleId}`)}>Edit Puzzle</button>}
           </div>}
         />
       </div>

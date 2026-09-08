@@ -1712,15 +1712,21 @@ export function EditorPage() {
             <button className="info-btn" onClick={handleResizeGrid}>Resize Grid</button>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
-            <button className="info-btn" onClick={handleSave}>Save (Download JSON)</button>
-            <button className="info-btn" onClick={() => fileInputRef.current?.click()}>Load JSON</button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              style={{ display: 'none' }}
-              onChange={handleLoad}
-            />
+            {/* A signed-in user's share link is their save, and the shared list their load. Anonymous
+                users have only the JSON file; on localhost the save writes the puzzle into the repo. */}
+            {(isDev || !user) && (
+              <button className="info-btn" onClick={handleSave}>{isDev ? 'Save Puzzle' : 'Save (Download JSON)'}</button>
+            )}
+            {!user && (<>
+              <button className="info-btn" onClick={() => fileInputRef.current?.click()}>Load JSON</button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                style={{ display: 'none' }}
+                onChange={handleLoad}
+              />
+            </>)}
             <button className="info-btn" onClick={handleClearAll}>Clear All</button>
             <button className="info-btn" onClick={handleClearPlayerInput}>Clear Player Input</button>
             <button className="info-btn" onClick={handleDiscardDraft}>Discard Draft</button>

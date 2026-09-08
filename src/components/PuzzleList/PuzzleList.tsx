@@ -19,7 +19,8 @@ import './PuzzleList.css'
 
 export function PuzzleList() {
   const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  const debug = new URLSearchParams(window.location.search).get('debug') === 'true'
+  // Localhost is always in debug mode; ?debug=true turns the same views on against the deployed site.
+  const debug = isDev || new URLSearchParams(window.location.search).get('debug') === 'true'
   const { theme, toggle: toggleTheme } = useTheme()
   const { user, signIn, signOut } = useAuth()
   const { completedPuzzleIds, completionTimes, displayName, setDisplayName } = useCompletions()
