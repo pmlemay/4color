@@ -142,6 +142,16 @@ export function EditorPage() {
   const [solutionMode, setSolutionMode] = useState(false)
   const [puzzleSnapshot, setPuzzleSnapshot] = useState('')
 
+  /** The editor slot a share document is filed under: the puzzle id, the shared doc id, or 'new'. */
+  const shareKey = puzzleId || sharedParam || 'new'
+  // Whether this slot already has a share document, which is what the first
+  // Share (or a solution save) creates. Read from the registry rather than
+  // derived, so saving a draft under a real id picks up the moved entry.
+  const [shareDocId, setShareDocId] = useState<string | null>(null)
+  useEffect(() => { setShareDocId(getShareId(shareKey)) }, [shareKey])
+  // A reopened puzzle writes back to the doc in the URL whatever the registry says.
+  const hasShareDoc = !!(sharedParam || shareDocId)
+
   const { modalProps, showAlert, showConfirm } = useModal()
   const gridState = useGrid(rows, cols)
   gridState.setIsEditor(true)
@@ -760,12 +770,25 @@ export function EditorPage() {
    * is gone.
    */
   const publishShared = async (puzzle: PuzzleData, solution: PuzzleSolution | null, ownerName: string): Promise<{ docId: string; updated: boolean }> => {
-    const shareKey = puzzleId || sharedParam || 'new'
     const payload = await encodeSharedPuzzle({ puzzle, solution: solution || undefined })
     const existingId = sharedParam || getShareId(shareKey)
     const docId = await putSharedPuzzle({ payload, title: puzzle.title, ownerName, existingId })
     setShareId(shareKey, docId)
+    setShareDocId(docId)
     return { docId, updated: !!existingId }
+  }
+
+  /** A shared puzzle is listed and played by other people, so it needs a name and a difficulty. */
+  const checkShareMeta = async (): Promise<boolean> => {
+    if (!title.trim()) {
+      await showAlert('Please enter a title before sharing this puzzle.', 'Title Required')
+      return false
+    }
+    if (!difficulty) {
+      await showAlert('Please select a difficulty before sharing this puzzle.', 'Difficulty Required')
+      return false
+    }
+    return true
   }
 
   /**
@@ -783,6 +806,7 @@ export function EditorPage() {
    * saved) as a playable link.
    */
   const handleShare = async () => {
+    if (!await checkShareMeta()) return
     if (!user) {
       const proceed = await showConfirm(
         'A share link is tied to your account, so you can update it later and keep the same URL.',
@@ -817,6 +841,7 @@ export function EditorPage() {
       gridState.resetGrid(rows, cols)
       // Starting over is a new puzzle, so it gets a new link.
       clearShareId(puzzleId || 'new')
+      setShareDocId(null)
     }
   }
 
@@ -825,6 +850,7 @@ export function EditorPage() {
     clearDraft()
     // Abandoning the draft retires its link — the next share starts a new one.
     clearShareId(puzzleId || 'new')
+    setShareDocId(null)
     if (puzzleId) {
       // Reload from file
       const puzzle = await fetchPuzzle(puzzleId)
@@ -994,6 +1020,9 @@ export function EditorPage() {
       }
       if (!await trySignIn()) return
     }
+    // Checked here rather than up front so a missing title can't stand between
+    // an anonymous author and their JSON download.
+    if (!await checkShareMeta()) return
     try {
       const ownerName = await getSiteDisplayName()
       const { docId, updated } = await publishShared(buildSharePuzzle(ownerName), solution, ownerName)
@@ -1787,7 +1816,7 @@ export function EditorPage() {
             <button className="info-btn" onClick={handleClearPlayerInput}>Clear Player Input</button>
             <button className="info-btn" onClick={handleDiscardDraft}>Discard Draft</button>
             <button className="info-btn" onClick={handleEnterSolutionMode}>Enter Solution Mode</button>
-            <button className="info-btn" onClick={handleShare}>Share Playable Version</button>
+            <button className="info-btn" onClick={handleShare}>{hasShareDoc ? 'Save/Update Shared Puzzle' : 'Share Playable Version'}</button>
             <input
               ref={imageInputRef}
               type="file"
