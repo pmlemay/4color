@@ -726,10 +726,61 @@ export function EditorPage() {
     downloadPuzzleJSON(puzzle)
   }
 
+  /** Runs the Google sign-in, reporting a cancelled or failed attempt. */
+  const trySignIn = async (): Promise<boolean> => {
+    try {
+      await signIn()
+      return true
+    } catch {
+      await showAlert('Sign-in was cancelled or failed.', 'Not Signed In')
+      return false
+    }
+  }
+
+  /**
+   * The definition as a share should carry it. In solution mode the answer's
+   * borders sit on the same field as the puzzle's own, so they're stripped back
+   * to the definition instead of being baked in as fixed borders.
+   */
+  const buildSharePuzzle = (ownerName: string): PuzzleData => {
+    const id = editorPuzzleId || puzzleId || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
+    // Credit the name they chose on the site. Without the fallback a visitor's
+    // puzzle carries no author at all, and publishing it would credit nobody.
+    const credited = authors.length ? authors : [ownerName]
+    const grid = solutionMode
+      ? gridState.grid.map(row => row.map(cell => ({ ...cell, borders: [...cell.fixedBorders] as [number, number, number, number] })))
+      : gridState.grid
+    return gridToPuzzle(grid, { id, title: title || 'Untitled', authors: credited, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
+  }
+
+  /**
+   * Writes the definition and its solution into this editor slot's share
+   * document, reusing the slot's id so links already handed out serve the new
+   * version. A reopened puzzle knows its own id even when the local registry
+   * is gone.
+   */
+  const publishShared = async (puzzle: PuzzleData, solution: PuzzleSolution | null, ownerName: string): Promise<{ docId: string; updated: boolean }> => {
+    const shareKey = puzzleId || sharedParam || 'new'
+    const payload = await encodeSharedPuzzle({ puzzle, solution: solution || undefined })
+    const existingId = sharedParam || getShareId(shareKey)
+    const docId = await putSharedPuzzle({ payload, title: puzzle.title, ownerName, existingId })
+    setShareId(shareKey, docId)
+    return { docId, updated: !!existingId }
+  }
+
+  /**
+   * The solution to publish alongside the definition. One just entered in
+   * solution mode outranks the file: it's the newer edit, and a shared puzzle
+   * has no solution file to read at all.
+   */
+  const resolveSolution = async (): Promise<PuzzleSolution | null> => {
+    if (sharedSolution) return sharedSolution
+    return puzzleId ? await fetchPuzzleSolution(puzzleId) : null
+  }
+
   /**
    * Publishes the current definition (plus its solution, if the puzzle has one
-   * saved) as a playable link. Normal edit mode only — in solution mode the grid
-   * carries the answers, which gridToPuzzle would bake in as fixed values.
+   * saved) as a playable link.
    */
   const handleShare = async () => {
     if (!user) {
@@ -738,37 +789,20 @@ export function EditorPage() {
         'Sign In Required', 'Sign in with Google', 'Cancel',
       )
       if (!proceed) return
-      try {
-        await signIn()
-      } catch {
-        await showAlert('Sign-in was cancelled or failed.', 'Not Signed In')
-        return
-      }
+      if (!await trySignIn()) return
     }
-    const shareKey = puzzleId || sharedParam || 'new'
-    const id = editorPuzzleId || puzzleId || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'untitled'
-    // Credit the name they chose on the site. Without the fallback a visitor's
-    // puzzle carries no author at all, and publishing it would credit nobody.
     const ownerName = await getSiteDisplayName()
-    const credited = authors.length ? authors : [ownerName]
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors: credited, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
-    // A shared puzzle's solution lives in its payload, not in a solution file —
-    // without this the re-share would silently drop it.
-    const solution = puzzleId ? await fetchPuzzleSolution(puzzleId) : sharedSolution
+    const puzzle = buildSharePuzzle(ownerName)
+    const solution = await resolveSolution()
     const selfValidating = (tags || []).includes('4color')
     if (!solution && !selfValidating) {
       if (!await showConfirm('No saved solution for this puzzle, so players won\'t be able to submit. Share anyway?', 'No Solution')) return
     }
     try {
-      const payload = await encodeSharedPuzzle({ puzzle, solution: solution || undefined })
-      // Reuse this slot's id so links already handed out serve the new version.
-      // A reopened puzzle knows its own id even when the local registry is gone.
-      const existingId = sharedParam || getShareId(shareKey)
-      const docId = await putSharedPuzzle({ payload, title: puzzle.title, ownerName, existingId })
-      setShareId(shareKey, docId)
+      const { docId, updated } = await publishShared(puzzle, solution, ownerName)
       await navigator.clipboard.writeText(buildShareUrl(docId))
       await showAlert(
-        existingId
+        updated
           ? 'Link updated — anyone who already has it now sees this version. Copied to clipboard.'
           : 'Playable link copied to clipboard.',
         'Shared',
@@ -852,7 +886,7 @@ export function EditorPage() {
     // Load existing solution if any. A puzzle on the server has a solution file;
     // a shared one carries its solution inside the payload instead.
     {
-      const existing = puzzleId ? await fetchPuzzleSolution(puzzleId) : sharedSolution
+      const existing = await resolveSolution()
       if (existing && (Object.keys(existing.cells).length > 0 || Object.keys(existing.borders || {}).length > 0 || Object.keys(existing.colors || {}).length > 0 || Object.keys(existing.lines || {}).length > 0 || Object.keys(existing.marks || {}).length > 0)) {
         gridState.setGrid(prev => {
           const next = prev.map(row => row.map(cell => ({ ...cell })))
@@ -936,21 +970,44 @@ export function EditorPage() {
     if (Object.keys(colors).length > 0) solution.colors = colors
     if (Object.keys(solutionLines).length > 0) solution.lines = solutionLines
     if (Object.keys(solutionMarks).length > 0) solution.marks = solutionMarks
-    // A shared puzzle has no solution file to write to — hold the solution so
-    // the next Share carries it, which is where it actually gets stored.
-    if (!puzzleId && sharedParam) {
-      setSharedSolution(solution)
-      await showAlert('Solution kept for this puzzle. Press Share Playable Version to store it.', 'Solution Updated')
-      return
-    }
-    if (import.meta.env.DEV) {
+    // A shared puzzle has no solution file — the solution rides inside its
+    // payload — so hold it for the share wherever this save ends up writing it.
+    setSharedSolution(solution)
+    const onSharedPuzzle = !puzzleId && !!sharedParam
+    if (import.meta.env.DEV && !onSharedPuzzle) {
       const result = await saveSolutionToServer(solution)
       if (result.ok) {
         await showAlert(`Solution saved to puzzles/solutions/${result.file}`, 'Saved')
         return
       }
     }
-    downloadSolutionJSON(solution)
+    // Off localhost the share document is the only place a solution can be
+    // stored, and writing one is tied to an account.
+    if (!user) {
+      const wantsSignIn = await showConfirm(
+        'Signing in stores the solution with the puzzle, so players can submit and you keep the same link when you update it. Without an account you can only download the solution as a JSON file.',
+        'Sign In to Save Solution', 'Sign in with Google', 'Download JSON',
+      )
+      if (!wantsSignIn) {
+        downloadSolutionJSON(solution)
+        return
+      }
+      if (!await trySignIn()) return
+    }
+    try {
+      const ownerName = await getSiteDisplayName()
+      const { docId, updated } = await publishShared(buildSharePuzzle(ownerName), solution, ownerName)
+      const copied = await navigator.clipboard.writeText(buildShareUrl(docId)).then(() => true, () => false)
+      await showAlert(
+        (updated
+          ? 'Solution saved — anyone who already has the link now plays this version.'
+          : 'Solution saved and a playable link created.')
+        + (copied ? ' Link copied to clipboard.' : ''),
+        'Solution Saved',
+      )
+    } catch {
+      await showAlert('Could not save the solution to your shared puzzle.', 'Save Failed')
+    }
   }
 
   const processImageFile = (file: File) => {
