@@ -22,7 +22,7 @@ export function PuzzleList() {
   // Localhost is always in debug mode; ?debug=true turns the same views on against the deployed site.
   const debug = isDev || new URLSearchParams(window.location.search).get('debug') === 'true'
   const { theme, toggle: toggleTheme } = useTheme()
-  const { user, signIn, signOut } = useAuth()
+  const { user, loading: authLoading, signIn, signOut } = useAuth()
   const { completedPuzzleIds, completionTimes, displayName, setDisplayName } = useCompletions()
   const leaderboard = useLeaderboard()
   const puzzleStats = usePuzzleStats()
@@ -54,25 +54,32 @@ export function PuzzleList() {
   // Which row just had its link copied — a clipboard write is otherwise silent.
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
+  // Both shared lists render above the puzzle grid, so scroll restore has to wait
+  // for them — these say when there is nothing left to arrive.
+  const [mySharedReady, setMySharedReady] = useState(false)
+  const [allSharedReady, setAllSharedReady] = useState(false)
+
   // The author's own shared puzzles. One read per puzzle, and only for a
   // signed-in user looking at their own list.
   useEffect(() => {
-    if (!user) { setMyShared([]); return }
+    if (authLoading) return
+    if (!user) { setMyShared([]); setMySharedReady(true); return }
     let cancelled = false
-    listMySharedPuzzles().then(list => { if (!cancelled) setMyShared(list) })
+    listMySharedPuzzles().then(list => { if (!cancelled) { setMyShared(list); setMySharedReady(true) } })
     return () => { cancelled = true }
-  }, [user])
+  }, [authLoading, user])
 
   // Debug view of everyone's shared puzzles. The rules decide whether this
   // returns anything — for a non-admin the query is rejected and comes back empty.
   const [allShared, setAllShared] = useState<SharedPuzzleMeta[]>([])
 
   useEffect(() => {
-    if (!debug || !user) { setAllShared([]); return }
+    if (authLoading) return
+    if (!debug || !user) { setAllShared([]); setAllSharedReady(true); return }
     let cancelled = false
-    listAllSharedPuzzles().then(list => { if (!cancelled) setAllShared(list) })
+    listAllSharedPuzzles().then(list => { if (!cancelled) { setAllShared(list); setAllSharedReady(true) } })
     return () => { cancelled = true }
-  }, [debug, user])
+  }, [authLoading, debug, user])
 
   const sharedByOwner = useMemo(() => {
     const groups = new Map<string, SharedPuzzleMeta[]>()
@@ -157,16 +164,22 @@ export function PuzzleList() {
     })
   }, [])
 
-  // Restore scroll position after puzzles load
+  // Where to scroll back to, read before the restore itself can overwrite it.
+  const [scrollTarget] = useState(() => Number(sessionStorage.getItem('puzzleListScroll')) || 0)
+  const scrollRestored = useRef(false)
+
+  // Restore only once the index and both shared lists have landed: the shared
+  // rows sit above the grid, so an earlier restore either gets clamped short or
+  // ends up pointing at a different row once they push the grid down.
   useEffect(() => {
-    if (!loading && mainRef.current) {
-      const saved = sessionStorage.getItem('puzzleListScroll')
-      if (saved) {
-        const el = mainRef.current
-        requestAnimationFrame(() => { el.scrollTop = Number(saved) })
-      }
-    }
-  }, [loading])
+    const el = mainRef.current
+    if (!el || scrollRestored.current) return
+    if (loading || !mySharedReady || !allSharedReady) return
+    scrollRestored.current = true
+    // Already scrolled while waiting — the player has picked their own spot.
+    if (!scrollTarget || el.scrollTop !== 0) return
+    requestAnimationFrame(() => { el.scrollTop = scrollTarget })
+  }, [loading, mySharedReady, allSharedReady, scrollTarget])
 
   // Save scroll position on scroll
   useEffect(() => {

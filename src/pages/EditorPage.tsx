@@ -1712,12 +1712,11 @@ export function EditorPage() {
             <button className="info-btn" onClick={handleResizeGrid}>Resize Grid</button>
 
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }} />
-            {/* A signed-in user's share link is their save, and the shared list their load. Anonymous
-                users have only the JSON file; on localhost the save writes the puzzle into the repo. */}
-            {(isDev || !user) && (
+            {/* A signed-in user's share link is their save and the shared list their load, so the
+                JSON pair is for anonymous users — and for localhost, where the save writes the
+                puzzle into the repo and the load takes in a file someone sent over. */}
+            {(isDev || !user) && (<>
               <button className="info-btn" onClick={handleSave}>{isDev ? 'Save Puzzle' : 'Save (Download JSON)'}</button>
-            )}
-            {!user && (<>
               <button className="info-btn" onClick={() => fileInputRef.current?.click()}>Load JSON</button>
               <input
                 ref={fileInputRef}

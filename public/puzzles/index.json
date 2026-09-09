@@ -290,6 +290,26 @@
     "thumbnail": "thumbnails/spiral-galaxy-2.png"
   },
   {
+    "id": "spiral-galaxy-murdoku-3",
+    "file": "spiral-galaxy-murdoku-3.json",
+    "title": "Spiral Galaxy Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 7,
+      "cols": 7
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku",
+      "Spiral-galaxy"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/spiral-galaxy-murdoku-3.png"
+  },
+  {
     "id": "cave-tutorial",
     "file": "cave-tutorial.json",
     "title": "Cave Tutorial",
