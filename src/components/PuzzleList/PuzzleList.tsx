@@ -178,7 +178,26 @@ export function PuzzleList() {
     scrollRestored.current = true
     // Already scrolled while waiting — the player has picked their own spot.
     if (!scrollTarget || el.scrollTop !== 0) return
-    requestAnimationFrame(() => { el.scrollTop = scrollTarget })
+
+    // Completions and presence rows can still grow the list after that, so
+    // re-apply on each height change until it settles. Touching scrollTop only
+    // when we're still where we put the player leaves a real scroll alone.
+    let height = -1
+    let applied = -1
+    const deadline = performance.now() + 1200
+    const settle = () => {
+      if (!el.isConnected) return
+      if (applied >= 0 && el.scrollTop !== applied) return
+      if (el.scrollHeight !== height) {
+        height = el.scrollHeight
+        el.scrollTop = scrollTarget
+        applied = el.scrollTop
+      }
+      if (performance.now() < deadline) requestAnimationFrame(settle)
+    }
+    requestAnimationFrame(settle)
+    // No cleanup on purpose: it would cancel the loop on StrictMode's remount,
+    // and the guard above then skips the second pass.
   }, [loading, mySharedReady, allSharedReady, scrollTarget])
 
   // Save scroll position on scroll
