@@ -25,7 +25,7 @@ import { savePlayerData, loadPlayerData, clearPlayerData, applyPlayerData, puzzl
 import { validate4Color, validateSolution } from '../utils/validate'
 import { useCompletions } from '../hooks/useCompletions'
 import { useTimer } from '../hooks/useTimer'
-import { formatTime } from '../utils/formatTime'
+import { formatCompletionTime } from '../utils/formatTime'
 import { useAuth } from '../contexts/AuthContext'
 import { usePuzzleLeaderboard } from '../hooks/usePuzzleLeaderboard'
 import { CellData, CellPosition, InputMode, PuzzleData, PuzzleSolution, AutoCrossRule, MarkShape } from '../types'
@@ -35,6 +35,13 @@ import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { incrementPuzzleCompletions } from '../utils/puzzleStats'
 import { usePresence } from '../hooks/usePresence'
 import { captureThumbnail } from '../utils/captureThumbnail'
+
+/**
+ * Below this, a completion time didn't come from someone playing. The fastest
+ * real solve on record is about two seconds (a tutorial grid); the times this
+ * rejects were tens to hundreds of milliseconds — a page load, not a player.
+ */
+const MIN_PLAUSIBLE_TIME_MS = 1000
 
 export function PlayerPage() {
   const { puzzleId } = useParams()
@@ -211,7 +218,7 @@ export function PlayerPage() {
   const flushSave = useCallback(() => {
     if (!localId || !loaded.current) return
     if (saveTimer.current) { clearTimeout(saveTimer.current); saveTimer.current = null }
-    savePlayerData(localId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, struckSpecialRuleWordsRef.current, timerRef.current.elapsedMs, revealedFogGroupIdsRef.current, fingerprintRef.current)
+    savePlayerData(localId, gridRef.current, struckRuleWordsRef.current, struckClueWordsRef.current, struckSpecialRuleWordsRef.current, timerRef.current.read(), revealedFogGroupIdsRef.current, fingerprintRef.current)
   }, [localId])
 
   // Auto-save on changes (debounced)
@@ -220,7 +227,7 @@ export function PlayerPage() {
     if (saveTimer.current) clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(() => {
       saveTimer.current = null
-      savePlayerData(localId, gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, timerRef.current.elapsedMs, revealedFogGroupIds, fingerprintRef.current)
+      savePlayerData(localId, gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, timerRef.current.read(), revealedFogGroupIds, fingerprintRef.current)
     }, 500)
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current) }
   }, [gridState.grid, struckRuleWords, struckClueWords, struckSpecialRuleWords, localId, revealedFogGroupIds])
@@ -379,8 +386,13 @@ export function PlayerPage() {
   const canSubmit = is4Color || !!solution
 
   const triggerCompletion = useCallback(() => {
-    timer.pause()
-    const timeMs = timer.elapsedMs
+    const elapsed = timer.pause()
+    // A grid restored from a previous session can already be solved the moment
+    // its solution file arrives, before the player has touched anything — the
+    // timer started milliseconds earlier, so that reading is meaningless. Zero
+    // is the codebase's "completed, time unknown": it still counts as a solve
+    // but the puzzle leaderboard leaves it out.
+    const timeMs = elapsed >= MIN_PLAUSIBLE_TIME_MS ? elapsed : 0
     setPuzzleCompleted(true)
     // A shared link records nothing, but the player still gets told they solved
     // it — and told the time isn't going anywhere, since nothing here is saved.
@@ -627,7 +639,7 @@ export function PlayerPage() {
 
   const timerDisplay = puzzleCompleted
     ? localId && completionTimes.has(localId)
-      ? <div className="info-timer completed">{formatTime(completionTimes.get(localId)!)}</div>
+      ? <div className="info-timer completed">{formatCompletionTime(completionTimes.get(localId)!)}</div>
       : null
     : <div className="info-timer">{timer.formatted}</div>
 
@@ -640,7 +652,7 @@ export function PlayerPage() {
             <li key={entry.uid} className={`puzzle-leaderboard-entry${user && entry.uid === user.uid ? ' puzzle-leaderboard-self' : ''}`}>
               <span className="puzzle-leaderboard-rank">{i + 1}.</span>
               <span className="puzzle-leaderboard-name notranslate">{entry.displayName}</span>
-              <span className="puzzle-leaderboard-time">{formatTime(entry.time)}</span>
+              <span className={`puzzle-leaderboard-time${entry.time > 0 ? '' : ' puzzle-leaderboard-time-unknown'}`}>{formatCompletionTime(entry.time)}</span>
             </li>
           ))}
         </ol>

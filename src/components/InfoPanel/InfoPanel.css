@@ -491,3 +491,9 @@
   font-weight: 600;
   white-space: nowrap;
 }
+
+/* Not a time, so it shouldn't read like one. */
+.puzzle-leaderboard-time-unknown {
+  color: var(--text-muted);
+  font-weight: normal;
+}

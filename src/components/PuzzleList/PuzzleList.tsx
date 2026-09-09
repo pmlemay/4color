@@ -5,7 +5,7 @@ import { fetchPuzzleIndex, savePuzzleToServer, saveSolutionToServer } from '../.
 import { useTheme } from '../../hooks/useTheme'
 import { useAuth } from '../../contexts/AuthContext'
 import { useCompletions } from '../../hooks/useCompletions'
-import { formatTime } from '../../utils/formatTime'
+import { formatCompletionTime } from '../../utils/formatTime'
 import { useLeaderboard } from '../../hooks/useLeaderboard'
 import { useModal } from '../../hooks/useModal'
 import { Modal } from '../Modal/Modal'
@@ -553,7 +553,7 @@ export function PuzzleList() {
                         {completedPuzzleIds.has(p.id) && (
                           <span className="completed-info">
                             <span className="completed-badge" title="Completed">&#10003;</span>
-                            {completionTimes.has(p.id) && <span className="completion-time">{formatTime(completionTimes.get(p.id)!)}</span>}
+                            {completionTimes.has(p.id) && <span className="completion-time">{formatCompletionTime(completionTimes.get(p.id)!)}</span>}
                           </span>
                         )}
                       </Link>
