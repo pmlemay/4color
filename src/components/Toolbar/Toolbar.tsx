@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { InputMode, LabelAlign, MarkShape, CellPosition, CellLabel, CellLabels, FogGroup, FogTrigger, CellTexture, TextureType } from '../../types'
+import { InputMode, LabelAlign, MarkShape, CellPosition, CellLabel, CellLabels, FogGroup, FogTrigger, CellTexture, TextureType, FixedTheme } from '../../types'
 import { TEXTURE_TYPES, TEXTURE_LABELS, getTextureColors, getTextureVariants } from '../../utils/textures'
 import { IconBrowser } from './IconBrowser'
 import './Toolbar.css'
@@ -47,7 +47,8 @@ const EDITOR_MODES: { mode: InputMode; label: string }[] = [
  * so labels made before this option existed keep rendering unchanged.
  */
 const LABEL_SIZES = [11, 13, 15, 18, 21, 24, 28, 32, 40]
-const DEFAULT_LABEL_SIZE = 11
+const CSS_LABEL_SIZE = 11
+const NEW_LABEL_SIZE = 18
 
 const PALE_COLORS: { id: string; label: string }[] = [
   { id: 'cream', label: 'Cream' },
@@ -74,6 +75,8 @@ interface ToolbarProps {
   onRedo: () => void
   onErase: () => void
   isEditor?: boolean
+  fixedTheme?: FixedTheme
+  onFixedThemeChange?: (theme: FixedTheme | undefined) => void
   imageLibrary?: string[]
   /** Data URIs currently in the shared default bucket, shown with a filled star. */
   defaultImages?: string[]
@@ -150,6 +153,8 @@ export function Toolbar({
   onRedo,
   onErase,
   isEditor = false,
+  fixedTheme,
+  onFixedThemeChange,
   imageLibrary = [],
   defaultImages = [],
   onToggleDefaultImage,
@@ -216,7 +221,7 @@ export function Toolbar({
   const [labelAlign, setLabelAlign] = useState<LabelAlign>('top')
   const [labelFogMode, setLabelFogMode] = useState<'hidden' | 'always' | string>('hidden') // 'hidden' | 'always' | fog group id
   const [labelBold, setLabelBold] = useState(false)
-  const [labelSize, setLabelSize] = useState(DEFAULT_LABEL_SIZE)
+  const [labelSize, setLabelSize] = useState(NEW_LABEL_SIZE)
 
   const loadLabelFields = useCallback((lbl: CellLabel | null | undefined) => {
     setLabelText(lbl?.text || '')
@@ -227,7 +232,7 @@ export function Toolbar({
     // only an existing label overrides them, with its own styling.
     if (lbl?.text) {
       setLabelBold(lbl.bold ?? false)
-      setLabelSize(lbl.size ?? DEFAULT_LABEL_SIZE)
+      setLabelSize(lbl.size ?? CSS_LABEL_SIZE)
     }
   }, [])
 
@@ -562,6 +567,24 @@ export function Toolbar({
       {isEditor && (
         <div className="tb-section">
           <div className="tb-section-title">Editor</div>
+          {onFixedThemeChange && (
+            <div
+              className="tb-row"
+              title={fixedTheme
+                ? `Everything on the grid always renders ${fixedTheme}. Click again to follow the viewer's theme.`
+                : "The grid follows the viewer's theme. Pick one to pin it for every viewer."}
+            >
+              {(['light', 'dark'] as FixedTheme[]).map(option => (
+                <button
+                  key={option}
+                  className={`tb-btn-sm ${fixedTheme === option ? 'selected' : ''}`}
+                  onClick={() => onFixedThemeChange(fixedTheme === option ? undefined : option)}
+                >
+                  {option === 'light' ? '☀ Light' : '☾ Dark'}
+                </button>
+              ))}
+            </div>
+          )}
           {EDITOR_MODES.map(m => (
             <div key={m.mode}>
               {renderModeBtn(m)}
@@ -604,7 +627,7 @@ export function Toolbar({
                     >
                       {LABEL_SIZES.map(size => (
                         <option key={size} value={size}>
-                          {size === DEFAULT_LABEL_SIZE ? `${size}px (default)` : `${size}px`}
+                          {size === NEW_LABEL_SIZE ? `${size}px (default)` : `${size}px`}
                         </option>
                       ))}
                     </select>
@@ -634,7 +657,7 @@ export function Toolbar({
                           showThroughFog: labelFogMode === 'always' ? true : undefined,
                           revealWithFog: labelFogMode !== 'hidden' && labelFogMode !== 'always' ? labelFogMode : undefined,
                           bold: labelBold || undefined,
-                          size: labelSize === DEFAULT_LABEL_SIZE ? undefined : labelSize,
+                          size: labelSize === CSS_LABEL_SIZE ? undefined : labelSize,
                         })
                       }
                     }}

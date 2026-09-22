@@ -32,6 +32,7 @@ import { CellData, CellPosition, InputMode, PuzzleData, PuzzleSolution, AutoCros
 import { PUZZLE_TYPE_DEFAULTS } from '../utils/puzzleIO'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
+import { murdokuSuspectLetters, MURDOKU_VICTIM_LETTER } from '../utils/murdoku'
 import { incrementPuzzleCompletions } from '../utils/puzzleStats'
 import { usePresence } from '../hooks/usePresence'
 import { captureThumbnail } from '../utils/captureThumbnail'
@@ -114,6 +115,9 @@ export function PlayerPage() {
     if (!puzzle) return []
     if (solution?.cells && Object.keys(solution.cells).length > 0) {
       return [...new Set(Object.values(solution.cells))].sort()
+    }
+    if (puzzle.puzzleType === 'murdoku' || puzzle.tags?.includes('Murdoku')) {
+      return [...murdokuSuspectLetters(puzzle.gridSize.rows, puzzle.gridSize.cols), MURDOKU_VICTIM_LETTER]
     }
     const maxDim = Math.max(puzzle.gridSize.rows, puzzle.gridSize.cols)
     const vals: string[] = []
@@ -741,6 +745,7 @@ export function PlayerPage() {
       foggedCells={foggedCells}
       revealedFogIds={revealedFogGroupIds}
       highlightedNote={highlightedNote}
+      fixedTheme={puzzle?.fixedTheme}
     />
   )
 

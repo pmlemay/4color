@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { CellData, CellPosition, InputMode, MarkShape, EdgeDescriptor } from '../../types'
+import { CellData, CellPosition, InputMode, MarkShape, EdgeDescriptor, FixedTheme } from '../../types'
 import { useDragSelect } from '../../hooks/useDragSelect'
 import { useEdgeDrag, expandEdge, detectEdge } from '../../hooks/useEdgeDrag'
 import { detectMarkTarget, getNearestCell, getVirtualCell, MarkTarget } from '../../utils/gridHitTest'
@@ -38,9 +38,10 @@ interface GridProps {
   fogPreviewCells?: Set<string>
   revealedFogIds?: Set<string>
   highlightedNote?: string | null
+  fixedTheme?: FixedTheme
 }
 
-export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onSetEdgeImage, onToggleFixedMark, onToggleLine, onToggleFixedLine, onLineCenterClick, onLineRightCenterClick, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds, highlightedNote }: GridProps) {
+export function Grid({ grid, selection, debug, inputMode, activeColor, activeMark, clearSelection, commitSelection, onDragChange, onLeftClickCell, onRightClickCell, onCommitEdges, onCommitFixedEdges, onToggleEdgeCross, onCycleEdgeMark, onSetEdgeImage, onToggleFixedMark, onToggleLine, onToggleFixedLine, onLineCenterClick, onLineRightCenterClick, isPinching, isTouchDragRef, foggedCells, fogPreviewCells, revealedFogIds, highlightedNote, fixedTheme }: GridProps) {
   const beingSelected = useRef<CellPosition[]>([])
   const beingDeselected = useRef<Set<string>>(new Set())
   const [, setRenderTick] = useState(0)
@@ -696,7 +697,7 @@ export function Grid({ grid, selection, debug, inputMode, activeColor, activeMar
       onContextMenu={(e) => e.preventDefault()}
     >
       <table
-        className="puzzle-grid"
+        className={`puzzle-grid${fixedTheme ? ` fixed-theme-${fixedTheme}` : ''}`}
         ref={dragSelect.tableRef}
       >
         <tbody>

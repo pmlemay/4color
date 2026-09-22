@@ -236,6 +236,52 @@
   overflow: visible;
 }
 
+/* Puzzle-level fixedTheme — pins everything drawn on the grid (fixed and player-entered)
+   to one theme whatever the viewer's theme, so it keeps its contrast over background images.
+   Redefining --text here reaches borders, labels, marks and crosses; the rest are rules
+   keyed on [data-theme="dark"] that need an explicit override. */
+.puzzle-grid.fixed-theme-light {
+  --text: #333333;
+  --grid-halo: rgba(255, 255, 255, 0.7);
+  --grid-note: #222222;
+  --grid-note-halo: rgba(255, 255, 255, 0.8);
+  --grid-color9: rgba(20, 20, 20, 0.92);
+  color: var(--text);
+}
+
+.puzzle-grid.fixed-theme-dark {
+  --text: #e0e0e0;
+  --grid-halo: rgba(0, 0, 0, 0.7);
+  --grid-note: #eeeeee;
+  --grid-note-halo: rgba(0, 0, 0, 0.8);
+  --grid-color9: rgba(60, 60, 80, 0.92);
+  color: var(--text);
+}
+
+.puzzle-grid.fixed-theme-light .cell-value,
+.puzzle-grid.fixed-theme-dark .cell-value {
+  text-shadow:
+    -1px -1px 0 var(--grid-halo),
+     1px -1px 0 var(--grid-halo),
+    -1px  1px 0 var(--grid-halo),
+     1px  1px 0 var(--grid-halo);
+}
+
+.puzzle-grid.fixed-theme-light .note-item,
+.puzzle-grid.fixed-theme-dark .note-item {
+  color: var(--grid-note);
+  text-shadow:
+    -1px -1px 0 var(--grid-note-halo),
+     1px -1px 0 var(--grid-note-halo),
+    -1px  1px 0 var(--grid-note-halo),
+     1px  1px 0 var(--grid-note-halo);
+}
+
+.puzzle-grid.fixed-theme-light .color9,
+.puzzle-grid.fixed-theme-dark .color9 {
+  background-color: var(--grid-color9);
+}
+
 .puzzle-grid td {
   min-width: 50px;
   min-height: 50px;
@@ -314,6 +360,19 @@
 
 .cell-being-selected {
   background-color: var(--selection) !important;
+}
+
+/* The td background sits under cell images, so a full-cell image hid the selection.
+   z-index 1 paints over images (0) while values and notes (also 1, later in the DOM) stay on top.
+   ::before because ::after is taken by the note highlight. */
+.cell-selected::before,
+.cell-being-selected::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 0, 0.4);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Cell texture overlay */

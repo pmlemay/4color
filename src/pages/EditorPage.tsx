@@ -19,9 +19,10 @@ import { encodeSharedPuzzle, decodeSharedPuzzle, buildShareUrl } from '../utils/
 import { putSharedPuzzle, getSharedPuzzle, getSiteDisplayName, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
 import { fetchDefaultImages, setDefaultImage } from '../utils/defaultImages'
 import { useAuth } from '../contexts/AuthContext'
-import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger } from '../types'
+import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger, FixedTheme } from '../types'
 import { computeFoggedCells, evaluateNewReveals } from '../utils/fog'
 import { cellMatchesAction, applyActionToGrid } from '../utils/clickActions'
+import { murdokuSuspectLetters, MURDOKU_VICTIM_LETTER } from '../utils/murdoku'
 
 const MURDOKU_NAMES: Record<string, { male: string[]; female: string[] }> = {
   A: { male: ['Alfred', 'Alaric', 'Arthur', 'Adrian', 'Alistair', 'Ambrose', 'Angelo', 'Archibald', 'Augustus', 'Atticus'], female: ['Alice', 'Agatha', 'Adelaide', 'Astrid', 'Amelia', 'Arabella', 'Antonia', 'Anastasia', 'Aurora', 'Abigail'] },
@@ -46,17 +47,16 @@ const MURDOKU_NAMES: Record<string, { male: string[]; female: string[] }> = {
   T: { male: ['Thomas', 'Theodore', 'Tobias', 'Tristan', 'Thaddeus', 'Thornton', 'Terrence', 'Timothy', 'Tiberius', 'Tucker'], female: ['Tanya', 'Thea', 'Tabitha', 'Tamara', 'Theodora', 'Tatiana', 'Tallulah', 'Temperance', 'Thomasina', 'Trudy'] },
   U: { male: ['Ulrich', 'Umberto', 'Ugo', 'Ulysses', 'Urban', 'Usher', 'Upton', 'Udo', 'Uriah', 'Uttam'], female: ['Ursula', 'Una', 'Ulyana', 'Undine', 'Unity', 'Ulla', 'Ulrike', 'Umaya', 'Ulyssa', 'Urbana'] },
   V: { male: ['Victor', 'Vincent', 'Vasco', 'Viktor', 'Virgil', 'Vernon', 'Vaughn', 'Valentin', 'Vladimir', 'Vance'], female: ['Valentina', 'Vivian', 'Viola', 'Vera', 'Veronica', 'Victoria', 'Virginia', 'Violet', 'Venetia', 'Vanessa'] },
+  W: { male: ['Walter', 'Winston', 'Wallace', 'Wendell', 'Wilfred', 'Warren', 'Wesley', 'Wolfgang', 'Webster', 'Whitaker'], female: ['Wilma', 'Winifred', 'Wanda', 'Willow', 'Wendy', 'Wilhelmina', 'Winona', 'Wren', 'Waverly', 'Whitney'] },
+  X: { male: ['Xavier', 'Xander', 'Xerxes', 'Ximon', 'Xeno', 'Xavi', 'Xenophon', 'Xylon', 'Xaver', 'Xenos'], female: ['Xena', 'Ximena', 'Xanthe', 'Xiomara', 'Xenia', 'Xyla', 'Xandra', 'Xaviera', 'Xanthia', 'Xylia'] },
+  Y: { male: ['Yves', 'Yuri', 'Yannick', 'Yorick', 'Yosef', 'Yardley', 'Yale', 'Yusuf', 'Yancy', 'Yestin'], female: ['Yvonne', 'Yolanda', 'Yasmin', 'Yvette', 'Yara', 'Yelena', 'Ysolde', 'Yuliana', 'Yasmeen', 'Yolande'] },
+  Z: { male: ['Zachary', 'Zane', 'Zeke', 'Zoltan', 'Zebulon', 'Zander', 'Zeno', 'Zacharias', 'Zion', 'Zoran'], female: ['Zoe', 'Zelda', 'Zara', 'Zinnia', 'Zenobia', 'Zora', 'Zuleika', 'Zaria', 'Zelie', 'Zita'] },
 }
 
-/** Suspect letters, in order. V is excluded — it is always reserved for the victim. */
-const MURDOKU_SUSPECT_LETTERS = 'ABCDEFGHIJKLMNOPQRSTU'
-
 /** Matches a generated-but-not-yet-written-in clue, so regenerating can't destroy authored text. */
-const MURDOKU_BLANK_CLUE = /^[A-V] \((?:Man|Woman) - \w+\)\. (?:(?:He|She) was\.\.\.|The victim\. (?:He|She) was alone with the murderer\.)$/
+const MURDOKU_BLANK_CLUE = /^[A-Z] \((?:Man|Woman) - \w+\)\. (?:(?:He|She) was\.\.\.|The victim\. (?:He|She) was alone with the murderer\.)$/
 
-/** One person per row and per column, so the grid's short side sets the cast size: N-1 suspects + the victim. */
 function generateMurdokuClues(gridRows: number, gridCols: number): string[] {
-  const suspectCount = Math.min(Math.min(gridRows, gridCols) - 1, MURDOKU_SUSPECT_LETTERS.length)
   const pick = (letter: string) => {
     const pool = MURDOKU_NAMES[letter]
     const isMale = Math.random() < 0.5
@@ -68,12 +68,12 @@ function generateMurdokuClues(gridRows: number, gridCols: number): string[] {
     }
   }
   const clues: string[] = []
-  for (const letter of MURDOKU_SUSPECT_LETTERS.slice(0, Math.max(0, suspectCount))) {
+  for (const letter of murdokuSuspectLetters(gridRows, gridCols)) {
     const person = pick(letter)
     clues.push(`${letter} (${person.gender} - ${person.name}). ${person.pronoun} was...`)
   }
-  const victim = pick('V')
-  clues.push(`V (${victim.gender} - ${victim.name}). The victim. ${victim.pronoun} was alone with the murderer.`)
+  const victim = pick(MURDOKU_VICTIM_LETTER)
+  clues.push(`${MURDOKU_VICTIM_LETTER} (${victim.gender} - ${victim.name}). The victim. ${victim.pronoun} was alone with the murderer.`)
   return clues
 }
 
@@ -117,6 +117,7 @@ export function EditorPage() {
   const [clickActionLeft, setClickActionLeft] = useState('')
   const [clickActionRight, setClickActionRight] = useState('cross')
   const [inProgress, setInProgress] = useState(false)
+  const [fixedTheme, setFixedTheme] = useState<FixedTheme | undefined>(undefined)
   // A shared puzzle's solution: read from its payload, edited in solution mode,
   // and written back out by the next Share. It has no solution file.
   const [sharedSolution, setSharedSolution] = useState<PuzzleSolution | null>(null)
@@ -214,6 +215,9 @@ export function EditorPage() {
     setDifficulty(puzzle.difficulty || '')
     setTags(puzzle.tags || [])
     setAutoCrossRulesState(puzzle.autoCrossRules || [])
+    // A load isn't a type switch — without this the type effect re-seeds the
+    // type's default rules over the ones the puzzle saved.
+    prevPuzzleType.current = puzzle.puzzleType || ''
     setPuzzleType(puzzle.puzzleType || '')
     setClickActionLeft(puzzle.clickActionLeft || '')
     setClickActionRight(puzzle.clickActionRight || 'cross')
@@ -221,6 +225,7 @@ export function EditorPage() {
     setRules(puzzle.rules || [])
     setClues(puzzle.clues || [])
     setFogGroups(puzzle.fogGroups || [])
+    setFixedTheme(puzzle.fixedTheme)
     setInProgress(puzzle.inProgress || false)
     gridState.setGrid(puzzleToGrid(puzzle))
     const images = new Set<string>()
@@ -334,13 +339,14 @@ export function EditorPage() {
           clickActionLeft: clickActionLeft || undefined,
           clickActionRight: clickActionRight || undefined,
           fogGroups: fogGroups.length ? fogGroups : undefined,
+          fixedTheme,
           inProgress: inProgress || undefined,
         })
         localStorage.setItem(draftKey, JSON.stringify(draft))
       } catch { /* ignore serialization errors */ }
     }, 3000)
     return () => clearTimeout(timer)
-  }, [gridState.grid, title, authors, difficulty, tags, specialRules, rules, clues, autoCrossRules, puzzleType, clickActionLeft, clickActionRight, fogGroups, inProgress, editorPuzzleId, draftKey])
+  }, [gridState.grid, title, authors, difficulty, tags, specialRules, rules, clues, autoCrossRules, puzzleType, clickActionLeft, clickActionRight, fogGroups, fixedTheme, inProgress, editorPuzzleId, draftKey])
 
   // Clear draft on successful save
   const clearDraft = useCallback(() => {
@@ -601,18 +607,18 @@ export function EditorPage() {
     if (clickActionLeft) {
       gridState.setInputMode('suggested')
     }
-    if (puzzleType === 'starbattle') {
+    const prev = prevPuzzleType.current
+    if (puzzleType === 'starbattle' && puzzleType !== prev) {
       if (!autoCrossRules.includes('king')) {
         setAutoCrossRulesState(prev => prev.includes('king') ? prev : [...prev, 'king'])
       }
     }
-    if (puzzleType === 'murdoku') {
+    if (puzzleType === 'murdoku' && puzzleType !== prev) {
       if (!autoCrossRules.includes('rook')) {
         setAutoCrossRulesState(prev => prev.includes('rook') ? prev : [...prev, 'rook'])
       }
     }
 
-    const prev = prevPuzzleType.current
     const prevRules = PUZZLE_TYPE_RULES[prev] || []
     const nextRules = PUZZLE_TYPE_RULES[puzzleType] || []
 
@@ -715,7 +721,7 @@ export function EditorPage() {
         id = `${id}-${n}`
       }
     }
-    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
+    const puzzle = gridToPuzzle(gridState.grid, { id, title: title || 'Untitled', authors, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, fixedTheme, inProgress: inProgress || undefined })
 
     if (puzzleId) {
       puzzle.id = puzzleId
@@ -760,7 +766,7 @@ export function EditorPage() {
     const grid = solutionMode
       ? gridState.grid.map(row => row.map(cell => ({ ...cell, borders: [...cell.fixedBorders] as [number, number, number, number] })))
       : gridState.grid
-    return gridToPuzzle(grid, { id, title: title || 'Untitled', authors: credited, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, inProgress: inProgress || undefined })
+    return gridToPuzzle(grid, { id, title: title || 'Untitled', authors: credited, specialRules: specialRules.length ? specialRules : undefined, rules, clues, difficulty, tags, autoCrossRules, puzzleType: puzzleType || undefined, clickActionLeft: clickActionLeft || undefined, clickActionRight: clickActionRight || undefined, fogGroups: fogGroups.length ? fogGroups : undefined, fixedTheme, inProgress: inProgress || undefined })
   }
 
   /**
@@ -2033,6 +2039,7 @@ export function EditorPage() {
                 onLineRightCenterClick={handleLineRightCenterClick}
                 isPinching={gridScale.isPinching}
                 fogPreviewCells={fogPreviewCells}
+                fixedTheme={fixedTheme}
               />
             </div>
           </div>
@@ -2064,6 +2071,8 @@ export function EditorPage() {
           onRedo={handleRedo}
           onErase={gridState.clearValues}
           isEditor={!solutionMode}
+          fixedTheme={fixedTheme}
+          onFixedThemeChange={setFixedTheme}
           imageLibrary={allImages}
           defaultImages={defaultImages}
           onToggleDefaultImage={isDev ? handleToggleDefaultImage : undefined}

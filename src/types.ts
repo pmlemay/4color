@@ -84,9 +84,13 @@ export interface PuzzleData {
   forcedInputLayout?: string // backward compat only
   images?: Record<string, string>
   fogGroups?: FogGroup[]
+  /** Pins everything drawn on the grid, fixed and player-entered, to one theme; omitted follows the viewer's theme. */
+  fixedTheme?: FixedTheme
   inProgress?: boolean
   createdAt: string
 }
+
+export type FixedTheme = 'light' | 'dark'
 
 export interface PuzzleIndexEntry {
   id: string

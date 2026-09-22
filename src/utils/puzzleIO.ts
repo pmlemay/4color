@@ -1,4 +1,4 @@
-import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule, MarkShape, FogGroup, CellTexture } from '../types'
+import { CellData, PuzzleData, PuzzleCellData, PuzzleIndexEntry, PuzzleSolution, AutoCrossRule, MarkShape, FogGroup, FixedTheme, CellTexture } from '../types'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -32,7 +32,7 @@ export function createEmptyGrid(rows: number, cols: number): CellData[][] {
 
 export function gridToPuzzle(
   grid: CellData[][],
-  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; specialRules?: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; puzzleType?: string; clickActionLeft?: string; clickActionRight?: string; fogGroups?: FogGroup[]; inProgress?: boolean }
+  meta: { id: string; title: string; authors: string[]; rules: string[]; clues: string[]; specialRules?: string[]; difficulty: string; tags: string[]; autoCrossRules?: AutoCrossRule[]; puzzleType?: string; clickActionLeft?: string; clickActionRight?: string; fogGroups?: FogGroup[]; fixedTheme?: FixedTheme; inProgress?: boolean }
 ): PuzzleData {
   // Build deduplicated image map: base64 → id
   const imageToId = new Map<string, string>()
@@ -100,6 +100,7 @@ export function gridToPuzzle(
   if (meta.clickActionLeft) puzzle.clickActionLeft = meta.clickActionLeft
   if (meta.clickActionRight) puzzle.clickActionRight = meta.clickActionRight
   if (meta.fogGroups?.length) puzzle.fogGroups = meta.fogGroups
+  if (meta.fixedTheme) puzzle.fixedTheme = meta.fixedTheme
   if (meta.inProgress) puzzle.inProgress = true
   return puzzle
 }
