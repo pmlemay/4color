@@ -221,6 +221,7 @@ export function Toolbar({
   const [labelAlign, setLabelAlign] = useState<LabelAlign>('top')
   const [labelFogMode, setLabelFogMode] = useState<'hidden' | 'always' | string>('hidden') // 'hidden' | 'always' | fog group id
   const [labelBold, setLabelBold] = useState(false)
+  const [labelBadge, setLabelBadge] = useState(false)
   const [labelSize, setLabelSize] = useState(NEW_LABEL_SIZE)
 
   const loadLabelFields = useCallback((lbl: CellLabel | null | undefined) => {
@@ -228,10 +229,11 @@ export function Toolbar({
     if (lbl?.revealWithFog) setLabelFogMode(lbl.revealWithFog)
     else if (lbl?.showThroughFog) setLabelFogMode('always')
     else setLabelFogMode('hidden')
-    // Bold and size stick between labels so a run of new ones stays consistent —
+    // Bold, badge and size stick between labels so a run of new ones stays consistent —
     // only an existing label overrides them, with its own styling.
     if (lbl?.text) {
       setLabelBold(lbl.bold ?? false)
+      setLabelBadge(lbl.badge ?? false)
       setLabelSize(lbl.size ?? CSS_LABEL_SIZE)
     }
   }, [])
@@ -619,6 +621,14 @@ export function Toolbar({
                     >
                       B
                     </button>
+                    <button
+                      className={`tb-btn-sm ${labelBadge ? 'selected' : ''}`}
+                      onClick={() => setLabelBadge(b => !b)}
+                      title="Sign style: white pill with a dark outline"
+                      style={{ flex: '0 0 44px' }}
+                    >
+                      Sign
+                    </button>
                     <select
                       style={{ flex: 1, fontSize: 12 }}
                       value={labelSize}
@@ -657,6 +667,7 @@ export function Toolbar({
                           showThroughFog: labelFogMode === 'always' ? true : undefined,
                           revealWithFog: labelFogMode !== 'hidden' && labelFogMode !== 'always' ? labelFogMode : undefined,
                           bold: labelBold || undefined,
+                          badge: labelBadge || undefined,
                           size: labelSize === CSS_LABEL_SIZE ? undefined : labelSize,
                         })
                       }

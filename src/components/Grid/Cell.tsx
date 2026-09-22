@@ -192,6 +192,10 @@ function EdgeImage({ src, side }: { src: string; side: typeof EDGE_IMAGE_SIDES[n
   )
 }
 
+function labelClass(pos: string, label: CellLabel, overFog: boolean): string {
+  return `cell-label cell-label-${pos}${label.badge ? ' cell-label-badge' : ''}${overFog ? ' cell-label-over-fog' : ''}`
+}
+
 /** Bold and size are optional overrides — labels without them keep the CSS defaults. */
 function labelStyle(label: CellLabel): React.CSSProperties | undefined {
   if (!label.bold && !label.size) return undefined
@@ -285,7 +289,7 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
           const lbl = labels[pos]
           if (!lbl?.text) return null
           if (lbl.revealWithFog && revealedFogIds && !revealedFogIds.has(lbl.revealWithFog)) return null
-          return <span key={pos} className={`cell-label cell-label-${pos}`} style={labelStyle(lbl)}>{lbl.text}</span>
+          return <span key={pos} className={labelClass(pos, lbl, false)} style={labelStyle(lbl)}>{lbl.text}</span>
         })}
         {debug && (
           <span className="debug-overlay">{row},{col}</span>
@@ -381,7 +385,7 @@ export const Cell = React.memo(function Cell({ data, beingSelected, beingDeselec
         if (!lbl?.text) return null
         const revealed = lbl.revealWithFog ? (revealedFogIds?.has(lbl.revealWithFog) ?? false) : false
         if (!lbl.showThroughFog && !revealed) return null
-        return <span key={pos} className={`cell-label cell-label-${pos} cell-label-over-fog`} style={labelStyle(lbl)}>{lbl.text}</span>
+        return <span key={pos} className={labelClass(pos, lbl, true)} style={labelStyle(lbl)}>{lbl.text}</span>
       })}
     </td>
   )

@@ -215,9 +215,7 @@ export function EditorPage() {
     setDifficulty(puzzle.difficulty || '')
     setTags(puzzle.tags || [])
     setAutoCrossRulesState(puzzle.autoCrossRules || [])
-    // A load isn't a type switch — without this the type effect re-seeds the
-    // type's default rules over the ones the puzzle saved.
-    prevPuzzleType.current = puzzle.puzzleType || ''
+    loadedPuzzleType.current = puzzle.puzzleType || ''
     setPuzzleType(puzzle.puzzleType || '')
     setClickActionLeft(puzzle.clickActionLeft || '')
     setClickActionRight(puzzle.clickActionRight || 'cross')
@@ -487,8 +485,14 @@ export function EditorPage() {
     'ero-regions': 'ERO-regions',
   }
   const prevPuzzleType = useRef(puzzleType)
+  // The type a load just set. A load isn't a type switch, so the type effect must not
+  // re-seed default rules/auto-cross over what the puzzle saved. Consumed by the effect
+  // rather than written to prevPuzzleType directly: a draft restores inside a mount
+  // effect, before the type effect's own mount run would overwrite prevPuzzleType.
+  const loadedPuzzleType = useRef<string | null>(null)
 
   const handlePuzzleTypeChange = useCallback((newType: string) => {
+    loadedPuzzleType.current = null
     setPuzzleType(newType)
     // Auto-populate click actions from defaults
     const defaults = PUZZLE_TYPE_DEFAULTS[newType]
@@ -606,6 +610,10 @@ export function EditorPage() {
     gridState.setPuzzleType(puzzleType)
     if (clickActionLeft) {
       gridState.setInputMode('suggested')
+    }
+    if (loadedPuzzleType.current === puzzleType) {
+      prevPuzzleType.current = puzzleType
+      loadedPuzzleType.current = null
     }
     const prev = prevPuzzleType.current
     if (puzzleType === 'starbattle' && puzzleType !== prev) {

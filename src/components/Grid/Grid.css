@@ -611,6 +611,20 @@
   z-index: 11;
 }
 
+/* Sign-style label: white pill with a dark outline. Fixed colors on purpose — a sign
+   reads the same on any background and in either theme. Sizes in em so it scales with the label size. */
+.cell-label-badge {
+  font-family: 'Arial Narrow', 'Roboto Condensed', 'Helvetica Neue', sans-serif;
+  font-stretch: condensed;
+  font-weight: 700;
+  color: #111111;
+  background: #ffffff;
+  border: max(2px, 0.12em) solid #111111;
+  border-radius: 999px;
+  padding: 0.12em 0.45em;
+  box-shadow: 0 0 0 1px #ffffff;
+}
+
 .debug-overlay {
   position: absolute;
   bottom: 1px;

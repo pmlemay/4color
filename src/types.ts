@@ -13,6 +13,7 @@ export interface CellLabel {
   revealWithFog?: string  // fog group ID — label hidden until that group is revealed
   bold?: boolean
   size?: number  // font-size in px; omitted means the default 11px
+  badge?: boolean  // drawn as a white pill with a dark outline, like a sign on the map
 }
 
 export type CellLabels = Partial<Record<LabelAlign, CellLabel | null>>
