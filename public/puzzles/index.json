@@ -599,6 +599,28 @@
     "thumbnail": "thumbnails/4color-3.png"
   },
   {
+    "id": "road-to-treasure-hunt-murdoku",
+    "file": "road-to-treasure-hunt-murdoku.json",
+    "title": "Road to treasure hunt - Murdoku",
+    "authors": [
+      "PmLemay"
+    ],
+    "gridSize": {
+      "rows": 10,
+      "cols": 10
+    },
+    "difficulty": "Medium",
+    "tags": [
+      "Murdoku"
+    ],
+    "autoCrossRules": [
+      "rook"
+    ],
+    "puzzleType": "murdoku",
+    "clickActionRight": "cross",
+    "thumbnail": "thumbnails/road-to-treasure-hunt-murdoku.png"
+  },
+  {
     "id": "snake-link-flow",
     "file": "snake-link-flow.json",
     "title": "Snake Link Flow",

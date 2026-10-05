@@ -850,9 +850,17 @@ export function EditorPage() {
     }
   }
 
+  /** Loaded as a blank puzzle so every side-panel field resets along with the grid. */
+  const loadBlankPuzzle = () => {
+    loadPuzzleIntoEditor({
+      id: '', title: '', authors: isDev ? ['PmLemay'] : [],
+      gridSize: { rows, cols }, cells: [], rules: [], clues: [], createdAt: '',
+    })
+  }
+
   const handleClearAll = async () => {
     if (await showConfirm('Are you sure you want to clear all? This cannot be undone.', 'Clear All')) {
-      gridState.resetGrid(rows, cols)
+      loadBlankPuzzle()
       // Starting over is a new puzzle, so it gets a new link.
       clearShareId(puzzleId || 'new')
       setShareDocId(null)
@@ -869,8 +877,12 @@ export function EditorPage() {
       // Reload from file
       const puzzle = await fetchPuzzle(puzzleId)
       if (puzzle) loadPuzzleIntoEditor(puzzle)
+    } else if (sharedParam) {
+      const payload = await getSharedPuzzle(sharedParam)
+      const decoded = payload ? await decodeSharedPuzzle(payload) : null
+      if (decoded) loadPuzzleIntoEditor(decoded.puzzle)
     } else {
-      gridState.resetGrid(rows, cols)
+      loadBlankPuzzle()
     }
   }
 

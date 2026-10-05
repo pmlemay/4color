@@ -363,7 +363,7 @@
 }
 
 /* The td background sits under cell images, so a full-cell image hid the selection.
-   z-index 1 paints over images (0) while values and notes (also 1, later in the DOM) stay on top.
+   z-index 1 paints over images (0) while values and notes (8) stay on top.
    ::before because ::after is taken by the note highlight. */
 .cell-selected::before,
 .cell-being-selected::before {
@@ -469,10 +469,10 @@
   transform: translate(-50%, 50%) rotate(90deg);
 }
 
-/* Cell value and notes — above images */
+/* Cell value and notes — above labels (7) so a label never covers what was entered */
 .cell-value {
   position: relative;
-  z-index: 1;
+  z-index: 8;
   text-shadow:
     -1px -1px 0 rgba(255,255,255,0.7),
      1px -1px 0 rgba(255,255,255,0.7),
@@ -550,7 +550,7 @@
 /* Notes grid */
 .notes-grid {
   position: relative;
-  z-index: 1;
+  z-index: 8;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
