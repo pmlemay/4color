@@ -90,7 +90,8 @@ export function clearActionOnCell(cell: CellData): void {
  * - force=true  → always apply (paint mode during drag)
  * - force=false → always clear
  * - force=undefined → toggle (single click / first cell of drag)
- * - autoCrossRules: if provided, auto-cross targets after placing a mark (suggested/forced mode only)
+ * - autoCrossRules: if provided, auto-cross targets after placing a mark. Callers pass it only for
+ *   the left-click action (e.g. Star Battle's star) — any other mark is a note and never auto-crosses.
  */
 export function applyActionToGrid(
   prev: CellData[][],

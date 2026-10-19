@@ -240,19 +240,6 @@ export function useGrid(initialRows: number, initialCols: number) {
             newGrid[pos.row][pos.col].mark = targetValue
           }
         }
-        // Auto-cross around newly placed marks
-        const rules = autoCrossRulesRef.current
-        if (targetValue !== null && rules.length > 0) {
-          const rows = newGrid.length
-          const cols = newGrid[0].length
-          const targets = getAutoCrossTargets(eligible, rules, rows, cols)
-          for (const t of targets) {
-            const cell = newGrid[t.row][t.col]
-            if (!cell.value && !cell.fixedValue && !cell.mark && !cell.fixedMark) {
-              cell.crossed = true
-            }
-          }
-        }
         return newGrid
       })
       return
@@ -730,19 +717,6 @@ export function useGrid(initialRows: number, initialCols: number) {
       const placing = !allHaveMark
       for (const pos of eligible) {
         newGrid[pos.row][pos.col].mark = placing ? shape : null
-      }
-      // Auto-cross around newly placed marks
-      const rules = autoCrossRulesRef.current
-      if (placing && rules.length > 0) {
-        const rows = newGrid.length
-        const cols = newGrid[0].length
-        const targets = getAutoCrossTargets(eligible, rules, rows, cols)
-        for (const t of targets) {
-          const cell = newGrid[t.row][t.col]
-          if (!cell.value && !cell.fixedValue && !cell.mark) {
-            cell.crossed = true
-          }
-        }
       }
       return newGrid
     })

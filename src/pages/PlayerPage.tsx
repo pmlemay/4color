@@ -326,11 +326,11 @@ export function PlayerPage() {
     if (isFirst) {
       const matches = cellMatchesAction(gridState.grid[pos.row][pos.col], clickActionRight)
       rightDragAction.current = !matches // true = apply, false = clear
-      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, undefined, suggestedAutoCross))
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight))
     } else {
-      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, rightDragAction.current, suggestedAutoCross))
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, rightDragAction.current))
     }
-  }, [clickActionRight, suggestedAutoCross, gridState])
+  }, [clickActionRight, gridState])
 
   const isTouchDragRef = useRef(false)
 
@@ -574,7 +574,7 @@ export function PlayerPage() {
         }
         if (action === 'clear') return applyActionToGrid(prev, pos, clickActionLeft, false)
         const mid = applyActionToGrid(prev, pos, clickActionLeft, false)
-        return applyActionToGrid(mid, pos, action, true, suggestedAutoCross)
+        return applyActionToGrid(mid, pos, action, true, action === clickActionLeft ? suggestedAutoCross : undefined)
       })
     }
   }, [isSuggestedMode, clickActionLeft, clickActionRight, suggestedAutoCross, gridState])

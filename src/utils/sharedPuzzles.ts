@@ -12,11 +12,16 @@ export interface SharedPuzzleMeta {
   ownerName: string
 }
 
+interface SharedDoc {
+  payload: string
+  owner: string
+}
+
 /**
  * Cached for the life of the page, so a reload is what picks up a puzzle the
  * author has re-shared since. Avoids a second read per link within a session.
  */
-const cache = new Map<string, string>()
+const cache = new Map<string, SharedDoc>()
 
 function randomId(): string {
   const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -105,7 +110,7 @@ export async function putSharedPuzzle(
       : { payload, title, owner: uid, ownerName, createdAt: now, updatedAt: now },
     { merge: true },
   )
-  cache.set(id, payload)
+  cache.set(id, { payload, owner: uid })
   return id
 }
 
@@ -141,17 +146,27 @@ function byNewest(a: SharedPuzzleMeta, b: SharedPuzzleMeta): number {
   return b.updatedAt - a.updatedAt
 }
 
-export async function getSharedPuzzle(id: string): Promise<string | null> {
+async function readSharedDoc(id: string): Promise<SharedDoc | null> {
   const cached = cache.get(id)
   if (cached) return cached
   try {
-    const snap = await getDoc(doc(db, COLLECTION, id))
-    const payload = snap.exists() ? (snap.data().payload as string) : null
-    if (payload) cache.set(id, payload)
-    return payload
+    const data = (await getDoc(doc(db, COLLECTION, id))).data()
+    if (!data?.payload) return null
+    const found = { payload: data.payload as string, owner: (data.owner as string) || '' }
+    cache.set(id, found)
+    return found
   } catch {
     return null
   }
+}
+
+export async function getSharedPuzzle(id: string): Promise<string | null> {
+  return (await readSharedDoc(id))?.payload ?? null
+}
+
+/** The author's uid, or null when the puzzle doesn't exist (never shared, or deleted). */
+export async function getSharedPuzzleOwner(id: string): Promise<string | null> {
+  return (await readSharedDoc(id))?.owner ?? null
 }
 
 /**

@@ -16,7 +16,7 @@ import { PillInput } from '../components/PillInput'
 import { useGridScale } from '../hooks/useGridScale'
 import { gridToPuzzle, downloadPuzzleJSON, savePuzzleToServer, saveSolutionToServer, downloadSolutionJSON, puzzleToGrid, fetchPuzzle, fetchPuzzleIndex, fetchPuzzleSolution, PUZZLE_TYPE_DEFAULTS, migratePuzzleType } from '../utils/puzzleIO'
 import { encodeSharedPuzzle, decodeSharedPuzzle, buildShareUrl } from '../utils/shareLink'
-import { putSharedPuzzle, getSharedPuzzle, getSiteDisplayName, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
+import { putSharedPuzzle, getSharedPuzzle, getSharedPuzzleOwner, getSiteDisplayName, getShareId, setShareId, clearShareId, moveShareId } from '../utils/sharedPuzzles'
 import { fetchDefaultImages, setDefaultImage } from '../utils/defaultImages'
 import { useAuth } from '../contexts/AuthContext'
 import { PuzzleData, PuzzleSolution, CellData, CellPosition, EdgeDescriptor, InputMode, AutoCrossRule, MarkShape, FogGroup, FogTrigger, FixedTheme } from '../types'
@@ -77,7 +77,38 @@ function generateMurdokuClues(gridRows: number, gridCols: number): string[] {
   return clues
 }
 
+/**
+ * Only the author edits a shared puzzle; anyone else is sent to play it. The
+ * editor would show them the solution, and on a deleted puzzle their Share
+ * would claim the id that old links still point to. The editor isn't mounted
+ * until this passes, so none of its loading runs for anyone else.
+ */
 export function EditorPage() {
+  const { user, loading: authLoading } = useAuth()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const sharedParam = searchParams.get('shared')
+  const [verified, setVerified] = useState<{ id: string; owner: string } | null>(null)
+
+  useEffect(() => {
+    if (!sharedParam || authLoading) return
+    const playInstead = () => navigate(`/play/shared?d=${sharedParam}`, { replace: true })
+    if (!user) { playInstead(); return }
+    let cancelled = false
+    getSharedPuzzleOwner(sharedParam).then(owner => {
+      if (cancelled) return
+      if (owner === user.uid) setVerified({ id: sharedParam, owner })
+      else playInstead()
+    })
+    return () => { cancelled = true }
+  }, [sharedParam, authLoading, user])
+
+  const mayEdit = !sharedParam || (!!user && verified?.id === sharedParam && verified.owner === user.uid)
+  if (!mayEdit) return <p style={{ textAlign: 'center', marginTop: 40 }}>Loading puzzle...</p>
+  return <Editor />
+}
+
+function Editor() {
   const { puzzleId } = useParams()
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
@@ -1410,11 +1441,11 @@ export function EditorPage() {
     if (isFirst) {
       const matches = cellMatchesAction(gridState.grid[pos.row][pos.col], clickActionRight)
       rightDragAction.current = !matches // true = apply, false = clear
-      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, undefined, autoCrossRules))
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight))
     } else {
-      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, rightDragAction.current, autoCrossRules))
+      gridState.setGrid(prev => applyActionToGrid(prev, pos, clickActionRight, rightDragAction.current))
     }
-  }, [clickActionRight, autoCrossRules, gridState])
+  }, [clickActionRight, gridState])
 
   // Map click action string to the effective inputMode / activeColor / activeMark
   const suggestedEffectiveMode: InputMode = (() => {
@@ -1517,7 +1548,7 @@ export function EditorPage() {
         }
         if (action === 'clear') return applyActionToGrid(prev, pos, clickActionLeft, false)
         const mid = applyActionToGrid(prev, pos, clickActionLeft, false)
-        return applyActionToGrid(mid, pos, action, true, autoCrossRules)
+        return applyActionToGrid(mid, pos, action, true, action === clickActionLeft ? autoCrossRules : undefined)
       })
     }
   }, [isSuggestedMode, clickActionLeft, clickActionRight, autoCrossRules, gridState])
