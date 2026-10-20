@@ -158,7 +158,13 @@ function validate4ColorClues(grid: CellData[][]): { valid: boolean; error?: stri
 }
 
 export function validate4Color(grid: CellData[][]): { valid: boolean; error?: string } {
-  // Clue-based variant: no predefined regions, clues drive region sizes.
+  const rows = grid.length
+  const cols = grid[0].length
+  const regionMap = findRegions(grid)
+
+  // Clue-based variant: no predefined regions, clues drive region sizes. Region-based puzzles
+  // can also carry fixed values (e.g. a digit on a given color), so fixed regions take precedence.
+  const hasFixedRegions = regionMap.some(row => row.some(regionId => regionId !== 0))
   let hasClues = false
   for (const row of grid) {
     for (const cell of row) {
@@ -166,11 +172,7 @@ export function validate4Color(grid: CellData[][]): { valid: boolean; error?: st
     }
     if (hasClues) break
   }
-  if (hasClues) return validate4ColorClues(grid)
-
-  const rows = grid.length
-  const cols = grid[0].length
-  const regionMap = findRegions(grid)
+  if (hasClues && !hasFixedRegions) return validate4ColorClues(grid)
 
   // Collect color per region
   const regionColors = new Map<number, string | null>()
