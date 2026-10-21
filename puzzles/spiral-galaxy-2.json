@@ -24,12 +24,7 @@
     {
       "row": 0,
       "col": 2,
-      "fixedEdgeMarks": [
-        null,
-        null,
-        "circle",
-        null
-      ]
+      "fixedMark": "circle"
     },
     {
       "row": 0,
@@ -39,12 +34,7 @@
     {
       "row": 1,
       "col": 2,
-      "fixedEdgeMarks": [
-        "circle",
-        null,
-        null,
-        null
-      ]
+      "fixedMark": "circle"
     },
     {
       "row": 1,
@@ -147,5 +137,5 @@
       "fixedMark": "circle"
     }
   ],
-  "createdAt": "2026-03-12"
+  "createdAt": "2026-10-21"
 }
